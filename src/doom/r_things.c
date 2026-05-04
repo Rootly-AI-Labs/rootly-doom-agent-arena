@@ -1,0 +1,1597 @@
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 2005-2014 Simon Howard
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// DESCRIPTION:
+//	Refresh of things, i.e. objects represented by sprites.
+//
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+
+#include "deh_main.h"
+#include "doomdef.h"
+
+#include "i_video.h"
+#include "i_swap.h"
+#include "i_system.h"
+#include "z_zone.h"
+#include "w_wad.h"
+
+#include "r_local.h"
+#include "hu_stuff.h"
+#include "rootly_incidents.h"
+#include "v_video.h"
+
+#include "doomstat.h"
+
+
+
+#define MINZ				(FRACUNIT*4)
+#define BASEYCENTER			(SCREENHEIGHT/2)
+
+//void R_DrawColumn (void);
+//void R_DrawFuzzColumn (void);
+
+
+
+typedef struct
+{
+    int		x1;
+    int		x2;
+	
+    int		column;
+    int		topclip;
+    int		bottomclip;
+
+} maskdraw_t;
+
+
+
+//
+// Sprite rotation 0 is facing the viewer,
+//  rotation 1 is one angle turn CLOCKWISE around the axis.
+// This is not the same as the angle,
+//  which increases counter clockwise (protractor).
+// There was a lot of stuff grabbed wrong, so I changed it...
+//
+fixed_t		pspritescale;
+fixed_t		pspriteiscale;
+
+lighttable_t**	spritelights;
+
+extern patch_t* hu_font[HU_FONTSIZE];
+
+// constant arrays
+//  used for psprite clipping and initializing clipping
+short		negonearray[SCREENWIDTH];
+short		screenheightarray[SCREENWIDTH];
+
+static boolean incident_label_font_warning;
+static boolean incident_label_colors_ready;
+static int incident_label_red;
+static int incident_label_orange;
+static int incident_label_yellow;
+static int incident_label_green;
+static int incident_label_gray;
+
+
+static void R_InitIncidentLabelColors(void)
+{
+    if (incident_label_colors_ready)
+    {
+        return;
+    }
+
+    incident_label_red = I_GetPaletteIndex(190, 24, 24);
+    incident_label_orange = I_GetPaletteIndex(218, 104, 0);
+    incident_label_yellow = I_GetPaletteIndex(216, 170, 24);
+    incident_label_green = I_GetPaletteIndex(36, 142, 48);
+    incident_label_gray = I_GetPaletteIndex(72, 72, 72);
+    incident_label_colors_ready = true;
+}
+
+
+static int R_IncidentLabelWidth(const char *string)
+{
+    int width;
+    int c;
+
+    width = 0;
+
+    while (*string)
+    {
+        c = toupper((unsigned char)*string) - HU_FONTSTART;
+        if (c < 0 || c >= HU_FONTSIZE)
+        {
+            width += 4;
+        }
+        else
+        {
+            width += SHORT(hu_font[c]->width);
+        }
+
+        string++;
+    }
+
+    return width;
+}
+
+
+static void R_TruncateIncidentLabel(char *label, int max_width)
+{
+    size_t len;
+
+    len = strlen(label);
+
+    while (len > 0 && R_IncidentLabelWidth(label) > max_width)
+    {
+        len--;
+        label[len] = '\0';
+    }
+}
+
+static int R_IncidentLabelColor(const char *label)
+{
+    R_InitIncidentLabelColors();
+
+    if (!strncmp(label, "SEV0", 4) || !strncmp(label, "SEV1", 4))
+    {
+        return incident_label_red;
+    }
+    else if (!strncmp(label, "SEV2", 4))
+    {
+        return incident_label_orange;
+    }
+    else if (!strncmp(label, "SEV3", 4))
+    {
+        return incident_label_yellow;
+    }
+    else if (!strncmp(label, "SEV4", 4))
+    {
+        return incident_label_green;
+    }
+    else if (!strncmp(label, "SEV5", 4))
+    {
+        return incident_label_gray;
+    }
+
+    return incident_label_gray;
+}
+
+static const byte incident_font_digits[36][5] =
+{
+    { 0x7, 0x5, 0x5, 0x5, 0x7 }, // 0
+    { 0x2, 0x6, 0x2, 0x2, 0x7 }, // 1
+    { 0x7, 0x1, 0x7, 0x4, 0x7 }, // 2
+    { 0x7, 0x1, 0x7, 0x1, 0x7 }, // 3
+    { 0x5, 0x5, 0x7, 0x1, 0x1 }, // 4
+    { 0x7, 0x4, 0x7, 0x1, 0x7 }, // 5
+    { 0x7, 0x4, 0x7, 0x5, 0x7 }, // 6
+    { 0x7, 0x1, 0x1, 0x1, 0x1 }, // 7
+    { 0x7, 0x5, 0x7, 0x5, 0x7 }, // 8
+    { 0x7, 0x5, 0x7, 0x1, 0x7 }, // 9
+    { 0x7, 0x5, 0x7, 0x5, 0x5 }, // A
+    { 0x6, 0x5, 0x6, 0x5, 0x6 }, // B
+    { 0x7, 0x4, 0x4, 0x4, 0x7 }, // C
+    { 0x6, 0x5, 0x5, 0x5, 0x6 }, // D
+    { 0x7, 0x4, 0x6, 0x4, 0x7 }, // E
+    { 0x7, 0x4, 0x6, 0x4, 0x4 }, // F
+    { 0x7, 0x4, 0x5, 0x5, 0x7 }, // G
+    { 0x5, 0x5, 0x7, 0x5, 0x5 }, // H
+    { 0x7, 0x2, 0x2, 0x2, 0x7 }, // I
+    { 0x1, 0x1, 0x1, 0x5, 0x7 }, // J
+    { 0x5, 0x5, 0x6, 0x5, 0x5 }, // K
+    { 0x4, 0x4, 0x4, 0x4, 0x7 }, // L
+    { 0x5, 0x7, 0x7, 0x5, 0x5 }, // M
+    { 0x5, 0x7, 0x7, 0x7, 0x5 }, // N
+    { 0x7, 0x5, 0x5, 0x5, 0x7 }, // O
+    { 0x7, 0x5, 0x7, 0x4, 0x4 }, // P
+    { 0x7, 0x5, 0x5, 0x7, 0x1 }, // Q
+    { 0x7, 0x5, 0x7, 0x6, 0x5 }, // R
+    { 0x7, 0x4, 0x7, 0x1, 0x7 }, // S
+    { 0x7, 0x2, 0x2, 0x2, 0x2 }, // T
+    { 0x5, 0x5, 0x5, 0x5, 0x7 }, // U
+    { 0x5, 0x5, 0x5, 0x5, 0x2 }, // V
+    { 0x5, 0x5, 0x7, 0x7, 0x5 }, // W
+    { 0x5, 0x5, 0x2, 0x5, 0x5 }, // X
+    { 0x5, 0x5, 0x2, 0x2, 0x2 }, // Y
+    { 0x7, 0x1, 0x2, 0x4, 0x7 }, // Z
+};
+
+static const byte incident_font_colon[5] = { 0x0, 0x2, 0x0, 0x2, 0x0 };
+
+static const byte *R_IncidentSmallGlyph(int c)
+{
+    c = toupper((unsigned char)c);
+
+    if (c >= '0' && c <= '9')
+    {
+        return incident_font_digits[c - '0'];
+    }
+    else if (c >= 'A' && c <= 'Z')
+    {
+        return incident_font_digits[10 + c - 'A'];
+    }
+    else if (c == ':')
+    {
+        return incident_font_colon;
+    }
+
+    return NULL;
+}
+
+static int R_IncidentSmallTextWidth(const char *string)
+{
+    int width;
+
+    width = 0;
+
+    while (*string)
+    {
+        if (*string == ' ')
+        {
+            width += 3;
+        }
+        else if (R_IncidentSmallGlyph(*string) != NULL)
+        {
+            width += 4;
+        }
+        else
+        {
+            width += 3;
+        }
+
+        string++;
+    }
+
+    return width;
+}
+
+static void R_DrawSmallPixel(int x, int y, int color)
+{
+    if (x < 0 || x >= SCREENWIDTH || y < 0 || y >= SCREENHEIGHT)
+    {
+        return;
+    }
+
+    I_VideoBuffer[y * SCREENWIDTH + x] = color;
+}
+
+static void R_DrawIncidentSmallGlyph(int x, int y, const byte *glyph, int color)
+{
+    int row;
+    int col;
+
+    for (row = 0; row < 5; row++)
+    {
+        for (col = 0; col < 3; col++)
+        {
+            if (glyph[row] & (1 << (2 - col)))
+            {
+                R_DrawSmallPixel(x + col, y + row, color);
+            }
+        }
+    }
+}
+
+static void R_DrawIncidentSmallText(int x, int y, const char *string, int color)
+{
+    const byte *glyph;
+    int black;
+
+    black = I_GetPaletteIndex(0, 0, 0);
+
+    while (*string)
+    {
+        if (*string == ' ')
+        {
+            x += 3;
+        }
+        else
+        {
+            glyph = R_IncidentSmallGlyph(*string);
+            if (glyph != NULL)
+            {
+                R_DrawIncidentSmallGlyph(x - 1, y, glyph, black);
+                R_DrawIncidentSmallGlyph(x + 1, y, glyph, black);
+                R_DrawIncidentSmallGlyph(x, y - 1, glyph, black);
+                R_DrawIncidentSmallGlyph(x, y + 1, glyph, black);
+                R_DrawIncidentSmallGlyph(x, y, glyph, color);
+                x += 4;
+            }
+            else
+            {
+                x += 3;
+            }
+        }
+
+        string++;
+    }
+}
+
+static void R_SimplifyIncidentLabel(char *label)
+{
+    char severity[8];
+    char title[64];
+    char *colon;
+    char *title_start;
+    size_t i;
+
+    colon = strchr(label, ':');
+    if (colon == NULL)
+    {
+        return;
+    }
+
+    memset(severity, 0, sizeof(severity));
+    memset(title, 0, sizeof(title));
+
+    strncpy(severity, label, sizeof(severity) - 1);
+    severity[sizeof(severity) - 1] = '\0';
+    colon = strchr(severity, ':');
+    if (colon != NULL)
+    {
+        *colon = '\0';
+    }
+
+    title_start = strchr(label, ':');
+    if (title_start == NULL)
+    {
+        return;
+    }
+    title_start++;
+    while (*title_start == ' ')
+    {
+        title_start++;
+    }
+
+    strncpy(title, title_start, sizeof(title) - 1);
+    title[sizeof(title) - 1] = '\0';
+
+    for (i = 0; title[i] != '\0'; i++)
+    {
+        title[i] = toupper((unsigned char)title[i]);
+    }
+
+    snprintf(label, 64, "%s: %.24s", severity, title);
+}
+
+
+static void R_DrawIncidentLabel(vissprite_t *spr)
+{
+    char label[64];
+    int width;
+    int height;
+    int x;
+    int y;
+    int text_color;
+
+    if (spr->incident_index < 0 || spr->incident_label[0] == '\0')
+    {
+        return;
+    }
+
+    if (hu_font[0] == NULL)
+    {
+        if (!incident_label_font_warning)
+        {
+            printf("Rootly Incident Mode: HUD font unavailable for labels\n");
+            incident_label_font_warning = true;
+        }
+        return;
+    }
+
+    strncpy(label, spr->incident_label, sizeof(label) - 1);
+    label[sizeof(label) - 1] = '\0';
+    R_SimplifyIncidentLabel(label);
+
+    if (label[0] == '\0')
+    {
+        return;
+    }
+
+    width = R_IncidentSmallTextWidth(label);
+    height = 5;
+    x = ((spr->x1 + spr->x2) / 2) - (width / 2);
+    y = (centeryfrac - FixedMul(spr->texturemid, spr->scale)) >> FRACBITS;
+    y -= height + 4;
+
+    if (x < 2
+        || x + width + 2 > SCREENWIDTH
+        || y < 1
+        || y + height + 1 > SCREENHEIGHT)
+    {
+        return;
+    }
+
+    text_color = R_IncidentLabelColor(label);
+    V_MarkRect(x - 1, y - 1, width + 2, height + 2);
+    R_DrawIncidentSmallText(x, y, label, text_color);
+}
+
+
+static void R_DrawIncidentSummary(void)
+{
+    char summary[128];
+    char rows[8][24];
+    char token[24];
+    int width;
+    int height;
+    int line_height;
+    int panel_height;
+    int x;
+    int y;
+    int draw_x;
+    int draw_y;
+    int c;
+    int w;
+    int i;
+    int row_count;
+    int token_len;
+    char *ch;
+    char *cursor;
+    char *separator;
+    char *colon;
+
+    if (hu_font[0] == NULL)
+    {
+        return;
+    }
+
+    Rootly_BuildRemainingSummary(summary, sizeof(summary));
+    if (summary[0] == '\0')
+    {
+        return;
+    }
+
+    memset(rows, 0, sizeof(rows));
+    row_count = 0;
+    cursor = summary;
+
+    while (*cursor != '\0' && row_count < 8)
+    {
+        while (*cursor == ' ')
+        {
+            cursor++;
+        }
+
+        if (*cursor == '\0')
+        {
+            break;
+        }
+
+        separator = strchr(cursor, ' ');
+        if (separator == NULL)
+        {
+            token_len = strlen(cursor);
+        }
+        else
+        {
+            token_len = separator - cursor;
+        }
+
+        if (token_len >= (int) sizeof(token))
+        {
+            token_len = sizeof(token) - 1;
+        }
+
+        memcpy(token, cursor, token_len);
+        token[token_len] = '\0';
+
+        if (row_count == 0)
+        {
+            strncpy(rows[row_count], token, sizeof(rows[row_count]) - 1);
+        }
+        else
+        {
+            colon = strchr(token, ':');
+            if (colon == NULL)
+            {
+                strncpy(rows[row_count], token, sizeof(rows[row_count]) - 1);
+            }
+            else
+            {
+                snprintf(rows[row_count],
+                         sizeof(rows[row_count]),
+                         "%.*s: %s",
+                         (int) (colon - token),
+                         token,
+                         colon + 1);
+            }
+        }
+
+        row_count++;
+
+        if (separator == NULL)
+        {
+            break;
+        }
+
+        cursor = separator + 1;
+    }
+
+    if (row_count <= 0)
+    {
+        return;
+    }
+
+    width = 0;
+    for (i = 0; i < row_count; i++)
+    {
+        R_TruncateIncidentLabel(rows[i], SCREENWIDTH - 12);
+        w = R_IncidentLabelWidth(rows[i]);
+        if (w > width)
+        {
+            width = w;
+        }
+    }
+
+    height = SHORT(hu_font[0]->height);
+    line_height = height + 2;
+    panel_height = row_count * line_height + 3;
+    x = 6;
+    y = 22;
+
+    if (x < 2 || x + width + 2 > SCREENWIDTH || y + panel_height > SCREENHEIGHT)
+    {
+        return;
+    }
+
+    V_DrawFilledBox(x - 2, y - 1, width + 4, panel_height, 104);
+    V_DrawBox(x - 2, y - 1, width + 4, panel_height, 0);
+
+    for (i = 0; i < row_count; i++)
+    {
+        draw_x = x;
+        draw_y = y + i * line_height;
+        ch = rows[i];
+
+        while (*ch)
+        {
+            c = toupper((unsigned char)*ch) - HU_FONTSTART;
+            if (c < 0 || c >= HU_FONTSIZE)
+            {
+                draw_x += 4;
+            }
+            else
+            {
+                w = SHORT(hu_font[c]->width);
+                V_DrawPatchDirect(draw_x, draw_y, hu_font[c]);
+                draw_x += w;
+            }
+
+            ch++;
+        }
+    }
+}
+
+static int R_IncidentAngleDegrees(angle_t angle)
+{
+    return (int) ((angle * 360.0) / 4294967296.0);
+}
+
+static void R_DrawIncidentCoordinates(void)
+{
+    char lines[2][64];
+    int width;
+    int height;
+    int line_height;
+    int panel_height;
+    int x;
+    int y;
+    int draw_x;
+    int draw_y;
+    int c;
+    int w;
+    int i;
+    const char *ch;
+    player_t *player;
+
+    if (hu_font[0] == NULL)
+    {
+        return;
+    }
+
+    if (!Rootly_IncidentModeEnabled())
+    {
+        return;
+    }
+
+    player = &players[consoleplayer];
+    if (player->mo == NULL)
+    {
+        return;
+    }
+
+    snprintf(lines[0],
+             sizeof(lines[0]),
+             "X: %d Y: %d",
+             player->mo->x >> FRACBITS,
+             player->mo->y >> FRACBITS);
+    snprintf(lines[1],
+             sizeof(lines[1]),
+             "POV: %d",
+             R_IncidentAngleDegrees(player->mo->angle));
+
+    height = SHORT(hu_font[0]->height);
+    line_height = height + 2;
+    width = 0;
+    for (i = 0; i < 2; i++)
+    {
+        w = R_IncidentLabelWidth(lines[i]);
+        if (w > width)
+        {
+            width = w;
+        }
+    }
+    panel_height = 2 * line_height + 3;
+
+    x = SCREENWIDTH - width - 8;
+    y = SCREENHEIGHT - panel_height - 8;
+
+    if (x < 2 || y < 2)
+    {
+        return;
+    }
+
+    V_DrawFilledBox(x - 2, y - 1, width + 4, panel_height, 104);
+    V_DrawBox(x - 2, y - 1, width + 4, panel_height, 0);
+
+    for (i = 0; i < 2; i++)
+    {
+        draw_x = x;
+        draw_y = y + i * line_height;
+        ch = lines[i];
+
+        while (*ch)
+        {
+            c = toupper((unsigned char) *ch) - HU_FONTSTART;
+            if (c < 0 || c >= HU_FONTSIZE)
+            {
+                draw_x += 4;
+            }
+            else
+            {
+                w = SHORT(hu_font[c]->width);
+                V_DrawPatchDirect(draw_x, draw_y, hu_font[c]);
+                draw_x += w;
+            }
+
+            ch++;
+        }
+    }
+}
+
+
+//
+// INITIALIZATION FUNCTIONS
+//
+
+// variables used to look up
+//  and range check thing_t sprites patches
+spritedef_t*	sprites;
+int		numsprites;
+
+spriteframe_t	sprtemp[29];
+int		maxframe;
+const char	*spritename;
+
+
+
+
+//
+// R_InstallSpriteLump
+// Local function for R_InitSprites.
+//
+void
+R_InstallSpriteLump
+( int		lump,
+  unsigned	frame,
+  unsigned	rotation,
+  boolean	flipped )
+{
+    int		r;
+	
+    if (frame >= 29 || rotation > 8)
+	I_Error("R_InstallSpriteLump: "
+		"Bad frame characters in lump %i", lump);
+	
+    if ((int)frame > maxframe)
+	maxframe = frame;
+		
+    if (rotation == 0)
+    {
+	// the lump should be used for all rotations
+	if (sprtemp[frame].rotate == false)
+	    I_Error ("R_InitSprites: Sprite %s frame %c has "
+		     "multip rot=0 lump", spritename, 'A'+frame);
+
+	if (sprtemp[frame].rotate == true)
+	    I_Error ("R_InitSprites: Sprite %s frame %c has rotations "
+		     "and a rot=0 lump", spritename, 'A'+frame);
+			
+	sprtemp[frame].rotate = false;
+	for (r=0 ; r<8 ; r++)
+	{
+	    sprtemp[frame].lump[r] = lump - firstspritelump;
+	    sprtemp[frame].flip[r] = (byte)flipped;
+	}
+	return;
+    }
+	
+    // the lump is only used for one rotation
+    if (sprtemp[frame].rotate == false)
+	I_Error ("R_InitSprites: Sprite %s frame %c has rotations "
+		 "and a rot=0 lump", spritename, 'A'+frame);
+		
+    sprtemp[frame].rotate = true;
+
+    // make 0 based
+    rotation--;		
+    if (sprtemp[frame].lump[rotation] != -1)
+	I_Error ("R_InitSprites: Sprite %s : %c : %c "
+		 "has two lumps mapped to it",
+		 spritename, 'A'+frame, '1'+rotation);
+		
+    sprtemp[frame].lump[rotation] = lump - firstspritelump;
+    sprtemp[frame].flip[rotation] = (byte)flipped;
+}
+
+
+
+
+//
+// R_InitSpriteDefs
+// Pass a null terminated list of sprite names
+//  (4 chars exactly) to be used.
+// Builds the sprite rotation matrixes to account
+//  for horizontally flipped sprites.
+// Will report an error if the lumps are inconsistant. 
+// Only called at startup.
+//
+// Sprite lump names are 4 characters for the actor,
+//  a letter for the frame, and a number for the rotation.
+// A sprite that is flippable will have an additional
+//  letter/number appended.
+// The rotation character can be 0 to signify no rotations.
+//
+void R_InitSpriteDefs(const char **namelist)
+{ 
+    const char **check;
+    int		i;
+    int		l;
+    int		frame;
+    int		rotation;
+    int		start;
+    int		end;
+    int		patched;
+		
+    // count the number of sprite names
+    check = namelist;
+    while (*check != NULL)
+	check++;
+
+    numsprites = check-namelist;
+	
+    if (!numsprites)
+	return;
+		
+    sprites = Z_Malloc(numsprites *sizeof(*sprites), PU_STATIC, NULL);
+	
+    start = firstspritelump-1;
+    end = lastspritelump+1;
+	
+    // scan all the lump names for each of the names,
+    //  noting the highest frame letter.
+    // Just compare 4 characters as ints
+    for (i=0 ; i<numsprites ; i++)
+    {
+	spritename = DEH_String(namelist[i]);
+	memset (sprtemp,-1, sizeof(sprtemp));
+		
+	maxframe = -1;
+	
+	// scan the lumps,
+	//  filling in the frames for whatever is found
+	for (l=start+1 ; l<end ; l++)
+	{
+	    if (!strncasecmp(lumpinfo[l]->name, spritename, 4))
+	    {
+		frame = lumpinfo[l]->name[4] - 'A';
+		rotation = lumpinfo[l]->name[5] - '0';
+
+		if (modifiedgame)
+		    patched = W_GetNumForName (lumpinfo[l]->name);
+		else
+		    patched = l;
+
+		R_InstallSpriteLump (patched, frame, rotation, false);
+
+		if (lumpinfo[l]->name[6])
+		{
+		    frame = lumpinfo[l]->name[6] - 'A';
+		    rotation = lumpinfo[l]->name[7] - '0';
+		    R_InstallSpriteLump (l, frame, rotation, true);
+		}
+	    }
+	}
+	
+	// check the frames that were found for completeness
+	if (maxframe == -1)
+	{
+	    sprites[i].numframes = 0;
+	    continue;
+	}
+		
+	maxframe++;
+	
+	for (frame = 0 ; frame < maxframe ; frame++)
+	{
+	    switch ((int)sprtemp[frame].rotate)
+	    {
+	      case -1:
+		// no rotations were found for that frame at all
+		I_Error ("R_InitSprites: No patches found "
+			 "for %s frame %c", spritename, frame+'A');
+		break;
+		
+	      case 0:
+		// only the first rotation is needed
+		break;
+			
+	      case 1:
+		// must have all 8 frames
+		for (rotation=0 ; rotation<8 ; rotation++)
+		    if (sprtemp[frame].lump[rotation] == -1)
+			I_Error ("R_InitSprites: Sprite %s frame %c "
+				 "is missing rotations",
+				 spritename, frame+'A');
+		break;
+	    }
+	}
+	
+	// allocate space for the frames present and copy sprtemp to it
+	sprites[i].numframes = maxframe;
+	sprites[i].spriteframes = 
+	    Z_Malloc (maxframe * sizeof(spriteframe_t), PU_STATIC, NULL);
+	memcpy (sprites[i].spriteframes, sprtemp, maxframe*sizeof(spriteframe_t));
+    }
+
+}
+
+
+
+
+//
+// GAME FUNCTIONS
+//
+vissprite_t	vissprites[MAXVISSPRITES];
+vissprite_t*	vissprite_p;
+int		newvissprite;
+
+
+
+//
+// R_InitSprites
+// Called at program start.
+//
+void R_InitSprites(const char **namelist)
+{
+    int		i;
+	
+    for (i=0 ; i<SCREENWIDTH ; i++)
+    {
+	negonearray[i] = -1;
+    }
+	
+    R_InitSpriteDefs (namelist);
+}
+
+
+
+//
+// R_ClearSprites
+// Called at frame start.
+//
+void R_ClearSprites (void)
+{
+    vissprite_p = vissprites;
+}
+
+
+//
+// R_NewVisSprite
+//
+vissprite_t	overflowsprite;
+
+vissprite_t* R_NewVisSprite (void)
+{
+    if (vissprite_p == &vissprites[MAXVISSPRITES])
+	return &overflowsprite;
+    
+    vissprite_p++;
+    return vissprite_p-1;
+}
+
+
+
+//
+// R_DrawMaskedColumn
+// Used for sprites and masked mid textures.
+// Masked means: partly transparent, i.e. stored
+//  in posts/runs of opaque pixels.
+//
+short*		mfloorclip;
+short*		mceilingclip;
+
+fixed_t		spryscale;
+fixed_t		sprtopscreen;
+
+void R_DrawMaskedColumn (column_t* column)
+{
+    int		topscreen;
+    int 	bottomscreen;
+    fixed_t	basetexturemid;
+	
+    basetexturemid = dc_texturemid;
+	
+    for ( ; column->topdelta != 0xff ; ) 
+    {
+	// calculate unclipped screen coordinates
+	//  for post
+	topscreen = sprtopscreen + spryscale*column->topdelta;
+	bottomscreen = topscreen + spryscale*column->length;
+
+	dc_yl = (topscreen+FRACUNIT-1)>>FRACBITS;
+	dc_yh = (bottomscreen-1)>>FRACBITS;
+		
+	if (dc_yh >= mfloorclip[dc_x])
+	    dc_yh = mfloorclip[dc_x]-1;
+	if (dc_yl <= mceilingclip[dc_x])
+	    dc_yl = mceilingclip[dc_x]+1;
+
+	if (dc_yl <= dc_yh)
+	{
+	    dc_source = (byte *)column + 3;
+	    dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
+	    // dc_source = (byte *)column + 3 - column->topdelta;
+
+	    // Drawn by either R_DrawColumn
+	    //  or (SHADOW) R_DrawFuzzColumn.
+	    colfunc ();	
+	}
+	column = (column_t *)(  (byte *)column + column->length + 4);
+    }
+	
+    dc_texturemid = basetexturemid;
+}
+
+
+
+//
+// R_DrawVisSprite
+//  mfloorclip and mceilingclip should also be set.
+//
+void
+R_DrawVisSprite
+( vissprite_t*		vis,
+  int			x1,
+  int			x2 )
+{
+    column_t*		column;
+    int			texturecolumn;
+    fixed_t		frac;
+    patch_t*		patch;
+	
+	
+    patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
+
+    dc_colormap = vis->colormap;
+    
+    if (!dc_colormap)
+    {
+	// NULL colormap = shadow draw
+	colfunc = fuzzcolfunc;
+    }
+    else if (vis->mobjflags & MF_TRANSLATION)
+    {
+	colfunc = transcolfunc;
+	dc_translation = translationtables - 256 +
+	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
+    }
+	
+    dc_iscale = abs(vis->xiscale)>>detailshift;
+    dc_texturemid = vis->texturemid;
+    frac = vis->startfrac;
+    spryscale = vis->scale;
+    sprtopscreen = centeryfrac - FixedMul(dc_texturemid,spryscale);
+	
+    for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
+    {
+	texturecolumn = frac>>FRACBITS;
+#ifdef RANGECHECK
+	if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
+	    I_Error ("R_DrawSpriteRange: bad texturecolumn");
+#endif
+	column = (column_t *) ((byte *)patch +
+			       LONG(patch->columnofs[texturecolumn]));
+	R_DrawMaskedColumn (column);
+    }
+
+    colfunc = basecolfunc;
+}
+
+
+
+//
+// R_ProjectSprite
+// Generates a vissprite for a thing
+//  if it might be visible.
+//
+void R_ProjectSprite (mobj_t* thing)
+{
+    fixed_t		tr_x;
+    fixed_t		tr_y;
+    
+    fixed_t		gxt;
+    fixed_t		gyt;
+    
+    fixed_t		tx;
+    fixed_t		tz;
+
+    fixed_t		xscale;
+    
+    int			x1;
+    int			x2;
+
+    spritedef_t*	sprdef;
+    spriteframe_t*	sprframe;
+    int			lump;
+    
+    unsigned		rot;
+    boolean		flip;
+    
+    int			index;
+
+    vissprite_t*	vis;
+    
+    angle_t		ang;
+    fixed_t		iscale;
+    
+    // transform the origin point
+    tr_x = thing->x - viewx;
+    tr_y = thing->y - viewy;
+	
+    gxt = FixedMul(tr_x,viewcos); 
+    gyt = -FixedMul(tr_y,viewsin);
+    
+    tz = gxt-gyt; 
+
+    // thing is behind view plane?
+    if (tz < MINZ)
+	return;
+    
+    xscale = FixedDiv(projection, tz);
+	
+    gxt = -FixedMul(tr_x,viewsin); 
+    gyt = FixedMul(tr_y,viewcos); 
+    tx = -(gyt+gxt); 
+
+    // too far off the side?
+    if (abs(tx)>(tz<<2))
+	return;
+    
+    // decide which patch to use for sprite relative to player
+#ifdef RANGECHECK
+    if ((unsigned int) thing->sprite >= (unsigned int) numsprites)
+	I_Error ("R_ProjectSprite: invalid sprite number %i ",
+		 thing->sprite);
+#endif
+    sprdef = &sprites[thing->sprite];
+#ifdef RANGECHECK
+    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
+	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
+		 thing->sprite, thing->frame);
+#endif
+    sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK];
+
+    if (sprframe->rotate)
+    {
+	// choose a different rotation based on player view
+	ang = R_PointToAngle (thing->x, thing->y);
+	rot = (ang-thing->angle+(unsigned)(ANG45/2)*9)>>29;
+	lump = sprframe->lump[rot];
+	flip = (boolean)sprframe->flip[rot];
+    }
+    else
+    {
+	// use single rotation for all views
+	lump = sprframe->lump[0];
+	flip = (boolean)sprframe->flip[0];
+    }
+    
+    // calculate edges of the shape
+    tx -= spriteoffset[lump];	
+    x1 = (centerxfrac + FixedMul (tx,xscale) ) >>FRACBITS;
+
+    // off the right side?
+    if (x1 > viewwidth)
+	return;
+    
+    tx +=  spritewidth[lump];
+    x2 = ((centerxfrac + FixedMul (tx,xscale) ) >>FRACBITS) - 1;
+
+    // off the left side
+    if (x2 < 0)
+	return;
+    
+    // store information in a vissprite
+    vis = R_NewVisSprite ();
+    vis->mobjflags = thing->flags;
+    vis->incident_index = thing->incident_index;
+    strncpy(vis->incident_label, thing->incident_label,
+            sizeof(vis->incident_label) - 1);
+    vis->incident_label[sizeof(vis->incident_label) - 1] = '\0';
+    vis->scale = xscale<<detailshift;
+    vis->gx = thing->x;
+    vis->gy = thing->y;
+    vis->gz = thing->z;
+    vis->gzt = thing->z + spritetopoffset[lump];
+    vis->texturemid = vis->gzt - viewz;
+    vis->x1 = x1 < 0 ? 0 : x1;
+    vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
+    iscale = FixedDiv (FRACUNIT, xscale);
+
+    if (flip)
+    {
+	vis->startfrac = spritewidth[lump]-1;
+	vis->xiscale = -iscale;
+    }
+    else
+    {
+	vis->startfrac = 0;
+	vis->xiscale = iscale;
+    }
+
+    if (vis->x1 > x1)
+	vis->startfrac += vis->xiscale*(vis->x1-x1);
+    vis->patch = lump;
+    
+    // get light level
+    if (thing->flags & MF_SHADOW)
+    {
+	// shadow draw
+	vis->colormap = NULL;
+    }
+    else if (fixedcolormap)
+    {
+	// fixed map
+	vis->colormap = fixedcolormap;
+    }
+    else if (thing->frame & FF_FULLBRIGHT)
+    {
+	// full bright
+	vis->colormap = colormaps;
+    }
+    
+    else
+    {
+	// diminished light
+	index = xscale>>(LIGHTSCALESHIFT-detailshift);
+
+	if (index >= MAXLIGHTSCALE) 
+	    index = MAXLIGHTSCALE-1;
+
+	vis->colormap = spritelights[index];
+    }	
+}
+
+
+
+
+//
+// R_AddSprites
+// During BSP traversal, this adds sprites by sector.
+//
+void R_AddSprites (sector_t* sec)
+{
+    mobj_t*		thing;
+    int			lightnum;
+
+    // BSP is traversed by subsector.
+    // A sector might have been split into several
+    //  subsectors during BSP building.
+    // Thus we check whether its already added.
+    if (sec->validcount == validcount)
+	return;		
+
+    // Well, now it will be done.
+    sec->validcount = validcount;
+	
+    lightnum = (sec->lightlevel >> LIGHTSEGSHIFT)+extralight;
+
+    if (lightnum < 0)		
+	spritelights = scalelight[0];
+    else if (lightnum >= LIGHTLEVELS)
+	spritelights = scalelight[LIGHTLEVELS-1];
+    else
+	spritelights = scalelight[lightnum];
+
+    // Handle all things in sector.
+    for (thing = sec->thinglist ; thing ; thing = thing->snext)
+	R_ProjectSprite (thing);
+}
+
+
+//
+// R_DrawPSprite
+//
+void R_DrawPSprite (pspdef_t* psp)
+{
+    fixed_t		tx;
+    int			x1;
+    int			x2;
+    spritedef_t*	sprdef;
+    spriteframe_t*	sprframe;
+    int			lump;
+    boolean		flip;
+    vissprite_t*	vis;
+    vissprite_t		avis;
+    
+    // decide which patch to use
+#ifdef RANGECHECK
+    if ( (unsigned)psp->state->sprite >= (unsigned int) numsprites)
+	I_Error ("R_ProjectSprite: invalid sprite number %i ",
+		 psp->state->sprite);
+#endif
+    sprdef = &sprites[psp->state->sprite];
+#ifdef RANGECHECK
+    if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes)
+	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
+		 psp->state->sprite, psp->state->frame);
+#endif
+    sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
+
+    lump = sprframe->lump[0];
+    flip = (boolean)sprframe->flip[0];
+    
+    // calculate edges of the shape
+    tx = psp->sx-(SCREENWIDTH/2)*FRACUNIT;
+	
+    tx -= spriteoffset[lump];	
+    x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
+
+    // off the right side
+    if (x1 > viewwidth)
+	return;		
+
+    tx +=  spritewidth[lump];
+    x2 = ((centerxfrac + FixedMul (tx, pspritescale) ) >>FRACBITS) - 1;
+
+    // off the left side
+    if (x2 < 0)
+	return;
+    
+    // store information in a vissprite
+    vis = &avis;
+    vis->mobjflags = 0;
+    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/2-(psp->sy-spritetopoffset[lump]);
+    vis->x1 = x1 < 0 ? 0 : x1;
+    vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
+    vis->scale = pspritescale<<detailshift;
+    
+    if (flip)
+    {
+	vis->xiscale = -pspriteiscale;
+	vis->startfrac = spritewidth[lump]-1;
+    }
+    else
+    {
+	vis->xiscale = pspriteiscale;
+	vis->startfrac = 0;
+    }
+    
+    if (vis->x1 > x1)
+	vis->startfrac += vis->xiscale*(vis->x1-x1);
+
+    vis->patch = lump;
+
+    if (viewplayer->powers[pw_invisibility] > 4*32
+	|| viewplayer->powers[pw_invisibility] & 8)
+    {
+	// shadow draw
+	vis->colormap = NULL;
+    }
+    else if (fixedcolormap)
+    {
+	// fixed color
+	vis->colormap = fixedcolormap;
+    }
+    else if (psp->state->frame & FF_FULLBRIGHT)
+    {
+	// full bright
+	vis->colormap = colormaps;
+    }
+    else
+    {
+	// local light
+	vis->colormap = spritelights[MAXLIGHTSCALE-1];
+    }
+	
+    R_DrawVisSprite (vis, vis->x1, vis->x2);
+}
+
+
+
+//
+// R_DrawPlayerSprites
+//
+void R_DrawPlayerSprites (void)
+{
+    int		i;
+    int		lightnum;
+    pspdef_t*	psp;
+    
+    // get light level
+    lightnum =
+	(viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) 
+	+extralight;
+
+    if (lightnum < 0)		
+	spritelights = scalelight[0];
+    else if (lightnum >= LIGHTLEVELS)
+	spritelights = scalelight[LIGHTLEVELS-1];
+    else
+	spritelights = scalelight[lightnum];
+    
+    // clip to screen bounds
+    mfloorclip = screenheightarray;
+    mceilingclip = negonearray;
+    
+    // add all active psprites
+    for (i=0, psp=viewplayer->psprites;
+	 i<NUMPSPRITES;
+	 i++,psp++)
+    {
+	if (psp->state)
+	    R_DrawPSprite (psp);
+    }
+}
+
+
+
+
+//
+// R_SortVisSprites
+//
+vissprite_t	vsprsortedhead;
+
+
+void R_SortVisSprites (void)
+{
+    int			i;
+    int			count;
+    vissprite_t*	ds;
+    vissprite_t*	best;
+    vissprite_t		unsorted;
+    fixed_t		bestscale;
+
+    count = vissprite_p - vissprites;
+	
+    unsorted.next = unsorted.prev = &unsorted;
+
+    if (!count)
+	return;
+		
+    for (ds=vissprites ; ds<vissprite_p ; ds++)
+    {
+	ds->next = ds+1;
+	ds->prev = ds-1;
+    }
+    
+    vissprites[0].prev = &unsorted;
+    unsorted.next = &vissprites[0];
+    (vissprite_p-1)->next = &unsorted;
+    unsorted.prev = vissprite_p-1;
+    
+    // pull the vissprites out by scale
+
+    vsprsortedhead.next = vsprsortedhead.prev = &vsprsortedhead;
+    for (i=0 ; i<count ; i++)
+    {
+	bestscale = INT_MAX;
+        best = unsorted.next;
+	for (ds=unsorted.next ; ds!= &unsorted ; ds=ds->next)
+	{
+	    if (ds->scale < bestscale)
+	    {
+		bestscale = ds->scale;
+		best = ds;
+	    }
+	}
+	best->next->prev = best->prev;
+	best->prev->next = best->next;
+	best->next = &vsprsortedhead;
+	best->prev = vsprsortedhead.prev;
+	vsprsortedhead.prev->next = best;
+	vsprsortedhead.prev = best;
+    }
+}
+
+
+
+//
+// R_DrawSprite
+//
+void R_DrawSprite (vissprite_t* spr)
+{
+    drawseg_t*		ds;
+    short		clipbot[SCREENWIDTH];
+    short		cliptop[SCREENWIDTH];
+    int			x;
+    int			r1;
+    int			r2;
+    fixed_t		scale;
+    fixed_t		lowscale;
+    int			silhouette;
+		
+    for (x = spr->x1 ; x<=spr->x2 ; x++)
+	clipbot[x] = cliptop[x] = -2;
+    
+    // Scan drawsegs from end to start for obscuring segs.
+    // The first drawseg that has a greater scale
+    //  is the clip seg.
+    for (ds=ds_p-1 ; ds >= drawsegs ; ds--)
+    {
+	// determine if the drawseg obscures the sprite
+	if (ds->x1 > spr->x2
+	    || ds->x2 < spr->x1
+	    || (!ds->silhouette
+		&& !ds->maskedtexturecol) )
+	{
+	    // does not cover sprite
+	    continue;
+	}
+			
+	r1 = ds->x1 < spr->x1 ? spr->x1 : ds->x1;
+	r2 = ds->x2 > spr->x2 ? spr->x2 : ds->x2;
+
+	if (ds->scale1 > ds->scale2)
+	{
+	    lowscale = ds->scale2;
+	    scale = ds->scale1;
+	}
+	else
+	{
+	    lowscale = ds->scale1;
+	    scale = ds->scale2;
+	}
+		
+	if (scale < spr->scale
+	    || ( lowscale < spr->scale
+		 && !R_PointOnSegSide (spr->gx, spr->gy, ds->curline) ) )
+	{
+	    // masked mid texture?
+	    if (ds->maskedtexturecol)	
+		R_RenderMaskedSegRange (ds, r1, r2);
+	    // seg is behind sprite
+	    continue;			
+	}
+
+	
+	// clip this piece of the sprite
+	silhouette = ds->silhouette;
+	
+	if (spr->gz >= ds->bsilheight)
+	    silhouette &= ~SIL_BOTTOM;
+
+	if (spr->gzt <= ds->tsilheight)
+	    silhouette &= ~SIL_TOP;
+			
+	if (silhouette == 1)
+	{
+	    // bottom sil
+	    for (x=r1 ; x<=r2 ; x++)
+		if (clipbot[x] == -2)
+		    clipbot[x] = ds->sprbottomclip[x];
+	}
+	else if (silhouette == 2)
+	{
+	    // top sil
+	    for (x=r1 ; x<=r2 ; x++)
+		if (cliptop[x] == -2)
+		    cliptop[x] = ds->sprtopclip[x];
+	}
+	else if (silhouette == 3)
+	{
+	    // both
+	    for (x=r1 ; x<=r2 ; x++)
+	    {
+		if (clipbot[x] == -2)
+		    clipbot[x] = ds->sprbottomclip[x];
+		if (cliptop[x] == -2)
+		    cliptop[x] = ds->sprtopclip[x];
+	    }
+	}
+		
+    }
+    
+    // all clipping has been performed, so draw the sprite
+
+    // check for unclipped columns
+    for (x = spr->x1 ; x<=spr->x2 ; x++)
+    {
+	if (clipbot[x] == -2)		
+	    clipbot[x] = viewheight;
+
+	if (cliptop[x] == -2)
+	    cliptop[x] = -1;
+    }
+		
+    mfloorclip = clipbot;
+    mceilingclip = cliptop;
+    R_DrawVisSprite (spr, spr->x1, spr->x2);
+    R_DrawIncidentLabel (spr);
+}
+
+
+
+
+//
+// R_DrawMasked
+//
+void R_DrawMasked (void)
+{
+    vissprite_t*	spr;
+    drawseg_t*		ds;
+	
+    R_SortVisSprites ();
+
+    if (vissprite_p > vissprites)
+    {
+	// draw all vissprites back to front
+	for (spr = vsprsortedhead.next ;
+	     spr != &vsprsortedhead ;
+	     spr=spr->next)
+	{
+	    
+	    R_DrawSprite (spr);
+	}
+    }
+    
+    // render any remaining masked mid textures
+    for (ds=ds_p-1 ; ds >= drawsegs ; ds--)
+	if (ds->maskedtexturecol)
+	    R_RenderMaskedSegRange (ds, ds->x1, ds->x2);
+    
+    // draw the psprites on top of everything
+    //  but does not draw on side views
+    if (!viewangleoffset)		
+	R_DrawPlayerSprites ();
+
+    if (!viewangleoffset)
+        R_DrawIncidentSummary ();
+
+    if (!viewangleoffset)
+        R_DrawIncidentCoordinates ();
+}
+
+
+
