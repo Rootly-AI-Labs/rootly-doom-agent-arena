@@ -35,6 +35,7 @@ PARTICIPANT_INTENT_HEADER = (
     "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n"
 )
+PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANTS = {"player_1", "player_2"}
 VALID_PARTICIPANT_INTENTS = {"hold", "engage_opponent", "strafe_attack", "search"}
 VALID_PARTICIPANT_INTENT_STYLES = {"balanced", "aggressive", "evasive", "cautious"}
@@ -144,6 +145,79 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         state = parse_state(self._request("GET", "/api/arena/state"))
         return json.dumps(make_participant_observation(state, participant_id), indent=2)
+
+    def set_participant_ready(self, participant_id: str, controller_token: str | None = None) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        ready_at = now_ms()
+        payload = {
+            "run_id": self.run_id,
+            "scenario_id": self.scenario_id,
+            "participant_id": participant_id,
+            "ready_at_ms": ready_at,
+            "status": "ready",
+        }
+        response_text = self._request(
+            "POST",
+            "/api/arena/participant-ready",
+            json.dumps(payload).encode("utf-8"),
+            "application/json; charset=utf-8",
+        )
+        return json.dumps(
+            {
+                "accepted": True,
+                "participant_id": participant_id,
+                "ready": True,
+                "ready_at_ms": ready_at,
+                "server_response": parse_optional_json(response_text),
+            },
+            indent=2,
+        )
+
+    def wait_for_match_start(
+        self,
+        participant_id: str,
+        controller_token: str | None = None,
+        timeout_ms: int = 60000,
+        poll_ms: int = 250,
+    ) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        timeout_ms = clamp_int(timeout_ms, 100, 300000, 60000)
+        poll_ms = clamp_int(poll_ms, 50, 5000, 250)
+        started_at = now_ms()
+        latest_state: dict[str, Any] = {}
+        while now_ms() - started_at <= timeout_ms:
+            try:
+                rows = parse_state(self._request("GET", "/api/arena/state"))
+                latest_state = make_shared_arena_state(rows)
+            except DoomArenaError as exc:
+                latest_state = {"phase": "unavailable", "error": str(exc)}
+            phase = str(latest_state.get("phase", ""))
+            if phase and phase != "waiting_for_agents" and phase != "unavailable":
+                return json.dumps(
+                    {
+                        "started": phase == "combat",
+                        "phase": phase,
+                        "participant_id": participant_id,
+                        "elapsed_wait_ms": now_ms() - started_at,
+                        "run_id": latest_state.get("run_id", ""),
+                    },
+                    indent=2,
+                )
+            time.sleep(poll_ms / 1000.0)
+
+        return json.dumps(
+            {
+                "started": False,
+                "phase": latest_state.get("phase", "waiting_for_agents"),
+                "participant_id": participant_id,
+                "elapsed_wait_ms": now_ms() - started_at,
+                "timeout_ms": timeout_ms,
+                "run_id": latest_state.get("run_id", ""),
+            },
+            indent=2,
+        )
 
     def set_participant_input(
         self,
@@ -1216,6 +1290,34 @@ def tool_definitions() -> list[dict[str, Any]]:
             },
         },
         {
+            "name": "set_participant_ready",
+            "description": "Signal that one MCP participant is connected and ready for the duel start barrier.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
+                    "controller_token": {"type": "string"},
+                },
+                "required": ["participant_id"],
+                "additionalProperties": False,
+            },
+        },
+        {
+            "name": "wait_for_match_start",
+            "description": "Block briefly until both participants are ready and the duel phase leaves waiting_for_agents.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
+                    "controller_token": {"type": "string"},
+                    "timeout_ms": {"type": "integer", "minimum": 100, "maximum": 300000},
+                    "poll_ms": {"type": "integer", "minimum": 50, "maximum": 5000},
+                },
+                "required": ["participant_id"],
+                "additionalProperties": False,
+            },
+        },
+        {
             "name": "set_participant_intent",
             "description": "Set high-level autopilot intent for player_1 or player_2.",
             "inputSchema": participant_intent_schema(),
@@ -1397,6 +1499,18 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
         return client.get_participant_observation(
             str(arguments["participant_id"]),
             optional_string(arguments.get("controller_token")),
+        )
+    if name == "set_participant_ready":
+        return client.set_participant_ready(
+            str(arguments["participant_id"]),
+            optional_string(arguments.get("controller_token")),
+        )
+    if name == "wait_for_match_start":
+        return client.wait_for_match_start(
+            str(arguments["participant_id"]),
+            optional_string(arguments.get("controller_token")),
+            int(arguments.get("timeout_ms", 60000)),
+            int(arguments.get("poll_ms", 250)),
         )
     if name == "set_participant_input":
         if not EXPOSE_LOW_LEVEL_PARTICIPANT_MCP:

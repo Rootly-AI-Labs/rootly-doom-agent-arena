@@ -143,7 +143,7 @@ def chrome_candidates() -> list[str]:
 
 
 def launch_browser(server_url: str, mode: str, chrome_path: str, timeout_seconds: int) -> tuple[subprocess.Popen[str] | None, tempfile.TemporaryDirectory[str] | None]:
-    url = server_url.rstrip("/") + "/?duel=1"
+    url = server_url.rstrip("/") + "/?duel=1&autoStart=1"
     if mode == "none":
         log_ok("using existing browser/WASM tab")
         return None, None
@@ -316,13 +316,15 @@ def low_level_check(client: DoomArenaClient, run_id: str, before_tick: int) -> d
 def wait_for_events(client: DoomArenaClient, run_id: str, timeout_seconds: int) -> list[dict[str, Any]]:
     deadline = time.time() + timeout_seconds
     latest: list[dict[str, Any]] = []
+    seen_text = ""
     while time.time() < deadline:
         latest = parse_json_object("get_duel_events", client.get_duel_events(run_id, 100)).get("events", [])
         event_text = "\n".join(str(event.get("event", "")) for event in latest)
+        seen_text += "\n" + event_text
         if (
-            "intent_set:" in event_text
-            and "autopilot_action:" in event_text
-            and "intent_expired:" in event_text
+            "intent_set:" in seen_text
+            and "autopilot_action:" in seen_text
+            and "intent_expired:" in seen_text
         ):
             log_ok("event log includes intent_set, autopilot_action, and intent_expired")
             return latest
@@ -362,7 +364,16 @@ def main() -> int:
                 "duel should wait for both agents before combat starts: "
                 + json.dumps(initial_state, indent=2)
             )
-        log_ok("duel waits for both participant intents before combat")
+        log_ok("duel waits for both participant ready signals before combat")
+
+        client.set_participant_ready("player_1", controller_token=p1_token)
+        single_ready_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
+        if single_ready_state.get("phase") != "waiting_for_agents":
+            raise RuntimeError(
+                "duel started before both participants were ready: "
+                + json.dumps(single_ready_state, indent=2)
+            )
+        log_ok("single participant ready signal does not start combat")
 
         client.set_participant_intent(
             "player_1",
@@ -384,10 +395,10 @@ def main() -> int:
         single_intent_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
         if single_intent_state.get("phase") != "waiting_for_agents":
             raise RuntimeError(
-                "duel started before both participant intents were active: "
+                "duel started before player_2 readiness was signaled: "
                 + json.dumps(single_intent_state, indent=2)
             )
-        log_ok("single participant intent does not start combat")
+        log_ok("combat intent alone does not bypass ready barrier")
 
         client.set_participant_intent(
             "player_1",
@@ -425,6 +436,8 @@ def main() -> int:
             decision_cadence_ms=750,
         )
         log_ok("set player_2 intent")
+        client.set_participant_ready("player_2", controller_token=p2_token)
+        log_ok("set player_2 ready signal")
 
         active_state = wait_for(
             lambda: active_autopilot_check(client, run_id, "search", "search"),

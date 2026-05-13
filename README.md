@@ -6,41 +6,31 @@ The current MVP focuses on duel mode: `player_1` is controlled by Codex, `player
 
 ## Quick Start
 
-Use this flow for a real LLM-vs-LLM comparison:
+Use this flow for a manual MCP chat comparison:
 
-1. Start the arena server:
+1. Start the arena server and open the browser:
+
+```powershell
+py scripts\start_doom_arena_duel.py
+```
+
+Or run the server directly and open the browser yourself:
 
 ```powershell
 py scripts\doom_arena_server.py --port 8001
 ```
 
-2. Open the browser and keep it open:
-
 ```text
-http://127.0.0.1:8001/?duel=1
+http://127.0.0.1:8001/
 ```
 
-3. Start the orchestrator in a second terminal:
+2. Pick the run settings in the browser, then click `Start Duel`.
+3. Copy the generated Codex prompt from the Player 1 panel and paste it into Codex.
+4. Copy the generated Claude prompt from the Player 2 panel and paste it into Claude.
 
-```powershell
-py scripts\doom_arena_mcp_duel_orchestrator.py `
-  --server-url http://127.0.0.1:8001 `
-  --player-1-model codex `
-  --player-2-model claude `
-  --round 1 `
-  --seed 42 `
-  --timeout-seconds 120 `
-  --decision-interval-ms 750 `
-  --decision-cadence-ms 750 `
-  --intent-duration-ms 2500 `
-  --max-steps 190 `
-  --state-wait-timeout-seconds 60
-```
+The browser writes fresh controller tokens and instruction files for each run.
 
-4. Paste the generated `player_1_mcp_instructions.md` into Codex.
-5. Paste the generated `player_2_mcp_instructions.md` into Claude.
-
-The duel waits in `phase=waiting_for_agents` until both agents have sent their first high-level intent. Do not reuse old prompt files or tokens after a reset.
+The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness. Do not reuse old prompt files or tokens after a reset.
 
 ## MCP Setup
 
@@ -76,6 +66,8 @@ url = "http://127.0.0.1:8001/mcp"
 Then restart Codex in this repo and check `/mcp`. Both Codex and Claude should expose:
 
 ```text
+set_participant_ready
+wait_for_match_start
 get_participant_observation
 set_participant_intent
 stop_participant_intent
@@ -89,7 +81,7 @@ Do not manually run `py scripts\doom_arena_mcp.py` for normal play. That stdio M
 
 - **Codex/Claude MCP agents:** choose high-level tactical policies with `set_participant_intent`.
 - **Doom-side autopilot:** executes low-level movement, aiming, firing, LOS handling, and stuck recovery every tick.
-- **Orchestrator:** resets runs, writes fresh tokens/prompts, monitors state, and does not self-play unless `--rolling-control` is explicitly passed.
+- **Browser/server session:** resets runs, writes fresh tokens/prompts, and shows copyable MCP prompts.
 
 See [Control Architecture](docs/control-architecture.md) for the full split.
 
@@ -98,14 +90,13 @@ See [Control Architecture](docs/control-architecture.md) for the full split.
 - [MCP Duel Runbook](docs/mcp-duel-runbook.md): terminal-by-terminal setup, MCP checks, prompts, and run-id mismatch fixes.
 - [Control Architecture](docs/control-architecture.md): high-level MCP controls, Doom autopilot behavior, sequence numbers, and the ready gate.
 - [Build](docs/build.md): WSL/Emscripten rebuild commands and browser cache notes.
-- [Smoke Tests](docs/smoke-tests.md): API, MCP, browser-backed, and rolling-loop smoke commands.
+- [Smoke Tests](docs/smoke-tests.md): API, MCP, and browser-backed smoke commands.
 
 ## Important Rules
 
 - Do not run `scripts\doom_arena_mcp.py` manually in a terminal for normal play; Codex/Claude should connect to the arena server's HTTP MCP endpoint.
-- Do not click `Start Duel` after the orchestrator resets a run.
-- Keep one browser tab and one orchestrator run active for a comparison.
-- Use `--rolling-control` only for local scripted smoke testing without real LLMs.
+- Click `Start Duel` once per comparison, then use only the newly generated prompts.
+- Keep one browser tab active for a comparison.
 
 ## License
 

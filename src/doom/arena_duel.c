@@ -36,6 +36,7 @@
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
 #define ARENA_DUEL_MAX_EVENTS 32
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
+#define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 
 static mobj_t *arena_duel_player2;
 static int arena_duel_player2_ammo_bullets;
@@ -213,10 +214,123 @@ static const char *ArenaDuel_ParticipantName(arena_participant_id_t participant)
     return participant == ARENA_PARTICIPANT_PLAYER_2 ? "player_2" : "player_1";
 }
 
+static void ArenaDuel_EnsurePlayer1Label(void)
+{
+    mobj_t *mobj;
+
+    if (!ArenaDuel_IsEnabled())
+    {
+        return;
+    }
+
+    mobj = players[consoleplayer].mo;
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    strncpy(mobj->arena_entity_id,
+            "player_1",
+            sizeof(mobj->arena_entity_id) - 1);
+    mobj->arena_entity_id[sizeof(mobj->arena_entity_id) - 1] = '\0';
+    strncpy(mobj->arena_label,
+            "player_1",
+            sizeof(mobj->arena_label) - 1);
+    mobj->arena_label[sizeof(mobj->arena_label) - 1] = '\0';
+}
+
+static void ArenaDuel_Chomp(char *line)
+{
+    size_t len;
+
+    len = strlen(line);
+    while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r'))
+    {
+        line[len - 1] = '\0';
+        len--;
+    }
+}
+
+static int ArenaDuel_SplitTsv(char *line, char **fields, int max_fields)
+{
+    int count;
+    char *cursor;
+    char *tab;
+
+    count = 0;
+    cursor = line;
+    while (count < max_fields)
+    {
+        fields[count] = cursor;
+        count++;
+
+        tab = strchr(cursor, '\t');
+        if (tab == NULL)
+        {
+            break;
+        }
+
+        *tab = '\0';
+        cursor = tab + 1;
+    }
+
+    return count;
+}
+
+static boolean ArenaDuel_ParticipantReady(arena_participant_id_t participant)
+{
+    FILE *file;
+    char line[256];
+    const char *participant_name;
+
+    participant_name = ArenaDuel_ParticipantName(participant);
+    file = fopen(ARENA_DUEL_PARTICIPANT_READY_PATH, "rb");
+    if (file == NULL)
+    {
+        return false;
+    }
+
+    if (fgets(line, sizeof(line), file) == NULL)
+    {
+        fclose(file);
+        return false;
+    }
+
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        char *fields[5];
+        int count;
+
+        ArenaDuel_Chomp(line);
+        if (line[0] == '\0')
+        {
+            continue;
+        }
+
+        count = ArenaDuel_SplitTsv(line, fields, 5);
+        if (count != 5)
+        {
+            continue;
+        }
+
+        if (!strcmp(fields[0], Arena_RunId())
+            && !strcmp(fields[1], Arena_ScenarioId())
+            && !strcmp(fields[2], participant_name)
+            && !strcmp(fields[4], "ready"))
+        {
+            fclose(file);
+            return true;
+        }
+    }
+
+    fclose(file);
+    return false;
+}
+
 static boolean ArenaDuel_BothParticipantsReady(void)
 {
-    return ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1)
-        && ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_2);
+    return ArenaDuel_ParticipantReady(ARENA_PARTICIPANT_PLAYER_1)
+        && ArenaDuel_ParticipantReady(ARENA_PARTICIPANT_PLAYER_2);
 }
 
 static void ArenaDuel_UpdateStartBarrier(void)
@@ -230,7 +344,7 @@ static void ArenaDuel_UpdateStartBarrier(void)
     {
         arena_duel_started = true;
         arena_duel_start_tick = leveltime;
-        ArenaDuel_AddEvent("match_started: both_participants_ready");
+        ArenaDuel_AddEvent("match_started: both_participants_ready_signaled");
         return;
     }
 
@@ -572,6 +686,8 @@ void ArenaDuel_SpawnPlayer2(void)
         return;
     }
 
+    ArenaDuel_EnsurePlayer1Label();
+
     if (!Arena_GetSpawnSlot(0, &x, &y, &angle))
     {
         x = 424;
@@ -616,6 +732,8 @@ void ArenaDuel_Ticker(void)
     {
         return;
     }
+
+    ArenaDuel_EnsurePlayer1Label();
 
     ArenaParticipantCommands_Load();
     ArenaParticipantIntent_TickOrRefresh();
@@ -948,7 +1066,7 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player2ViewWidth(void)
 
 ARENA_DUEL_EXPORT int ArenaDuel_Player2ViewHeight(void)
 {
-    return SCREENHEIGHT;
+    return viewheight > 0 ? viewheight : SCREENHEIGHT;
 }
 
 ARENA_DUEL_EXPORT int ArenaDuel_Player2ViewFrame(void)
@@ -1027,7 +1145,7 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player1ViewWidth(void)
 
 ARENA_DUEL_EXPORT int ArenaDuel_Player1ViewHeight(void)
 {
-    return SCREENHEIGHT;
+    return viewheight > 0 ? viewheight : SCREENHEIGHT;
 }
 
 ARENA_DUEL_EXPORT int ArenaDuel_Player1ViewFrame(void)

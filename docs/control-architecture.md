@@ -13,6 +13,8 @@ set_participant_intent
 Normal MCP tools:
 
 ```text
+set_participant_ready
+wait_for_match_start
 get_participant_observation
 set_participant_intent
 stop_participant_intent
@@ -61,7 +63,7 @@ Typical fast-mode payload:
   "target_id": "player_2",
   "preferred_distance": 600,
   "aggression": 0.7,
-  "duration_ms": 2500,
+  "duration_ms": 3000,
   "sequence_number": 1,
   "decision_cadence_ms": 750,
   "strafe_direction": "auto",
@@ -94,6 +96,12 @@ Agents increment `sequence_number` every decision. Higher sequence numbers overr
 
 Expired intents do not reactivate.
 
+## Chatbot Refresh Loop
+
+In the normal browser/chatbot flow, each agent should immediately observe again after sending an intent, then send the next updated intent with a higher `sequence_number`.
+
+Doom continues executing the current intent between chat tool calls. When the next valid intent arrives, the higher `sequence_number` makes it override the previous one immediately.
+
 ## Ready Gate
 
 The duel starts in:
@@ -102,7 +110,7 @@ The duel starts in:
 waiting_for_agents
 ```
 
-Doom freezes both participants until both players have active intents. Once both first intents exist, the match changes to:
+Doom freezes both participants until both players have signaled readiness with `set_participant_ready`. Once both agents are ready, the match changes to:
 
 ```text
 combat
@@ -126,13 +134,3 @@ $env:DOOM_ARENA_EXPOSE_LOW_LEVEL_MCP="1"
 ```
 
 Normal comparisons should not use them.
-
-## Local Rolling Controller
-
-The orchestrator can run a local scripted rolling controller for smoke testing:
-
-```powershell
-py scripts\start_doom_arena_duel.py --keep-server --rolling-control
-```
-
-This is not a real Codex-vs-Claude comparison. Real comparison runs should omit `--rolling-control`.

@@ -22,7 +22,9 @@
       "Bash(\"C:\\\\Users\\\\muhha\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" \"C:\\\\Users\\\\muhha\\\\OneDrive\\\\Desktop\\\\doom-wasm\\\\scripts\\\\doom_arena_mcp.py\" --server-url http://127.0.0.1:8001)",
       "Bash(netstat -ano)",
       "Bash(findstr \"8001\")",
-      "Bash(findstr \"LISTENING\")"
+      "Bash(findstr \"LISTENING\")",
+      "mcp__doom-arena__set_participant_ready",
+      "mcp__doom-arena__wait_for_match_start"
     ]
   },
   "enableAllProjectMcpServers": true,

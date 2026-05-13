@@ -17,6 +17,12 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+from doom_arena_duel_prompts import (
+    RESULTS_ROOT,
+    build_controller_tokens,
+    instructions as render_participant_instructions,
+    write_controller_tokens,
+)
 from doom_arena_mcp import DoomArenaClient, DoomArenaError, call_tool, tool_definitions
 
 
@@ -28,6 +34,7 @@ ARENA_EVENTS_TSV = SRC_DIR / "arena_duel_events.local.tsv"
 ARENA_PLAYER_COMMAND_TSV = SRC_DIR / "arena_player_command.local.tsv"
 ARENA_PARTICIPANT_COMMAND_TSV = SRC_DIR / "arena_participant_commands.local.tsv"
 ARENA_PARTICIPANT_INTENT_TSV = SRC_DIR / "arena_participant_intents.local.tsv"
+ARENA_PARTICIPANT_READY_TSV = SRC_DIR / "arena_participant_ready.local.tsv"
 ARENA_ENEMY_COMMAND_TSV = SRC_DIR / "arena_enemy_commands.local.tsv"
 ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
 
@@ -58,6 +65,7 @@ PARTICIPANT_INTENT_HEADER = (
     "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n"
 )
+PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 ENEMY_COMMAND_HEADER = (
     "run_id\tscenario_id\tcommand_id\tissued_at_ms\texpires_at_ms\t"
     "target_type\ttarget\tcommand\targ1\targ2\n"
@@ -206,6 +214,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.write_participant_intents()
             return
 
+        if path == "/api/arena/participant-ready":
+            self.write_participant_ready()
+            return
+
         if path == "/api/arena/enemy-commands":
             self.write_file(ARENA_ENEMY_COMMAND_TSV, "arena_enemy_commands.local.tsv")
             return
@@ -216,6 +228,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/reset":
             self.reset_arena()
+            return
+
+        if path == "/api/arena/duel-session":
+            self.create_duel_session()
             return
 
         if path == "/api/arena/run-metadata":
@@ -245,6 +261,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/participant-intents":
             self.read_file(ARENA_PARTICIPANT_INTENT_TSV, "arena_participant_intents.local.tsv")
+            return
+
+        if path == "/api/arena/participant-ready":
+            self.read_file(ARENA_PARTICIPANT_READY_TSV, "arena_participant_ready.local.tsv")
             return
 
         if path == "/api/arena/enemy-commands":
@@ -331,8 +351,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         "description": "Local MCP tools for controlling Doom Arena duel participants.",
                     },
                     "instructions": (
-                        "Use get_participant_observation, set_participant_intent, "
-                        "stop_participant_intent, get_match_result, and get_duel_events to control "
+                        "Use set_participant_ready, wait_for_match_start, get_participant_observation, "
+                        "set_participant_intent, stop_participant_intent, get_match_result, and get_duel_events to control "
                         "assigned Doom Arena duel participants through high-level intents."
                     ),
                 },
@@ -467,6 +487,39 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             {
                 "ok": True,
                 "path": "arena_participant_intents.local.tsv",
+                "bytes": len(body),
+            },
+        )
+
+    def write_participant_ready(self) -> None:
+        body = self.read_body()
+        content_type = self.headers.get("Content-Type", "")
+
+        try:
+            if "application/json" in content_type:
+                payload = json.loads(body.decode("utf-8"))
+                if isinstance(payload, list):
+                    rows = [self.normalize_participant_ready(row) for row in payload]
+                    body = self.participant_ready_rows_to_tsv(rows).encode("utf-8")
+                elif isinstance(payload, dict):
+                    body = self.update_participant_ready_json(payload).encode("utf-8")
+                else:
+                    raise ValueError("JSON payload must be an object or list")
+            else:
+                self.validate_participant_ready_tsv(body.decode("utf-8", errors="replace"))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            self.write_json(
+                HTTPStatus.BAD_REQUEST,
+                {"ok": False, "error": f"Invalid participant ready state: {exc}"},
+            )
+            return
+
+        ARENA_PARTICIPANT_READY_TSV.write_bytes(body)
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "path": "arena_participant_ready.local.tsv",
                 "bytes": len(body),
             },
         )
@@ -736,8 +789,86 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             body += "\t".join(row.get(key, "") for key in keys) + "\n"
         return body
 
-    def reset_arena(self) -> None:
-        payload = self.read_json_body()
+    def update_participant_ready_json(self, payload: dict[str, Any]) -> str:
+        ready_row = self.normalize_participant_ready(payload)
+        rows = [
+            row for row in self.read_participant_ready_rows()
+            if row.get("participant_id") != ready_row["participant_id"]
+        ]
+        rows.append(ready_row)
+        return self.participant_ready_rows_to_tsv(rows)
+
+    def normalize_participant_ready(self, payload: dict[str, Any]) -> dict[str, str]:
+        participant_id = str(payload.get("participant_id", ""))
+        if participant_id not in PARTICIPANTS:
+            raise ValueError("participant_id must be player_1 or player_2")
+
+        status = str(payload.get("status", "ready")).strip().lower()
+        if status != "ready":
+            raise ValueError("status must be ready")
+
+        ready_at_ms = int(payload.get("ready_at_ms", now_ms()))
+        if ready_at_ms <= 0:
+            raise ValueError("ready_at_ms must be positive")
+
+        return {
+            "run_id": self.server.run_id,
+            "scenario_id": self.server.scenario_id,
+            "participant_id": participant_id,
+            "ready_at_ms": str(ready_at_ms),
+            "status": status,
+        }
+
+    def read_participant_ready_rows(self) -> list[dict[str, str]]:
+        if not ARENA_PARTICIPANT_READY_TSV.exists():
+            return []
+        text = ARENA_PARTICIPANT_READY_TSV.read_text(encoding="utf-8", errors="replace")
+        return self.parse_participant_ready_rows(text)
+
+    def parse_participant_ready_rows(self, text: str) -> list[dict[str, str]]:
+        lines = text.splitlines()
+        if not lines:
+            return []
+        header = lines[0].split("\t")
+        expected_header = PARTICIPANT_READY_HEADER.strip().split("\t")
+        if header != expected_header:
+            raise ValueError("participant ready TSV header does not match expected schema")
+        rows = []
+        for line in lines[1:]:
+            if not line.strip():
+                continue
+            values = line.split("\t")
+            if len(values) != len(expected_header):
+                raise ValueError("participant ready TSV row has wrong column count")
+            row = dict(zip(expected_header, values))
+            self.validate_participant_ready_row(row)
+            rows.append(row)
+        return rows
+
+    def validate_participant_ready_tsv(self, text: str) -> None:
+        self.parse_participant_ready_rows(text)
+
+    def validate_participant_ready_row(self, row: dict[str, str]) -> None:
+        if row.get("run_id", "") != self.server.run_id:
+            raise ValueError("run_id does not match active run")
+        if row.get("scenario_id", "") != self.server.scenario_id:
+            raise ValueError("scenario_id does not match active scenario")
+        if row.get("participant_id", "") not in PARTICIPANTS:
+            raise ValueError("participant_id must be player_1 or player_2")
+        if int(row.get("ready_at_ms", "0")) <= 0:
+            raise ValueError("ready_at_ms must be positive")
+        if row.get("status", "") != "ready":
+            raise ValueError("status must be ready")
+
+    def participant_ready_rows_to_tsv(self, rows: list[dict[str, str]]) -> str:
+        keys = PARTICIPANT_READY_HEADER.strip().split("\t")
+        body = PARTICIPANT_READY_HEADER
+        for row in rows:
+            self.validate_participant_ready_row(row)
+            body += "\t".join(row.get(key, "") for key in keys) + "\n"
+        return body
+
+    def reset_arena_state(self, payload: dict[str, Any]) -> dict[str, Any]:
         self.apply_reset_config(payload)
         self.server.run_id = new_run_id()
         self.server.started_at_ms = now_ms()
@@ -749,6 +880,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             ARENA_PLAYER_COMMAND_TSV,
             ARENA_PARTICIPANT_COMMAND_TSV,
             ARENA_PARTICIPANT_INTENT_TSV,
+            ARENA_PARTICIPANT_READY_TSV,
             ARENA_ENEMY_COMMAND_TSV,
         ):
             try:
@@ -759,22 +891,111 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ARENA_PLAYER_COMMAND_TSV.write_text(PLAYER_COMMAND_HEADER, encoding="utf-8")
         ARENA_PARTICIPANT_COMMAND_TSV.write_text(PARTICIPANT_COMMAND_HEADER, encoding="utf-8")
         ARENA_PARTICIPANT_INTENT_TSV.write_text(PARTICIPANT_INTENT_HEADER, encoding="utf-8")
+        ARENA_PARTICIPANT_READY_TSV.write_text(PARTICIPANT_READY_HEADER, encoding="utf-8")
         ARENA_ENEMY_COMMAND_TSV.write_text(ENEMY_COMMAND_HEADER, encoding="utf-8")
         write_run_metadata(self.server)
+
+        return {
+            "ok": True,
+            "run_id": self.server.run_id,
+            "scenario_id": self.server.scenario_id,
+            "arena_mode": self.server.arena_mode,
+            "player_1_model": self.server.player_1_model,
+            "player_2_model": self.server.player_2_model,
+            "round": self.server.round,
+            "seed": self.server.seed,
+            "timeout_seconds": self.server.timeout_seconds,
+            "reset_requested": True,
+        }
+
+    def reset_arena(self) -> None:
+        self.write_json(HTTPStatus.OK, self.reset_arena_state(self.read_json_body()))
+
+    def create_duel_session(self) -> None:
+        payload = self.read_json_body()
+        decision_cadence_ms = int(payload.get("decision_cadence_ms", 750))
+        intent_duration_ms = int(payload.get("intent_duration_ms", 3000))
+        enforce_tokens = bool(payload.get("enforce_controller_tokens", True))
+        reset_payload = self.reset_arena_state(
+            {
+                **payload,
+                "arena_mode": "duel",
+                "player_1_model": payload.get("player_1_model", DUEL_DEFAULTS["player_1_model"]),
+                "player_2_model": payload.get("player_2_model", DUEL_DEFAULTS["player_2_model"]),
+                "round": payload.get("round", DUEL_DEFAULTS["round"]),
+                "seed": payload.get("seed", DUEL_DEFAULTS["seed"]),
+                "timeout_seconds": payload.get("timeout_seconds", DUEL_DEFAULTS["timeout_seconds"]),
+            }
+        )
+        run_id = str(reset_payload["run_id"])
+        run_dir = RESULTS_ROOT / run_id
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+        controller_tokens = build_controller_tokens(
+            run_id,
+            str(reset_payload["player_1_model"]),
+            str(reset_payload["player_2_model"]),
+            enforce_tokens,
+        )
+        write_controller_tokens(run_dir, controller_tokens)
+
+        player_1_instructions = render_participant_instructions(
+            "player_1",
+            str(reset_payload["player_1_model"]),
+            "player_2",
+            controller_tokens["player_1"]["controller_token"],
+            enforce_tokens,
+            decision_cadence_ms,
+            intent_duration_ms,
+        )
+        player_2_instructions = render_participant_instructions(
+            "player_2",
+            str(reset_payload["player_2_model"]),
+            "player_1",
+            controller_tokens["player_2"]["controller_token"],
+            enforce_tokens,
+            decision_cadence_ms,
+            intent_duration_ms,
+        )
+        player_1_path = run_dir / "player_1_mcp_instructions.md"
+        player_2_path = run_dir / "player_2_mcp_instructions.md"
+        player_1_path.write_text(player_1_instructions, encoding="utf-8")
+        player_2_path.write_text(player_2_instructions, encoding="utf-8")
+        (run_dir / "config.json").write_text(
+            json.dumps(
+                {
+                    "runner": "doom_arena_server_duel_session",
+                    "run_id": run_id,
+                    "scenario_id": reset_payload.get("scenario_id", ""),
+                    "arena_mode": "duel",
+                    "player_1_model": reset_payload["player_1_model"],
+                    "player_2_model": reset_payload["player_2_model"],
+                    "round": reset_payload["round"],
+                    "seed": reset_payload["seed"],
+                    "timeout_seconds": reset_payload["timeout_seconds"],
+                    "decision_cadence_ms": decision_cadence_ms,
+                    "intent_duration_ms": intent_duration_ms,
+                    "control_path": "external MCP clients call HTTP doom-arena tools",
+                    "enforce_controller_tokens": enforce_tokens,
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
 
         self.write_json(
             HTTPStatus.OK,
             {
-                "ok": True,
-                "run_id": self.server.run_id,
-                "scenario_id": self.server.scenario_id,
-                "arena_mode": self.server.arena_mode,
-                "player_1_model": self.server.player_1_model,
-                "player_2_model": self.server.player_2_model,
-                "round": self.server.round,
-                "seed": self.server.seed,
-                "timeout_seconds": self.server.timeout_seconds,
-                "reset_requested": True,
+                **reset_payload,
+                "results_dir": str(run_dir),
+                "controller_tokens": str(run_dir / "controller_tokens.json"),
+                "player_1_instructions": str(player_1_path),
+                "player_2_instructions": str(player_2_path),
+                "player_1_prompt": player_1_instructions,
+                "player_2_prompt": player_2_instructions,
+                "decision_cadence_ms": decision_cadence_ms,
+                "intent_duration_ms": intent_duration_ms,
             },
         )
 

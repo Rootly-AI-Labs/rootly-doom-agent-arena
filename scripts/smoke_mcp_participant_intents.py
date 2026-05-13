@@ -20,7 +20,7 @@ from doom_arena_mcp import (
     parse_participant_intent_rows,
     tool_definitions,
 )
-from doom_arena_mcp_duel_orchestrator import instructions as render_participant_instructions
+from doom_arena_duel_prompts import instructions as render_participant_instructions
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -57,7 +57,12 @@ def main() -> int:
     args = parser.parse_args()
 
     tools = {tool["name"] for tool in tool_definitions()}
-    for name in {"set_participant_intent", "stop_participant_intent"}:
+    for name in {
+        "set_participant_ready",
+        "wait_for_match_start",
+        "set_participant_intent",
+        "stop_participant_intent",
+    }:
         if name not in tools:
             raise AssertionError(f"missing MCP tool: {name}")
     intent_tool = next(tool for tool in tool_definitions() if tool["name"] == "set_participant_intent")
@@ -88,18 +93,21 @@ def main() -> int:
         "token",
         True,
         decision_cadence_ms=750,
-        intent_duration_ms=2000,
+        intent_duration_ms=3000,
     )
     for snippet in (
-        "500-1000ms",
-        "1500 and 2500",
+        "set_participant_ready",
+        "wait_for_match_start",
+        "waiting_for_agents",
+        "immediately observe again",
+        "Do not call `Start-Sleep`",
         "sequence_number",
         "increment it on every decision",
         "Doom continues executing the latest valid policy",
     ):
         if snippet not in instruction_text:
             raise AssertionError(f"generated instructions missing snippet: {snippet}")
-    print("ok generated instructions mention fast cadence, short duration, and sequence_number")
+    print("ok generated instructions mention ready handshake, immediate chatbot loop, and sequence_number")
 
     client = DoomArenaClient(args.server_url)
     previous_tokens = CONTROLLER_TOKENS_PATH.read_bytes() if CONTROLLER_TOKENS_PATH.exists() else None
@@ -121,6 +129,34 @@ def main() -> int:
             + "\n",
             encoding="utf-8",
         )
+
+        p1_intent = parse_json_object(
+            "set_participant_ready(player_1)",
+            client.set_participant_ready("player_1", controller_token=p1_token),
+        )
+        if not p1_intent.get("accepted") or not p1_intent.get("ready"):
+            raise AssertionError("player_1 ready signal was not accepted")
+        p2_ready = parse_json_object(
+            "set_participant_ready(player_2)",
+            client.set_participant_ready("player_2", controller_token=p2_token),
+        )
+        if not p2_ready.get("accepted") or not p2_ready.get("ready"):
+            raise AssertionError("player_2 ready signal was not accepted")
+        status, ready_body = request(args.server_url, "GET", "/api/arena/participant-ready")
+        if status != 200:
+            raise AssertionError(f"GET /api/arena/participant-ready returned HTTP {status}")
+        ready_text = ready_body.decode("utf-8", errors="replace")
+        if "player_1" not in ready_text or "player_2" not in ready_text:
+            raise AssertionError("participant ready TSV did not include both participants")
+        print("ok participant ready MCP tools write durable ready state")
+
+        wait_result = parse_json_object(
+            "wait_for_match_start(player_1 short timeout)",
+            client.wait_for_match_start("player_1", controller_token=p1_token, timeout_ms=100, poll_ms=50),
+        )
+        if "started" not in wait_result or "phase" not in wait_result:
+            raise AssertionError("wait_for_match_start did not return start status")
+        print("ok wait_for_match_start returns structured status")
 
         p1_intent = parse_json_object(
             "set_participant_intent(player_1)",

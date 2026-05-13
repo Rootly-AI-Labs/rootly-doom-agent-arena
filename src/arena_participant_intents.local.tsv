@@ -1,2 +1,0 @@
-run_id	scenario_id	intent_id	issued_at_ms	expires_at_ms	participant_id	intent	style	target_id	preferred_distance	aggression	duration_ms	strafe_direction	movement_bias	fire_policy	distance_policy	replan_if	sequence_number	decision_cadence_ms
-run_e70a912f7322	duel_e1m8	player_2_intent_1778631771628	1778631771628	1778631774128	player_2	engage_opponent	balanced	player_1	600	0.700	2500	auto	direct	only_when_aligned	close	lost_los,stuck,low_health	3	750

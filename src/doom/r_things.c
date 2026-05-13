@@ -359,7 +359,7 @@ static void R_DrawArenaLabel(vissprite_t *spr)
     int y;
     int text_color;
 
-    if (spr->arena_entity_index < 0 || spr->arena_label[0] == '\0')
+    if (spr->arena_label[0] == '\0')
     {
         return;
     }

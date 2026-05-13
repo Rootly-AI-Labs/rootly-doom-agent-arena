@@ -50,6 +50,9 @@ def main() -> int:
     forbidden = sorted(tools & FORBIDDEN_TOOL_NAMES)
     if forbidden:
         raise AssertionError(f"Forbidden direct-mutation tools exposed: {forbidden}")
+    for name in {"set_participant_ready", "wait_for_match_start", "set_participant_intent"}:
+        if name not in tools:
+            raise AssertionError(f"missing expected MCP tool: {name}")
 
     reset = parse_json_object(
         "reset_duel",
@@ -66,6 +69,17 @@ def main() -> int:
         "enforce_controller_tokens": not args.no_controller_tokens,
     }
     CONTROLLER_TOKENS_PATH.write_text(json.dumps(token_payload, indent=2) + "\n", encoding="utf-8")
+
+    p1_ready = parse_json_object(
+        "set_participant_ready(player_1)",
+        client.set_participant_ready("player_1", controller_token=p1_token),
+    )
+    p2_ready = parse_json_object(
+        "set_participant_ready(player_2)",
+        client.set_participant_ready("player_2", controller_token=p2_token),
+    )
+    if not p1_ready.get("ready") or not p2_ready.get("ready"):
+        raise AssertionError("participant ready signals were not accepted")
 
     p1_command = parse_json_object(
         "set_participant_intent(player_1)",

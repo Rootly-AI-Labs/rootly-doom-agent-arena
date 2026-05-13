@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <title>Websockets Doom</title>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <style>
+            @font-face {
+                font-family: "VT323";
+                font-style: normal;
+                font-weight: 400;
+                src: url(https://fonts.gstatic.com/s/vt323/v12/pxiKyp0ihIEF2isfFJXUdVNF.woff2) format("woff2");
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                font-family: "VT323", monospace;
+                font-size: 12px;
+            }
+
+            body {
+                background-color: #111;
+                margin: 0;
+                padding: 2ch;
+                /* vietnamese */
+            }
+
+            #container {
+                max-width: 1120px;
+                margin: auto;
+                position: relative;
+            }
+
+            .frame {
+                padding-right: 0;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+
+            /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+            canvas.frame {
+                background-color: black;
+                width: 800px;
+                height: 600px;
+                image-rendering: pixelated;
+            }
+
+            #arena-launcher {
+                position: absolute;
+                inset: 0;
+                z-index: 4;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 600px;
+                background: radial-gradient(circle at 50% 35%, #3b0f0f 0%, #080808 62%);
+                color: #f7f5d8;
+                text-align: center;
+            }
+
+            .arena-launcher-card {
+                width: min(520px, calc(100% - 32px));
+                padding: 28px;
+                border: 1px solid rgba(255, 255, 255, 0.28);
+                background: #0e0e0c;
+                box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
+            }
+
+            .arena-launcher-card h1 {
+                margin: 0 0 8px;
+                font: 700 28px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .arena-launcher-card p {
+                margin: 0 0 18px;
+                color: #d3d0ad;
+                font: 14px/1.45 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-launcher-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .arena-model-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                margin: 18px 0;
+                text-align: left;
+            }
+
+            .arena-config-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+                margin: 12px 0;
+                text-align: left;
+            }
+
+            .arena-model-field label {
+                display: block;
+                margin-bottom: 6px;
+                color: #b8e986;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-model-field select,
+            .arena-model-field input {
+                width: 100%;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                background: #10130d;
+                color: #f7f5d8;
+                padding: 10px;
+                font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-config-grid .arena-model-field label {
+                font-size: 10px;
+            }
+
+            .arena-launcher-actions button {
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                background: #263019;
+                color: #f7f5d8;
+                padding: 14px 12px;
+                font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-launcher-actions button:last-child {
+                background: #401717;
+            }
+
+            #arena-start-game {
+                display: block;
+                width: 100%;
+                margin-top: 12px;
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                background: #263019;
+                color: #f7f5d8;
+                padding: 14px 12px;
+                font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            #arena-launcher-status {
+                min-height: 18px;
+                margin-top: 16px;
+                color: #ffce6b;
+                font: 12px/1.4 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            #arena-debug-panel {
+                display: none;
+            }
+
+            #duel-pov-grid {
+                display: none;
+                width: 800px;
+                margin: 0 auto;
+            }
+
+            #duel-pov-grid.duel-active {
+                width: min(1120px, 100%);
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                align-items: start;
+            }
+
+            #duel-header {
+                display: none;
+                width: min(1120px, 100%);
+                margin: 0 auto 8px;
+            }
+
+            .duel-pov-card h2 {
+                display: none;
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card {
+                position: relative;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #171914;
+                color: #f7f5d8;
+                padding: 8px;
+                overflow: hidden;
+                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card h2 {
+                display: block;
+                margin: 0 0 7px;
+                color: #b8e986;
+                font: 700 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            #player-2-pov-card {
+                display: none;
+            }
+
+            #duel-pov-grid.duel-active #player-2-pov-card {
+                display: block;
+            }
+
+            .duel-pov-frame {
+                position: relative;
+                outline: 2px solid rgba(255, 92, 92, 0.42);
+                outline-offset: 0;
+                transition: outline-color 120ms ease, box-shadow 120ms ease;
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-pov-frame {
+                outline-color: rgba(255, 92, 92, 0.48);
+                box-shadow: 0 0 0 1px rgba(255, 92, 92, 0.14);
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-pov-frame {
+                outline-color: rgba(105, 220, 120, 0.58);
+                box-shadow: 0 0 0 1px rgba(105, 220, 120, 0.18);
+            }
+
+            #duel-pov-grid.duel-active canvas.frame {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .duel-death-overlay {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                min-height: 100%;
+                padding: 18px;
+                background: rgba(20, 0, 0, 0.9);
+                color: #f7f5d8;
+                text-align: center;
+                z-index: 5;
+            }
+
+            .duel-death-overlay[hidden] {
+                display: none;
+            }
+
+            .duel-death-title {
+                color: #ff4d3d;
+                font: 900 30px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                text-shadow: 0 2px 0 #000;
+            }
+
+            .duel-death-subtitle {
+                max-width: 260px;
+                color: #ffce6b;
+                font: 700 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-death-overlay button {
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.32);
+                background: #401717;
+                color: #f7f5d8;
+                padding: 10px 12px;
+                font: 900 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            #player-1-pov-status,
+            #player-2-pov-status {
+                display: none;
+            }
+
+            #arena-duel-dashboard {
+                display: none;
+                width: min(1120px, 100%);
+                margin: 12px auto 0;
+                color: #f7f5d8;
+                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            #duel-header,
+            .duel-shared,
+            .duel-events {
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #171914;
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            #duel-header.duel-active {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                align-items: center;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            #duel-header button {
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                background: #401717;
+                color: #f7f5d8;
+                padding: 7px 9px;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-panels {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .duel-player-panel {
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #191b16;
+                padding: 10px;
+            }
+
+            .duel-player-panel h2 {
+                margin: 0 0 8px;
+                color: #b8e986;
+                font: 700 14px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-stat-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 5px 10px;
+            }
+
+            .duel-prompt-card {
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px solid rgba(255, 255, 255, 0.14);
+            }
+
+            .duel-prompt-card summary {
+                cursor: pointer;
+                color: #ffce6b;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            .duel-prompt-card button {
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                background: #263019;
+                color: #f7f5d8;
+                padding: 6px 8px;
+                margin: 6px 0;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-prompt-card textarea {
+                width: 100%;
+                min-height: 88px;
+                resize: vertical;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #10130d;
+                color: #f7f5d8;
+                padding: 8px;
+                font: 11px/1.3 Consolas, "Courier New", monospace;
+            }
+
+            .duel-player-log {
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px solid rgba(255, 255, 255, 0.14);
+                color: #d3d0ad;
+                min-height: 74px;
+                overflow: hidden;
+            }
+
+            .duel-log-title {
+                margin-bottom: 4px;
+                color: #ffce6b;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            .duel-log-line {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .duel-game-log {
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #171914;
+                padding: 10px;
+                margin-bottom: 8px;
+                min-height: 92px;
+                overflow: hidden;
+            }
+
+            .duel-events {
+                min-height: 68px;
+                max-height: 112px;
+                overflow: hidden;
+            }
+
+            .duel-events div {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #arena-debug-panel .debug-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            #arena-debug-panel button {
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                background: #263019;
+                color: #f7f5d8;
+                padding: 7px 9px;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            #arena-countdown {
+                display: none;
+                margin-top: 16px;
+                color: #ffce6b;
+                font: 700 34px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+        </style>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+    </head>
+    <body>
+        <div id="container" class="noselect">
+            <div id="arena-launcher">
+                <div class="arena-launcher-card">
+                    <h1 id="arena-launcher-title">Welcome to Doom Arena</h1>
+                    <p id="arena-launcher-message">Select two model controllers, then start the duel.</p>
+                    <div class="arena-model-grid">
+                        <div class="arena-model-field">
+                            <label for="player-1-model">Player 1 Model</label>
+                            <select id="player-1-model">
+                                <option value="codex" selected>Codex</option>
+                                <option value="claude">Claude</option>
+                                <option value="baseline">Baseline</option>
+                            </select>
+                        </div>
+                        <div class="arena-model-field">
+                            <label for="player-2-model">Player 2 Model</label>
+                            <select id="player-2-model">
+                                <option value="codex">Codex</option>
+                                <option value="claude" selected>Claude</option>
+                                <option value="baseline">Baseline</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="arena-config-grid">
+                        <div class="arena-model-field">
+                            <label for="arena-round">Round</label>
+                            <input id="arena-round" type="number" min="1" value="1" />
+                        </div>
+                        <div class="arena-model-field">
+                            <label for="arena-seed">Seed</label>
+                            <input id="arena-seed" type="number" value="42" />
+                        </div>
+                        <div class="arena-model-field">
+                            <label for="arena-timeout-seconds">Timeout Sec</label>
+                            <input id="arena-timeout-seconds" type="number" min="1" value="120" />
+                        </div>
+                        <div class="arena-model-field">
+                            <label for="arena-intent-duration-ms">Intent Duration MS</label>
+                            <input id="arena-intent-duration-ms" type="number" min="1" value="3000" />
+                        </div>
+                    </div>
+                    <button id="arena-start-game" type="button">Start Duel</button>
+                    <div id="arena-countdown"></div>
+                    <div id="arena-launcher-status"></div>
+                </div>
+            </div>
+            <div id="duel-header">
+                <div id="duel-title">Doom Arena | Codex vs Claude | Round 1 | Seed 42 | Waiting</div>
+                <div>
+                    <button type="button" id="duel-reset">Reset</button>
+                </div>
+            </div>
+            <div id="duel-pov-grid">
+                <div class="duel-pov-card" id="player-1-pov-card">
+                    <h2 id="player-1-pov-title">Player 1 POV</h2>
+                    <div class="duel-pov-frame">
+                        <canvas class="frame" id="player-1-canvas" width="320" height="200"></canvas>
+                        <div class="duel-death-overlay" id="player-1-death-overlay" hidden>
+                            <div class="duel-death-title">You Died</div>
+                            <div class="duel-death-subtitle" id="player-1-death-detail">Player 1 eliminated</div>
+                            <button type="button" data-duel-restart>Restart Duel</button>
+                        </div>
+                    </div>
+                    <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+                    <div id="player-1-pov-status">Waiting for Player 1 camera</div>
+                </div>
+                <div class="duel-pov-card" id="player-2-pov-card">
+                    <h2 id="player-2-pov-title">Player 2 POV</h2>
+                    <div class="duel-pov-frame">
+                        <canvas class="frame" id="player-2-canvas" width="320" height="200"></canvas>
+                        <div class="duel-death-overlay" id="player-2-death-overlay" hidden>
+                            <div class="duel-death-title">You Died</div>
+                            <div class="duel-death-subtitle" id="player-2-death-detail">Player 2 eliminated</div>
+                            <button type="button" data-duel-restart>Restart Duel</button>
+                        </div>
+                    </div>
+                    <div id="player-2-pov-status">Waiting for Player 2 camera</div>
+                </div>
+            </div>
+            <div id="arena-duel-dashboard">
+                <div class="duel-panels">
+                    <div class="duel-player-panel">
+                        <h2 id="duel-player-1-name">Player 1</h2>
+                        <div class="duel-stat-grid">
+                            <div>Health: <span id="duel-p1-health">-</span></div>
+                            <div>Ammo: <span id="duel-p1-ammo">-</span></div>
+                            <div>Move: <span id="duel-p1-action">-</span></div>
+                            <div>Shots: <span id="duel-p1-shots">-</span></div>
+                            <div>Damage: <span id="duel-p1-damage">-</span></div>
+                        </div>
+                        <details class="duel-prompt-card" id="duel-p1-prompt-card" open>
+                            <summary>Codex MCP Prompt</summary>
+                            <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                            <textarea id="duel-p1-prompt" readonly placeholder="Click Start Duel to generate the Codex prompt."></textarea>
+                        </details>
+                        <div class="duel-player-log">
+                            <div class="duel-log-title">Player 1 Log</div>
+                            <div id="duel-p1-log"></div>
+                        </div>
+                    </div>
+                    <div class="duel-player-panel">
+                        <h2 id="duel-player-2-name">Player 2</h2>
+                        <div class="duel-stat-grid">
+                            <div>Health: <span id="duel-p2-health">-</span></div>
+                            <div>Ammo: <span id="duel-p2-ammo">-</span></div>
+                            <div>Move: <span id="duel-p2-action">-</span></div>
+                            <div>Shots: <span id="duel-p2-shots">-</span></div>
+                            <div>Damage: <span id="duel-p2-damage">-</span></div>
+                        </div>
+                        <details class="duel-prompt-card" id="duel-p2-prompt-card" open>
+                            <summary>Claude MCP Prompt</summary>
+                            <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                            <textarea id="duel-p2-prompt" readonly placeholder="Click Start Duel to generate the Claude prompt."></textarea>
+                        </details>
+                        <div class="duel-player-log">
+                            <div class="duel-log-title">Player 2 Log</div>
+                            <div id="duel-p2-log"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="duel-shared" id="duel-shared-state">Tick: - | Phase: - | Distance: - | LOS: - | Winner: -</div>
+                <div class="duel-game-log">
+                    <div class="duel-log-title">Game State Log</div>
+                    <div id="duel-game-log"></div>
+                </div>
+                <div class="duel-events" id="duel-events"></div>
+            </div>
+            <div id="arena-debug-panel">
+                <div id="arena-debug-status">Status: waiting</div>
+                <div class="debug-row">
+                    <button type="button" data-player-command="forward">Forward</button>
+                    <button type="button" data-player-command="turn-left">Turn Left</button>
+                    <button type="button" data-player-command="turn-right">Turn Right</button>
+                    <button type="button" data-player-command="shoot">Shoot</button>
+                    <button type="button" data-player-command="use">Use</button>
+                    <button type="button" data-player-command="stop">Stop</button>
+                </div>
+                <div class="debug-row">
+                    <span>Player 1</span>
+                    <button type="button" data-participant-id="player_1" data-participant-intent="engage_opponent">Engage</button>
+                    <button type="button" data-participant-id="player_1" data-participant-intent="strafe_attack">Strafe Attack</button>
+                    <button type="button" data-participant-id="player_1" data-participant-intent="hold">Hold</button>
+                    <button type="button" data-participant-id="player_1" data-participant-intent="search">Search</button>
+                </div>
+                <div class="debug-row">
+                    <span>Player 2</span>
+                    <button type="button" data-participant-id="player_2" data-participant-intent="engage_opponent">Engage</button>
+                    <button type="button" data-participant-id="player_2" data-participant-intent="strafe_attack">Strafe Attack</button>
+                    <button type="button" data-participant-id="player_2" data-participant-intent="hold">Hold</button>
+                    <button type="button" data-participant-id="player_2" data-participant-intent="search">Search</button>
+                </div>
+                <div class="debug-row">
+                    <button type="button" id="clear-participant-intents">Clear Intents</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            var commonArgs = ["-iwad", "doom1.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+            var arenaDataMountPath = "arena_enemies.mock.tsv";
+            var arenaDataLocalPath = "arena_enemies.local.tsv";
+            var arenaDataMockPath = "arena_enemies.mock.tsv";
+            var agenticStatePath = "arena_game_state.local.tsv";
+            var agenticStateEndpoint = "/api/arena/state";
+            var agenticCommandPath = "arena_enemy_commands.local.tsv";
+            var agenticCommandEndpoint = "/api/arena/enemy-commands";
+            var arenaPlayerCommandPath = "arena_player_command.local.tsv";
+            var arenaPlayerCommandEndpoint = "/api/arena/player-command";
+            var arenaParticipantCommandPath = "arena_participant_commands.local.tsv";
+            var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
+            var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
+            var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n";
+            var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
+            var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
+            var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
+            var arenaRunMetadataPath = "arena_run_metadata.local.tsv";
+            var arenaRunMetadataEndpoint = "/api/arena/run-metadata";
+            var arenaResetEndpoint = "/api/arena/reset";
+            var arenaDuelSessionEndpoint = "/api/arena/duel-session";
+            var arenaScoreEndpoint = "/api/arena/score";
+            var arenaEventsPath = "arena_duel_events.local.tsv";
+            var arenaEventsEndpoint = "/api/arena/events";
+            var lastPostedAgenticState = "";
+            var lastPostedArenaEvents = "";
+            var lastLoadedAgenticCommands = "";
+            var lastLoadedPlayerCommand = "";
+            var lastLoadedParticipantCommands = "";
+            var lastLoadedParticipantIntents = "";
+            var lastLoadedParticipantReady = "";
+            var lastLoadedRunMetadata = "";
+            var currentArenaRunId = "run_unknown";
+            var currentArenaScenarioId = "scenario_unknown";
+            var currentArenaMode = "enemies";
+            var currentPlayer1Model = "";
+            var currentPlayer2Model = "";
+            var currentArenaRound = 1;
+            var currentArenaSeed = 0;
+            var currentArenaTimeoutSeconds = 300;
+            var selectedArenaDataMode = "mock";
+            var selectedArenaDataSourcePath = arenaDataMockPath;
+            var doomScriptLoaded = false;
+            var gameEnded = false;
+            var loadedDoomRunId = "";
+            var loadedDoomArenaMode = "";
+            var pendingArenaDataMode = null;
+            var player1PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
+            var player2PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
+            // legacy aliases kept for any remaining references
+            var player2PovContext = null;
+            var player2PovImageData = null;
+            var player2PovWidth = 0;
+            var player2PovHeight = 0;
+            var lastPlayer2PovFrame = -1;
+            var currentDuelSession = null;
+            var participantReadyById = { player_1: false, player_2: false };
+            var participantActionLogs = {
+                player_1: { lastKey: "", lines: [] },
+                player_2: { lastKey: "", lines: [] }
+            };
+            var duelLauncherHidePending = false;
+
+            function updateArenaBanner() {
+                var label = document.getElementById("arena-data-label");
+
+                if (label !== null) {
+                    if (currentArenaMode === "duel") {
+                        label.textContent = "Duel: " + currentPlayer1Model + " vs " + currentPlayer2Model;
+                    } else {
+                        label.textContent = "Scenario: " + (selectedArenaDataMode === "local" ? "local" : "default");
+                    }
+                }
+            }
+
+            function updateLauncherStatus(message) {
+                var status = document.getElementById("arena-launcher-status");
+
+                if (status !== null) {
+                    status.textContent = message || "";
+                }
+            }
+
+            function setLauncherCopy(title, message) {
+                var titleNode = document.getElementById("arena-launcher-title");
+                var messageNode = document.getElementById("arena-launcher-message");
+
+                if (titleNode !== null) {
+                    titleNode.textContent = title;
+                }
+
+                if (messageNode !== null) {
+                    messageNode.textContent = message;
+                }
+            }
+
+            function setLauncherMode(mode) {
+                var startButton = document.getElementById("arena-start-game");
+
+                if (startButton !== null) {
+                    startButton.style.display = mode === "choose" || mode === "ready" ? "block" : "none";
+                }
+            }
+
+            function arenaDataExists(path) {
+                var request = new XMLHttpRequest();
+
+                try {
+                    request.open("HEAD", path, false);
+                    request.send(null);
+                    return request.status >= 200 && request.status < 300;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function selectArenaDataSource(mode) {
+                if (mode === "mock") {
+                    selectedArenaDataMode = "mock";
+                    selectedArenaDataSourcePath = arenaDataMockPath;
+                    updateArenaBanner();
+                    console.log("Doom Agent Arena: selected TSV source mock (" + arenaDataMockPath + ")");
+                    return true;
+                }
+
+                if (mode === "local") {
+                    if (!arenaDataExists(arenaDataLocalPath)) {
+                        updateLauncherStatus("No local arena TSV found.");
+                        console.warn("Doom Agent Arena: local TSV not found (" + arenaDataLocalPath + ")");
+                        return false;
+                    }
+
+                    selectedArenaDataMode = "local";
+                    selectedArenaDataSourcePath = arenaDataLocalPath;
+                    updateArenaBanner();
+                    console.log("Doom Agent Arena: selected TSV source local (" + arenaDataLocalPath + ")");
+                    return true;
+                }
+
+                if (mode !== null && mode !== "local") {
+                    console.warn("Doom Agent Arena: unknown scenario value, using auto mode");
+                }
+
+                if (arenaDataExists(arenaDataLocalPath)) {
+                    selectedArenaDataMode = "local";
+                    selectedArenaDataSourcePath = arenaDataLocalPath;
+                    updateArenaBanner();
+                    console.log("Doom Agent Arena: selected TSV source local (" + arenaDataLocalPath + ")");
+                    return true;
+                }
+
+                selectedArenaDataMode = "mock";
+                selectedArenaDataSourcePath = arenaDataMockPath;
+                updateArenaBanner();
+                console.log("Doom Agent Arena: selected TSV source mock (" + arenaDataMockPath + ")");
+                return true;
+            }
+
+            function loadDoomScript() {
+                var script;
+
+                if (doomScriptLoaded) {
+                    return;
+                }
+
+                disableDoomPointerCapture();
+                doomScriptLoaded = true;
+                script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "websockets-doom.js?v=dual-pov-21";
+                script.addEventListener("load", function () {
+                    disableDoomPointerCapture();
+                });
+                document.body.appendChild(script);
+            }
+
+            function syncAgenticState() {
+                var stateText;
+
+                if (!Module.FS) {
+                    return;
+                }
+
+                try {
+                    stateText = Module.FS.readFile(agenticStatePath, {
+                        encoding: "utf8",
+                    });
+                } catch (error) {
+                    return;
+                }
+
+                if (stateText === lastPostedAgenticState) {
+                    return;
+                }
+
+                lastPostedAgenticState = stateText;
+                fetch(agenticStateEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/tab-separated-values",
+                    },
+                    body: stateText,
+                }).catch(function (error) {
+                    console.warn("Agentic Doom: failed to mirror state TSV", error);
+                });
+            }
+
+            function syncAgenticCommands() {
+                fetch(agenticCommandEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (commandText) {
+                        if (!Module.FS || commandText === lastLoadedAgenticCommands) {
+                            return;
+                        }
+
+                        lastLoadedAgenticCommands = commandText;
+                        Module.FS.writeFile(agenticCommandPath, commandText);
+                    })
+                    .catch(function (error) {
+                        console.warn("Agentic Doom: failed to load command TSV", error);
+                    });
+            }
+
+            function syncArenaEvents() {
+                var eventText;
+
+                if (!Module.FS) {
+                    return;
+                }
+
+                try {
+                    eventText = Module.FS.readFile(arenaEventsPath, {
+                        encoding: "utf8",
+                    });
+                } catch (error) {
+                    return;
+                }
+
+                if (eventText === lastPostedArenaEvents) {
+                    return;
+                }
+
+                lastPostedArenaEvents = eventText;
+                fetch(arenaEventsEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/tab-separated-values",
+                    },
+                    body: eventText,
+                }).catch(function (error) {
+                    console.warn("Doom Agent Arena: failed to mirror duel events TSV", error);
+                });
+            }
+
+            function syncArenaPlayerCommand() {
+                fetch(arenaPlayerCommandEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (commandText) {
+                        if (!Module.FS || commandText === lastLoadedPlayerCommand) {
+                            return;
+                        }
+
+                        lastLoadedPlayerCommand = commandText;
+                        Module.FS.writeFile(arenaPlayerCommandPath, commandText);
+                    })
+                    .catch(function (error) {
+                        console.warn("Doom Agent Arena: failed to load player command TSV", error);
+                    });
+            }
+
+            function syncArenaParticipantCommands() {
+                fetch(arenaParticipantCommandEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (commandText) {
+                        if (!Module.FS || commandText === lastLoadedParticipantCommands) {
+                            return;
+                        }
+
+                        lastLoadedParticipantCommands = commandText;
+                        Module.FS.writeFile(arenaParticipantCommandPath, commandText);
+                    })
+                    .catch(function (error) {
+                        console.warn("Doom Agent Arena: failed to load participant command TSV", error);
+                    });
+            }
+
+            function syncArenaParticipantIntents() {
+                fetch(arenaParticipantIntentEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return arenaParticipantIntentHeader;
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (intentText) {
+                        if (!Module.FS) {
+                            return;
+                        }
+
+                        if (!intentText) {
+                            intentText = arenaParticipantIntentHeader;
+                        }
+
+                        if (intentText === lastLoadedParticipantIntents) {
+                            return;
+                        }
+
+                        lastLoadedParticipantIntents = intentText;
+                        Module.FS.writeFile(arenaParticipantIntentPath, intentText);
+                    })
+                    .catch(function (error) {
+                        console.warn("Doom Agent Arena: failed to load participant intent TSV", error);
+                    });
+            }
+
+            function syncArenaParticipantReady() {
+                fetch(arenaParticipantReadyEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return arenaParticipantReadyHeader;
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (readyText) {
+                        if (!Module.FS) {
+                            return;
+                        }
+
+                        if (!readyText) {
+                            readyText = arenaParticipantReadyHeader;
+                        }
+
+                        if (readyText === lastLoadedParticipantReady) {
+                            return;
+                        }
+
+                        lastLoadedParticipantReady = readyText;
+                        updateParticipantReadyState(readyText);
+                        Module.FS.writeFile(arenaParticipantReadyPath, readyText);
+                    })
+                    .catch(function (error) {
+                        console.warn("Doom Agent Arena: failed to load participant ready TSV", error);
+                    });
+            }
+
+            function updateArenaRunMetadata(metadataText) {
+                var lines;
+                var fields;
+
+                if (!metadataText) {
+                    return;
+                }
+
+                lines = metadataText.trim().split(/\r?\n/);
+                if (lines.length < 2) {
+                    return;
+                }
+
+                fields = lines[1].split("\t");
+                if (fields.length >= 2) {
+                    currentArenaRunId = fields[0] || currentArenaRunId;
+                    currentArenaScenarioId = fields[1] || currentArenaScenarioId;
+                }
+                if (fields.length >= 9) {
+                    currentArenaMode = fields[2] || currentArenaMode;
+                    currentPlayer1Model = fields[4] || currentPlayer1Model;
+                    currentPlayer2Model = fields[5] || currentPlayer2Model;
+                    currentArenaRound = parseInt(fields[6] || currentArenaRound, 10);
+                    currentArenaSeed = parseInt(fields[7] || currentArenaSeed, 10);
+                    currentArenaTimeoutSeconds = parseInt(fields[8] || currentArenaTimeoutSeconds, 10);
+                    updateArenaBanner();
+                }
+            }
+
+            function writeArenaRunMetadata(metadataText) {
+                if (!Module.FS || !metadataText || metadataText === lastLoadedRunMetadata) {
+                    return;
+                }
+
+                lastLoadedRunMetadata = metadataText;
+                updateArenaRunMetadata(metadataText);
+                Module.FS.writeFile(arenaRunMetadataPath, metadataText);
+            }
+
+            function syncArenaRunMetadata() {
+                fetch(arenaRunMetadataEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(writeArenaRunMetadata)
+                    .catch(function (error) {
+                    console.warn("Doom Agent Arena: failed to load run metadata TSV", error);
+                });
+            }
+
+            function loadArenaRunMetadataForLauncher() {
+                return fetch(arenaRunMetadataEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (metadataText) {
+                        updateArenaRunMetadata(metadataText);
+                        return metadataText;
+                    });
+            }
+
+            function syncArenaRunMetadataNow() {
+                var request;
+
+                if (!Module.FS) {
+                    return;
+                }
+
+                request = new XMLHttpRequest();
+                try {
+                    request.open("GET", arenaRunMetadataEndpoint, false);
+                    request.setRequestHeader("Cache-Control", "no-store");
+                    request.send(null);
+                    if (request.status >= 200 && request.status < 300) {
+                        writeArenaRunMetadata(request.responseText);
+                    }
+                } catch (error) {
+                    console.warn("Doom Agent Arena: failed to synchronously load run metadata TSV", error);
+                }
+            }
+
+            function setArenaLauncherButtonsDisabled(disabled) {
+                var buttons = document.querySelectorAll("[data-arena-mode], #arena-start-game, #player-1-model, #player-2-model");
+
+                buttons.forEach(function (button) {
+                    button.disabled = disabled;
+                });
+            }
+
+            function selectedModelValue(id, fallback) {
+                var node = document.getElementById(id);
+
+                if (node === null || !node.value) {
+                    return fallback;
+                }
+
+                return node.value;
+            }
+
+            function selectedNumberValue(id, fallback) {
+                var node = document.getElementById(id);
+                var value;
+
+                if (node === null || node.value === "") {
+                    return fallback;
+                }
+
+                value = parseInt(node.value, 10);
+                if (!Number.isFinite(value)) {
+                    return fallback;
+                }
+
+                return value;
+            }
+
+            function buildDuelSessionPayload() {
+                return {
+                    arena_mode: "duel",
+                    player_1_model: selectedModelValue("player-1-model", "codex"),
+                    player_2_model: selectedModelValue("player-2-model", "claude"),
+                    round: selectedNumberValue("arena-round", 1),
+                    seed: selectedNumberValue("arena-seed", 42),
+                    timeout_seconds: selectedNumberValue("arena-timeout-seconds", 120),
+                    decision_cadence_ms: 750,
+                    intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 3000),
+                };
+            }
+
+            function postArenaReset(payload) {
+                return fetch(arenaResetEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload || {}),
+                }).then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Reset failed with HTTP " + response.status);
+                    }
+
+                    return response.json();
+                });
+            }
+
+            function postDuelSession(payload) {
+                return fetch(arenaDuelSessionEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload || {}),
+                }).then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Duel session failed with HTTP " + response.status);
+                    }
+
+                    return response.json();
+                });
+            }
+
+            function setPromptText(id, text) {
+                var node = document.getElementById(id);
+
+                if (node !== null) {
+                    node.value = text || "";
+                }
+            }
+
+            function renderDuelSessionPrompts(session) {
+                currentDuelSession = session || currentDuelSession;
+                if (!currentDuelSession) {
+                    return;
+                }
+
+                setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
+                setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+            }
+
+            function copyPromptText(id) {
+                var node = document.getElementById(id);
+
+                if (node === null || !node.value) {
+                    updateLauncherStatus("No prompt generated yet.");
+                    return;
+                }
+
+                node.focus();
+                node.select();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(node.value).catch(function () {
+                        document.execCommand("copy");
+                    });
+                } else {
+                    document.execCommand("copy");
+                }
+            }
+
+            function exitPointerLockIfNeeded() {
+                var lockedElement =
+                    document.pointerLockElement ||
+                    document.mozPointerLockElement ||
+                    document.webkitPointerLockElement ||
+                    document.msPointerLockElement;
+
+                if (!lockedElement) {
+                    return;
+                }
+
+                if (document.exitPointerLock) {
+                    document.exitPointerLock();
+                } else if (document.mozExitPointerLock) {
+                    document.mozExitPointerLock();
+                } else if (document.webkitExitPointerLock) {
+                    document.webkitExitPointerLock();
+                } else if (document.msExitPointerLock) {
+                    document.msExitPointerLock();
+                }
+            }
+
+            function disableDoomPointerCapture() {
+                var mainCanvas = document.getElementById("canvas");
+                var noop = function () {};
+
+                if (window.HTMLCanvasElement && window.HTMLCanvasElement.prototype) {
+                    window.HTMLCanvasElement.prototype.requestPointerLock = noop;
+                    window.HTMLCanvasElement.prototype.mozRequestPointerLock = noop;
+                    window.HTMLCanvasElement.prototype.webkitRequestPointerLock = noop;
+                    window.HTMLCanvasElement.prototype.msRequestPointerLock = noop;
+                }
+
+                if (window.HTMLElement && window.HTMLElement.prototype) {
+                    window.HTMLElement.prototype.requestFullscreen = noop;
+                    window.HTMLElement.prototype.mozRequestFullScreen = noop;
+                    window.HTMLElement.prototype.webkitRequestFullscreen = noop;
+                    window.HTMLElement.prototype.webkitRequestFullScreen = noop;
+                    window.HTMLElement.prototype.msRequestFullscreen = noop;
+                }
+
+                if (mainCanvas !== null) {
+                    mainCanvas.requestPointerLock = noop;
+                    mainCanvas.mozRequestPointerLock = noop;
+                    mainCanvas.webkitRequestPointerLock = noop;
+                    mainCanvas.msRequestPointerLock = noop;
+                    mainCanvas.requestFullscreen = noop;
+                    mainCanvas.mozRequestFullScreen = noop;
+                    mainCanvas.webkitRequestFullscreen = noop;
+                    mainCanvas.webkitRequestFullScreen = noop;
+                    mainCanvas.msRequestFullscreen = noop;
+                    mainCanvas.style.cursor = "default";
+                }
+
+                if (typeof Module !== "undefined") {
+                    Module.requestFullscreen = noop;
+                    if (Module.canvas) {
+                        Module.canvas.requestPointerLock = noop;
+                        Module.canvas.mozRequestPointerLock = noop;
+                        Module.canvas.webkitRequestPointerLock = noop;
+                        Module.canvas.msRequestPointerLock = noop;
+                        Module.canvas.style.cursor = "default";
+                    }
+                }
+
+                exitPointerLockIfNeeded();
+            }
+
+            function installPointerCaptureGuards() {
+                ["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange", "mspointerlockchange"].forEach(function (eventName) {
+                    document.addEventListener(eventName, function () {
+                        window.setTimeout(disableDoomPointerCapture, 0);
+                    });
+                });
+            }
+
+            function runDuelCountdown() {
+                var countdown = document.getElementById("arena-countdown");
+                var values = ["3", "2", "1", "FIGHT"];
+                var index = 0;
+
+                if (countdown === null) {
+                    return Promise.resolve();
+                }
+
+                countdown.style.display = "block";
+                countdown.textContent = values[index];
+
+                return new Promise(function (resolve) {
+                    var timer = window.setInterval(function () {
+                        index++;
+                        if (index >= values.length) {
+                            window.clearInterval(timer);
+                            resolve();
+                            return;
+                        }
+
+                        countdown.textContent = values[index];
+                    }, 700);
+                });
+            }
+
+            function startDuel() {
+                var payload;
+
+                updateLauncherStatus("");
+                setArenaLauncherButtonsDisabled(true);
+                clearDuelDeathOverlays();
+                resetParticipantReadyState();
+                resetDuelPovFrameState();
+                resetParticipantActionLogs();
+
+                payload = buildDuelSessionPayload();
+
+                postDuelSession(payload)
+                    .then(function (resetPayload) {
+                        currentArenaRunId = resetPayload.run_id || currentArenaRunId;
+                        currentArenaScenarioId = resetPayload.scenario_id || currentArenaScenarioId;
+                        currentArenaMode = resetPayload.arena_mode || "duel";
+                        currentPlayer1Model = resetPayload.player_1_model || payload.player_1_model;
+                        currentPlayer2Model = resetPayload.player_2_model || payload.player_2_model;
+                        currentArenaRound = resetPayload.round || payload.round;
+                        currentArenaSeed = resetPayload.seed || payload.seed;
+                        currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
+                        renderDuelSessionPrompts(resetPayload);
+                        updateArenaBanner();
+                        return runDuelCountdown();
+                    })
+                    .then(function () {
+                        startDoom("mock", false);
+                    })
+                    .catch(function (error) {
+                        updateLauncherStatus(error.message);
+                        console.warn("Doom Agent Arena: " + error.message);
+                        setArenaLauncherButtonsDisabled(false);
+                    });
+            }
+
+            function startDuelFromExistingRun() {
+                var payload;
+
+                updateLauncherStatus("Starting duel...");
+                setArenaLauncherButtonsDisabled(true);
+                currentArenaMode = "duel";
+                clearDuelDeathOverlays();
+                resetParticipantReadyState();
+                resetDuelPovFrameState();
+                resetParticipantActionLogs();
+
+                payload = buildDuelSessionPayload();
+
+                loadArenaRunMetadataForLauncher()
+                    .then(function (metadataText) {
+                        if (!metadataText || currentArenaMode !== "duel") {
+                            updateLauncherStatus("Creating duel session...");
+                            return postDuelSession(payload).then(function (resetPayload) {
+                                currentArenaRunId = resetPayload.run_id || currentArenaRunId;
+                                currentArenaScenarioId = resetPayload.scenario_id || currentArenaScenarioId;
+                                currentArenaMode = resetPayload.arena_mode || "duel";
+                                currentPlayer1Model = resetPayload.player_1_model || payload.player_1_model;
+                                currentPlayer2Model = resetPayload.player_2_model || payload.player_2_model;
+                                currentArenaRound = resetPayload.round || payload.round;
+                                currentArenaSeed = resetPayload.seed || payload.seed;
+                                currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
+                                renderDuelSessionPrompts(resetPayload);
+                                return resetPayload;
+                            });
+                        }
+
+                        currentArenaMode = "duel";
+                        return null;
+                    })
+                    .then(function () {
+                        updateArenaBanner();
+                        return runDuelCountdown();
+                    })
+                    .then(function () {
+                        startDoom("mock", false);
+                    })
+                    .catch(function (error) {
+                        updateLauncherStatus(error.message);
+                        console.warn("Doom Agent Arena: " + error.message);
+                        setArenaLauncherButtonsDisabled(false);
+                    });
+            }
+
+            function commandTiming(durationMs, prefix) {
+                var issuedAt = Date.now();
+
+                return {
+                    run_id: currentArenaRunId,
+                    scenario_id: currentArenaScenarioId,
+                    command_id: prefix + "_" + issuedAt,
+                    issued_at_ms: issuedAt,
+                    expires_at_ms: issuedAt + durationMs,
+                    duration_ms: durationMs,
+                };
+            }
+
+            function parseTsv(text) {
+                var lines = (text || "").trim().split(/\r?\n/);
+                var header;
+
+                if (lines.length < 2 || !lines[0]) {
+                    return [];
+                }
+
+                header = lines[0].split("\t");
+                return lines.slice(1).filter(Boolean).map(function (line) {
+                    var values = line.split("\t");
+                    var row = {};
+
+                    header.forEach(function (key, index) {
+                        row[key] = values[index] || "";
+                    });
+                    return row;
+                });
+            }
+
+            function setText(id, value) {
+                var node = document.getElementById(id);
+
+                if (node !== null) {
+                    node.textContent = value;
+                }
+            }
+
+            function renderLogLines(id, lines) {
+                var node = document.getElementById(id);
+
+                if (node === null) {
+                    return;
+                }
+
+                node.innerHTML = "";
+                lines.forEach(function (text) {
+                    var line = document.createElement("div");
+                    line.className = "duel-log-line";
+                    line.textContent = text;
+                    node.appendChild(line);
+                });
+            }
+
+            function truthyTsv(value) {
+                return value === "1" || value === "true" || value === true;
+            }
+
+            function participantIsDead(player) {
+                var health;
+
+                if (!player || !player.entity_id) {
+                    return false;
+                }
+
+                if (player.alive === "0" || player.alive === "false" || player.alive === false) {
+                    return true;
+                }
+
+                health = parseInt(player.health || "0", 10);
+                return Number.isFinite(health) && health <= 0;
+            }
+
+            function updateParticipantDeathOverlay(participantId, player, opponentLabel, phase, winner, terminalReason) {
+                var overlay = document.getElementById(participantId.replace("_", "-") + "-death-overlay");
+                var detail = document.getElementById(participantId.replace("_", "-") + "-death-detail");
+                var dead = participantIsDead(player);
+                var reason;
+
+                if (overlay === null) {
+                    return;
+                }
+
+                overlay.hidden = !dead;
+                if (!dead) {
+                    return;
+                }
+
+                if (detail !== null) {
+                    reason = terminalReason || (phase === "finished" ? "match finished" : "eliminated");
+                    detail.textContent = opponentLabel + " won | " + reason;
+                }
+            }
+
+            function clearDuelDeathOverlays() {
+                updateParticipantDeathOverlay("player_1", {}, "Player 2", "", "", "");
+                updateParticipantDeathOverlay("player_2", {}, "Player 1", "", "", "");
+            }
+
+            function updatePovConnectionBorder(participantId, connected) {
+                var card = document.getElementById(participantId.replace("_", "-") + "-pov-card");
+
+                if (card === null) {
+                    return;
+                }
+
+                card.classList.toggle("llm-connected", !!connected);
+                card.classList.toggle("llm-disconnected", !connected);
+            }
+
+            function updatePovConnectionBorders() {
+                updatePovConnectionBorder("player_1", participantReadyById.player_1);
+                updatePovConnectionBorder("player_2", participantReadyById.player_2);
+            }
+
+            function resetParticipantReadyState() {
+                participantReadyById = { player_1: false, player_2: false };
+                lastLoadedParticipantReady = "";
+                updatePovConnectionBorders();
+            }
+
+            function updateParticipantReadyState(readyText) {
+                var rows = parseTsv(readyText || arenaParticipantReadyHeader);
+
+                participantReadyById = { player_1: false, player_2: false };
+                rows.forEach(function (row) {
+                    if ((row.participant_id === "player_1" || row.participant_id === "player_2") && row.status === "ready") {
+                        participantReadyById[row.participant_id] = true;
+                    }
+                });
+                updatePovConnectionBorders();
+            }
+
+            function participantLogTimestamp(player) {
+                var elapsed = Number(player.elapsed_time_seconds);
+
+                if (Number.isFinite(elapsed)) {
+                    return "[" + elapsed.toFixed(1) + "s]";
+                }
+
+                if (player.tick) {
+                    return "[tick " + player.tick + "]";
+                }
+
+                return "[state]";
+            }
+
+            function participantLogLines(participantId, player, fallbackLabel) {
+                var logState = participantActionLogs[participantId] || { lastKey: "", lines: [] };
+                var intent = player.intent || "none";
+                var intentStatus = player.intent_status || "inactive";
+                var intentStyle = player.intent_style || player.style || "-";
+                var sequenceNumber = player.sequence_number || "-";
+                var controllerMode = player.controller_mode || "low_level_command";
+                var action = player.autopilot_action || player.last_action || "none";
+                var reason = player.autopilot_reason || "none";
+                var visible = truthyTsv(player.line_of_sight) ? "visible" : "not visible";
+                var replanRecommended = truthyTsv(player.replan_recommended);
+                var replanReasons = player.replan_reasons || "none";
+                var mcpLine;
+                var doomLine;
+                var replanLine;
+                var contextLine;
+                var key;
+                var timestamp;
+
+                if (intent !== "none" && intentStatus !== "inactive") {
+                    mcpLine = "MCP -> " + intent + " / " + intentStyle + " (" + intentStatus + ", seq " + sequenceNumber + ")";
+                } else {
+                    mcpLine = "MCP -> waiting for high-level intent (" + fallbackLabel + ")";
+                }
+
+                doomLine = "Doom AI -> " + controllerMode + " / " + action + " (reason: " + reason + ")";
+                replanLine = replanRecommended ? "Replan -> " + replanReasons : "";
+                contextLine = "Now -> aim " + (player.aim_error || "0")
+                    + " | distance " + (player.distance_to_player || "-")
+                    + " | " + visible
+                    + " | shots " + (player.shots_fired || "0") + " fired / " + (player.shots_hit || "0") + " hit";
+                key = mcpLine + "|" + doomLine + "|" + replanLine;
+
+                if (key !== logState.lastKey) {
+                    timestamp = participantLogTimestamp(player);
+                    logState.lines.push(timestamp + " " + mcpLine);
+                    logState.lines.push(timestamp + " " + doomLine);
+                    if (replanLine) {
+                        logState.lines.push(timestamp + " " + replanLine);
+                    }
+                    logState.lines = logState.lines.slice(-6);
+                    logState.lastKey = key;
+                }
+
+                participantActionLogs[participantId] = logState;
+
+                if (logState.lines.length === 0) {
+                    return ["Waiting for player action state", contextLine];
+                }
+
+                return logState.lines.concat([contextLine]);
+            }
+
+            function gameStateLogLines(match, player1, player2, phase, winner, terminalReason) {
+                return [
+                    "Tick: " + (match.tick || player1.tick || "-") + " | Elapsed: " + (match.elapsed_time_seconds || player1.elapsed_time_seconds || "-") + "s / " + (match.timeout_seconds || player1.timeout_seconds || currentArenaTimeoutSeconds) + "s",
+                    "Phase: " + phase + " | Winner: " + (winner || "none") + (terminalReason ? " | Reason: " + terminalReason : ""),
+                    "Distance: " + (player1.distance_to_player || "-") + " | LOS: " + (truthyTsv(player1.line_of_sight) ? "true" : "false"),
+                    "P1 pos: " + (player1.x || "-") + "," + (player1.y || "-") + " angle " + (player1.angle || "-") + " | P2 pos: " + (player2.x || "-") + "," + (player2.y || "-") + " angle " + (player2.angle || "-"),
+                    "P1 mode: " + (player1.controller_mode || "-") + " | P2 mode: " + (player2.controller_mode || "-")
+                ];
+            }
+
+            function formatModel(value, fallback) {
+                if (!value) {
+                    return fallback;
+                }
+
+                return value.charAt(0).toUpperCase() + value.slice(1);
+            }
+
+            function setDuelPovActive(active) {
+                var grid = document.getElementById("duel-pov-grid");
+                var header = document.getElementById("duel-header");
+
+                if (grid === null) {
+                    return;
+                }
+
+                if (active) {
+                    grid.classList.add("duel-active");
+                    if (header !== null) {
+                        header.classList.add("duel-active");
+                    }
+                } else {
+                    grid.classList.remove("duel-active");
+                    if (header !== null) {
+                        header.classList.remove("duel-active");
+                    }
+                }
+
+                updatePovConnectionBorders();
+                maybeHideDuelLauncherAfterFirstFrames();
+            }
+
+            function maybeHideDuelLauncherAfterFirstFrames() {
+                var grid;
+                var launcher;
+
+                if (!duelLauncherHidePending || currentArenaMode !== "duel") {
+                    return;
+                }
+
+                if (player1PovState.lastFrame < 0 || player2PovState.lastFrame < 0) {
+                    return;
+                }
+
+                grid = document.getElementById("duel-pov-grid");
+                if (grid === null || !grid.classList.contains("duel-active")) {
+                    return;
+                }
+
+                launcher = document.getElementById("arena-launcher");
+                if (launcher !== null) {
+                    launcher.style.display = "none";
+                }
+                duelLauncherHidePending = false;
+            }
+
+            function resetDuelPovFrameState() {
+                player1PovState.lastFrame = -1;
+                player1PovState.lastDiagnosticFrame = -1;
+                player2PovState.lastFrame = -1;
+                player2PovState.lastDiagnosticFrame = -1;
+            }
+
+            function resetParticipantActionLogs() {
+                participantActionLogs = {
+                    player_1: { lastKey: "", lines: [] },
+                    player_2: { lastKey: "", lines: [] }
+                };
+            }
+
+            function isPromiseLike(value) {
+                return value !== null && typeof value === "object" && typeof value.then === "function";
+            }
+
+            function renderPovToCanvas(label, canvas, statusEl, frameGetter, rgbaGetter, palettedGetter, widthGetter, heightGetter, nonzeroGetter, state) {
+                var frame, pointer, palettedPointer, palettePointer, width, height, nonzeroPixels;
+                var source, palettedSource, paletteSource, pixelIndex, colorIndex, renderMode, value, x, y, jsNonzeroPixels, paintedPixels, paintedData;
+                var imageDataPixels, firstImageDataPixel, testPaintedPixels, testData, canvasRect, canvasStyle, paintError, readbackError, testError, shouldLogDiagnostic;
+
+                if (typeof Asyncify !== "undefined" && Asyncify.currData) {
+                    if (statusEl !== null && state.lastFrame < 0) { statusEl.textContent = label + " camera waiting for WASM"; }
+                    return;
+                }
+
+                try {
+                    frame = Module.ccall(frameGetter, "number", [], []);
+                    pointer = Module.ccall(rgbaGetter, "number", [], []);
+                    palettedPointer = Module.ccall(palettedGetter, "number", [], []);
+                    palettePointer = Module.ccall("ArenaDuel_PalettePointer", "number", [], []);
+                    width = Module.ccall(widthGetter, "number", [], []);
+                    height = Module.ccall(heightGetter, "number", [], []);
+                    nonzeroPixels = Module.ccall(nonzeroGetter, "number", [], []);
+                } catch (error) {
+                    console.error("[" + label + "] ccall failed:", error);
+                    if (statusEl !== null) { statusEl.textContent = label + " export unavailable: " + error; }
+                    return;
+                }
+
+                if (isPromiseLike(frame) || isPromiseLike(pointer) || isPromiseLike(palettedPointer) || isPromiseLike(palettePointer) || isPromiseLike(width) || isPromiseLike(height) || isPromiseLike(nonzeroPixels)) {
+                    console.warn("[" + label + "] skipped POV frame because WASM returned async values", {
+                        frame: String(frame),
+                        pointer: String(pointer),
+                        palettedPointer: String(palettedPointer),
+                        palettePointer: String(palettePointer),
+                        width: String(width),
+                        height: String(height),
+                        nonzeroPixels: String(nonzeroPixels)
+                    });
+                    if (statusEl !== null && state.lastFrame < 0) { statusEl.textContent = label + " camera waiting for synchronous frame"; }
+                    return;
+                }
+
+                frame = Number(frame);
+                pointer = Number(pointer);
+                palettedPointer = Number(palettedPointer);
+                palettePointer = Number(palettePointer);
+                width = Number(width);
+                height = Number(height);
+                nonzeroPixels = Number(nonzeroPixels);
+
+                if (!Number.isFinite(frame) || !Number.isFinite(pointer) || !Number.isFinite(palettedPointer) || !Number.isFinite(palettePointer) || !Number.isFinite(width) || !Number.isFinite(height) || !Number.isFinite(nonzeroPixels)) {
+                    console.warn("[" + label + "] skipped POV frame because exported values were not finite", {
+                        frame: frame,
+                        pointer: pointer,
+                        palettedPointer: palettedPointer,
+                        palettePointer: palettePointer,
+                        width: width,
+                        height: height,
+                        nonzeroPixels: nonzeroPixels
+                    });
+                    if (statusEl !== null && state.lastFrame < 0) { statusEl.textContent = label + " camera waiting for valid frame"; }
+                    return;
+                }
+
+                if (!pointer || frame === state.lastFrame || width <= 0 || height <= 0) {
+                    if (statusEl !== null && !pointer) { statusEl.textContent = "Waiting for " + label + " camera"; }
+                    return;
+                }
+
+                if (state.width !== width || state.height !== height || state.imageData === null) {
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.style.width = "100%";
+                    canvas.style.height = "auto";
+                    state.context = canvas.getContext("2d");
+                    state.imageData = state.context.createImageData(width, height);
+                    state.width = width;
+                    state.height = height;
+                } else if (state.context === null) {
+                    state.context = canvas.getContext("2d");
+                }
+
+                jsNonzeroPixels = 0;
+                if (pointer && nonzeroPixels > 0) {
+                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    state.imageData.data.set(source);
+                    for (pixelIndex = 0; pixelIndex < width * height * 4; pixelIndex += 4) {
+                        if (source[pixelIndex] !== 0 || source[pixelIndex + 1] !== 0 || source[pixelIndex + 2] !== 0) {
+                            jsNonzeroPixels++;
+                        }
+                        state.imageData.data[pixelIndex + 3] = 255;
+                    }
+                    renderMode = "rgba";
+                    if (jsNonzeroPixels === 0 && palettedPointer && palettePointer) {
+                        palettedSource = Module.HEAPU8.subarray(palettedPointer, palettedPointer + width * height);
+                        paletteSource = Module.HEAPU8.subarray(palettePointer, palettePointer + 256 * 4);
+                        for (pixelIndex = 0; pixelIndex < width * height; pixelIndex++) {
+                            colorIndex = palettedSource[pixelIndex];
+                            state.imageData.data[pixelIndex * 4 + 0] = paletteSource[colorIndex * 4 + 0];
+                            state.imageData.data[pixelIndex * 4 + 1] = paletteSource[colorIndex * 4 + 1];
+                            state.imageData.data[pixelIndex * 4 + 2] = paletteSource[colorIndex * 4 + 2];
+                            state.imageData.data[pixelIndex * 4 + 3] = 255;
+                            if (state.imageData.data[pixelIndex * 4 + 0] !== 0 || state.imageData.data[pixelIndex * 4 + 1] !== 0 || state.imageData.data[pixelIndex * 4 + 2] !== 0) {
+                                jsNonzeroPixels++;
+                            }
+                        }
+                        renderMode = "js-palette";
+                    }
+                } else if (palettedPointer && nonzeroPixels > 0) {
+                    palettedSource = Module.HEAPU8.subarray(palettedPointer, palettedPointer + width * height);
+                    jsNonzeroPixels = 0;
+                    for (pixelIndex = 0; pixelIndex < width * height; pixelIndex++) {
+                        colorIndex = palettedSource[pixelIndex];
+                        if (colorIndex !== 0) {
+                            jsNonzeroPixels++;
+                        }
+                        x = pixelIndex % width;
+                        y = Math.floor(pixelIndex / width);
+                        value = colorIndex === 0 ? 12 : 96 + ((colorIndex * 47 + x + y) % 160);
+                        state.imageData.data[pixelIndex * 4 + 0] = colorIndex === 0 ? 12 : value;
+                        state.imageData.data[pixelIndex * 4 + 1] = colorIndex === 0 ? 12 : 255 - Math.floor(value / 2);
+                        state.imageData.data[pixelIndex * 4 + 2] = colorIndex === 0 ? 12 : 64 + ((colorIndex * 23 + x) % 160);
+                        state.imageData.data[pixelIndex * 4 + 3] = 255;
+                    }
+
+                    if (jsNonzeroPixels === 0) {
+                        for (pixelIndex = 0; pixelIndex < width * height; pixelIndex++) {
+                            x = pixelIndex % width;
+                            y = Math.floor(pixelIndex / width);
+                            value = (((x >> 4) ^ (y >> 4)) & 1) ? 255 : 32;
+                            state.imageData.data[pixelIndex * 4 + 0] = value;
+                            state.imageData.data[pixelIndex * 4 + 1] = value === 255 ? 64 : 220;
+                            state.imageData.data[pixelIndex * 4 + 2] = value === 255 ? 64 : 255;
+                            state.imageData.data[pixelIndex * 4 + 3] = 255;
+                        }
+                        renderMode = "pointer-empty-test";
+                    } else {
+                        renderMode = "false-color";
+                    }
+                } else {
+                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    state.imageData.data.set(source);
+                    for (pixelIndex = 3; pixelIndex < width * height * 4; pixelIndex += 4) {
+                        state.imageData.data[pixelIndex] = 255;
+                    }
+                    renderMode = "rgba";
+                }
+
+                imageDataPixels = 0;
+                firstImageDataPixel = "none";
+                for (pixelIndex = 0; pixelIndex < width * height * 4; pixelIndex += 4) {
+                    if (state.imageData.data[pixelIndex] !== 0 || state.imageData.data[pixelIndex + 1] !== 0 || state.imageData.data[pixelIndex + 2] !== 0) {
+                        imageDataPixels++;
+                        if (firstImageDataPixel === "none") {
+                            firstImageDataPixel = (pixelIndex / 4) + ":"
+                                + state.imageData.data[pixelIndex] + ","
+                                + state.imageData.data[pixelIndex + 1] + ","
+                                + state.imageData.data[pixelIndex + 2] + ","
+                                + state.imageData.data[pixelIndex + 3];
+                        }
+                    }
+                }
+
+                state.context = canvas.getContext("2d");
+                paintError = "";
+                readbackError = "";
+                testError = "";
+                try {
+                    state.context.putImageData(state.imageData, 0, 0);
+                } catch (error) {
+                    paintError = String(error);
+                    console.error("[" + label + "] putImageData failed:", error);
+                }
+                paintedPixels = 0;
+                try {
+                    paintedData = state.context.getImageData(0, 0, width, height).data;
+                    for (pixelIndex = 0; pixelIndex < width * height * 4; pixelIndex += 4) {
+                        if (paintedData[pixelIndex] !== 0 || paintedData[pixelIndex + 1] !== 0 || paintedData[pixelIndex + 2] !== 0) {
+                            paintedPixels++;
+                        }
+                    }
+                } catch (error) {
+                    readbackError = String(error);
+                    console.error("[" + label + "] canvas readback failed:", error);
+                }
+
+                testPaintedPixels = -1;
+                if (paintedPixels === 0) {
+                    try {
+                        state.context.fillStyle = "rgb(255, 0, 0)";
+                        state.context.fillRect(0, 0, 16, 16);
+                        testData = state.context.getImageData(0, 0, 16, 16).data;
+                        testPaintedPixels = 0;
+                        for (pixelIndex = 0; pixelIndex < 16 * 16 * 4; pixelIndex += 4) {
+                            if (testData[pixelIndex] !== 0 || testData[pixelIndex + 1] !== 0 || testData[pixelIndex + 2] !== 0) {
+                                testPaintedPixels++;
+                            }
+                        }
+                    } catch (error) {
+                        testError = String(error);
+                        console.error("[" + label + "] canvas test draw failed:", error);
+                    }
+                }
+
+                shouldLogDiagnostic = paintedPixels === 0 && (frame === state.lastDiagnosticFrame + 20 || state.lastDiagnosticFrame < 0);
+                if (shouldLogDiagnostic) {
+                    canvasRect = canvas.getBoundingClientRect();
+                    canvasStyle = window.getComputedStyle(canvas);
+                    window.doomArenaPovDiagnostics = window.doomArenaPovDiagnostics || {};
+                    window.doomArenaPovDiagnostics[label] = {
+                        frame: frame,
+                        renderMode: renderMode,
+                        pointer: pointer,
+                        palettedPointer: palettedPointer,
+                        palettePointer: palettePointer,
+                        cNonzeroPixels: nonzeroPixels,
+                        jsNonzeroPixels: jsNonzeroPixels,
+                        imageDataPixels: imageDataPixels,
+                        firstImageDataPixel: firstImageDataPixel,
+                        paintedPixels: paintedPixels,
+                        testPaintedPixels: testPaintedPixels,
+                        paintError: paintError,
+                        readbackError: readbackError,
+                        testError: testError,
+                        canvasWidth: canvas.width,
+                        canvasHeight: canvas.height,
+                        clientWidth: canvas.clientWidth,
+                        clientHeight: canvas.clientHeight,
+                        rectWidth: canvasRect.width,
+                        rectHeight: canvasRect.height,
+                        display: canvasStyle.display,
+                        visibility: canvasStyle.visibility,
+                        opacity: canvasStyle.opacity,
+                        background: canvasStyle.backgroundColor
+                    };
+                    console.warn("[" + label + "] POV diagnostic", window.doomArenaPovDiagnostics[label]);
+                    state.lastDiagnosticFrame = frame;
+                }
+                state.lastFrame = frame;
+                maybeHideDuelLauncherAfterFirstFrames();
+                if (statusEl !== null) { statusEl.textContent = ""; }
+            }
+
+            function refreshPlayer1Pov() {
+                var canvas, status;
+
+                if (currentArenaMode !== "duel" || typeof Module === "undefined" || typeof Module.ccall !== "function") { return; }
+                canvas = document.getElementById("player-1-canvas");
+                status = document.getElementById("player-1-pov-status");
+                if (canvas === null) { return; }
+
+                renderPovToCanvas(
+                    "P1", canvas, status,
+                    "ArenaDuel_Player1ViewFrame",
+                    "ArenaDuel_Player1ViewRGBA",
+                    "ArenaDuel_Player1ViewPaletted",
+                    "ArenaDuel_Player1ViewWidth",
+                    "ArenaDuel_Player1ViewHeight",
+                    "ArenaDuel_Player1ViewNonzeroPixels",
+                    player1PovState
+                );
+            }
+
+            function refreshPlayer2Pov() {
+                var canvas, status;
+
+                if (currentArenaMode !== "duel" || typeof Module === "undefined" || typeof Module.ccall !== "function") { return; }
+                canvas = document.getElementById("player-2-canvas");
+                status = document.getElementById("player-2-pov-status");
+                if (canvas === null) { return; }
+
+                renderPovToCanvas(
+                    "P2", canvas, status,
+                    "ArenaDuel_Player2ViewFrame",
+                    "ArenaDuel_Player2ViewRGBA",
+                    "ArenaDuel_Player2ViewPaletted",
+                    "ArenaDuel_Player2ViewWidth",
+                    "ArenaDuel_Player2ViewHeight",
+                    "ArenaDuel_Player2ViewNonzeroPixels",
+                    player2PovState
+                );
+            }
+
+            function updateDuelDashboard(rows) {
+                var dashboard = document.getElementById("arena-duel-dashboard");
+                var match = rows.find(function (row) { return row.kind === "match"; }) || {};
+                var player1 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_1"; }) || {};
+                var player2 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_2"; }) || {};
+                var p1Model = formatModel(player1.model || currentPlayer1Model, "Codex");
+                var p2Model = formatModel(player2.model || currentPlayer2Model, "Claude");
+                var phase = match.phase || player1.phase || "combat";
+                var winner = match.winner || player1.winner || "";
+                var terminalReason = match.terminal_reason || player1.terminal_reason || "";
+
+                if (dashboard !== null && currentArenaMode === "duel") {
+                    dashboard.style.display = "block";
+                }
+                setDuelPovActive(currentArenaMode === "duel");
+
+                setText("duel-title", "Doom Arena | " + p1Model + " vs " + p2Model + " | Round " + (match.round || player1.round || currentArenaRound) + " | Seed " + (match.seed || player1.seed || currentArenaSeed) + " | " + (phase === "finished" ? "Finished" : "Running"));
+                setText("duel-player-1-name", "Player 1: " + p1Model);
+                setText("duel-player-2-name", "Player 2: " + p2Model);
+                setText("duel-p1-health", player1.health || "-");
+                setText("duel-p2-health", player2.health || "-");
+                setText("duel-p1-ammo", player1.ammo_bullets || "-");
+                setText("duel-p2-ammo", player2.ammo_bullets || "-");
+                setText("duel-p1-action", player1.last_action || "-");
+                setText("duel-p2-action", player2.last_action || "-");
+                setText("duel-p1-shots", (player1.shots_fired || "0") + " fired / " + (player1.shots_hit || "0") + " hit");
+                setText("duel-p2-shots", (player2.shots_fired || "0") + " fired / " + (player2.shots_hit || "0") + " hit");
+                setText("duel-p1-damage", player1.damage_dealt || "0");
+                setText("duel-p2-damage", player2.damage_dealt || "0");
+                renderLogLines("duel-p1-log", participantLogLines("player_1", player1, "waiting"));
+                renderLogLines("duel-p2-log", participantLogLines("player_2", player2, "waiting"));
+                renderLogLines("duel-game-log", gameStateLogLines(match, player1, player2, phase, winner, terminalReason));
+                updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);
+                updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
+                setText(
+                    "duel-shared-state",
+                    "Tick: " + (match.tick || player1.tick || "-") +
+                    " | Phase: " + phase +
+                    " | Distance: " + (player1.distance_to_player || "-") +
+                    " | LOS: " + ((player1.line_of_sight || "0") === "1" ? "true" : "false") +
+                    " | Winner: " + (winner || "none") +
+                    (terminalReason ? " | Reason: " + terminalReason : "")
+                );
+            }
+
+            function refreshDuelState() {
+                if (currentArenaMode !== "duel") {
+                    setDuelPovActive(false);
+                    clearDuelDeathOverlays();
+                    return;
+                }
+
+                fetch(agenticStateEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (text) {
+                        updateDuelDashboard(parseTsv(text));
+                    });
+
+                fetch(arenaEventsEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.text();
+                    })
+                    .then(function (text) {
+                        var events = parseTsv(text).slice(-5);
+                        var node = document.getElementById("duel-events");
+
+                        if (node === null) {
+                            return;
+                        }
+
+                        node.innerHTML = "";
+                        var title = document.createElement("div");
+                        title.className = "duel-log-title";
+                        title.textContent = "Event Log";
+                        node.appendChild(title);
+                        if (events.length === 0) {
+                            var emptyLine = document.createElement("div");
+                            emptyLine.className = "duel-log-line";
+                            emptyLine.textContent = "No duel events yet";
+                            node.appendChild(emptyLine);
+                            return;
+                        }
+                        events.forEach(function (event) {
+                            var line = document.createElement("div");
+                            line.className = "duel-log-line";
+                            line.textContent = "[" + ((parseInt(event.timestamp_ms || "0", 10) / 1000).toFixed(1)) + "s] " + event.event;
+                            node.appendChild(line);
+                        });
+                    });
+            }
+
+            function postPlayerDebugCommand(command) {
+                var payload = commandTiming(250, "browser_player_cmd");
+
+                payload.forward = 0;
+                payload.strafe = 0;
+                payload.turn = 0;
+                payload.attack = false;
+                payload.use = false;
+
+                if (command === "forward") {
+                    payload.forward = 1;
+                } else if (command === "turn-left") {
+                    payload.turn = -1;
+                } else if (command === "turn-right") {
+                    payload.turn = 1;
+                } else if (command === "shoot") {
+                    payload.attack = true;
+                } else if (command === "use") {
+                    payload.use = true;
+                } else if (command === "stop") {
+                    payload.duration_ms = 100;
+                    payload.expires_at_ms = payload.issued_at_ms + 100;
+                }
+
+                fetch(arenaPlayerCommandEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            }
+
+            function postEnemyDebugCommand(command) {
+                var timing = commandTiming(1500, "browser_enemy_cmd");
+                var body;
+
+                if (command === "clear") {
+                    body = "run_id\tscenario_id\tcommand_id\tissued_at_ms\texpires_at_ms\ttarget_type\ttarget\tcommand\targ1\targ2\n";
+                } else {
+                    body =
+                        "run_id\tscenario_id\tcommand_id\tissued_at_ms\texpires_at_ms\ttarget_type\ttarget\tcommand\targ1\targ2\n" +
+                        timing.run_id + "\t" +
+                        timing.scenario_id + "\t" +
+                        timing.command_id + "\t" +
+                        timing.issued_at_ms + "\t" +
+                        timing.expires_at_ms + "\tteam\tenemy\t" +
+                        command + "\t\t\n";
+                }
+
+                fetch(agenticCommandEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/tab-separated-values" },
+                    body: body,
+                });
+            }
+
+            function participantIntentStyle(intent) {
+                if (intent === "strafe_attack") {
+                    return "aggressive";
+                }
+
+                if (intent === "hold") {
+                    return "cautious";
+                }
+
+                return "balanced";
+            }
+
+            function postParticipantIntentDebugCommand(participantId, intent) {
+                var durationMs = 3000;
+                var timing = commandTiming(durationMs, "browser_participant_intent");
+                var payload = {
+                    run_id: timing.run_id,
+                    scenario_id: timing.scenario_id,
+                    intent_id: timing.command_id,
+                    issued_at_ms: timing.issued_at_ms,
+                    expires_at_ms: timing.expires_at_ms,
+                    participant_id: participantId,
+                    intent: intent,
+                    style: participantIntentStyle(intent),
+                    target_id: participantId === "player_1" ? "player_2" : "player_1",
+                    preferred_distance: 600,
+                    aggression: 0.5,
+                    duration_ms: durationMs,
+                    strafe_direction: "auto",
+                    movement_bias: intent === "strafe_attack" ? "circle" : "direct",
+                    fire_policy: "only_when_aligned",
+                    distance_policy: "maintain",
+                    replan_if: [],
+                    decision_cadence_ms: 750,
+                };
+
+                fetch(arenaParticipantIntentEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                }).catch(function (error) {
+                    console.warn("Doom Agent Arena: failed to post participant intent", error);
+                });
+            }
+
+            function clearParticipantIntentsDebug() {
+                fetch(arenaParticipantIntentEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/tab-separated-values" },
+                    body: arenaParticipantIntentHeader,
+                })
+                    .then(function () {
+                        lastLoadedParticipantIntents = "";
+                        if (Module.FS) {
+                            Module.FS.writeFile(arenaParticipantIntentPath, arenaParticipantIntentHeader);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.warn("Doom Agent Arena: failed to clear participant intents", error);
+                    });
+            }
+
+            function refreshArenaScore() {
+                fetch(arenaScoreEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return null;
+                        }
+
+                        return response.json();
+                    })
+                    .then(function (score) {
+                        var status = document.getElementById("arena-debug-status");
+
+                        if (score === null || status === null) {
+                            return;
+                        }
+
+                        if (score.mode === "duel") {
+                            status.textContent =
+                                "Duel: " + score.phase +
+                                " | Winner: " + score.winner +
+                                " | P1 HP: " + score.player_1_health +
+                                " | P2 HP: " + score.player_2_health;
+                        } else {
+                            status.textContent =
+                                "Status: " + score.winner +
+                                " | Player HP: " + score.player_health +
+                                " | Enemies alive: " + score.enemies_alive + "/" + score.enemies_total;
+                        }
+                    });
+            }
+
+            function pollArenaReset() {
+                fetch(arenaResetEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return null;
+                        }
+
+                        return response.json();
+                    })
+                    .then(function (payload) {
+                        if (payload !== null && payload.reset_requested && doomScriptLoaded) {
+                            var url = new URL(window.location.href);
+
+                            if (
+                                payload.run_id === loadedDoomRunId &&
+                                payload.arena_mode === loadedDoomArenaMode
+                            ) {
+                                return;
+                            }
+
+                            if (payload.arena_mode === "duel") {
+                                url.searchParams.set("duel", "1");
+                                url.searchParams.delete("arenaData");
+                            } else {
+                                url.searchParams.set("arenaData", "mock");
+                                url.searchParams.delete("duel");
+                            }
+
+                            window.location.href = url.toString();
+                        }
+                    });
+            }
+
+            async function startDoom(mode, fetchBeforeStart) {
+                var launcher = document.getElementById("arena-launcher");
+                var resetPromise = Promise.resolve();
+
+                updateLauncherStatus("");
+                setArenaLauncherButtonsDisabled(true);
+                if (currentArenaMode !== "duel") {
+                    resetPromise = postArenaReset({ arena_mode: "enemies" });
+                }
+
+                try {
+                    await resetPromise;
+                    if (!selectArenaDataSource(mode)) {
+                        setArenaLauncherButtonsDisabled(false);
+                        return;
+                    }
+                } catch (error) {
+                    updateLauncherStatus(error.message);
+                    console.warn("Doom Agent Arena: " + error.message);
+                    setArenaLauncherButtonsDisabled(false);
+                    return;
+                }
+
+                if (currentArenaMode === "duel") {
+                    duelLauncherHidePending = true;
+                    updateLauncherStatus("Loading duel view...");
+                } else if (launcher !== null) {
+                    launcher.style.display = "none";
+                }
+
+                loadDoomScript();
+            }
+
+            function showDeathRestart() {
+                var launcher = document.getElementById("arena-launcher");
+
+                if (gameEnded) {
+                    return;
+                }
+
+                gameEnded = true;
+                setLauncherCopy(
+                    "You Died",
+                    "Press Enter to restart."
+                );
+                updateLauncherStatus("");
+                setLauncherMode("dead");
+
+                if (launcher !== null) {
+                    launcher.style.display = "flex";
+                }
+            }
+
+            function initializeArenaLauncher() {
+                var buttons = document.querySelectorAll("[data-arena-mode]");
+                var queryParams = new URLSearchParams(window.location.search);
+                var queryMode = queryParams.get("arenaData");
+                var queryDuel = queryParams.get("duel") === "1" || queryParams.get("arenaMode") === "duel";
+                var queryAutoStart = queryParams.get("autoStart") === "1";
+
+                buttons.forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        var mode = button.getAttribute("data-arena-mode");
+                        startDoom(mode, false);
+                    });
+                });
+
+                document.getElementById("arena-start-game").addEventListener("click", function () {
+                    startDuel();
+                });
+                document.getElementById("duel-reset").addEventListener("click", function () {
+                    startDuel();
+                });
+                document.querySelectorAll("[data-duel-restart]").forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        startDuel();
+                    });
+                });
+                document.getElementById("duel-p1-copy-prompt").addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    disableDoomPointerCapture();
+                    copyPromptText("duel-p1-prompt");
+                });
+                document.getElementById("duel-p2-copy-prompt").addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    disableDoomPointerCapture();
+                    copyPromptText("duel-p2-prompt");
+                });
+
+                document.querySelectorAll("[data-player-command]").forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        postPlayerDebugCommand(button.getAttribute("data-player-command"));
+                    });
+                });
+
+                document.querySelectorAll("[data-enemy-command]").forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        postEnemyDebugCommand(button.getAttribute("data-enemy-command"));
+                    });
+                });
+
+                document.querySelectorAll("[data-participant-intent]").forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        postParticipantIntentDebugCommand(
+                            button.getAttribute("data-participant-id"),
+                            button.getAttribute("data-participant-intent")
+                        );
+                    });
+                });
+
+                document.getElementById("clear-participant-intents").addEventListener("click", function () {
+                    clearParticipantIntentsDebug();
+                });
+
+                document.addEventListener("keydown", function (event) {
+                    if (gameEnded && event.key === "Enter") {
+                        event.preventDefault();
+                        window.location.href = window.location.pathname;
+                    }
+                });
+
+                updateArenaBanner();
+                setLauncherMode("choose");
+                installPointerCaptureGuards();
+                disableDoomPointerCapture();
+
+                if (queryDuel && queryAutoStart) {
+                    startDuelFromExistingRun();
+                    return;
+                }
+
+                if (queryDuel) {
+                    currentArenaMode = "duel";
+                    currentPlayer1Model = selectedModelValue("player-1-model", "codex");
+                    currentPlayer2Model = selectedModelValue("player-2-model", "claude");
+                    setLauncherCopy("Doom Arena Duel", "Choose run settings, then click Start Duel.");
+                    updateArenaBanner();
+                    return;
+                }
+
+                if (queryMode === "mock" || queryMode === "local") {
+                    startDoom(queryMode, false);
+                }
+            }
+
+            var Module = {
+                onRuntimeInitialized: () => {
+                    syncArenaRunMetadataNow();
+                    loadedDoomRunId = currentArenaRunId;
+                    loadedDoomArenaMode = currentArenaMode;
+                    disableDoomPointerCapture();
+                    callMain(commonArgs);
+                    disableDoomPointerCapture();
+                    window.setInterval(syncArenaRunMetadata, 1000);
+                    window.setInterval(syncAgenticState, 250);
+                    window.setInterval(syncArenaEvents, 250);
+                    window.setInterval(syncAgenticCommands, 100);
+                    window.setInterval(syncArenaPlayerCommand, 100);
+                    window.setInterval(syncArenaParticipantCommands, 100);
+                    window.setInterval(syncArenaParticipantIntents, 100);
+                    window.setInterval(syncArenaParticipantReady, 100);
+                    window.setInterval(refreshArenaScore, 1000);
+                    window.setInterval(refreshDuelState, 1000);
+                    window.setInterval(refreshPlayer1Pov, 100);
+                    window.setInterval(refreshPlayer2Pov, 100);
+                    window.setInterval(pollArenaReset, 1000);
+                    window.setInterval(disableDoomPointerCapture, 1000);
+                },
+                noInitialRun: true,
+                locateFile: function (path) {
+                    if (path === "websockets-doom.wasm") {
+                        return path + "?v=dual-pov-20";
+                    }
+
+                    return path;
+                },
+                preRun: () => {
+                    Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
+                    Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+                    Module.FS.createPreloadedFile("", arenaDataMountPath, selectedArenaDataSourcePath, true, true);
+                },
+                printErr: function (text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+                    console.error(text);
+                },
+                canvas: (function () {
+                    var canvas = document.getElementById("canvas");
+                    canvas.addEventListener(
+                        "webglcontextlost",
+                        function (e) {
+                            alert("WebGL context lost. You will need to reload the page.");
+                            e.preventDefault();
+                        },
+                        false
+                    );
+                    return canvas;
+                })(),
+                print: function (text) {
+                    if (text === "ARENA_PLAYER_DEAD") {
+                        showDeathRestart();
+                        return;
+                    }
+
+                    console.log(text);
+                },
+                setStatus: function (text) {
+                    console.log(text);
+                },
+                totalDependencies: 0,
+                monitorRunDependencies: function (left) {
+                    this.totalDependencies = Math.max(this.totalDependencies, left);
+                    Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
+                },
+            };
+
+            window.onerror = function (event) {
+                Module.setStatus("Exception thrown, see JavaScript console");
+                Module.setStatus = function (text) {
+                    if (text) Module.printErr("[post-exception status] " + text);
+                };
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initializeArenaLauncher);
+            } else {
+                initializeArenaLauncher();
+            }
+        </script>
+    </body>
+</html>

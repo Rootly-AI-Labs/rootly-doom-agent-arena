@@ -1,17 +1,18 @@
 # Smoke Tests
 
-These checks cover the server, MCP tools, Doom intent parser, autopilot logic, browser/WASM path, and rolling-loop timing.
+These checks cover the server, MCP tools, Doom intent parser, autopilot logic, and browser/WASM path.
 
 ## Python Compile
 
 ```powershell
 py -m py_compile `
   scripts\doom_arena_mcp.py `
-  scripts\doom_arena_mcp_duel_orchestrator.py `
+  scripts\doom_arena_duel_prompts.py `
   scripts\doom_arena_server.py `
   scripts\start_doom_arena_duel.py `
-  scripts\smoke_duel_autopilot.py `
-  scripts\smoke_rolling_tactical_loop.py
+  scripts\smoke_participant_intents_api.py `
+  scripts\smoke_mcp_participant_intents.py `
+  scripts\smoke_duel_autopilot.py
 ```
 
 ## Parser And Autopilot
@@ -55,23 +56,6 @@ It verifies:
 - clear/stop returns to fallback mode
 - wrong controller token is rejected
 - low-level debug path still works after clearing intents
-
-## Rolling Loop Timing
-
-```powershell
-py scripts\smoke_rolling_tactical_loop.py
-```
-
-This simulates decision latencies:
-
-```text
-100ms
-750ms
-1500ms
-3000ms
-```
-
-It verifies that Doom keeps an active intent while model decisions are pending and that stale responses are discarded when multiple decisions are in flight.
 
 ## Full MCP Duel E2E
 
