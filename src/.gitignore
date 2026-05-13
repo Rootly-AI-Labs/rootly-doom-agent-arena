@@ -3,6 +3,13 @@ Makefile.in
 .deps
 *.rc
 websockets-doom.*
+arena_game_state.local.tsv
+arena_duel_events.local.tsv
+arena_player_command.local.tsv
+arena_participant_commands.local.tsv
+arena_enemy_commands.local.tsv
+arena_run_metadata.local.tsv
+arena_controller_tokens.local.json
 *.cfg
 *.exe
 *.desktop

@@ -1,0 +1,11 @@
+2026-05-07T13:55:52 start server_url=http://127.0.0.1:8001
+2026-05-07T13:55:52 recv method='initialize' id=1
+2026-05-07T13:55:52 recv method='notifications/initialized' id=None
+2026-05-07T13:55:52 recv method='tools/list' id=2
+2026-05-07T13:55:52 stdin closed
+2026-05-07T15:21:42 start server_url=http://127.0.0.1:8001
+2026-05-07T15:21:42 client ready; waiting for MCP messages
+2026-05-07T15:21:42 recv method='initialize' id=1
+2026-05-07T15:21:42 recv method='notifications/initialized' id=None
+2026-05-07T15:21:42 recv method='tools/list' id=2
+2026-05-07T15:21:42 stdin closed

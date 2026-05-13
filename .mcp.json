@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "doom-arena": {
+      "type": "stdio",
+      "command": "C:\\Users\\muhha\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "args": [
+        "C:\\Users\\muhha\\OneDrive\\Desktop\\doom-wasm\\scripts\\doom_arena_mcp.py",
+        "--server-url",
+        "http://127.0.0.1:8001"
+      ]
+    }
+  }
+}

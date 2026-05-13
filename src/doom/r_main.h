@@ -21,6 +21,7 @@
 #define __R_MAIN__
 
 #include "d_player.h"
+#include "p_mobj.h"
 #include "r_data.h"
 
 
@@ -150,6 +151,8 @@ R_AddPointToBox
 
 // Called by G_Drawer.
 void R_RenderPlayerView (player_t *player);
+void R_RenderMobjView (mobj_t *camera, player_t *template_player);
+boolean R_IsSecondaryView(void);
 
 // Called by startup code.
 void R_Init (void);

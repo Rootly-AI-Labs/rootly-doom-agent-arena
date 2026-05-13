@@ -277,9 +277,10 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
 
-    // Rootly Incident Mode metadata. incident_index is -1 for normal objects.
-    int			incident_index;
-    char		incident_label[64];
+    // Doom Agent Arena metadata. arena_entity_index is -1 for normal objects.
+    int			arena_entity_index;
+    char		arena_entity_id[32];
+    char		arena_label[64];
     
 } mobj_t;
 

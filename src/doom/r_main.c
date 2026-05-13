@@ -32,6 +32,7 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
+#include "p_local.h"
 #include "r_local.h"
 #include "r_sky.h"
 
@@ -77,6 +78,7 @@ fixed_t			viewcos;
 fixed_t			viewsin;
 
 player_t*		viewplayer;
+static boolean		secondaryview;
 
 // 0 = high, 1 = low
 int			detailshift;	
@@ -855,6 +857,40 @@ void R_SetupFrame (player_t* player)
     validcount++;
 }
 
+static void R_SetupMobjFrame(mobj_t *camera, player_t *template_player)
+{
+    int i;
+
+    viewplayer = template_player;
+    viewx = camera->x;
+    viewy = camera->y;
+    viewangle = camera->angle;
+    extralight = template_player != NULL ? template_player->extralight : 0;
+    viewz = camera->z + VIEWHEIGHT;
+
+    viewsin = finesine[viewangle>>ANGLETOFINESHIFT];
+    viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];
+
+    sscount = 0;
+
+    if (template_player != NULL && template_player->fixedcolormap)
+    {
+	fixedcolormap =
+	    colormaps
+	    + template_player->fixedcolormap*256;
+
+	walllights = scalelightfixed;
+
+	for (i=0 ; i<MAXLIGHTSCALE ; i++)
+	    scalelightfixed[i] = fixedcolormap;
+    }
+    else
+	fixedcolormap = 0;
+
+    framecount++;
+    validcount++;
+}
+
 
 
 //
@@ -862,6 +898,7 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
+    secondaryview = false;
     R_SetupFrame (player);
 
     // Clear buffers.
@@ -888,4 +925,40 @@ void R_RenderPlayerView (player_t* player)
 
     // Check for new console commands.
     NetUpdate ();				
+}
+
+void R_RenderMobjView (mobj_t *camera, player_t *template_player)
+{
+    player_t camera_player;
+
+    if (camera == NULL || template_player == NULL)
+    {
+	return;
+    }
+
+    camera_player = *template_player;
+    camera_player.mo = camera;
+
+    secondaryview = true;
+    R_SetupMobjFrame(camera, &camera_player);
+
+    R_ClearClipSegs ();
+    R_ClearDrawSegs ();
+    R_ClearPlanes ();
+    R_ClearSprites ();
+
+    NetUpdate ();
+    R_RenderBSPNode (numnodes-1);
+    NetUpdate ();
+    R_DrawPlanes ();
+    NetUpdate ();
+    R_DrawMasked ();
+    NetUpdate ();
+
+    secondaryview = false;
+}
+
+boolean R_IsSecondaryView(void)
+{
+    return secondaryview;
 }

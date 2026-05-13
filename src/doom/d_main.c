@@ -66,6 +66,7 @@
 #include "g_game.h"
 
 #include "am_map.h"
+#include "arena_duel.h"
 #include "hu_stuff.h"
 #include "net_client.h"
 #include "net_dedicated.h"
@@ -221,7 +222,12 @@ boolean D_Display(void)
     I_UpdateNoBlit();
 
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic) R_RenderPlayerView(&players[displayplayer]);
+    if (gamestate == GS_LEVEL && !automapactive && gametic)
+    {
+        R_RenderPlayerView(&players[displayplayer]);
+        ArenaDuel_RenderPlayer1View();
+        ArenaDuel_RenderPlayer2View();
+    }
 
     if (gamestate == GS_LEVEL && gametic) HU_Drawer();
 

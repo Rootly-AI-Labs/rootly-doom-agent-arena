@@ -50,6 +50,8 @@ void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
 
 void I_ReadScreen (pixel_t* scr);
+void I_ConvertPalettedBufferToRGBA(const pixel_t *src, byte *dst, int pixel_count);
+uintptr_t I_GetPaletteData(void);
 
 void I_BeginRead (void);
 

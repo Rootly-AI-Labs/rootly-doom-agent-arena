@@ -36,7 +36,8 @@
 
 #include "r_local.h"
 #include "hu_stuff.h"
-#include "rootly_incidents.h"
+#include "arena_duel.h"
+#include "arena_enemies.h"
 #include "v_video.h"
 
 #include "doomstat.h"
@@ -83,32 +84,24 @@ extern patch_t* hu_font[HU_FONTSIZE];
 short		negonearray[SCREENWIDTH];
 short		screenheightarray[SCREENWIDTH];
 
-static boolean incident_label_font_warning;
-static boolean incident_label_colors_ready;
-static int incident_label_red;
-static int incident_label_orange;
-static int incident_label_yellow;
-static int incident_label_green;
-static int incident_label_gray;
+static boolean arena_label_font_warning;
+static boolean arena_label_colors_ready;
+static int arena_label_color;
 
 
-static void R_InitIncidentLabelColors(void)
+static void R_InitArenaLabelColors(void)
 {
-    if (incident_label_colors_ready)
+    if (arena_label_colors_ready)
     {
         return;
     }
 
-    incident_label_red = I_GetPaletteIndex(190, 24, 24);
-    incident_label_orange = I_GetPaletteIndex(218, 104, 0);
-    incident_label_yellow = I_GetPaletteIndex(216, 170, 24);
-    incident_label_green = I_GetPaletteIndex(36, 142, 48);
-    incident_label_gray = I_GetPaletteIndex(72, 72, 72);
-    incident_label_colors_ready = true;
+    arena_label_color = I_GetPaletteIndex(216, 170, 24);
+    arena_label_colors_ready = true;
 }
 
 
-static int R_IncidentLabelWidth(const char *string)
+static int R_ArenaLabelWidth(const char *string)
 {
     int width;
     int c;
@@ -134,48 +127,26 @@ static int R_IncidentLabelWidth(const char *string)
 }
 
 
-static void R_TruncateIncidentLabel(char *label, int max_width)
+static void R_TruncateArenaLabel(char *label, int max_width)
 {
     size_t len;
 
     len = strlen(label);
 
-    while (len > 0 && R_IncidentLabelWidth(label) > max_width)
+    while (len > 0 && R_ArenaLabelWidth(label) > max_width)
     {
         len--;
         label[len] = '\0';
     }
 }
 
-static int R_IncidentLabelColor(const char *label)
+static int R_ArenaLabelColor(const char *label)
 {
-    R_InitIncidentLabelColors();
-
-    if (!strncmp(label, "SEV0", 4) || !strncmp(label, "SEV1", 4))
-    {
-        return incident_label_red;
-    }
-    else if (!strncmp(label, "SEV2", 4))
-    {
-        return incident_label_orange;
-    }
-    else if (!strncmp(label, "SEV3", 4))
-    {
-        return incident_label_yellow;
-    }
-    else if (!strncmp(label, "SEV4", 4))
-    {
-        return incident_label_green;
-    }
-    else if (!strncmp(label, "SEV5", 4))
-    {
-        return incident_label_gray;
-    }
-
-    return incident_label_gray;
+    R_InitArenaLabelColors();
+    return arena_label_color;
 }
 
-static const byte incident_font_digits[36][5] =
+static const byte arena_font_digits[36][5] =
 {
     { 0x7, 0x5, 0x5, 0x5, 0x7 }, // 0
     { 0x2, 0x6, 0x2, 0x2, 0x7 }, // 1
@@ -215,29 +186,34 @@ static const byte incident_font_digits[36][5] =
     { 0x7, 0x1, 0x2, 0x4, 0x7 }, // Z
 };
 
-static const byte incident_font_colon[5] = { 0x0, 0x2, 0x0, 0x2, 0x0 };
+static const byte arena_font_colon[5] = { 0x0, 0x2, 0x0, 0x2, 0x0 };
+static const byte arena_font_underscore[5] = { 0x0, 0x0, 0x0, 0x0, 0x7 };
 
-static const byte *R_IncidentSmallGlyph(int c)
+static const byte *R_ArenaSmallGlyph(int c)
 {
     c = toupper((unsigned char)c);
 
     if (c >= '0' && c <= '9')
     {
-        return incident_font_digits[c - '0'];
+        return arena_font_digits[c - '0'];
     }
     else if (c >= 'A' && c <= 'Z')
     {
-        return incident_font_digits[10 + c - 'A'];
+        return arena_font_digits[10 + c - 'A'];
     }
     else if (c == ':')
     {
-        return incident_font_colon;
+        return arena_font_colon;
+    }
+    else if (c == '_')
+    {
+        return arena_font_underscore;
     }
 
     return NULL;
 }
 
-static int R_IncidentSmallTextWidth(const char *string)
+static int R_ArenaSmallTextWidth(const char *string)
 {
     int width;
 
@@ -249,7 +225,7 @@ static int R_IncidentSmallTextWidth(const char *string)
         {
             width += 3;
         }
-        else if (R_IncidentSmallGlyph(*string) != NULL)
+        else if (R_ArenaSmallGlyph(*string) != NULL)
         {
             width += 4;
         }
@@ -274,7 +250,7 @@ static void R_DrawSmallPixel(int x, int y, int color)
     I_VideoBuffer[y * SCREENWIDTH + x] = color;
 }
 
-static void R_DrawIncidentSmallGlyph(int x, int y, const byte *glyph, int color)
+static void R_DrawArenaSmallGlyph(int x, int y, const byte *glyph, int color)
 {
     int row;
     int col;
@@ -291,7 +267,7 @@ static void R_DrawIncidentSmallGlyph(int x, int y, const byte *glyph, int color)
     }
 }
 
-static void R_DrawIncidentSmallText(int x, int y, const char *string, int color)
+static void R_DrawArenaSmallText(int x, int y, const char *string, int color)
 {
     const byte *glyph;
     int black;
@@ -306,14 +282,14 @@ static void R_DrawIncidentSmallText(int x, int y, const char *string, int color)
         }
         else
         {
-            glyph = R_IncidentSmallGlyph(*string);
+            glyph = R_ArenaSmallGlyph(*string);
             if (glyph != NULL)
             {
-                R_DrawIncidentSmallGlyph(x - 1, y, glyph, black);
-                R_DrawIncidentSmallGlyph(x + 1, y, glyph, black);
-                R_DrawIncidentSmallGlyph(x, y - 1, glyph, black);
-                R_DrawIncidentSmallGlyph(x, y + 1, glyph, black);
-                R_DrawIncidentSmallGlyph(x, y, glyph, color);
+                R_DrawArenaSmallGlyph(x - 1, y, glyph, black);
+                R_DrawArenaSmallGlyph(x + 1, y, glyph, black);
+                R_DrawArenaSmallGlyph(x, y - 1, glyph, black);
+                R_DrawArenaSmallGlyph(x, y + 1, glyph, black);
+                R_DrawArenaSmallGlyph(x, y, glyph, color);
                 x += 4;
             }
             else
@@ -326,9 +302,9 @@ static void R_DrawIncidentSmallText(int x, int y, const char *string, int color)
     }
 }
 
-static void R_SimplifyIncidentLabel(char *label)
+static void R_SimplifyArenaLabel(char *label)
 {
-    char severity[8];
+    char prefix[16];
     char title[64];
     char *colon;
     char *title_start;
@@ -340,12 +316,12 @@ static void R_SimplifyIncidentLabel(char *label)
         return;
     }
 
-    memset(severity, 0, sizeof(severity));
+    memset(prefix, 0, sizeof(prefix));
     memset(title, 0, sizeof(title));
 
-    strncpy(severity, label, sizeof(severity) - 1);
-    severity[sizeof(severity) - 1] = '\0';
-    colon = strchr(severity, ':');
+    strncpy(prefix, label, sizeof(prefix) - 1);
+    prefix[sizeof(prefix) - 1] = '\0';
+    colon = strchr(prefix, ':');
     if (colon != NULL)
     {
         *colon = '\0';
@@ -370,11 +346,11 @@ static void R_SimplifyIncidentLabel(char *label)
         title[i] = toupper((unsigned char)title[i]);
     }
 
-    snprintf(label, 64, "%s: %.24s", severity, title);
+    snprintf(label, 64, "%s: %.24s", prefix, title);
 }
 
 
-static void R_DrawIncidentLabel(vissprite_t *spr)
+static void R_DrawArenaLabel(vissprite_t *spr)
 {
     char label[64];
     int width;
@@ -383,31 +359,31 @@ static void R_DrawIncidentLabel(vissprite_t *spr)
     int y;
     int text_color;
 
-    if (spr->incident_index < 0 || spr->incident_label[0] == '\0')
+    if (spr->arena_entity_index < 0 || spr->arena_label[0] == '\0')
     {
         return;
     }
 
     if (hu_font[0] == NULL)
     {
-        if (!incident_label_font_warning)
+        if (!arena_label_font_warning)
         {
-            printf("Rootly Incident Mode: HUD font unavailable for labels\n");
-            incident_label_font_warning = true;
+            printf("Doom Agent Arena: HUD font unavailable for labels\n");
+            arena_label_font_warning = true;
         }
         return;
     }
 
-    strncpy(label, spr->incident_label, sizeof(label) - 1);
+    strncpy(label, spr->arena_label, sizeof(label) - 1);
     label[sizeof(label) - 1] = '\0';
-    R_SimplifyIncidentLabel(label);
+    R_SimplifyArenaLabel(label);
 
     if (label[0] == '\0')
     {
         return;
     }
 
-    width = R_IncidentSmallTextWidth(label);
+    width = R_ArenaSmallTextWidth(label);
     height = 5;
     x = ((spr->x1 + spr->x2) / 2) - (width / 2);
     y = (centeryfrac - FixedMul(spr->texturemid, spr->scale)) >> FRACBITS;
@@ -421,13 +397,13 @@ static void R_DrawIncidentLabel(vissprite_t *spr)
         return;
     }
 
-    text_color = R_IncidentLabelColor(label);
+    text_color = R_ArenaLabelColor(label);
     V_MarkRect(x - 1, y - 1, width + 2, height + 2);
-    R_DrawIncidentSmallText(x, y, label, text_color);
+    R_DrawArenaSmallText(x, y, label, text_color);
 }
 
 
-static void R_DrawIncidentSummary(void)
+static void R_DrawArenaSummary(void)
 {
     char summary[128];
     char rows[8][24];
@@ -455,7 +431,7 @@ static void R_DrawIncidentSummary(void)
         return;
     }
 
-    Rootly_BuildRemainingSummary(summary, sizeof(summary));
+    Arena_BuildRemainingSummary(summary, sizeof(summary));
     if (summary[0] == '\0')
     {
         return;
@@ -535,8 +511,8 @@ static void R_DrawIncidentSummary(void)
     width = 0;
     for (i = 0; i < row_count; i++)
     {
-        R_TruncateIncidentLabel(rows[i], SCREENWIDTH - 12);
-        w = R_IncidentLabelWidth(rows[i]);
+        R_TruncateArenaLabel(rows[i], SCREENWIDTH - 12);
+        w = R_ArenaLabelWidth(rows[i]);
         if (w > width)
         {
             width = w;
@@ -582,12 +558,12 @@ static void R_DrawIncidentSummary(void)
     }
 }
 
-static int R_IncidentAngleDegrees(angle_t angle)
+static int R_ArenaAngleDegrees(angle_t angle)
 {
     return (int) ((angle * 360.0) / 4294967296.0);
 }
 
-static void R_DrawIncidentCoordinates(void)
+static void R_DrawArenaCoordinates(void)
 {
     char lines[2][64];
     int width;
@@ -609,7 +585,7 @@ static void R_DrawIncidentCoordinates(void)
         return;
     }
 
-    if (!Rootly_IncidentModeEnabled())
+    if (!Arena_ModeEnabled())
     {
         return;
     }
@@ -628,14 +604,14 @@ static void R_DrawIncidentCoordinates(void)
     snprintf(lines[1],
              sizeof(lines[1]),
              "POV: %d",
-             R_IncidentAngleDegrees(player->mo->angle));
+             R_ArenaAngleDegrees(player->mo->angle));
 
     height = SHORT(hu_font[0]->height);
     line_height = height + 2;
     width = 0;
     for (i = 0; i < 2; i++)
     {
-        w = R_IncidentLabelWidth(lines[i]);
+        w = R_ArenaLabelWidth(lines[i]);
         if (w > width)
         {
             width = w;
@@ -1074,6 +1050,13 @@ void R_ProjectSprite (mobj_t* thing)
     
     angle_t		ang;
     fixed_t		iscale;
+
+    if (R_IsSecondaryView()
+        && viewplayer != NULL
+        && thing == viewplayer->mo)
+    {
+        return;
+    }
     
     // transform the origin point
     tr_x = thing->x - viewx;
@@ -1145,10 +1128,13 @@ void R_ProjectSprite (mobj_t* thing)
     // store information in a vissprite
     vis = R_NewVisSprite ();
     vis->mobjflags = thing->flags;
-    vis->incident_index = thing->incident_index;
-    strncpy(vis->incident_label, thing->incident_label,
-            sizeof(vis->incident_label) - 1);
-    vis->incident_label[sizeof(vis->incident_label) - 1] = '\0';
+    vis->arena_entity_index = thing->arena_entity_index;
+    strncpy(vis->arena_entity_id, thing->arena_entity_id,
+            sizeof(vis->arena_entity_id) - 1);
+    vis->arena_entity_id[sizeof(vis->arena_entity_id) - 1] = '\0';
+    strncpy(vis->arena_label, thing->arena_label,
+            sizeof(vis->arena_label) - 1);
+    vis->arena_label[sizeof(vis->arena_label) - 1] = '\0';
     vis->scale = xscale<<detailshift;
     vis->gx = thing->x;
     vis->gy = thing->y;
@@ -1548,7 +1534,7 @@ void R_DrawSprite (vissprite_t* spr)
     mfloorclip = clipbot;
     mceilingclip = cliptop;
     R_DrawVisSprite (spr, spr->x1, spr->x2);
-    R_DrawIncidentLabel (spr);
+    R_DrawArenaLabel (spr);
 }
 
 
@@ -1582,15 +1568,14 @@ void R_DrawMasked (void)
 	    R_RenderMaskedSegRange (ds, ds->x1, ds->x2);
     
     // draw the psprites on top of everything
-    //  but does not draw on side views
-    if (!viewangleoffset)		
+    if (!viewangleoffset)
 	R_DrawPlayerSprites ();
 
-    if (!viewangleoffset)
-        R_DrawIncidentSummary ();
+    if (!viewangleoffset && !R_IsSecondaryView())
+        R_DrawArenaSummary ();
 
-    if (!viewangleoffset)
-        R_DrawIncidentCoordinates ();
+    if (!viewangleoffset && !R_IsSecondaryView())
+        R_DrawArenaCoordinates ();
 }
 
 

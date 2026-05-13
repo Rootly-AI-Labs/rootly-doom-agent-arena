@@ -369,8 +369,9 @@ typedef struct vissprite_s
    
     int			mobjflags;
 
-    int			incident_index;
-    char		incident_label[64];
+    int			arena_entity_index;
+    char		arena_entity_id[32];
+    char		arena_label[64];
     
 } vissprite_t;
 

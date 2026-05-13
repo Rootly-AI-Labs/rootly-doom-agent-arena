@@ -1,0 +1,24 @@
+2026-05-07T13:51:50 start server_url=http://127.0.0.1:8001
+2026-05-07T13:51:50 recv method='initialize' id=1
+2026-05-07T13:51:50 recv method='notifications/initialized' id=None
+2026-05-07T13:51:50 recv method='tools/list' id=2
+2026-05-07T13:51:50 recv method='resources/list' id=3
+2026-05-07T13:51:50 recv method='prompts/list' id=4
+2026-05-07T13:51:50 recv method='ping' id=5
+2026-05-07T13:51:50 stdin closed
+2026-05-07T13:51:50 start server_url=http://127.0.0.1:8001
+2026-05-07T13:51:51 recv method='initialize' id=1
+2026-05-07T13:51:51 recv method='notifications/initialized' id=None
+2026-05-07T13:51:51 recv method='tools/list' id=2
+2026-05-07T13:51:51 recv method='resources/list' id=3
+2026-05-07T13:51:51 recv method='prompts/list' id=4
+2026-05-07T13:51:51 recv method='ping' id=5
+2026-05-07T13:51:51 stdin closed
+2026-05-07T13:51:51 start server_url=http://127.0.0.1:8001
+2026-05-07T13:51:51 recv method='initialize' id=1
+2026-05-07T13:51:51 recv method='notifications/initialized' id=None
+2026-05-07T13:51:51 recv method='tools/list' id=2
+2026-05-07T13:51:51 recv method='resources/list' id=3
+2026-05-07T13:51:51 recv method='prompts/list' id=4
+2026-05-07T13:51:51 recv method='ping' id=5
+2026-05-07T13:51:51 stdin closed

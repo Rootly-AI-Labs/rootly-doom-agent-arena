@@ -36,7 +36,8 @@
 
 #include "doomdef.h"
 #include "p_local.h"
-#include "rootly_incidents.h"
+#include "arena_duel.h"
+#include "arena_enemies.h"
 
 #include "s_sound.h"
 
@@ -824,6 +825,13 @@ P_SetupLevel
     maplumpinfo = lumpinfo[lumpnum];
 
     leveltime = 0;
+    if (Arena_ModeEnabled()
+        && episode == 1
+        && map == 8)
+    {
+        Arena_LoadRunMetadata();
+        ArenaDuel_InitLevel();
+    }
 	
     // note: most of this ordering is important	
     P_LoadBlockMap (lumpnum+ML_BLOCKMAP);
@@ -843,12 +851,19 @@ P_SetupLevel
     deathmatch_p = deathmatchstarts;
     P_LoadThings (lumpnum+ML_THINGS);
 
-    if (Rootly_IncidentModeEnabled()
+    if (Arena_ModeEnabled()
         && episode == 1
         && map == 8)
     {
-        Rootly_LoadIncidents();
-        Rootly_SpawnIncidents();
+        if (Arena_DuelModeEnabled())
+        {
+            ArenaDuel_SpawnPlayer2();
+        }
+        else
+        {
+            Arena_LoadEnemies();
+            Arena_SpawnEnemies();
+        }
     }
     
     // if deathmatch, randomly spawn the active players

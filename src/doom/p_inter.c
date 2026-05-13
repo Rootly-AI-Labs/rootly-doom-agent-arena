@@ -40,7 +40,7 @@
 #include "s_sound.h"
 
 #include "p_inter.h"
-#include "rootly_incidents.h"
+#include "arena_enemies.h"
 
 
 #define BONUSADD	6
@@ -716,10 +716,10 @@ P_KillMobj
 	target->player->playerstate = PST_DEAD;
 	P_DropWeapon (target->player);
 
-	if (Rootly_IncidentModeEnabled()
+	if (Arena_ModeEnabled()
 	    && target->player == &players[consoleplayer])
 	{
-	    printf("ROOTLY_PLAYER_DEAD\n");
+	    printf("ARENA_PLAYER_DEAD\n");
 	}
 
 	if (target->player == &players[consoleplayer]

@@ -21,6 +21,7 @@
 #include "z_zone.h"
 #include "p_local.h"
 #include "agentic_control.h"
+#include "arena_duel.h"
 
 #include "doomstat.h"
 
@@ -144,6 +145,8 @@ void P_Ticker (void)
     for (i=0 ; i<MAXPLAYERS ; i++)
 	if (playeringame[i])
 	    P_PlayerThink (&players[i]);
+
+    ArenaDuel_Ticker();
 			
     P_RunThinkers ();
     P_UpdateSpecials ();

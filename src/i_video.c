@@ -815,6 +815,31 @@ void I_ReadScreen (pixel_t* scr)
     memcpy(scr, I_VideoBuffer, SCREENWIDTH*SCREENHEIGHT*sizeof(*scr));
 }
 
+void I_ConvertPalettedBufferToRGBA(const pixel_t *src, byte *dst, int pixel_count)
+{
+    int i;
+    SDL_Color color;
+
+    if (src == NULL || dst == NULL || pixel_count <= 0)
+    {
+        return;
+    }
+
+    for (i = 0; i < pixel_count; i++)
+    {
+        color = palette[src[i]];
+        dst[i * 4 + 0] = color.r;
+        dst[i * 4 + 1] = color.g;
+        dst[i * 4 + 2] = color.b;
+        dst[i * 4 + 3] = 255;
+    }
+}
+
+uintptr_t I_GetPaletteData(void)
+{
+    return (uintptr_t) palette;
+}
+
 
 //
 // I_SetPalette

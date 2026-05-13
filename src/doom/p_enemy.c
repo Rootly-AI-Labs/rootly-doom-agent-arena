@@ -78,7 +78,7 @@ dirtype_t diags[] =
 
 void A_Fall (mobj_t *actor);
 
-static mobj_t *Agentic_FindIncidentOpponent(mobj_t *actor)
+static mobj_t *Agentic_FindArenaOpponent(mobj_t *actor)
 {
     thinker_t *thinker;
     mobj_t *candidate;
@@ -96,7 +96,7 @@ static mobj_t *Agentic_FindIncidentOpponent(mobj_t *actor)
 
 	candidate = (mobj_t *) thinker;
 	if (candidate == actor
-	    || candidate->incident_index < 0
+	    || candidate->arena_entity_index < 0
 	    || candidate->health <= 0
 	    || !(candidate->flags & MF_SHOOTABLE))
 	{
@@ -704,11 +704,12 @@ void A_Chase (mobj_t*	actor)
     int		delta;
     agentic_command_t agentic_command;
 
-    if (actor->incident_index >= 0)
+    if (actor->arena_entity_index >= 0)
     {
-	agentic_command = Agentic_CommandForIncident(actor->incident_index);
+	agentic_command = Agentic_CommandForEnemy(actor->arena_entity_index);
 
-	if (agentic_command == AGENTIC_CMD_HOLD)
+	if (agentic_command == AGENTIC_CMD_HOLD
+	    || agentic_command == AGENTIC_CMD_GUARD_POSITION)
 	{
 	    actor->momx = 0;
 	    actor->momy = 0;
@@ -725,7 +726,7 @@ void A_Chase (mobj_t*	actor)
 
 	if (agentic_command == AGENTIC_CMD_FIGHT_EACH_OTHER)
 	{
-	    actor->target = Agentic_FindIncidentOpponent(actor);
+	    actor->target = Agentic_FindArenaOpponent(actor);
 	    actor->threshold = BASETHRESHOLD;
 	}
     }

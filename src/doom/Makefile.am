@@ -6,6 +6,12 @@ noinst_LIBRARIES=libdoom.a
 
 libdoom_a_SOURCES =             \
 agentic_control.c agentic_control.h \
+arena_duel.c arena_duel.h \
+arena_enemies.c arena_enemies.h \
+arena_participant_autopilot.c arena_participant_autopilot.h \
+arena_participant_commands.c arena_participant_commands.h \
+arena_participant_intents.c arena_participant_intents.h \
+arena_player_control.c arena_player_control.h \
 am_map.c           am_map.h     \
 deh_ammo.c                      \
 deh_bexstr.c                    \
@@ -67,7 +73,6 @@ r_segs.c           r_segs.h     \
 r_sky.c            r_sky.h      \
                    r_state.h    \
 r_things.c         r_things.h   \
-rootly_incidents.c rootly_incidents.h \
 s_sound.c          s_sound.h    \
 sounds.c           sounds.h     \
 statdump.c         statdump.h   \

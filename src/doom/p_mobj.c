@@ -32,7 +32,7 @@
 #include "s_sound.h"
 
 #include "doomstat.h"
-#include "rootly_incidents.h"
+#include "arena_enemies.h"
 
 
 void G_PlayerReborn (int player);
@@ -528,7 +528,7 @@ P_SpawnMobj
 	
     mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
     memset (mobj, 0, sizeof (*mobj));
-    mobj->incident_index = -1;
+    mobj->arena_entity_index = -1;
     info = &mobjinfo[type];
 	
     mobj->type = type;
@@ -694,7 +694,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
     fixed_t		z;
 
     mobj_t*		mobj;
-    mapthing_t		incident_start;
+    mapthing_t		arena_start;
 
     int			i;
 
@@ -707,15 +707,15 @@ void P_SpawnPlayer (mapthing_t* mthing)
     if (!playeringame[mthing->type-1])
 	return;					
 
-    if (Rootly_IncidentModeEnabled()
+    if (Arena_ModeEnabled()
         && gameepisode == 1
         && gamemap == 8)
     {
-        incident_start = *mthing;
-        incident_start.x = 412;
-        incident_start.y = 2456;
-        incident_start.angle = 90;
-        mthing = &incident_start;
+        arena_start = *mthing;
+        arena_start.x = 412;
+        arena_start.y = 2456;
+        arena_start.angle = 90;
+        mthing = &arena_start;
     }
 		
     p = &players[mthing->type-1];
@@ -833,7 +833,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 		 mthing->type,
 		 mthing->x, mthing->y);
 
-    if (Rootly_IncidentModeEnabled()
+    if (Arena_ModeEnabled()
         && gameepisode == 1
         && gamemap == 8
         && (mobjinfo[i].flags & MF_COUNTKILL))
@@ -841,7 +841,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
         return;
     }
 
-    if (Rootly_IncidentModeEnabled()
+    if (Arena_ModeEnabled()
         && gameepisode == 1
         && gamemap == 8
         && i == MT_BARREL)

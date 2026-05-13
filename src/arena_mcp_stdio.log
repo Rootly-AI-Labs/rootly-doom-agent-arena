@@ -1,0 +1,439 @@
+2026-05-11T00:23:47 start server_url=http://127.0.0.1:8001
+2026-05-11T00:23:47 client ready; waiting for MCP messages
+2026-05-11T00:23:47 recv method='initialize' id=0
+2026-05-11T00:23:47 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:23:47 wrote message bytes=153
+2026-05-11T00:23:47 sent response id=0
+2026-05-11T00:24:16 stdin closed
+2026-05-11T00:25:47 start server_url=http://127.0.0.1:8001
+2026-05-11T00:25:47 client ready; waiting for MCP messages
+2026-05-11T00:25:47 recv method='initialize' id=0
+2026-05-11T00:25:47 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"test-client","version":"0"}}
+2026-05-11T00:25:47 wrote message bytes=153
+2026-05-11T00:25:47 sent response id=0
+2026-05-11T00:26:03 start server_url=http://127.0.0.1:8001
+2026-05-11T00:26:03 client ready; waiting for MCP messages
+2026-05-11T00:26:03 recv method='initialize' id=0
+2026-05-11T00:26:03 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:26:03 wrote message bytes=153
+2026-05-11T00:26:03 sent response id=0
+2026-05-11T00:26:33 stdin closed
+2026-05-11T00:26:34 start server_url=http://127.0.0.1:8001
+2026-05-11T00:26:34 client ready; waiting for MCP messages
+2026-05-11T00:26:34 recv method='initialize' id=0
+2026-05-11T00:26:34 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:26:34 wrote message bytes=153
+2026-05-11T00:26:34 sent response id=0
+2026-05-11T00:27:04 stdin closed
+2026-05-11T00:27:04 start server_url=http://127.0.0.1:8001
+2026-05-11T00:27:04 client ready; waiting for MCP messages
+2026-05-11T00:27:04 recv method='initialize' id=0
+2026-05-11T00:27:04 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:27:04 wrote message bytes=153
+2026-05-11T00:27:04 sent response id=0
+2026-05-11T00:27:34 stdin closed
+2026-05-11T00:31:48 start server_url=http://127.0.0.1:8001
+2026-05-11T00:31:48 client ready; waiting for MCP messages
+2026-05-11T00:31:48 recv method='initialize' id=0
+2026-05-11T00:31:48 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:31:48 wrote message bytes=153
+2026-05-11T00:31:48 sent response id=0
+2026-05-11T00:32:18 stdin closed
+2026-05-11T00:32:18 start server_url=http://127.0.0.1:8001
+2026-05-11T00:32:18 client ready; waiting for MCP messages
+2026-05-11T00:32:18 recv method='initialize' id=0
+2026-05-11T00:32:18 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:32:18 wrote message bytes=153
+2026-05-11T00:32:18 sent response id=0
+2026-05-11T00:32:48 stdin closed
+2026-05-11T00:37:37 start server_url=http://127.0.0.1:8001
+2026-05-11T00:37:37 client ready; waiting for MCP messages
+2026-05-11T00:37:37 recv method='initialize' id=0
+2026-05-11T00:37:37 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:37:37 wrote message bytes=153
+2026-05-11T00:37:37 sent response id=0
+2026-05-11T00:38:07 stdin closed
+2026-05-11T00:38:48 start server_url=http://127.0.0.1:8001
+2026-05-11T00:38:48 client ready; waiting for MCP messages
+2026-05-11T00:38:48 recv method='initialize' id=0
+2026-05-11T00:38:48 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131"}}
+2026-05-11T00:38:48 wrote message bytes=153
+2026-05-11T00:38:48 sent response id=0
+2026-05-11T00:38:48 recv method='notifications/initialized' id=None
+2026-05-11T00:38:48 recv method='tools/list' id=1
+2026-05-11T00:38:48 wrote message bytes=5931
+2026-05-11T00:38:48 sent response id=1
+2026-05-11T00:39:31 start server_url=http://127.0.0.1:8001
+2026-05-11T00:39:31 client ready; waiting for MCP messages
+2026-05-11T00:39:31 recv method='initialize' id=0
+2026-05-11T00:39:31 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:39:31 wrote message bytes=153
+2026-05-11T00:39:31 sent response id=0
+2026-05-11T00:40:01 stdin closed
+2026-05-11T00:40:37 start server_url=http://127.0.0.1:8001
+2026-05-11T00:40:37 client ready; waiting for MCP messages
+2026-05-11T00:40:37 recv method='initialize' id=0
+2026-05-11T00:40:37 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131"}}
+2026-05-11T00:40:37 wrote message bytes=171
+2026-05-11T00:40:37 sent response id=0
+2026-05-11T00:40:37 recv method='notifications/initialized' id=None
+2026-05-11T00:40:37 recv method='tools/list' id=1
+2026-05-11T00:40:37 wrote message bytes=5931
+2026-05-11T00:40:37 sent response id=1
+2026-05-11T00:40:45 start server_url=http://127.0.0.1:8001
+2026-05-11T00:40:45 client ready; waiting for MCP messages
+2026-05-11T00:40:45 recv method='initialize' id=0
+2026-05-11T00:40:45 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:40:45 wrote message bytes=171
+2026-05-11T00:40:45 sent response id=0
+2026-05-11T00:41:15 stdin closed
+2026-05-11T00:41:34 start server_url=http://127.0.0.1:8001
+2026-05-11T00:41:34 client ready; waiting for MCP messages
+2026-05-11T00:41:34 recv method='initialize' id=0
+2026-05-11T00:41:34 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:41:34 wrote message bytes=171
+2026-05-11T00:42:44 start server_url=http://127.0.0.1:8001
+2026-05-11T00:42:44 client ready; waiting for MCP messages
+2026-05-11T00:42:44 recv method='initialize' id=0
+2026-05-11T00:42:44 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"test","version":"0"}}
+2026-05-11T00:42:44 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","version":"2.1.131"}}
+2026-05-11T00:42:44 wrote message bytes=171 framing=content-length
+2026-05-11T00:42:51 start server_url=http://127.0.0.1:8001
+2026-05-11T00:42:51 client ready; waiting for MCP messages
+2026-05-11T00:42:51 recv method='initialize' id=0
+2026-05-11T00:42:51 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:42:51 wrote message bytes=171 framing=ndjson
+2026-05-11T00:42:51 sent response id=0
+2026-05-11T00:42:51 recv method='notifications/initialized' id=None
+2026-05-11T00:44:35 start server_url=http://127.0.0.1:8001
+2026-05-11T00:44:35 client ready; waiting for MCP messages
+2026-05-11T00:44:35 recv method='initialize' id=0
+2026-05-11T00:44:35 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T00:44:35 wrote message bytes=171 framing=ndjson
+2026-05-11T00:44:35 sent response id=0
+2026-05-11T00:44:36 recv method='notifications/initialized' id=None
+2026-05-11T00:44:36 recv method='tools/list' id=1
+2026-05-11T00:44:36 wrote message bytes=5931 framing=ndjson
+2026-05-11T00:44:36 sent response id=1
+2026-05-11T00:45:07 recv method='tools/call' id=2
+2026-05-11T00:45:07 wrote message bytes=3615 framing=ndjson
+2026-05-11T00:45:07 sent response id=2
+2026-05-11T00:45:14 recv method='tools/call' id=3
+2026-05-11T00:45:14 wrote message bytes=666 framing=ndjson
+2026-05-11T00:45:14 sent response id=3
+2026-05-11T00:45:17 recv method='tools/call' id=4
+2026-05-11T00:45:17 wrote message bytes=3662 framing=ndjson
+2026-05-11T00:45:17 sent response id=4
+2026-05-11T00:45:26 recv method='tools/call' id=5
+2026-05-11T00:45:26 wrote message bytes=666 framing=ndjson
+2026-05-11T00:45:26 sent response id=5
+2026-05-11T00:45:29 recv method='tools/call' id=6
+2026-05-11T00:45:29 wrote message bytes=3664 framing=ndjson
+2026-05-11T00:45:29 sent response id=6
+2026-05-11T00:45:42 recv method='tools/call' id=7
+2026-05-11T00:45:42 wrote message bytes=668 framing=ndjson
+2026-05-11T00:45:42 sent response id=7
+2026-05-11T00:45:44 recv method='tools/call' id=8
+2026-05-11T00:45:44 wrote message bytes=3669 framing=ndjson
+2026-05-11T00:45:44 sent response id=8
+2026-05-11T00:45:53 recv method='tools/call' id=9
+2026-05-11T00:45:53 wrote message bytes=666 framing=ndjson
+2026-05-11T00:45:53 sent response id=9
+2026-05-11T00:45:55 recv method='tools/call' id=10
+2026-05-11T00:45:55 wrote message bytes=3666 framing=ndjson
+2026-05-11T00:45:55 sent response id=10
+2026-05-11T00:46:06 recv method='tools/call' id=11
+2026-05-11T00:46:06 wrote message bytes=667 framing=ndjson
+2026-05-11T00:46:06 sent response id=11
+2026-05-11T00:46:08 recv method='tools/call' id=12
+2026-05-11T00:46:08 wrote message bytes=3660 framing=ndjson
+2026-05-11T00:46:08 sent response id=12
+2026-05-11T00:46:15 recv method='tools/call' id=13
+2026-05-11T00:46:15 wrote message bytes=667 framing=ndjson
+2026-05-11T00:46:15 sent response id=13
+2026-05-11T00:46:17 recv method='tools/call' id=14
+2026-05-11T00:46:17 wrote message bytes=3716 framing=ndjson
+2026-05-11T00:46:17 sent response id=14
+2026-05-11T00:46:38 recv method='tools/call' id=15
+2026-05-11T00:46:38 wrote message bytes=127 framing=ndjson
+2026-05-11T00:46:38 sent response id=15
+2026-05-11T00:46:38 recv method='tools/call' id=16
+2026-05-11T00:46:38 wrote message bytes=3614 framing=ndjson
+2026-05-11T00:46:38 sent response id=16
+2026-05-11T00:46:44 recv method='tools/call' id=17
+2026-05-11T00:46:44 wrote message bytes=667 framing=ndjson
+2026-05-11T00:46:44 sent response id=17
+2026-05-11T00:46:46 recv method='tools/call' id=18
+2026-05-11T00:46:46 wrote message bytes=3668 framing=ndjson
+2026-05-11T00:46:46 sent response id=18
+2026-05-11T00:46:51 recv method='tools/call' id=19
+2026-05-11T00:46:51 wrote message bytes=669 framing=ndjson
+2026-05-11T00:46:51 sent response id=19
+2026-05-11T00:46:55 recv method='tools/call' id=20
+2026-05-11T00:46:55 wrote message bytes=3615 framing=ndjson
+2026-05-11T00:46:55 sent response id=20
+2026-05-11T00:47:01 recv method='tools/call' id=21
+2026-05-11T00:47:01 wrote message bytes=669 framing=ndjson
+2026-05-11T00:47:01 sent response id=21
+2026-05-11T00:47:02 recv method='tools/call' id=22
+2026-05-11T00:47:02 wrote message bytes=3667 framing=ndjson
+2026-05-11T00:47:02 sent response id=22
+2026-05-11T00:47:10 recv method='tools/call' id=23
+2026-05-11T00:47:10 wrote message bytes=660 framing=ndjson
+2026-05-11T00:47:10 sent response id=23
+2026-05-11T00:47:12 recv method='tools/call' id=24
+2026-05-11T00:47:12 wrote message bytes=3650 framing=ndjson
+2026-05-11T00:47:12 sent response id=24
+2026-05-11T00:47:20 recv method='tools/call' id=25
+2026-05-11T00:47:20 wrote message bytes=669 framing=ndjson
+2026-05-11T00:47:20 sent response id=25
+2026-05-11T00:47:22 recv method='tools/call' id=26
+2026-05-11T00:47:22 wrote message bytes=3677 framing=ndjson
+2026-05-11T00:47:22 sent response id=26
+2026-05-11T00:47:28 recv method='tools/call' id=27
+2026-05-11T00:47:28 wrote message bytes=667 framing=ndjson
+2026-05-11T00:47:28 sent response id=27
+2026-05-11T00:47:30 recv method='tools/call' id=28
+2026-05-11T00:47:30 wrote message bytes=3667 framing=ndjson
+2026-05-11T00:47:30 sent response id=28
+2026-05-11T00:47:42 recv method='tools/call' id=29
+2026-05-11T00:47:42 wrote message bytes=664 framing=ndjson
+2026-05-11T00:47:42 sent response id=29
+2026-05-11T00:47:44 recv method='tools/call' id=30
+2026-05-11T00:47:44 wrote message bytes=3664 framing=ndjson
+2026-05-11T00:47:44 sent response id=30
+2026-05-11T00:47:58 recv method='tools/call' id=31
+2026-05-11T00:47:58 wrote message bytes=669 framing=ndjson
+2026-05-11T00:47:58 sent response id=31
+2026-05-11T00:48:00 recv method='tools/call' id=32
+2026-05-11T00:48:00 wrote message bytes=3674 framing=ndjson
+2026-05-11T00:48:00 sent response id=32
+2026-05-11T00:48:15 recv method='tools/call' id=33
+2026-05-11T00:48:15 wrote message bytes=667 framing=ndjson
+2026-05-11T00:48:15 sent response id=33
+2026-05-11T00:48:18 recv method='tools/call' id=34
+2026-05-11T00:48:18 wrote message bytes=3667 framing=ndjson
+2026-05-11T00:48:18 sent response id=34
+2026-05-11T00:48:21 recv method='tools/call' id=35
+2026-05-11T00:48:21 wrote message bytes=247 framing=ndjson
+2026-05-11T00:48:21 sent response id=35
+2026-05-11T01:09:21 recv method='tools/call' id=36
+2026-05-11T01:09:21 wrote message bytes=3616 framing=ndjson
+2026-05-11T01:09:21 sent response id=36
+2026-05-11T01:09:27 recv method='tools/call' id=37
+2026-05-11T01:09:27 wrote message bytes=667 framing=ndjson
+2026-05-11T01:09:27 sent response id=37
+2026-05-11T01:09:29 recv method='tools/call' id=38
+2026-05-11T01:09:29 wrote message bytes=3672 framing=ndjson
+2026-05-11T01:09:29 sent response id=38
+2026-05-11T01:09:35 recv method='tools/call' id=39
+2026-05-11T01:09:35 wrote message bytes=669 framing=ndjson
+2026-05-11T01:09:35 sent response id=39
+2026-05-11T01:09:38 recv method='tools/call' id=40
+2026-05-11T01:09:38 wrote message bytes=3671 framing=ndjson
+2026-05-11T01:09:38 sent response id=40
+2026-05-11T01:09:46 recv method='tools/call' id=41
+2026-05-11T01:09:46 wrote message bytes=667 framing=ndjson
+2026-05-11T01:09:46 sent response id=41
+2026-05-11T01:09:48 recv method='tools/call' id=42
+2026-05-11T01:09:48 wrote message bytes=3718 framing=ndjson
+2026-05-11T01:09:48 sent response id=42
+2026-05-11T01:09:55 recv method='tools/call' id=43
+2026-05-11T01:09:55 wrote message bytes=667 framing=ndjson
+2026-05-11T01:09:55 sent response id=43
+2026-05-11T01:09:57 recv method='tools/call' id=44
+2026-05-11T01:09:57 wrote message bytes=3718 framing=ndjson
+2026-05-11T01:09:57 sent response id=44
+2026-05-11T01:10:00 recv method='tools/call' id=45
+2026-05-11T01:10:00 wrote message bytes=247 framing=ndjson
+2026-05-11T01:10:00 sent response id=45
+2026-05-11T01:35:11 recv method='tools/call' id=46
+2026-05-11T01:35:11 wrote message bytes=3614 framing=ndjson
+2026-05-11T01:35:11 sent response id=46
+2026-05-11T01:35:17 recv method='tools/call' id=47
+2026-05-11T01:35:17 wrote message bytes=667 framing=ndjson
+2026-05-11T01:35:17 sent response id=47
+2026-05-11T01:35:20 recv method='tools/call' id=48
+2026-05-11T01:35:20 wrote message bytes=3724 framing=ndjson
+2026-05-11T01:35:20 sent response id=48
+2026-05-11T01:35:28 recv method='tools/call' id=49
+2026-05-11T01:35:28 wrote message bytes=667 framing=ndjson
+2026-05-11T01:35:28 sent response id=49
+2026-05-11T01:35:30 recv method='tools/call' id=50
+2026-05-11T01:35:30 wrote message bytes=3666 framing=ndjson
+2026-05-11T01:35:30 sent response id=50
+2026-05-11T01:35:37 recv method='tools/call' id=51
+2026-05-11T01:35:37 wrote message bytes=669 framing=ndjson
+2026-05-11T01:35:37 sent response id=51
+2026-05-11T01:35:37 recv method='notifications/cancelled' id=None
+2026-05-11T01:36:06 recv method='tools/call' id=52
+2026-05-11T01:36:06 wrote message bytes=3614 framing=ndjson
+2026-05-11T01:36:06 sent response id=52
+2026-05-11T01:36:11 recv method='tools/call' id=53
+2026-05-11T01:36:11 wrote message bytes=669 framing=ndjson
+2026-05-11T01:36:11 sent response id=53
+2026-05-11T01:36:13 recv method='tools/call' id=54
+2026-05-11T01:36:13 wrote message bytes=3670 framing=ndjson
+2026-05-11T01:36:13 sent response id=54
+2026-05-11T01:36:19 recv method='tools/call' id=55
+2026-05-11T01:36:19 wrote message bytes=667 framing=ndjson
+2026-05-11T01:36:19 sent response id=55
+2026-05-11T01:36:21 recv method='tools/call' id=56
+2026-05-11T01:36:21 wrote message bytes=3781 framing=ndjson
+2026-05-11T01:36:21 sent response id=56
+2026-05-11T01:36:27 recv method='tools/call' id=57
+2026-05-11T01:36:28 wrote message bytes=236 framing=ndjson
+2026-05-11T01:36:28 sent response id=57
+2026-05-11T01:37:02 recv method='tools/call' id=58
+2026-05-11T01:37:02 wrote message bytes=3616 framing=ndjson
+2026-05-11T01:37:02 sent response id=58
+2026-05-11T01:37:08 recv method='tools/call' id=59
+2026-05-11T01:37:08 wrote message bytes=669 framing=ndjson
+2026-05-11T01:37:08 sent response id=59
+2026-05-11T01:37:11 recv method='tools/call' id=60
+2026-05-11T01:37:11 wrote message bytes=3728 framing=ndjson
+2026-05-11T01:37:11 sent response id=60
+2026-05-11T01:37:16 recv method='tools/call' id=61
+2026-05-11T01:37:16 wrote message bytes=3718 framing=ndjson
+2026-05-11T01:37:16 sent response id=61
+2026-05-11T01:37:20 recv method='tools/call' id=62
+2026-05-11T01:37:20 wrote message bytes=236 framing=ndjson
+2026-05-11T01:37:20 sent response id=62
+2026-05-11T10:18:25 recv method='tools/call' id=63
+2026-05-11T10:18:25 wrote message bytes=3614 framing=ndjson
+2026-05-11T10:18:25 sent response id=63
+2026-05-11T10:18:28 recv method='tools/call' id=64
+2026-05-11T10:18:28 wrote message bytes=669 framing=ndjson
+2026-05-11T10:18:28 sent response id=64
+2026-05-11T10:18:30 recv method='tools/call' id=65
+2026-05-11T10:18:30 wrote message bytes=3718 framing=ndjson
+2026-05-11T10:18:30 sent response id=65
+2026-05-11T10:18:35 recv method='tools/call' id=66
+2026-05-11T10:18:35 wrote message bytes=667 framing=ndjson
+2026-05-11T10:18:35 sent response id=66
+2026-05-11T10:18:38 recv method='tools/call' id=67
+2026-05-11T10:18:38 wrote message bytes=3774 framing=ndjson
+2026-05-11T10:18:38 sent response id=67
+2026-05-11T10:58:15 recv method='tools/call' id=68
+2026-05-11T10:58:15 wrote message bytes=3617 framing=ndjson
+2026-05-11T10:58:15 sent response id=68
+2026-05-11T10:58:18 recv method='tools/call' id=69
+2026-05-11T10:58:18 wrote message bytes=669 framing=ndjson
+2026-05-11T10:58:18 sent response id=69
+2026-05-11T10:58:20 recv method='tools/call' id=70
+2026-05-11T10:58:20 wrote message bytes=3675 framing=ndjson
+2026-05-11T10:58:20 sent response id=70
+2026-05-11T10:58:25 recv method='tools/call' id=71
+2026-05-11T10:58:25 wrote message bytes=669 framing=ndjson
+2026-05-11T10:58:25 sent response id=71
+2026-05-11T10:58:28 recv method='tools/call' id=72
+2026-05-11T10:58:28 wrote message bytes=3672 framing=ndjson
+2026-05-11T10:58:28 sent response id=72
+2026-05-11T10:58:32 recv method='tools/call' id=73
+2026-05-11T10:58:32 wrote message bytes=667 framing=ndjson
+2026-05-11T10:58:32 sent response id=73
+2026-05-11T10:58:35 recv method='tools/call' id=74
+2026-05-11T10:58:35 wrote message bytes=3778 framing=ndjson
+2026-05-11T10:58:35 sent response id=74
+2026-05-11T18:17:51 start server_url=http://127.0.0.1:8001
+2026-05-11T18:17:51 client ready; waiting for MCP messages
+2026-05-11T18:17:51 recv method='initialize' id=0
+2026-05-11T18:17:51 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T18:17:51 wrote message bytes=171 framing=ndjson
+2026-05-11T18:17:51 sent response id=0
+2026-05-11T18:17:51 recv method='notifications/initialized' id=None
+2026-05-11T18:17:52 recv method='tools/list' id=1
+2026-05-11T18:17:52 wrote message bytes=5070 framing=ndjson
+2026-05-11T18:17:52 sent response id=1
+2026-05-11T18:18:33 start server_url=http://127.0.0.1:8001
+2026-05-11T18:18:33 client ready; waiting for MCP messages
+2026-05-11T18:18:33 recv method='initialize' id=0
+2026-05-11T18:18:33 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-11T18:18:33 wrote message bytes=171 framing=ndjson
+2026-05-11T18:18:33 sent response id=0
+2026-05-11T18:18:33 recv method='notifications/initialized' id=None
+2026-05-11T18:18:33 recv method='tools/list' id=1
+2026-05-11T18:18:33 wrote message bytes=5070 framing=ndjson
+2026-05-11T18:18:33 sent response id=1
+2026-05-11T19:16:08 recv method='tools/call' id=2
+2026-05-11T19:16:08 wrote message bytes=3530 framing=ndjson
+2026-05-11T19:16:08 sent response id=2
+2026-05-11T19:16:13 recv method='tools/call' id=3
+2026-05-11T19:16:13 wrote message bytes=668 framing=ndjson
+2026-05-11T19:16:13 sent response id=3
+2026-05-11T19:16:15 recv method='tools/call' id=4
+2026-05-11T19:16:15 wrote message bytes=3588 framing=ndjson
+2026-05-11T19:16:15 sent response id=4
+2026-05-11T19:16:21 recv method='tools/call' id=5
+2026-05-11T19:16:21 wrote message bytes=668 framing=ndjson
+2026-05-11T19:16:21 sent response id=5
+2026-05-11T19:16:24 recv method='tools/call' id=6
+2026-05-11T19:16:24 wrote message bytes=3585 framing=ndjson
+2026-05-11T19:16:24 sent response id=6
+2026-05-11T19:16:30 recv method='tools/call' id=7
+2026-05-11T19:16:30 wrote message bytes=666 framing=ndjson
+2026-05-11T19:16:30 sent response id=7
+2026-05-11T19:16:32 recv method='tools/call' id=8
+2026-05-11T19:16:32 wrote message bytes=3578 framing=ndjson
+2026-05-11T19:16:32 sent response id=8
+2026-05-11T19:16:39 recv method='tools/call' id=9
+2026-05-11T19:16:39 wrote message bytes=668 framing=ndjson
+2026-05-11T19:16:39 sent response id=9
+2026-05-11T19:16:41 recv method='tools/call' id=10
+2026-05-11T19:16:41 wrote message bytes=3579 framing=ndjson
+2026-05-11T19:16:41 sent response id=10
+2026-05-11T21:00:17 recv method='tools/call' id=11
+2026-05-11T21:00:17 wrote message bytes=3531 framing=ndjson
+2026-05-11T21:00:17 sent response id=11
+2026-05-11T21:00:22 recv method='tools/call' id=12
+2026-05-11T21:00:22 wrote message bytes=669 framing=ndjson
+2026-05-11T21:00:22 sent response id=12
+2026-05-11T21:00:25 recv method='tools/call' id=13
+2026-05-11T21:00:25 wrote message bytes=3586 framing=ndjson
+2026-05-11T21:00:25 sent response id=13
+2026-05-11T21:00:30 recv method='tools/call' id=14
+2026-05-11T21:00:30 wrote message bytes=669 framing=ndjson
+2026-05-11T21:00:30 sent response id=14
+2026-05-11T21:00:32 recv method='tools/call' id=15
+2026-05-11T21:00:32 wrote message bytes=3585 framing=ndjson
+2026-05-11T21:00:32 sent response id=15
+2026-05-11T21:00:40 recv method='tools/call' id=16
+2026-05-11T21:00:40 wrote message bytes=667 framing=ndjson
+2026-05-11T21:00:40 sent response id=16
+2026-05-11T21:00:42 recv method='tools/call' id=17
+2026-05-11T21:00:42 wrote message bytes=3583 framing=ndjson
+2026-05-11T21:00:42 sent response id=17
+2026-05-11T21:00:49 recv method='tools/call' id=18
+2026-05-11T21:00:49 wrote message bytes=667 framing=ndjson
+2026-05-11T21:00:49 sent response id=18
+2026-05-11T21:29:53 recv method='tools/call' id=19
+2026-05-11T21:29:53 wrote message bytes=3681 framing=ndjson
+2026-05-11T21:29:53 sent response id=19
+2026-05-12T12:19:22 start server_url=http://127.0.0.1:8001
+2026-05-12T12:19:22 client ready; waiting for MCP messages
+2026-05-12T12:19:22 recv method='initialize' id=0
+2026-05-12T12:19:22 initialize params={"protocolVersion":"2025-11-25","capabilities":{"roots":{},"elicitation":{}},"clientInfo":{"name":"claude-code","title":"Claude Code","version":"2.1.131","description":"Anthropic's agentic coding tool","websiteUrl":"https://claude.com/claude-code"}}
+2026-05-12T12:19:22 wrote message bytes=171 framing=ndjson
+2026-05-12T12:19:22 sent response id=0
+2026-05-12T12:19:22 recv method='notifications/initialized' id=None
+2026-05-12T12:19:22 recv method='tools/list' id=1
+2026-05-12T12:19:22 wrote message bytes=5637 framing=ndjson
+2026-05-12T12:19:22 sent response id=1
+2026-05-12T20:22:20 recv method='tools/call' id=2
+2026-05-12T20:22:20 wrote message bytes=5044 framing=ndjson
+2026-05-12T20:22:20 sent response id=2
+2026-05-12T20:22:27 recv method='tools/call' id=3
+2026-05-12T20:22:27 wrote message bytes=976 framing=ndjson
+2026-05-12T20:22:27 sent response id=3
+2026-05-12T20:22:30 recv method='tools/call' id=4
+2026-05-12T20:22:30 wrote message bytes=5044 framing=ndjson
+2026-05-12T20:22:30 sent response id=4
+2026-05-12T20:22:38 recv method='tools/call' id=5
+2026-05-12T20:22:38 wrote message bytes=976 framing=ndjson
+2026-05-12T20:22:38 sent response id=5
+2026-05-12T20:22:40 recv method='tools/call' id=6
+2026-05-12T20:22:40 wrote message bytes=5044 framing=ndjson
+2026-05-12T20:22:40 sent response id=6
+2026-05-12T20:22:51 recv method='tools/call' id=7
+2026-05-12T20:22:51 wrote message bytes=976 framing=ndjson
+2026-05-12T20:22:51 sent response id=7

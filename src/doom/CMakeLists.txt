@@ -1,4 +1,11 @@
 add_library(doom STATIC
+            agentic_control.c agentic_control.h
+            arena_duel.c arena_duel.h
+            arena_enemies.c  arena_enemies.h
+            arena_participant_autopilot.c arena_participant_autopilot.h
+            arena_participant_commands.c arena_participant_commands.h
+            arena_participant_intents.c arena_participant_intents.h
+            arena_player_control.c arena_player_control.h
             am_map.c        am_map.h
             deh_ammo.c
             deh_bexstr.c

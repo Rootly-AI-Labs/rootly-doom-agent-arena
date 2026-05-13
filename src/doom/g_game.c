@@ -47,6 +47,8 @@
 #include "d_main.h"
 
 #include "am_map.h"
+#include "arena_enemies.h"
+#include "arena_player_control.h"
 #include "hu_stuff.h"
 #include "st_stuff.h"
 #include "statdump.h"
@@ -300,6 +302,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     memset(cmd, 0, sizeof(ticcmd_t));
 
     cmd->consistancy = consistancy[consoleplayer][maketic % BACKUPTICS];
+
+    if (Arena_ModeEnabled() && Arena_PlayerControlBuildTiccmd(cmd))
+    {
+        return;
+    }
 
     strafe =
         gamekeydown[key_strafe] || gamekeydown[key_strafe_alt] || mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
@@ -792,6 +799,10 @@ void G_Ticker(void)
             cmd = &players[i].cmd;
 
             memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
+            if (Arena_ModeEnabled() && i == consoleplayer)
+            {
+                Arena_PlayerControlBuildTiccmd(cmd);
+            }
 
             if (demoplayback) G_ReadDemoTiccmd(cmd);
             if (demorecording) G_WriteDemoTiccmd(cmd);

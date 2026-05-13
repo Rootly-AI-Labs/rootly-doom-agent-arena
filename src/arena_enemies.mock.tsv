@@ -1,0 +1,4 @@
+enemy_id	enemy_type	label	spawn_slot	team	health
+enemy_0	imp	enemy_0	0	enemy	60
+enemy_1	shotgunner	enemy_1	1	enemy	30
+enemy_2	demon	enemy_2	2	enemy	150
