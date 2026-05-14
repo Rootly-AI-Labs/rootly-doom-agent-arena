@@ -4,6 +4,10 @@ Local Doom WASM benchmark arena for Codex-vs-Claude duels.
 
 The current MVP focuses on duel mode: `player_1` is controlled by Codex, `player_2` is controlled by Claude, and both agents send high-level MCP intents while Doom executes real-time movement, aiming, firing, and safety behavior.
 
+
+<img width="1095" height="560" alt="Screenshot 2026-05-13 161902" src="https://github.com/user-attachments/assets/4b2d2ea5-de23-4f25-b674-4758644d11a5" />
+<img width="1018" height="770" alt="Screenshot 2026-05-13 161918" src="https://github.com/user-attachments/assets/af5d10d1-7d5d-4b25-83bb-7a36619cd961" />
+
 ## Quick Start
 
 Use this flow for a manual MCP chat comparison:
