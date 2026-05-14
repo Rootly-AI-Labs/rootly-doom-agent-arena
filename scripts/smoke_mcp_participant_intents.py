@@ -51,6 +51,30 @@ def expect_doom_error(label: str, fn: Any) -> None:
     raise AssertionError(f"{label} did not fail")
 
 
+def mcp_tool_call(server_url: str, request_id: int, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    payload = {
+        "jsonrpc": "2.0",
+        "id": request_id,
+        "method": "tools/call",
+        "params": {"name": name, "arguments": arguments},
+    }
+    req = urllib.request.Request(
+        server_url.rstrip("/") + "/mcp",
+        data=json.dumps(payload).encode("utf-8"),
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=5) as response:
+        body = response.read().decode("utf-8", errors="replace")
+    parsed = parse_json_object(f"HTTP MCP {name}", body)
+    result = parsed.get("result", {})
+    if result.get("isError"):
+        content = result.get("content", [])
+        message = content[0].get("text", "") if content else ""
+        raise AssertionError(f"HTTP MCP {name} failed: {message}")
+    return parsed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Smoke-test MCP participant intent tools.")
     parser.add_argument("--server-url", default="http://127.0.0.1:8001")
@@ -99,6 +123,8 @@ def main() -> int:
         "set_participant_ready",
         "wait_for_match_start",
         "waiting_for_agents",
+        "opening high-level intent",
+        "both agents have submitted their first high-level intent",
         "immediately observe again",
         "Do not call `Start-Sleep`",
         "sequence_number",
@@ -156,7 +182,9 @@ def main() -> int:
         )
         if "started" not in wait_result or "phase" not in wait_result:
             raise AssertionError("wait_for_match_start did not return start status")
-        print("ok wait_for_match_start returns structured status")
+        if wait_result.get("phase") == "waiting_for_agents" and not wait_result.get("needs_opening_intent"):
+            raise AssertionError("wait_for_match_start should request an opening intent before blocking")
+        print("ok wait_for_match_start returns structured opening-intent status")
 
         p1_intent = parse_json_object(
             "set_participant_intent(player_1)",
@@ -167,7 +195,7 @@ def main() -> int:
                 target_id="player_2",
                 preferred_distance=600,
                 aggression=0.5,
-                duration_ms=2500,
+                duration_ms=60000,
                 controller_token=p1_token,
                 strafe_direction="auto",
                 movement_bias="direct",
@@ -177,7 +205,9 @@ def main() -> int:
         )
         if not p1_intent.get("accepted") or p1_intent.get("participant_id") != "player_1":
             raise AssertionError("player_1 intent was not accepted")
-        print("ok correct player_1 token can set intent")
+        if p1_intent.get("normalized_intent", {}).get("duration_ms") != 60000:
+            raise AssertionError("player_1 long opening intent duration was not preserved")
+        print("ok correct player_1 token can set long opening intent")
 
         p2_intent = parse_json_object(
             "set_participant_intent(player_2 extended)",
@@ -285,6 +315,43 @@ def main() -> int:
         if not p1_stop.get("accepted"):
             raise AssertionError("existing stop_participant was not accepted")
         print("ok internal stop_participant path still works")
+
+        mcp_tool_call(
+            args.server_url,
+            101,
+            "set_participant_intent",
+            {
+                "participant_id": "player_1",
+                "controller_token": p1_token,
+                "intent": "engage_opponent",
+                "target_id": "player_2",
+                "duration_ms": 3000,
+                "sequence_number": 11,
+                "decision_cadence_ms": 750,
+            },
+        )
+        mcp_tool_call(
+            args.server_url,
+            102,
+            "set_participant_intent",
+            {
+                "participant_id": "player_1",
+                "controller_token": p1_token,
+                "intent": "strafe_attack",
+                "target_id": "player_2",
+                "duration_ms": 3000,
+                "sequence_number": 12,
+                "decision_cadence_ms": 750,
+            },
+        )
+        stats_path = REPO_ROOT / "benchmarks" / "results" / run_id / "stats.json"
+        stats = parse_json_object("stats.json", stats_path.read_text(encoding="utf-8"))
+        stats_summary = stats.get("summary", {})
+        if stats_summary.get("total_mcp_calls", 0) < 2:
+            raise AssertionError("stats.json did not capture HTTP MCP calls")
+        if stats_summary.get("intents_superseded_before_expiry", 0) < 1:
+            raise AssertionError("stats.json did not capture superseded intent overlap")
+        print("ok HTTP MCP stats.json captures call latency and intent supersession")
     finally:
         if previous_tokens is None:
             CONTROLLER_TOKENS_PATH.unlink(missing_ok=True)

@@ -194,6 +194,29 @@ class DoomArenaClient:
             except DoomArenaError as exc:
                 latest_state = {"phase": "unavailable", "error": str(exc)}
             phase = str(latest_state.get("phase", ""))
+            participant_state = latest_state.get(participant_id, {})
+            if (
+                phase == "waiting_for_agents"
+                and isinstance(participant_state, dict)
+                and str(participant_state.get("intent", "none")) in {"", "none"}
+                and str(participant_state.get("intent_status", "inactive")) == "inactive"
+            ):
+                return json.dumps(
+                    {
+                        "started": False,
+                        "phase": phase,
+                        "participant_id": participant_id,
+                        "needs_opening_intent": True,
+                        "instruction": (
+                            "Call set_participant_intent once with an opening high-level intent "
+                            "before waiting again. Doom will hold it until the other participant "
+                            "also has an opening intent."
+                        ),
+                        "elapsed_wait_ms": now_ms() - started_at,
+                        "run_id": latest_state.get("run_id", ""),
+                    },
+                    indent=2,
+                )
             if phase and phase != "waiting_for_agents" and phase != "unavailable":
                 return json.dumps(
                     {
@@ -302,7 +325,7 @@ class DoomArenaClient:
         target_id = normalize_participant_target(participant_id, target_id)
         preferred_distance = clamp_int(preferred_distance, 1, 10000, 600)
         aggression = clamp_float(aggression, 0.0, 1.0, 0.5)
-        duration_ms = clamp_int(duration_ms, 100, 10000, 7000)
+        duration_ms = clamp_int(duration_ms, 100, 60000, 7000)
         strafe_direction = normalize_tactical_enum(
             strafe_direction,
             "auto",
@@ -366,6 +389,8 @@ class DoomArenaClient:
                 "intent_id": intent_id,
                 "run_id": self.run_id,
                 "scenario_id": self.scenario_id,
+                "issued_at_ms": issued,
+                "expires_at_ms": issued + duration_ms,
                 "normalized_intent": {
                     "participant_id": participant_id,
                     "intent": intent,
@@ -1304,7 +1329,7 @@ def tool_definitions() -> list[dict[str, Any]]:
         },
         {
             "name": "wait_for_match_start",
-            "description": "Block briefly until both participants are ready and the duel phase leaves waiting_for_agents.",
+            "description": "Block briefly until both participants are ready, both opening intents are armed, and the duel phase leaves waiting_for_agents.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -1446,7 +1471,7 @@ def participant_intent_schema() -> dict[str, Any]:
             "target_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
             "preferred_distance": {"type": "integer", "minimum": 1, "maximum": 10000},
             "aggression": {"type": "number", "minimum": 0.0, "maximum": 1.0},
-            "duration_ms": {"type": "integer", "minimum": 100, "maximum": 10000},
+            "duration_ms": {"type": "integer", "minimum": 100, "maximum": 60000},
             "strafe_direction": {"type": "string", "enum": sorted(VALID_STRAFE_DIRECTIONS)},
             "movement_bias": {"type": "string", "enum": sorted(VALID_MOVEMENT_BIASES)},
             "fire_policy": {"type": "string", "enum": sorted(VALID_FIRE_POLICIES)},

@@ -37,6 +37,7 @@
 #define ARENA_DUEL_MAX_EVENTS 32
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
+#define ARENA_DUEL_PLAYER2_BULLETS 50
 
 static mobj_t *arena_duel_player2;
 static int arena_duel_player2_ammo_bullets;
@@ -78,6 +79,7 @@ static fixed_t arena_duel_player2_last_autopilot_y;
 static int arena_duel_player2_autopilot_stuck_ticks;
 static boolean arena_duel_player2_have_autopilot_position;
 static boolean arena_duel_waiting_event_logged;
+static boolean arena_duel_waiting_first_intents_event_logged;
 
 static void ArenaDuel_CopyField(char *dest, size_t dest_size, const char *value)
 {
@@ -333,6 +335,25 @@ static boolean ArenaDuel_BothParticipantsReady(void)
         && ArenaDuel_ParticipantReady(ARENA_PARTICIPANT_PLAYER_2);
 }
 
+static boolean ArenaDuel_BothParticipantsHaveOpeningIntents(void)
+{
+    return ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1)
+        && ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_2);
+}
+
+static const char *ArenaDuel_StartWaitReason(void)
+{
+    if (!ArenaDuel_BothParticipantsReady())
+    {
+        return "waiting_for_both_agents";
+    }
+    if (!ArenaDuel_BothParticipantsHaveOpeningIntents())
+    {
+        return "waiting_for_first_intents";
+    }
+    return "waiting_for_start_barrier";
+}
+
 static void ArenaDuel_UpdateStartBarrier(void)
 {
     if (arena_duel_started || arena_duel_finished)
@@ -342,9 +363,19 @@ static void ArenaDuel_UpdateStartBarrier(void)
 
     if (ArenaDuel_BothParticipantsReady())
     {
-        arena_duel_started = true;
-        arena_duel_start_tick = leveltime;
-        ArenaDuel_AddEvent("match_started: both_participants_ready_signaled");
+        if (ArenaDuel_BothParticipantsHaveOpeningIntents())
+        {
+            arena_duel_started = true;
+            arena_duel_start_tick = leveltime;
+            ArenaDuel_AddEvent("match_started: both_participants_ready_and_first_intents");
+            return;
+        }
+
+        if (!arena_duel_waiting_first_intents_event_logged)
+        {
+            ArenaDuel_AddEvent("match_waiting_for_first_intents");
+            arena_duel_waiting_first_intents_event_logged = true;
+        }
         return;
     }
 
@@ -475,6 +506,18 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
     mobj->momy += FixedMul(move, finesine[fine_angle]);
 }
 
+static void ArenaDuel_RefillPlayer1Ammo(void)
+{
+    player_t *player;
+    int i;
+
+    player = &players[consoleplayer];
+    for (i = 0; i < NUMAMMO; i++)
+    {
+        player->ammo[i] = player->maxammo[i];
+    }
+}
+
 static void ArenaDuel_Player2Attack(void)
 {
     fixed_t slope;
@@ -486,8 +529,7 @@ static void ArenaDuel_Player2Attack(void)
     }
 
     arena_duel_player2_attack_requests++;
-    if (arena_duel_player2_attack_cooldown > 0
-        || arena_duel_player2_ammo_bullets <= 0)
+    if (arena_duel_player2_attack_cooldown > 0)
     {
         return;
     }
@@ -510,7 +552,7 @@ static void ArenaDuel_Player2Attack(void)
                  damage);
     S_StartSound(arena_duel_player2, sfx_pistol);
 
-    arena_duel_player2_ammo_bullets--;
+    arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
     arena_duel_player2_shots_fired++;
     arena_duel_player2_attack_cooldown = ARENA_DUEL_ATTACK_COOLDOWN_TICS;
     ArenaDuel_AddEvent("participant_fired: player_2");
@@ -637,7 +679,7 @@ boolean ArenaDuel_IsEnabled(void)
 void ArenaDuel_InitLevel(void)
 {
     arena_duel_player2 = NULL;
-    arena_duel_player2_ammo_bullets = 50;
+    arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
     arena_duel_player2_attack_cooldown = 0;
     arena_duel_player2_attack_requests = 0;
     arena_duel_player2_shots_fired = 0;
@@ -663,6 +705,7 @@ void ArenaDuel_InitLevel(void)
     arena_duel_player2_have_autopilot_position = false;
     arena_duel_player2_autopilot_stuck_ticks = 0;
     arena_duel_waiting_event_logged = false;
+    arena_duel_waiting_first_intents_event_logged = false;
     memset(arena_duel_last_intent_id, 0, sizeof(arena_duel_last_intent_id));
     memset(arena_duel_intent_was_active, 0, sizeof(arena_duel_intent_was_active));
     memset(arena_duel_last_autopilot_key, 0, sizeof(arena_duel_last_autopilot_key));
@@ -734,6 +777,8 @@ void ArenaDuel_Ticker(void)
     }
 
     ArenaDuel_EnsurePlayer1Label();
+    ArenaDuel_RefillPlayer1Ammo();
+    arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
 
     ArenaParticipantCommands_Load();
     ArenaParticipantIntent_TickOrRefresh();
@@ -742,12 +787,15 @@ void ArenaDuel_Ticker(void)
 
     if (!arena_duel_started)
     {
+        const char *wait_reason;
+
+        wait_reason = ArenaDuel_StartWaitReason();
         arena_duel_player2->momx = 0;
         arena_duel_player2->momy = 0;
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
-                                                 "waiting_for_both_agents");
+                                                 wait_reason);
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_2,
-                                                 "waiting_for_both_agents");
+                                                 wait_reason);
         return;
     }
 

@@ -29,8 +29,9 @@ http://127.0.0.1:8001/
 4. Copy the generated Claude prompt from the Player 2 panel and paste it into Claude.
 
 The browser writes fresh controller tokens and instruction files for each run.
+Each run folder under `benchmarks/results/run_*` also gets `stats.json`, which records HTTP MCP tool-call latency and whether participant intents were superseded before their duration expired.
 
-The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness. Do not reuse old prompt files or tokens after a reset.
+The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset.
 
 ## MCP Setup
 

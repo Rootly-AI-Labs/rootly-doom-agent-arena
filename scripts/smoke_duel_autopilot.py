@@ -361,10 +361,10 @@ def main() -> int:
         initial_state = wait_for_state(client, run_id, args.timeout_seconds)
         if initial_state.get("phase") != "waiting_for_agents":
             raise RuntimeError(
-                "duel should wait for both agents before combat starts: "
+                "duel should wait for both agents and opening intents before combat starts: "
                 + json.dumps(initial_state, indent=2)
             )
-        log_ok("duel waits for both participant ready signals before combat")
+        log_ok("duel waits for participant readiness and opening intents before combat")
 
         client.set_participant_ready("player_1", controller_token=p1_token)
         single_ready_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
@@ -418,6 +418,14 @@ def main() -> int:
             decision_cadence_ms=750,
         )
         log_ok("set player_1 intent")
+        client.set_participant_ready("player_2", controller_token=p2_token)
+        both_ready_one_intent_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
+        if both_ready_one_intent_state.get("phase") != "waiting_for_agents":
+            raise RuntimeError(
+                "duel started before both opening intents were armed: "
+                + json.dumps(both_ready_one_intent_state, indent=2)
+            )
+        log_ok("both ready signals still wait for both opening intents")
         client.set_participant_intent(
             "player_2",
             "search",
@@ -436,8 +444,6 @@ def main() -> int:
             decision_cadence_ms=750,
         )
         log_ok("set player_2 intent")
-        client.set_participant_ready("player_2", controller_token=p2_token)
-        log_ok("set player_2 ready signal")
 
         active_state = wait_for(
             lambda: active_autopilot_check(client, run_id, "search", "search"),

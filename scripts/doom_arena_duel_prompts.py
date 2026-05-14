@@ -62,6 +62,7 @@ Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.
 - Doom continues executing the latest valid policy until a newer one arrives or it expires.
+- The match does not begin executing movement until both agents are ready and both agents have submitted their first high-level intent.
 - After sending an intent, immediately observe again and choose the next intent.
 - Do not run your own timer, sleep loop, or `Start-Sleep`; keep updating as fast as the chat environment allows.
 - Use MCP tool `set_participant_intent` for normal play.
@@ -69,12 +70,14 @@ Core rule:
 
 Loop template:
 1. Call MCP tool `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
-2. Call MCP tool `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
-3. Once the phase is `combat`, call `get_participant_observation` and choose one high-level intent.
-4. Increment `sequence_number`.
-5. Call MCP tool `set_participant_intent` once for this decision with `participant_id="{participant_id}"`, your controller token, the incremented `sequence_number`, and one normalized intent.
-6. Immediately call `get_participant_observation` again and choose the next high-level intent.
-7. Repeat observation and intent decisions until `get_match_result` shows `phase="finished"`.
+2. Call MCP tool `get_participant_observation` while phase may still be `waiting_for_agents`.
+3. Pick an opening high-level intent, set `sequence_number=1`, use `duration_ms=60000`, and call `set_participant_intent`. This arms your first action but Doom will not execute it until both agents have submitted opening intents.
+4. Call MCP tool `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
+5. Once the phase is `combat`, immediately call `get_participant_observation` and choose the next high-level intent.
+6. Increment `sequence_number`.
+7. Call MCP tool `set_participant_intent` once for this decision with `participant_id="{participant_id}"`, your controller token, the incremented `sequence_number`, and one normalized intent.
+8. Immediately call `get_participant_observation` again and choose the next high-level intent.
+9. Repeat observation and intent decisions until `get_match_result` shows `phase="finished"`.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -163,8 +166,10 @@ State fields to watch:
 
 Loop behavior:
 - Signal readiness once at the start with `set_participant_ready`.
-- Use `wait_for_match_start` so you do not waste combat intents while the other participant connects.
-- If `wait_for_match_start` times out and phase is still `waiting_for_agents`, call it again.
+- Send one opening `set_participant_intent` before calling `wait_for_match_start`; it is a synchronized start signal, not immediate movement.
+- Use a long opening intent duration such as `duration_ms=60000` so it stays armed while the other participant connects.
+- Use `wait_for_match_start` after the opening intent so both participants begin executing first actions together.
+- If `wait_for_match_start` times out and phase is still `waiting_for_agents`, refresh your opening intent with the same plan and a higher `sequence_number`, then call `wait_for_match_start` again.
 - Observe state before every intent decision.
 - Pick one high-level intent.
 - Use `set_participant_intent`, not frame-level movement, for normal play.
@@ -181,7 +186,7 @@ Rules:
 - Do not control `{opponent_id}`.
 - Never call `set_participant_ready` for `{opponent_id}`.
 - Never call `set_participant_intent` for `{opponent_id}`.
-- Do not send combat intents while phase is `waiting_for_agents`; wait for the match start barrier instead.
+- Only send your own opening high-level intent while phase is `waiting_for_agents`; Doom will hold it until both opening intents are present.
 - Use `get_participant_observation` before each high-level intent decision.
 - Use `set_participant_intent` once per decision during normal play.
 - If phase is finished, stop sending intents and controls.

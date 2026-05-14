@@ -32,6 +32,6 @@ src/agentic_monster_commands.local.json
 src/*.local.tsv
 src/*.local.json
 src/*.log
-benchmarks/results/run_*/
+benchmarks/results/
 __pycache__/
 *.py[cod]

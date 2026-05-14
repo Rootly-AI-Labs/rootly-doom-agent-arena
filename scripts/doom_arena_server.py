@@ -8,8 +8,10 @@ All endpoints are local-only by default.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import sys
+import threading
 import time
 import uuid
 from http import HTTPStatus
@@ -166,6 +168,13 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.timeout_seconds = 300
         self.started_at_ms = now_ms()
         self.reset_requested = False
+        self.stats_lock = threading.Lock()
+        self.mcp_call_counter = 0
+        self.mcp_calls: list[dict[str, Any]] = []
+        self.active_mcp_calls: dict[str, dict[str, Any]] = {}
+        self.intent_records: list[dict[str, Any]] = []
+        self.latest_intent_by_participant: dict[str, dict[str, Any]] = {}
+        self.summary_written_runs: set[str] = set()
 
 
 class DoomArenaHandler(SimpleHTTPRequestHandler):
@@ -287,6 +296,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.read_score()
             return
 
+        if path == "/api/arena/run-stats":
+            self.read_run_artifact("stats.json")
+            return
+
+        if path == "/api/arena/run-summary":
+            self.read_run_artifact("summary.json")
+            return
+
         if path == "/api/arena/mcp-config":
             self.read_mcp_config()
             return
@@ -297,6 +314,309 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         length_header = self.headers.get("Content-Length")
         length = int(length_header or "0")
         return self.rfile.read(length)
+
+    def run_dir(self, run_id: str | None = None) -> Path:
+        selected_run_id = run_id or self.server.run_id
+        return RESULTS_ROOT / selected_run_id
+
+    def reset_mcp_stats(self) -> None:
+        with self.server.stats_lock:
+            self.server.mcp_call_counter = 0
+            self.server.mcp_calls = []
+            self.server.active_mcp_calls = {}
+            self.server.intent_records = []
+            self.server.latest_intent_by_participant = {}
+            self.write_mcp_stats_locked()
+
+    def start_mcp_tool_call(
+        self,
+        tool_name: str,
+        arguments: dict[str, Any],
+        message_id: Any,
+    ) -> dict[str, Any]:
+        started_at = now_ms()
+        participant_id = str(arguments.get("participant_id", ""))
+        with self.server.stats_lock:
+            self.server.mcp_call_counter += 1
+            call_id = f"mcp_call_{self.server.mcp_call_counter:06d}"
+            record = {
+                "call_id": call_id,
+                "request_index": self.server.mcp_call_counter,
+                "run_id": self.server.run_id,
+                "scenario_id": self.server.scenario_id,
+                "jsonrpc_id": message_id,
+                "tool_name": tool_name,
+                "participant_id": participant_id,
+                "started_at_ms": started_at,
+                "completed_at_ms": None,
+                "latency_ms": None,
+                "status": "in_flight",
+                "is_error": False,
+                "overlapped_by_later_call": False,
+                "overlapped_by_call_id": "",
+                "overlapped_at_ms": None,
+            }
+            for active in self.server.active_mcp_calls.values():
+                same_participant = (
+                    participant_id
+                    and active.get("participant_id") == participant_id
+                    and active.get("run_id") == self.server.run_id
+                )
+                if same_participant:
+                    active["overlapped_by_later_call"] = True
+                    active["overlapped_by_call_id"] = call_id
+                    active["overlapped_at_ms"] = started_at
+            self.server.active_mcp_calls[call_id] = record
+            return record
+
+    def complete_mcp_tool_call(self, record: dict[str, Any], is_error: bool, text: str) -> None:
+        completed_at = now_ms()
+        with self.server.stats_lock:
+            record["completed_at_ms"] = completed_at
+            record["latency_ms"] = completed_at - int(record["started_at_ms"])
+            record["status"] = "error" if is_error else "completed"
+            record["is_error"] = bool(is_error)
+            if is_error:
+                record["error"] = text[:500]
+            else:
+                self.attach_mcp_result_summary_locked(record, text)
+            self.server.active_mcp_calls.pop(str(record["call_id"]), None)
+            self.server.mcp_calls.append(record)
+            if not is_error and record.get("tool_name") == "set_participant_intent":
+                self.record_intent_lifecycle_locked(record, text)
+            self.write_mcp_stats_locked()
+
+    def attach_mcp_result_summary_locked(self, record: dict[str, Any], text: str) -> None:
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError:
+            return
+        if not isinstance(payload, dict):
+            return
+        for key in ("accepted", "ready", "cleared", "started", "phase", "run_id", "intent_id", "issued_at_ms", "expires_at_ms"):
+            if key in payload:
+                record[key] = payload[key]
+        normalized = payload.get("normalized_intent")
+        if isinstance(normalized, dict):
+            for key in (
+                "intent",
+                "style",
+                "target_id",
+                "duration_ms",
+                "sequence_number",
+                "decision_cadence_ms",
+                "strafe_direction",
+                "movement_bias",
+                "fire_policy",
+                "distance_policy",
+            ):
+                if key in normalized:
+                    record[key] = normalized[key]
+
+    def record_intent_lifecycle_locked(self, call_record: dict[str, Any], text: str) -> None:
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError:
+            return
+        if not isinstance(payload, dict) or not payload.get("accepted"):
+            return
+        normalized = payload.get("normalized_intent")
+        if not isinstance(normalized, dict):
+            return
+
+        participant_id = str(payload.get("participant_id") or normalized.get("participant_id") or "")
+        if participant_id not in PARTICIPANTS:
+            return
+
+        issued_at = int(payload.get("issued_at_ms") or call_record.get("started_at_ms") or now_ms())
+        duration_ms = int(normalized.get("duration_ms") or payload.get("duration_ms") or 0)
+        expires_at = int(payload.get("expires_at_ms") or (issued_at + max(duration_ms, 0)))
+        intent_record = {
+            "call_id": call_record["call_id"],
+            "run_id": str(payload.get("run_id", self.server.run_id)),
+            "scenario_id": str(payload.get("scenario_id", self.server.scenario_id)),
+            "participant_id": participant_id,
+            "intent_id": str(payload.get("intent_id", "")),
+            "intent": str(normalized.get("intent", "")),
+            "style": str(normalized.get("style", "")),
+            "target_id": str(normalized.get("target_id", "")),
+            "preferred_distance": normalized.get("preferred_distance"),
+            "aggression": normalized.get("aggression"),
+            "strafe_direction": str(normalized.get("strafe_direction", "")),
+            "movement_bias": str(normalized.get("movement_bias", "")),
+            "fire_policy": str(normalized.get("fire_policy", "")),
+            "distance_policy": str(normalized.get("distance_policy", "")),
+            "replan_if": normalized.get("replan_if", []),
+            "sequence_number": normalized.get("sequence_number"),
+            "decision_cadence_ms": normalized.get("decision_cadence_ms"),
+            "duration_ms": duration_ms,
+            "issued_at_ms": issued_at,
+            "expires_at_ms": expires_at,
+            "mcp_call_latency_ms": call_record.get("latency_ms"),
+            "superseded_before_expiry": False,
+            "superseded_at_ms": None,
+            "superseded_by_intent_id": "",
+            "superseded_by_sequence_number": None,
+            "effective_until_ms": expires_at,
+            "effective_duration_ms": max(0, expires_at - issued_at),
+            "unused_duration_ms": 0,
+            "previous_intent_id": "",
+            "gap_after_previous_expiry_ms": None,
+        }
+
+        previous = self.server.latest_intent_by_participant.get(participant_id)
+        if previous:
+            intent_record["previous_intent_id"] = previous.get("intent_id", "")
+            previous_expires_at = int(previous.get("expires_at_ms") or 0)
+            previous_issued_at = int(previous.get("issued_at_ms") or 0)
+            previous["next_intent_id"] = intent_record["intent_id"]
+            previous["next_sequence_number"] = intent_record["sequence_number"]
+            previous["next_issued_at_ms"] = issued_at
+            if issued_at < previous_expires_at:
+                previous["superseded_before_expiry"] = True
+                previous["superseded_at_ms"] = issued_at
+                previous["superseded_by_intent_id"] = intent_record["intent_id"]
+                previous["superseded_by_sequence_number"] = intent_record["sequence_number"]
+                previous["effective_until_ms"] = issued_at
+                previous["effective_duration_ms"] = max(0, issued_at - previous_issued_at)
+                previous["unused_duration_ms"] = max(0, previous_expires_at - issued_at)
+            else:
+                previous["expired_before_next_intent"] = True
+                previous["gap_after_expiry_before_next_ms"] = issued_at - previous_expires_at
+                intent_record["gap_after_previous_expiry_ms"] = issued_at - previous_expires_at
+
+        self.server.intent_records.append(intent_record)
+        self.server.latest_intent_by_participant[participant_id] = intent_record
+        call_record["intent_id"] = intent_record["intent_id"]
+        call_record["sequence_number"] = intent_record["sequence_number"]
+
+    def build_mcp_stats_payload_locked(self) -> dict[str, Any]:
+        calls = [copy.deepcopy(call) for call in self.server.mcp_calls]
+        active_calls = [copy.deepcopy(call) for call in self.server.active_mcp_calls.values()]
+        intents = [copy.deepcopy(intent) for intent in self.server.intent_records]
+        latencies = [
+            float(call["latency_ms"])
+            for call in calls
+            if call.get("latency_ms") is not None
+        ]
+        by_tool: dict[str, dict[str, Any]] = {}
+        by_participant: dict[str, dict[str, Any]] = {}
+
+        for call in calls:
+            tool_name = str(call.get("tool_name", "unknown"))
+            participant_id = str(call.get("participant_id", ""))
+            tool_bucket = by_tool.setdefault(
+                tool_name,
+                {"count": 0, "completed": 0, "errors": 0, "average_latency_ms": 0.0, "max_latency_ms": 0.0},
+            )
+            tool_bucket["count"] += 1
+            if call.get("is_error"):
+                tool_bucket["errors"] += 1
+            else:
+                tool_bucket["completed"] += 1
+            latency = float(call.get("latency_ms") or 0)
+            tool_bucket.setdefault("_latencies", []).append(latency)
+
+            if participant_id:
+                participant_bucket = by_participant.setdefault(
+                    participant_id,
+                    {"count": 0, "completed": 0, "errors": 0, "average_latency_ms": 0.0, "max_latency_ms": 0.0},
+                )
+                participant_bucket["count"] += 1
+                if call.get("is_error"):
+                    participant_bucket["errors"] += 1
+                else:
+                    participant_bucket["completed"] += 1
+                participant_bucket.setdefault("_latencies", []).append(latency)
+
+        for buckets in (by_tool, by_participant):
+            for bucket in buckets.values():
+                bucket_latencies = bucket.pop("_latencies", [])
+                if bucket_latencies:
+                    bucket["average_latency_ms"] = round(sum(bucket_latencies) / len(bucket_latencies), 3)
+                    bucket["max_latency_ms"] = round(max(bucket_latencies), 3)
+
+        superseded = [intent for intent in intents if intent.get("superseded_before_expiry")]
+        expired_before_next = [intent for intent in intents if intent.get("expired_before_next_intent")]
+        unused_durations = [
+            int(intent.get("unused_duration_ms") or 0)
+            for intent in superseded
+        ]
+        gaps = [
+            int(intent.get("gap_after_expiry_before_next_ms") or 0)
+            for intent in expired_before_next
+        ]
+
+        return {
+            "run_id": self.server.run_id,
+            "scenario_id": self.server.scenario_id,
+            "started_at_ms": self.server.started_at_ms,
+            "generated_at_ms": now_ms(),
+            "note": "latency_ms is local HTTP MCP tool-call latency measured by the arena server, not LLM think time.",
+            "summary": {
+                "total_mcp_calls": len(calls),
+                "completed_mcp_calls": sum(1 for call in calls if not call.get("is_error")),
+                "errored_mcp_calls": sum(1 for call in calls if call.get("is_error")),
+                "in_flight_mcp_calls": len(active_calls),
+                "overlapped_in_flight_mcp_calls": sum(1 for call in calls if call.get("overlapped_by_later_call")),
+                "average_mcp_latency_ms": round(sum(latencies) / len(latencies), 3) if latencies else 0.0,
+                "max_mcp_latency_ms": round(max(latencies), 3) if latencies else 0.0,
+                "intents_sent": len(intents),
+                "intents_superseded_before_expiry": len(superseded),
+                "intents_expired_before_next": len(expired_before_next),
+                "average_unused_intent_duration_ms": round(sum(unused_durations) / len(unused_durations), 3) if unused_durations else 0.0,
+                "max_unused_intent_duration_ms": max(unused_durations) if unused_durations else 0,
+                "average_gap_after_intent_expiry_ms": round(sum(gaps) / len(gaps), 3) if gaps else 0.0,
+                "max_gap_after_intent_expiry_ms": max(gaps) if gaps else 0,
+            },
+            "by_tool": by_tool,
+            "by_participant": by_participant,
+            "calls": calls,
+            "active_calls": active_calls,
+            "intent_lifecycles": intents,
+        }
+
+    def write_mcp_stats_locked(self) -> None:
+        run_dir = self.run_dir()
+        run_dir.mkdir(parents=True, exist_ok=True)
+        payload = self.build_mcp_stats_payload_locked()
+        (run_dir / "stats.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    def maybe_write_finished_run_artifacts(self, state_text: str) -> None:
+        rows = parse_tsv_rows(state_text)
+        score = score_from_state(rows)
+        if score.get("mode") != "duel" or score.get("phase") != "finished":
+            return
+        run_id = self.server.run_id
+        if run_id in self.server.summary_written_runs:
+            return
+        run_dir = self.run_dir(run_id)
+        run_dir.mkdir(parents=True, exist_ok=True)
+        summary = {
+            "run_id": run_id,
+            "mode": "duel",
+            "player_1_model": self.server.player_1_model,
+            "player_2_model": self.server.player_2_model,
+            "round": self.server.round,
+            "seed": self.server.seed,
+            "winner": score.get("winner", ""),
+            "terminal_reason": score.get("terminal_reason", ""),
+            "elapsed_time_seconds": score.get("elapsed_time_seconds", 0),
+            "timeout_seconds": score.get("timeout_seconds", self.server.timeout_seconds),
+            "player_1_health_end": score.get("player_1_health", 0),
+            "player_2_health_end": score.get("player_2_health", 0),
+            "player_1_damage_dealt": score.get("player_1_damage_dealt", 0),
+            "player_2_damage_dealt": score.get("player_2_damage_dealt", 0),
+            "player_1_shots_fired": score.get("player_1_shots_fired", 0),
+            "player_2_shots_fired": score.get("player_2_shots_fired", 0),
+            "player_1_shots_hit": score.get("player_1_shots_hit", 0),
+            "player_2_shots_hit": score.get("player_2_shots_hit", 0),
+            "stats": "stats.json",
+        }
+        (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        self.server.summary_written_runs.add(run_id)
+        with self.server.stats_lock:
+            self.write_mcp_stats_locked()
 
     def handle_mcp_http(self) -> None:
         try:
@@ -374,12 +694,17 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return {"jsonrpc": "2.0", "id": message_id, "result": {"prompts": []}}
 
         if method == "tools/call":
+            tool_name = str(params.get("name"))
+            arguments = params.get("arguments") or {}
+            call_record = self.start_mcp_tool_call(tool_name, arguments if isinstance(arguments, dict) else {}, message_id)
             try:
                 client = DoomArenaClient(f"http://{self.server.args.host}:{self.server.args.port}")
-                text = call_tool(client, str(params.get("name")), params.get("arguments") or {})
+                text = call_tool(client, tool_name, arguments if isinstance(arguments, dict) else {})
                 result = {"content": [{"type": "text", "text": text}], "isError": False}
             except (KeyError, TypeError, ValueError, DoomArenaError) as exc:
-                result = {"content": [{"type": "text", "text": str(exc)}], "isError": True}
+                text = str(exc)
+                result = {"content": [{"type": "text", "text": text}], "isError": True}
+            self.complete_mcp_tool_call(call_record, bool(result["isError"]), text)
             return {"jsonrpc": "2.0", "id": message_id, "result": result}
 
         return {
@@ -391,6 +716,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def write_file(self, path: Path, label: str) -> None:
         body = self.read_body()
         path.write_bytes(body)
+        if path == ARENA_STATE_TSV:
+            self.maybe_write_finished_run_artifacts(body.decode("utf-8", errors="replace"))
         self.write_json(HTTPStatus.OK, {"ok": True, "path": label, "bytes": len(body)})
 
     def read_file(self, path: Path, label: str) -> None:
@@ -404,6 +731,26 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         body = path.read_bytes()
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", "text/tab-separated-values; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def read_run_artifact(self, filename: str) -> None:
+        path = self.run_dir() / filename
+        if not path.exists():
+            self.write_json(
+                HTTPStatus.NOT_FOUND,
+                {
+                    "ok": False,
+                    "error": f"{filename} has not been written yet for {self.server.run_id}.",
+                    "run_id": self.server.run_id,
+                },
+            )
+            return
+
+        body = path.read_bytes()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -873,6 +1220,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.server.run_id = new_run_id()
         self.server.started_at_ms = now_ms()
         self.server.reset_requested = True
+        self.server.summary_written_runs.discard(self.server.run_id)
 
         for path in (
             ARENA_STATE_TSV,
@@ -894,6 +1242,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ARENA_PARTICIPANT_READY_TSV.write_text(PARTICIPANT_READY_HEADER, encoding="utf-8")
         ARENA_ENEMY_COMMAND_TSV.write_text(ENEMY_COMMAND_HEADER, encoding="utf-8")
         write_run_metadata(self.server)
+        self.reset_mcp_stats()
 
         return {
             "ok": True,
@@ -977,6 +1326,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     "intent_duration_ms": intent_duration_ms,
                     "control_path": "external MCP clients call HTTP doom-arena tools",
                     "enforce_controller_tokens": enforce_tokens,
+                    "stats": "stats.json",
                 },
                 indent=2,
             )
@@ -990,6 +1340,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 **reset_payload,
                 "results_dir": str(run_dir),
                 "controller_tokens": str(run_dir / "controller_tokens.json"),
+                "stats": str(run_dir / "stats.json"),
                 "player_1_instructions": str(player_1_path),
                 "player_2_instructions": str(player_2_path),
                 "player_1_prompt": player_1_instructions,
@@ -1092,7 +1443,11 @@ def read_arena_state() -> list[dict[str, str]]:
     if not ARENA_STATE_TSV.exists():
         return []
 
-    rows = ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace").splitlines()
+    return parse_tsv_rows(ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace"))
+
+
+def parse_tsv_rows(text: str) -> list[dict[str, str]]:
+    rows = text.splitlines()
     if not rows:
         return []
 

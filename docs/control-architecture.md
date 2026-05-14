@@ -102,6 +102,19 @@ In the normal browser/chatbot flow, each agent should immediately observe again 
 
 Doom continues executing the current intent between chat tool calls. When the next valid intent arrives, the higher `sequence_number` makes it override the previous one immediately.
 
+## MCP Timing Stats
+
+The browser/server flow writes `benchmarks/results/run_*/stats.json` for each duel run. The file records local HTTP MCP `tools/call` latency, completion/error status, and whether an in-flight call was overlapped by a later call for the same participant.
+
+For accepted `set_participant_intent` calls, it also records intent lifecycle timing:
+
+- `superseded_before_expiry`
+- `effective_duration_ms`
+- `unused_duration_ms`
+- `gap_after_expiry_before_next_ms`
+
+These fields are meant to help tune `Intent Duration MS`: large unused durations mean new intents are arriving well before expiry, while large expiry gaps mean Doom may lose active autopilot coverage between chat decisions.
+
 ## Ready Gate
 
 The duel starts in:
@@ -110,13 +123,13 @@ The duel starts in:
 waiting_for_agents
 ```
 
-Doom freezes both participants until both players have signaled readiness with `set_participant_ready`. Once both agents are ready, the match changes to:
+Doom freezes both participants until both players have signaled readiness with `set_participant_ready` and both players have submitted an opening `set_participant_intent`. The opening intents are armed but not executed while the phase is still `waiting_for_agents`. Once both opening intents are present, the match changes to:
 
 ```text
 combat
 ```
 
-This keeps one agent from acting before the other is connected.
+This keeps one agent from acting before the other is connected or before the other agent has chosen its first high-level action.
 
 ## Low-Level Debug Fallback
 

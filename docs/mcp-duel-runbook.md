@@ -52,6 +52,19 @@ Choose the run settings, then click `Start Duel`. The browser/server will reset 
 
 The browser exports WASM state into `src/arena_game_state.local.tsv`.
 
+The run folder under `benchmarks/results/run_*` contains:
+
+```text
+config.json
+controller_tokens.json
+player_1_mcp_instructions.md
+player_2_mcp_instructions.md
+stats.json
+summary.json after the browser reports phase=finished
+```
+
+`stats.json` is updated as HTTP MCP calls arrive. It includes per-tool latency, error status, in-flight overlap, and intent lifecycle data such as `superseded_before_expiry`, `unused_duration_ms`, and gaps after expiry. Use it to tune `Intent Duration MS`.
+
 ## Chat 2: Codex
 
 Open a Codex chat with the repo-level `doom-arena` MCP server connected. Copy the Player 1/Codex prompt from the browser and paste it into Codex.
@@ -95,7 +108,7 @@ The duel starts in:
 phase=waiting_for_agents
 ```
 
-Doom freezes both participants until both agents have signaled readiness through `set_participant_ready`. This prevents one agent from moving before the other is connected.
+Doom freezes both participants until both agents have signaled readiness through `set_participant_ready` and both agents have submitted an opening `set_participant_intent`. The opening intents are held until both are present, then Doom starts executing both on the same tick. This prevents one agent from moving before the other is connected or before the other agent has chosen its first high-level action.
 
 ## One-Command Bootstrap
 
