@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import argparse
 import copy
+import html
 import json
+import shutil
 import sys
 import threading
 import time
@@ -18,6 +20,7 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 from doom_arena_duel_prompts import (
     RESULTS_ROOT,
@@ -62,10 +65,25 @@ PARTICIPANT_INTENT_LEGACY_HEADER = (
     "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\t"
     "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\n"
 )
-PARTICIPANT_INTENT_HEADER = (
+PARTICIPANT_INTENT_PREVIOUS_HEADER = (
     "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\t"
     "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n"
+)
+PARTICIPANT_INTENT_EXTENDED_PREVIOUS_HEADER = (
+    "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\t"
+    "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
+    "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
+    "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
+    "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\n"
+)
+PARTICIPANT_INTENT_HEADER = (
+    "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\t"
+    "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
+    "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
+    "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
+    "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
+    "turn_policy\tnavigation_target\tfire_mode\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 ENEMY_COMMAND_HEADER = (
@@ -79,11 +97,40 @@ RUN_METADATA_HEADER = (
 PARTICIPANTS = {"player_1", "player_2"}
 ALLOWED_PARTICIPANT_INTENTS = {"hold", "engage_opponent", "strafe_attack", "search"}
 ALLOWED_PARTICIPANT_INTENT_STYLES = {"balanced", "aggressive", "evasive", "cautious"}
-ALLOWED_STRAFE_DIRECTIONS = {"left", "right", "alternate", "auto"}
+ALLOWED_STRAFE_DIRECTIONS = {"left", "right", "alternate", "auto", "hold_direction", "switch_if_hit"}
 ALLOWED_MOVEMENT_BIASES = {"direct", "circle", "evasive", "cautious"}
 ALLOWED_FIRE_POLICIES = {"hold_fire", "only_when_aligned", "burst_when_aligned", "suppressive"}
 ALLOWED_DISTANCE_POLICIES = {"close", "maintain", "kite"}
 ALLOWED_REPLAN_TRIGGERS = {"lost_los", "stuck", "low_health", "target_far", "target_close"}
+ALLOWED_LOS_LOST_ACTIONS = {"turn_left", "turn_right", "advance_last_seen", "hold_angle", "sweep"}
+ALLOWED_STUCK_RECOVERY_STRATEGIES = {"back_up", "turn_left", "turn_right", "strafe_out", "default"}
+ALLOWED_MOVEMENT_PRIMITIVES = {
+    "advance",
+    "retreat",
+    "strafe_left",
+    "strafe_right",
+    "circle_left",
+    "circle_right",
+    "hold_position",
+}
+ALLOWED_TURN_POLICIES = {"auto", "turn_to_enemy", "sweep_left", "sweep_right", "hold_angle", "face_last_seen"}
+ALLOWED_NAVIGATION_TARGETS = {"none", "opponent", "last_seen_enemy", "center", "left_lane", "right_lane", "keep_distance"}
+ALLOWED_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "burst", "suppressive"}
+PARTICIPANT_INTENT_EXTRA_FIELDS = (
+    "aim_tolerance",
+    "fire_burst_ms",
+    "min_fire_alignment",
+    "min_distance",
+    "max_distance",
+    "retreat_if_closer_than",
+    "push_if_farther_than",
+    "los_lost_action",
+    "stuck_recovery_strategy",
+    "movement_primitive",
+    "turn_policy",
+    "navigation_target",
+    "fire_mode",
+)
 
 
 def now_ms() -> int:
@@ -94,13 +141,26 @@ def new_run_id() -> str:
     return "run_" + uuid.uuid4().hex[:12]
 
 
+def new_duel_session_id() -> str:
+    return "session_" + uuid.uuid4().hex[:12]
+
+
 def clamp_int(value: Any, low: int, high: int) -> int:
     return max(low, min(high, int(value)))
 
 
-def normalize_optional_enum(value: Any, default: str, allowed: set[str], field_name: str) -> str:
+def normalize_optional_enum(
+    value: Any,
+    default: str,
+    allowed: set[str],
+    field_name: str,
+    *,
+    allow_blank: bool = False,
+) -> str:
     normalized = str(value if value is not None else default).strip().lower()
     if normalized == "":
+        if allow_blank:
+            return ""
         normalized = default
     if normalized not in allowed:
         raise ValueError(f"{field_name} must be one of " + ", ".join(sorted(allowed)))
@@ -127,12 +187,20 @@ def normalize_replan_if(value: Any) -> str:
     return ",".join(triggers)
 
 
-def normalize_optional_int(value: Any, field_name: str, *, minimum: int | None = None) -> str:
+def normalize_optional_int(
+    value: Any,
+    field_name: str,
+    *,
+    minimum: int | None = None,
+    maximum: int | None = None,
+) -> str:
     if value is None or value == "":
         return ""
     parsed = int(value)
     if minimum is not None and parsed < minimum:
         raise ValueError(f"{field_name} must be >= {minimum}")
+    if maximum is not None and parsed > maximum:
+        raise ValueError(f"{field_name} must be <= {maximum}")
     return str(parsed)
 
 
@@ -175,6 +243,14 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.intent_records: list[dict[str, Any]] = []
         self.latest_intent_by_participant: dict[str, dict[str, Any]] = {}
         self.summary_written_runs: set[str] = set()
+        self.run_results_dirs: dict[str, Path] = {self.run_id: RESULTS_ROOT / self.run_id}
+        self.current_run_results_dir: Path = self.run_results_dirs[self.run_id]
+        self.duel_session_id = ""
+        self.duel_total_rounds = 1
+        self.duel_current_round = 0
+        self.duel_controller_tokens: dict[str, Any] = {}
+        self.duel_player_1_prompt = ""
+        self.duel_player_2_prompt = ""
 
 
 class DoomArenaHandler(SimpleHTTPRequestHandler):
@@ -225,6 +301,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/participant-ready":
             self.write_participant_ready()
+            return
+
+        if path == "/api/arena/mcp-call-telemetry":
+            self.write_mcp_call_telemetry()
             return
 
         if path == "/api/arena/enemy-commands":
@@ -304,6 +384,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.read_run_artifact("summary.json")
             return
 
+        if path == "/api/arena/run-results":
+            self.read_run_results_page()
+            return
+
+        if path == "/api/arena/run-instructions":
+            self.read_run_instructions()
+            return
+
         if path == "/api/arena/mcp-config":
             self.read_mcp_config()
             return
@@ -317,7 +405,32 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def run_dir(self, run_id: str | None = None) -> Path:
         selected_run_id = run_id or self.server.run_id
+        mapped = self.server.run_results_dirs.get(selected_run_id)
+        if mapped is not None:
+            return mapped
+        if run_id is None and self.server.current_run_results_dir:
+            return self.server.current_run_results_dir
         return RESULTS_ROOT / selected_run_id
+
+    def set_run_results_dir(self, run_id: str, target_dir: Path) -> None:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        legacy_dir = RESULTS_ROOT / run_id
+        if legacy_dir.exists() and legacy_dir != target_dir:
+            for child in legacy_dir.iterdir():
+                destination = target_dir / child.name
+                if destination.exists():
+                    if destination.is_dir():
+                        shutil.rmtree(destination)
+                    else:
+                        destination.unlink()
+                shutil.move(str(child), str(destination))
+            try:
+                legacy_dir.rmdir()
+            except OSError:
+                pass
+        self.server.run_results_dirs[run_id] = target_dir
+        if run_id == self.server.run_id:
+            self.server.current_run_results_dir = target_dir
 
     def reset_mcp_stats(self) -> None:
         with self.server.stats_lock:
@@ -393,6 +506,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
         if not isinstance(payload, dict):
             return
+        self.attach_mcp_result_payload_summary_locked(record, payload)
+
+    def attach_mcp_result_payload_summary_locked(self, record: dict[str, Any], payload: dict[str, Any]) -> None:
         for key in ("accepted", "ready", "cleared", "started", "phase", "run_id", "intent_id", "issued_at_ms", "expires_at_ms"):
             if key in payload:
                 record[key] = payload[key]
@@ -409,9 +525,40 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "movement_bias",
                 "fire_policy",
                 "distance_policy",
+                *PARTICIPANT_INTENT_EXTRA_FIELDS,
             ):
                 if key in normalized:
                     record[key] = normalized[key]
+
+    def normalize_remote_mcp_call(self, payload: dict[str, Any]) -> dict[str, Any]:
+        self.server.mcp_call_counter += 1
+        request_index = self.server.mcp_call_counter
+        started_at = int(payload.get("started_at_ms") or now_ms())
+        completed_at = int(payload.get("completed_at_ms") or started_at)
+        is_error = bool(payload.get("is_error", False))
+        participant_id = str(payload.get("participant_id", ""))
+        if participant_id and participant_id not in PARTICIPANTS:
+            participant_id = ""
+
+        return {
+            "call_id": str(payload.get("call_id") or f"external_mcp_call_{request_index:06d}"),
+            "request_index": request_index,
+            "run_id": str(payload.get("run_id") or self.server.run_id),
+            "scenario_id": str(payload.get("scenario_id") or self.server.scenario_id),
+            "jsonrpc_id": payload.get("jsonrpc_id"),
+            "tool_name": str(payload.get("tool_name") or "unknown"),
+            "participant_id": participant_id,
+            "started_at_ms": started_at,
+            "completed_at_ms": completed_at,
+            "latency_ms": max(0, completed_at - started_at),
+            "status": "error" if is_error else "completed",
+            "is_error": is_error,
+            "overlapped_by_later_call": bool(payload.get("overlapped_by_later_call", False)),
+            "overlapped_by_call_id": str(payload.get("overlapped_by_call_id", "")),
+            "overlapped_at_ms": payload.get("overlapped_at_ms"),
+            "source": "external_mcp_telemetry",
+            **({"error": str(payload.get("error", ""))[:500]} if is_error else {}),
+        }
 
     def record_intent_lifecycle_locked(self, call_record: dict[str, Any], text: str) -> None:
         try:
@@ -423,20 +570,103 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         normalized = payload.get("normalized_intent")
         if not isinstance(normalized, dict):
             return
+        self.record_intent_payload_locked(payload, normalized, "mcp_tool", call_record)
 
+    def record_participant_intent_row_locked(self, row: dict[str, str]) -> None:
+        normalized = {
+            "participant_id": row.get("participant_id", ""),
+            "intent": row.get("intent", ""),
+            "style": row.get("style", ""),
+            "target_id": row.get("target_id", ""),
+            "preferred_distance": row.get("preferred_distance"),
+            "aggression": row.get("aggression"),
+            "duration_ms": row.get("duration_ms"),
+            "strafe_direction": row.get("strafe_direction", ""),
+            "movement_bias": row.get("movement_bias", ""),
+            "fire_policy": row.get("fire_policy", ""),
+            "distance_policy": row.get("distance_policy", ""),
+            "replan_if": [
+                item.strip()
+                for item in str(row.get("replan_if", "")).split(",")
+                if item.strip()
+            ],
+            "sequence_number": row.get("sequence_number") or None,
+            "decision_cadence_ms": row.get("decision_cadence_ms") or None,
+        }
+        for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
+            normalized[key] = row.get(key, "")
+        payload = {
+            "accepted": True,
+            "participant_id": row.get("participant_id", ""),
+            "intent_id": row.get("intent_id", ""),
+            "run_id": row.get("run_id", self.server.run_id),
+            "scenario_id": row.get("scenario_id", self.server.scenario_id),
+            "issued_at_ms": row.get("issued_at_ms", ""),
+            "expires_at_ms": row.get("expires_at_ms", ""),
+            "normalized_intent": normalized,
+        }
+        self.record_intent_payload_locked(payload, normalized, "participant_intents_api", None)
+
+    def match_is_finished(self) -> bool:
+        try:
+            score = score_from_state(read_arena_state())
+        except (OSError, ValueError):
+            return False
+        return score.get("mode") == "duel" and score.get("phase") == "finished"
+
+    def has_current_run_intents(self, rows: list[dict[str, str]]) -> bool:
+        return any(
+            row.get("run_id", self.server.run_id) == self.server.run_id
+            and row.get("participant_id", "") in PARTICIPANTS
+            and row.get("intent", "") not in {"", "none"}
+            for row in rows
+        )
+
+    def record_intent_payload_locked(
+        self,
+        payload: dict[str, Any],
+        normalized: dict[str, Any],
+        source: str,
+        call_record: dict[str, Any] | None,
+    ) -> None:
         participant_id = str(payload.get("participant_id") or normalized.get("participant_id") or "")
         if participant_id not in PARTICIPANTS:
             return
 
-        issued_at = int(payload.get("issued_at_ms") or call_record.get("started_at_ms") or now_ms())
+        intent_id = str(payload.get("intent_id", ""))
+        run_id = str(payload.get("run_id", self.server.run_id))
+        existing = next(
+            (
+                intent
+                for intent in self.server.intent_records
+                if intent.get("run_id") == run_id
+                and intent.get("participant_id") == participant_id
+                and intent.get("intent_id") == intent_id
+            ),
+            None,
+        )
+        if existing is not None:
+            if call_record is not None:
+                existing["call_id"] = call_record["call_id"]
+                existing["request_index"] = call_record.get("request_index")
+                existing["mcp_call_latency_ms"] = call_record.get("latency_ms")
+                existing["source"] = "mcp_tool"
+                call_record["intent_id"] = existing["intent_id"]
+                call_record["sequence_number"] = existing["sequence_number"]
+            return
+
+        fallback_started_at = call_record.get("started_at_ms") if call_record is not None else None
+        issued_at = int(payload.get("issued_at_ms") or fallback_started_at or now_ms())
         duration_ms = int(normalized.get("duration_ms") or payload.get("duration_ms") or 0)
         expires_at = int(payload.get("expires_at_ms") or (issued_at + max(duration_ms, 0)))
         intent_record = {
-            "call_id": call_record["call_id"],
+            "call_id": call_record["call_id"] if call_record is not None else "",
+            "request_index": call_record.get("request_index") if call_record is not None else None,
+            "source": source,
             "run_id": str(payload.get("run_id", self.server.run_id)),
             "scenario_id": str(payload.get("scenario_id", self.server.scenario_id)),
             "participant_id": participant_id,
-            "intent_id": str(payload.get("intent_id", "")),
+            "intent_id": intent_id,
             "intent": str(normalized.get("intent", "")),
             "style": str(normalized.get("style", "")),
             "target_id": str(normalized.get("target_id", "")),
@@ -452,7 +682,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "duration_ms": duration_ms,
             "issued_at_ms": issued_at,
             "expires_at_ms": expires_at,
-            "mcp_call_latency_ms": call_record.get("latency_ms"),
+            "mcp_call_latency_ms": call_record.get("latency_ms") if call_record is not None else None,
             "superseded_before_expiry": False,
             "superseded_at_ms": None,
             "superseded_by_intent_id": "",
@@ -463,6 +693,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "previous_intent_id": "",
             "gap_after_previous_expiry_ms": None,
         }
+        for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
+            intent_record[key] = normalized.get(key)
 
         previous = self.server.latest_intent_by_participant.get(participant_id)
         if previous:
@@ -483,14 +715,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             else:
                 previous["expired_before_next_intent"] = True
                 previous["gap_after_expiry_before_next_ms"] = issued_at - previous_expires_at
+                previous["sticky_after_expiry"] = True
+                previous["sticky_extension_before_next_ms"] = issued_at - previous_expires_at
                 intent_record["gap_after_previous_expiry_ms"] = issued_at - previous_expires_at
 
         self.server.intent_records.append(intent_record)
         self.server.latest_intent_by_participant[participant_id] = intent_record
-        call_record["intent_id"] = intent_record["intent_id"]
-        call_record["sequence_number"] = intent_record["sequence_number"]
+        if call_record is not None:
+            call_record["intent_id"] = intent_record["intent_id"]
+            call_record["sequence_number"] = intent_record["sequence_number"]
 
     def build_mcp_stats_payload_locked(self) -> dict[str, Any]:
+        generated_at = now_ms()
         calls = [copy.deepcopy(call) for call in self.server.mcp_calls]
         active_calls = [copy.deepcopy(call) for call in self.server.active_mcp_calls.values()]
         intents = [copy.deepcopy(intent) for intent in self.server.intent_records]
@@ -536,6 +772,17 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     bucket["average_latency_ms"] = round(sum(bucket_latencies) / len(bucket_latencies), 3)
                     bucket["max_latency_ms"] = round(max(bucket_latencies), 3)
 
+        for intent in intents:
+            expires_at = int(intent.get("expires_at_ms") or 0)
+            if (
+                expires_at > 0
+                and generated_at > expires_at
+                and not intent.get("superseded_before_expiry")
+                and not intent.get("next_issued_at_ms")
+            ):
+                intent["sticky_after_expiry"] = True
+                intent["sticky_extension_until_stats_ms"] = generated_at - expires_at
+
         superseded = [intent for intent in intents if intent.get("superseded_before_expiry")]
         expired_before_next = [intent for intent in intents if intent.get("expired_before_next_intent")]
         unused_durations = [
@@ -546,13 +793,50 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             int(intent.get("gap_after_expiry_before_next_ms") or 0)
             for intent in expired_before_next
         ]
+        sticky_extensions = [
+            int(intent.get("sticky_extension_before_next_ms") or intent.get("sticky_extension_until_stats_ms") or 0)
+            for intent in intents
+            if intent.get("sticky_after_expiry")
+        ]
+        inferred_decision_turns: list[dict[str, Any]] = []
+        last_observation_by_participant: dict[str, dict[str, Any]] = {}
+        for call in sorted(calls, key=lambda item: int(item.get("request_index") or 0)):
+            participant_id = str(call.get("participant_id", ""))
+            tool_name = str(call.get("tool_name", ""))
+            if not participant_id:
+                continue
+            if tool_name == "get_participant_observation" and call.get("completed_at_ms") is not None:
+                last_observation_by_participant[participant_id] = call
+            elif tool_name == "set_participant_intent" and call.get("started_at_ms") is not None:
+                previous_observation = last_observation_by_participant.get(participant_id)
+                if previous_observation is None:
+                    continue
+                decision_latency = int(call["started_at_ms"]) - int(previous_observation["completed_at_ms"])
+                if decision_latency < 0:
+                    continue
+                inferred_decision_turns.append(
+                    {
+                        "participant_id": participant_id,
+                        "observation_call_id": previous_observation.get("call_id"),
+                        "intent_call_id": call.get("call_id"),
+                        "observation_completed_at_ms": previous_observation.get("completed_at_ms"),
+                        "intent_started_at_ms": call.get("started_at_ms"),
+                        "inferred_decision_latency_ms": decision_latency,
+                        "intent": call.get("intent"),
+                        "sequence_number": call.get("sequence_number"),
+                    }
+                )
+        inferred_decision_latencies = [
+            int(turn["inferred_decision_latency_ms"])
+            for turn in inferred_decision_turns
+        ]
 
         return {
             "run_id": self.server.run_id,
             "scenario_id": self.server.scenario_id,
             "started_at_ms": self.server.started_at_ms,
-            "generated_at_ms": now_ms(),
-            "note": "latency_ms is local HTTP MCP tool-call latency measured by the arena server, not LLM think time.",
+            "generated_at_ms": generated_at,
+            "note": "latency_ms is local HTTP MCP tool-call latency measured by the arena server, not LLM think time. inferred_chat_decision_latency_ms approximates time from observation completion to the next intent request.",
             "summary": {
                 "total_mcp_calls": len(calls),
                 "completed_mcp_calls": sum(1 for call in calls if not call.get("is_error")),
@@ -568,11 +852,17 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "max_unused_intent_duration_ms": max(unused_durations) if unused_durations else 0,
                 "average_gap_after_intent_expiry_ms": round(sum(gaps) / len(gaps), 3) if gaps else 0.0,
                 "max_gap_after_intent_expiry_ms": max(gaps) if gaps else 0,
+                "intents_continued_stale_after_expiry": len(sticky_extensions),
+                "average_stale_intent_extension_ms": round(sum(sticky_extensions) / len(sticky_extensions), 3) if sticky_extensions else 0.0,
+                "max_stale_intent_extension_ms": max(sticky_extensions) if sticky_extensions else 0,
+                "average_inferred_chat_decision_latency_ms": round(sum(inferred_decision_latencies) / len(inferred_decision_latencies), 3) if inferred_decision_latencies else 0.0,
+                "max_inferred_chat_decision_latency_ms": max(inferred_decision_latencies) if inferred_decision_latencies else 0,
             },
             "by_tool": by_tool,
             "by_participant": by_participant,
             "calls": calls,
             "active_calls": active_calls,
+            "inferred_decision_turns": inferred_decision_turns,
             "intent_lifecycles": intents,
         }
 
@@ -581,6 +871,21 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         run_dir.mkdir(parents=True, exist_ok=True)
         payload = self.build_mcp_stats_payload_locked()
         (run_dir / "stats.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    def write_run_events_artifact(self, events_text: str) -> None:
+        rows = [
+            row for row in parse_tsv_rows(events_text)
+            if row.get("run_id", self.server.run_id) in {"", self.server.run_id}
+        ]
+        if not rows:
+            return
+
+        run_dir = self.run_dir()
+        run_dir.mkdir(parents=True, exist_ok=True)
+        (run_dir / "events.jsonl").write_text(
+            "".join(json.dumps(row, separators=(",", ":")) + "\n" for row in rows),
+            encoding="utf-8",
+        )
 
     def maybe_write_finished_run_artifacts(self, state_text: str) -> None:
         rows = parse_tsv_rows(state_text)
@@ -614,6 +919,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "stats": "stats.json",
         }
         (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        if ARENA_EVENTS_TSV.exists():
+            self.write_run_events_artifact(ARENA_EVENTS_TSV.read_text(encoding="utf-8", errors="replace"))
         self.server.summary_written_runs.add(run_id)
         with self.server.stats_lock:
             self.write_mcp_stats_locked()
@@ -718,6 +1025,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         path.write_bytes(body)
         if path == ARENA_STATE_TSV:
             self.maybe_write_finished_run_artifacts(body.decode("utf-8", errors="replace"))
+        elif path == ARENA_EVENTS_TSV:
+            self.write_run_events_artifact(body.decode("utf-8", errors="replace"))
         self.write_json(HTTPStatus.OK, {"ok": True, "path": label, "bytes": len(body)})
 
     def read_file(self, path: Path, label: str) -> None:
@@ -754,6 +1063,146 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def read_run_results_page(self) -> None:
+        run_dir = self.run_dir()
+        session_dir = Path()
+        if self.server.duel_session_id:
+            session_dir = RESULTS_ROOT / self.server.duel_session_id
+        elif run_dir.parent.name.startswith("session_"):
+            session_dir = run_dir.parent
+        artifact_names = [
+            "summary.json",
+            "stats.json",
+            "config.json",
+            "controller_tokens.json",
+            "events.jsonl",
+            "player_1_mcp_instructions.md",
+            "player_2_mcp_instructions.md",
+        ]
+        endpoint_by_name = {
+            "summary.json": "/api/arena/run-summary",
+            "stats.json": "/api/arena/run-stats",
+        }
+        rows = []
+
+        for artifact_name in artifact_names:
+            artifact_path = run_dir / artifact_name
+            if artifact_path.exists():
+                href = endpoint_by_name.get(artifact_name)
+                if href:
+                    rows.append(f'<li><a href="{href}">{html.escape(artifact_name)}</a></li>')
+                else:
+                    rows.append(f"<li>{html.escape(artifact_name)}</li>")
+
+        if not rows:
+            rows.append("<li>No result artifacts have been written yet.</li>")
+
+        round_rows: list[str] = []
+        if session_dir and session_dir.exists() and session_dir != run_dir:
+            for candidate in sorted(session_dir.glob("round_*")):
+                if candidate.is_dir():
+                    round_rows.append(f"<li>{html.escape(candidate.name)}</li>")
+        if not round_rows:
+            round_rows.append("<li>No additional rounds found yet.</li>")
+
+        session_folder_html = (
+            f"""<p>Session folder:</p>
+  <code>{html.escape(str(session_dir))}</code>"""
+            if session_dir and session_dir.exists()
+            else ""
+        )
+
+        body = f"""<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Doom Arena Results {html.escape(self.server.run_id)}</title>
+  <style>
+    body {{
+      background: #10130d;
+      color: #f7f5d8;
+      font: 14px/1.45 Consolas, "Courier New", monospace;
+      padding: 24px;
+    }}
+    h1 {{ color: #b8e986; font-size: 20px; }}
+    a {{ color: #ffce6b; }}
+    code {{
+      display: block;
+      padding: 10px;
+      background: #050505;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }}
+  </style>
+</head>
+<body>
+  <h1>Doom Arena Match Results</h1>
+  <p>Run ID: {html.escape(self.server.run_id)}</p>
+  {session_folder_html}
+  <p>Round folder:</p>
+  <code>{html.escape(str(run_dir))}</code>
+  <h2>Round Artifacts</h2>
+  <ul>
+    {''.join(rows)}
+  </ul>
+  <h2>Session Rounds</h2>
+  <ul>
+    {''.join(round_rows)}
+  </ul>
+</body>
+</html>
+""".encode("utf-8")
+
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def duel_prompt_text(self, participant_id: str) -> str:
+        if participant_id == "player_1" and self.server.duel_player_1_prompt:
+            return self.server.duel_player_1_prompt
+        if participant_id == "player_2" and self.server.duel_player_2_prompt:
+            return self.server.duel_player_2_prompt
+
+        prompt_path = self.run_dir() / f"{participant_id}_mcp_instructions.md"
+        if prompt_path.exists():
+            return prompt_path.read_text(encoding="utf-8", errors="replace")
+        return ""
+
+    def read_run_instructions(self) -> None:
+        query = parse_qs(urlparse(self.path).query)
+        participant_id = str(query.get("participant_id", [""])[0])
+        if participant_id not in PARTICIPANTS:
+            self.write_json(
+                HTTPStatus.BAD_REQUEST,
+                {"ok": False, "error": "participant_id must be player_1 or player_2."},
+            )
+            return
+
+        prompt = self.duel_prompt_text(participant_id)
+        if not prompt:
+            self.write_json(
+                HTTPStatus.NOT_FOUND,
+                {
+                    "ok": False,
+                    "error": f"{participant_id} MCP instructions have not been written yet.",
+                    "run_id": self.server.run_id,
+                },
+            )
+            return
+
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "run_id": self.server.run_id,
+                "participant_id": participant_id,
+                "prompt": prompt,
+            },
+        )
 
     def write_player_command(self) -> None:
         body = self.read_body()
@@ -809,18 +1258,26 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def write_participant_intents(self) -> None:
         body = self.read_body()
         content_type = self.headers.get("Content-Type", "")
+        intent_rows_for_stats: list[dict[str, str]] = []
 
         try:
             if "application/json" in content_type:
                 payload = json.loads(body.decode("utf-8"))
                 if isinstance(payload, list):
-                    body = self.participant_intents_json_to_tsv(payload).encode("utf-8")
+                    intent_rows_for_stats = [
+                        self.normalize_participant_intent(row)
+                        for row in payload
+                    ]
+                    body = self.participant_intent_rows_to_tsv(intent_rows_for_stats).encode("utf-8")
                 elif isinstance(payload, dict):
-                    body = self.update_participant_intent_json(payload).encode("utf-8")
+                    intent_row = self.normalize_participant_intent(payload)
+                    intent_rows_for_stats = [intent_row]
+                    body = self.update_participant_intent_row(intent_row).encode("utf-8")
                 else:
                     raise ValueError("JSON payload must be an object or list")
             else:
-                self.validate_participant_intents_tsv(body.decode("utf-8", errors="replace"))
+                text = body.decode("utf-8", errors="replace")
+                intent_rows_for_stats = self.parse_participant_intent_rows(text)
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
             self.write_json(
                 HTTPStatus.BAD_REQUEST,
@@ -828,13 +1285,64 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             )
             return
 
+        if self.match_is_finished() and self.has_current_run_intents(intent_rows_for_stats):
+            self.write_json(
+                HTTPStatus.CONFLICT,
+                {
+                    "ok": False,
+                    "error": "Match is already finished; post-finish participant intents are rejected.",
+                    "run_id": self.server.run_id,
+                },
+            )
+            return
+
         ARENA_PARTICIPANT_INTENT_TSV.write_bytes(body)
+        if intent_rows_for_stats:
+            with self.server.stats_lock:
+                for row in intent_rows_for_stats:
+                    self.record_participant_intent_row_locked(row)
+                self.write_mcp_stats_locked()
         self.write_json(
             HTTPStatus.OK,
             {
                 "ok": True,
                 "path": "arena_participant_intents.local.tsv",
                 "bytes": len(body),
+            },
+        )
+
+    def write_mcp_call_telemetry(self) -> None:
+        try:
+            payload = self.read_json_body()
+            if not payload:
+                raise ValueError("telemetry payload must be a JSON object")
+            with self.server.stats_lock:
+                record = self.normalize_remote_mcp_call(payload)
+                self.server.mcp_calls.append(record)
+                result_text = ""
+                result_payload = payload.get("result")
+                if isinstance(result_payload, dict):
+                    self.attach_mcp_result_payload_summary_locked(record, result_payload)
+                    result_text = json.dumps(result_payload)
+                elif isinstance(payload.get("result_text"), str):
+                    result_text = str(payload.get("result_text", ""))
+                    self.attach_mcp_result_summary_locked(record, result_text)
+                if not record.get("is_error") and record.get("tool_name") == "set_participant_intent" and result_text:
+                    self.record_intent_lifecycle_locked(record, result_text)
+                self.write_mcp_stats_locked()
+        except (TypeError, ValueError, json.JSONDecodeError) as exc:
+            self.write_json(
+                HTTPStatus.BAD_REQUEST,
+                {"ok": False, "error": f"Invalid MCP telemetry: {exc}"},
+            )
+            return
+
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "call_id": record.get("call_id", ""),
+                "recorded": True,
             },
         )
 
@@ -922,6 +1430,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def update_participant_intent_json(self, payload: dict[str, Any]) -> str:
         intent_row = self.normalize_participant_intent(payload)
+        return self.update_participant_intent_row(intent_row)
+
+    def update_participant_intent_row(self, intent_row: dict[str, str]) -> str:
         rows = self.read_participant_intent_rows()
         current_ms = now_ms()
         rows = [
@@ -1017,6 +1528,83 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "decision_cadence_ms",
             minimum=1,
         )
+        aim_tolerance = normalize_optional_int(
+            payload.get("aim_tolerance"),
+            "aim_tolerance",
+            minimum=0,
+            maximum=180,
+        )
+        fire_burst_ms = normalize_optional_int(
+            payload.get("fire_burst_ms"),
+            "fire_burst_ms",
+            minimum=0,
+            maximum=60000,
+        )
+        min_fire_alignment = normalize_optional_int(
+            payload.get("min_fire_alignment"),
+            "min_fire_alignment",
+            minimum=0,
+            maximum=180,
+        )
+        min_distance = normalize_optional_int(
+            payload.get("min_distance"),
+            "min_distance",
+            minimum=0,
+        )
+        max_distance = normalize_optional_int(
+            payload.get("max_distance"),
+            "max_distance",
+            minimum=0,
+        )
+        retreat_if_closer_than = normalize_optional_int(
+            payload.get("retreat_if_closer_than"),
+            "retreat_if_closer_than",
+            minimum=0,
+        )
+        push_if_farther_than = normalize_optional_int(
+            payload.get("push_if_farther_than"),
+            "push_if_farther_than",
+            minimum=0,
+        )
+        if min_distance and max_distance and int(min_distance) > int(max_distance):
+            raise ValueError("min_distance must be <= max_distance")
+        los_lost_action = normalize_optional_enum(
+            payload.get("los_lost_action"),
+            "sweep",
+            ALLOWED_LOS_LOST_ACTIONS,
+            "los_lost_action",
+        )
+        stuck_recovery_strategy = normalize_optional_enum(
+            payload.get("stuck_recovery_strategy"),
+            "default",
+            ALLOWED_STUCK_RECOVERY_STRATEGIES,
+            "stuck_recovery_strategy",
+        )
+        movement_primitive = normalize_optional_enum(
+            payload.get("movement_primitive"),
+            "",
+            ALLOWED_MOVEMENT_PRIMITIVES,
+            "movement_primitive",
+            allow_blank=True,
+        )
+        turn_policy = normalize_optional_enum(
+            payload.get("turn_policy"),
+            "auto",
+            ALLOWED_TURN_POLICIES,
+            "turn_policy",
+        )
+        navigation_target = normalize_optional_enum(
+            payload.get("navigation_target"),
+            "opponent",
+            ALLOWED_NAVIGATION_TARGETS,
+            "navigation_target",
+        )
+        fire_mode = normalize_optional_enum(
+            payload.get("fire_mode"),
+            "auto",
+            ALLOWED_FIRE_MODES,
+            "fire_mode",
+        )
 
         return {
             "run_id": str(payload.get("run_id", self.server.run_id)),
@@ -1038,6 +1626,19 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "replan_if": replan_if,
             "sequence_number": sequence_number,
             "decision_cadence_ms": decision_cadence_ms,
+            "aim_tolerance": aim_tolerance,
+            "fire_burst_ms": fire_burst_ms,
+            "min_fire_alignment": min_fire_alignment,
+            "min_distance": min_distance,
+            "max_distance": max_distance,
+            "retreat_if_closer_than": retreat_if_closer_than,
+            "push_if_farther_than": push_if_farther_than,
+            "los_lost_action": los_lost_action,
+            "stuck_recovery_strategy": stuck_recovery_strategy,
+            "movement_primitive": movement_primitive,
+            "turn_policy": turn_policy,
+            "navigation_target": navigation_target,
+            "fire_mode": fire_mode,
         }
 
     def read_participant_intent_rows(self) -> list[dict[str, str]]:
@@ -1051,10 +1652,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         if not lines:
             return []
         expected_header = PARTICIPANT_INTENT_HEADER.strip().split("\t")
+        extended_previous_header = PARTICIPANT_INTENT_EXTENDED_PREVIOUS_HEADER.strip().split("\t")
+        previous_header = PARTICIPANT_INTENT_PREVIOUS_HEADER.strip().split("\t")
         legacy_header = PARTICIPANT_INTENT_LEGACY_HEADER.strip().split("\t")
         header = lines[0].split("\t")
         if header == legacy_header:
             parse_header = legacy_header
+        elif header == previous_header:
+            parse_header = previous_header
+        elif header == extended_previous_header:
+            parse_header = extended_previous_header
         elif header == expected_header:
             parse_header = expected_header
         else:
@@ -1077,8 +1684,35 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         "replan_if": "",
                         "sequence_number": "",
                         "decision_cadence_ms": "",
+                        "aim_tolerance": "",
+                        "fire_burst_ms": "",
+                        "min_fire_alignment": "",
+                        "min_distance": "",
+                        "max_distance": "",
+                        "retreat_if_closer_than": "",
+                        "push_if_farther_than": "",
+                        "los_lost_action": "sweep",
+                        "stuck_recovery_strategy": "default",
+                        "movement_primitive": "",
+                        "turn_policy": "auto",
+                        "navigation_target": "opponent",
+                        "fire_mode": "auto",
                     }
                 )
+            if parse_header in (legacy_header, previous_header, extended_previous_header):
+                for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
+                    if key not in row:
+                        row[key] = ""
+                if not row.get("los_lost_action"):
+                    row["los_lost_action"] = "sweep"
+                if not row.get("stuck_recovery_strategy"):
+                    row["stuck_recovery_strategy"] = "default"
+                if not row.get("turn_policy"):
+                    row["turn_policy"] = "auto"
+                if not row.get("navigation_target"):
+                    row["navigation_target"] = "opponent"
+                if not row.get("fire_mode"):
+                    row["fire_mode"] = "auto"
             self.validate_participant_intent_row(row, reject_expired=reject_expired)
             rows.append(row)
         return rows
@@ -1127,6 +1761,37 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         decision_cadence_ms = row.get("decision_cadence_ms", "")
         if decision_cadence_ms:
             normalize_optional_int(decision_cadence_ms, "decision_cadence_ms", minimum=1)
+        for field_name in (
+            "min_distance",
+            "max_distance",
+            "retreat_if_closer_than",
+            "push_if_farther_than",
+        ):
+            if row.get(field_name, ""):
+                normalize_optional_int(row[field_name], field_name, minimum=0)
+        for field_name in ("aim_tolerance", "min_fire_alignment"):
+            if row.get(field_name, ""):
+                normalize_optional_int(row[field_name], field_name, minimum=0, maximum=180)
+        if row.get("fire_burst_ms", ""):
+            normalize_optional_int(row["fire_burst_ms"], "fire_burst_ms", minimum=0, maximum=60000)
+        if (
+            row.get("min_distance", "")
+            and row.get("max_distance", "")
+            and int(row["min_distance"]) > int(row["max_distance"])
+        ):
+            raise ValueError("min_distance must be <= max_distance")
+        if row.get("los_lost_action", "sweep") not in ALLOWED_LOS_LOST_ACTIONS:
+            raise ValueError("invalid los_lost_action")
+        if row.get("stuck_recovery_strategy", "default") not in ALLOWED_STUCK_RECOVERY_STRATEGIES:
+            raise ValueError("invalid stuck_recovery_strategy")
+        if row.get("movement_primitive", "") and row["movement_primitive"] not in ALLOWED_MOVEMENT_PRIMITIVES:
+            raise ValueError("invalid movement_primitive")
+        if row.get("turn_policy", "auto") not in ALLOWED_TURN_POLICIES:
+            raise ValueError("invalid turn_policy")
+        if row.get("navigation_target", "opponent") not in ALLOWED_NAVIGATION_TARGETS:
+            raise ValueError("invalid navigation_target")
+        if row.get("fire_mode", "auto") not in ALLOWED_FIRE_MODES:
+            raise ValueError("invalid fire_mode")
 
     def participant_intent_rows_to_tsv(self, rows: list[dict[str, str]]) -> str:
         keys = PARTICIPANT_INTENT_HEADER.strip().split("\t")
@@ -1221,6 +1886,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.server.started_at_ms = now_ms()
         self.server.reset_requested = True
         self.server.summary_written_runs.discard(self.server.run_id)
+        default_run_dir = RESULTS_ROOT / self.server.run_id
+        self.server.run_results_dirs[self.server.run_id] = default_run_dir
+        self.server.current_run_results_dir = default_run_dir
 
         for path in (
             ARENA_STATE_TSV,
@@ -1263,37 +1931,114 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def create_duel_session(self) -> None:
         payload = self.read_json_body()
         decision_cadence_ms = int(payload.get("decision_cadence_ms", 750))
-        intent_duration_ms = int(payload.get("intent_duration_ms", 3000))
+        intent_duration_ms = int(payload.get("intent_duration_ms", 25000))
         enforce_tokens = bool(payload.get("enforce_controller_tokens", True))
+        continue_session = bool(payload.get("continue_session", False))
+        try:
+            requested_total_rounds = clamp_int(
+                payload.get("rounds", payload.get("round", DUEL_DEFAULTS["round"])),
+                1,
+                50,
+            )
+        except (TypeError, ValueError):
+            requested_total_rounds = int(DUEL_DEFAULTS["round"])
+
+        if continue_session and self.server.duel_session_id:
+            if not self.match_is_finished():
+                self.write_json(
+                    HTTPStatus.CONFLICT,
+                    {
+                        "ok": False,
+                        "error": "Current round is still active; wait for phase=finished before starting next round.",
+                        "duel_session_id": self.server.duel_session_id,
+                        "current_round": self.server.duel_current_round,
+                        "total_rounds": self.server.duel_total_rounds,
+                    },
+                )
+                return
+            if self.server.duel_current_round >= self.server.duel_total_rounds:
+                self.write_json(
+                    HTTPStatus.CONFLICT,
+                    {
+                        "ok": False,
+                        "error": "No remaining rounds in this duel session.",
+                        "duel_session_id": self.server.duel_session_id,
+                        "current_round": self.server.duel_current_round,
+                        "total_rounds": self.server.duel_total_rounds,
+                    },
+                )
+                return
+            duel_session_id = self.server.duel_session_id
+            total_rounds = self.server.duel_total_rounds
+            round_number = self.server.duel_current_round + 1
+        else:
+            duel_session_id = new_duel_session_id()
+            total_rounds = requested_total_rounds
+            round_number = 1
+            self.server.duel_controller_tokens = {}
+            self.server.duel_player_1_prompt = ""
+            self.server.duel_player_2_prompt = ""
+
+        player_1_model = str(payload.get("player_1_model", self.server.player_1_model or DUEL_DEFAULTS["player_1_model"]))
+        player_2_model = str(payload.get("player_2_model", self.server.player_2_model or DUEL_DEFAULTS["player_2_model"]))
+        try:
+            seed_value = int(payload.get("seed", self.server.seed or DUEL_DEFAULTS["seed"]))
+        except (TypeError, ValueError):
+            seed_value = int(self.server.seed or DUEL_DEFAULTS["seed"])
+        try:
+            timeout_seconds_value = int(
+                payload.get("timeout_seconds", self.server.timeout_seconds or DUEL_DEFAULTS["timeout_seconds"])
+            )
+        except (TypeError, ValueError):
+            timeout_seconds_value = int(self.server.timeout_seconds or DUEL_DEFAULTS["timeout_seconds"])
         reset_payload = self.reset_arena_state(
             {
                 **payload,
                 "arena_mode": "duel",
-                "player_1_model": payload.get("player_1_model", DUEL_DEFAULTS["player_1_model"]),
-                "player_2_model": payload.get("player_2_model", DUEL_DEFAULTS["player_2_model"]),
-                "round": payload.get("round", DUEL_DEFAULTS["round"]),
-                "seed": payload.get("seed", DUEL_DEFAULTS["seed"]),
-                "timeout_seconds": payload.get("timeout_seconds", DUEL_DEFAULTS["timeout_seconds"]),
+                "player_1_model": player_1_model,
+                "player_2_model": player_2_model,
+                "round": round_number,
+                "seed": seed_value,
+                "timeout_seconds": timeout_seconds_value,
             }
         )
         run_id = str(reset_payload["run_id"])
-        run_dir = RESULTS_ROOT / run_id
+        session_dir = RESULTS_ROOT / duel_session_id
+        run_dir = session_dir / f"round_{round_number:02d}_{run_id}"
         run_dir.mkdir(parents=True, exist_ok=True)
+        self.set_run_results_dir(run_id, run_dir)
 
-        controller_tokens = build_controller_tokens(
-            run_id,
-            str(reset_payload["player_1_model"]),
-            str(reset_payload["player_2_model"]),
-            enforce_tokens,
-        )
+        if self.server.duel_controller_tokens:
+            controller_tokens = copy.deepcopy(self.server.duel_controller_tokens)
+            controller_tokens["run_id"] = run_id
+            controller_tokens["enforce_controller_tokens"] = bool(
+                controller_tokens.get("enforce_controller_tokens", enforce_tokens)
+            )
+            if isinstance(controller_tokens.get("player_1"), dict):
+                controller_tokens["player_1"]["model"] = str(reset_payload["player_1_model"])
+            if isinstance(controller_tokens.get("player_2"), dict):
+                controller_tokens["player_2"]["model"] = str(reset_payload["player_2_model"])
+        else:
+            controller_tokens = build_controller_tokens(
+                run_id,
+                str(reset_payload["player_1_model"]),
+                str(reset_payload["player_2_model"]),
+                enforce_tokens,
+            )
+        effective_enforce_tokens = bool(controller_tokens.get("enforce_controller_tokens", enforce_tokens))
+        self.server.duel_controller_tokens = copy.deepcopy(controller_tokens)
         write_controller_tokens(run_dir, controller_tokens)
+        (session_dir / "controller_tokens.json").write_text(
+            json.dumps(controller_tokens, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
         player_1_instructions = render_participant_instructions(
             "player_1",
             str(reset_payload["player_1_model"]),
             "player_2",
             controller_tokens["player_1"]["controller_token"],
-            enforce_tokens,
+            effective_enforce_tokens,
             decision_cadence_ms,
             intent_duration_ms,
         )
@@ -1302,7 +2047,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             str(reset_payload["player_2_model"]),
             "player_1",
             controller_tokens["player_2"]["controller_token"],
-            enforce_tokens,
+            effective_enforce_tokens,
             decision_cadence_ms,
             intent_duration_ms,
         )
@@ -1310,10 +2055,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         player_2_path = run_dir / "player_2_mcp_instructions.md"
         player_1_path.write_text(player_1_instructions, encoding="utf-8")
         player_2_path.write_text(player_2_instructions, encoding="utf-8")
+        self.server.duel_player_1_prompt = player_1_instructions
+        self.server.duel_player_2_prompt = player_2_instructions
+        self.server.duel_session_id = duel_session_id
+        self.server.duel_total_rounds = total_rounds
+        self.server.duel_current_round = round_number
         (run_dir / "config.json").write_text(
             json.dumps(
                 {
                     "runner": "doom_arena_server_duel_session",
+                    "duel_session_id": duel_session_id,
+                    "total_rounds": total_rounds,
+                    "current_round": round_number,
                     "run_id": run_id,
                     "scenario_id": reset_payload.get("scenario_id", ""),
                     "arena_mode": "duel",
@@ -1325,7 +2078,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     "decision_cadence_ms": decision_cadence_ms,
                     "intent_duration_ms": intent_duration_ms,
                     "control_path": "external MCP clients call HTTP doom-arena tools",
-                    "enforce_controller_tokens": enforce_tokens,
+                    "enforce_controller_tokens": effective_enforce_tokens,
                     "stats": "stats.json",
                 },
                 indent=2,
@@ -1338,7 +2091,12 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             HTTPStatus.OK,
             {
                 **reset_payload,
-                "results_dir": str(run_dir),
+                "results_dir": str(session_dir),
+                "round_results_dir": str(run_dir),
+                "duel_session_id": duel_session_id,
+                "total_rounds": total_rounds,
+                "current_round": round_number,
+                "has_next_round": round_number < total_rounds,
                 "controller_tokens": str(run_dir / "controller_tokens.json"),
                 "stats": str(run_dir / "stats.json"),
                 "player_1_instructions": str(player_1_path),
@@ -1401,6 +2159,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.timeout_seconds = 300
 
     def read_reset(self) -> None:
+        round_results_dir = self.run_dir()
+        if self.server.duel_session_id:
+            results_dir = RESULTS_ROOT / self.server.duel_session_id
+        else:
+            results_dir = round_results_dir
+        player_1_prompt = self.duel_prompt_text("player_1")
+        player_2_prompt = self.duel_prompt_text("player_2")
         payload = {
             "ok": True,
             "run_id": self.server.run_id,
@@ -1411,6 +2176,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "round": self.server.round,
             "seed": self.server.seed,
             "timeout_seconds": self.server.timeout_seconds,
+            "duel_session_id": self.server.duel_session_id,
+            "total_rounds": self.server.duel_total_rounds,
+            "current_round": self.server.duel_current_round,
+            "has_next_round": self.server.duel_current_round < self.server.duel_total_rounds,
+            "results_dir": str(results_dir),
+            "round_results_dir": str(round_results_dir),
+            "player_1_prompt": player_1_prompt,
+            "player_2_prompt": player_2_prompt,
             "reset_requested": self.server.reset_requested,
         }
         self.server.reset_requested = False

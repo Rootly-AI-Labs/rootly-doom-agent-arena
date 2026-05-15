@@ -36,6 +36,10 @@ Those paths exist inside the `Ubuntu-24.04` WSL distro, not in native Windows Po
 
 After rebuilding, hard refresh the browser tab. Existing tabs can continue running an old WASM image until reloaded.
 
+## Performance Build
+
+The browser build is tuned for live duel playback: source maps, `SAFE_HEAP`, and `STACK_OVERFLOW_CHECK` are disabled in the generated Emscripten flags to avoid avoidable FPS overhead. Re-enable those checks only for a focused debugging build, then rebuild and hard refresh the browser tab.
+
 ## Common Failure
 
 Plain `make` can try to refresh Autotools files and fail with:

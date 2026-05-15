@@ -102,6 +102,9 @@ def main() -> int:
         "replan_if",
         "sequence_number",
         "decision_cadence_ms",
+        "turn_policy",
+        "navigation_target",
+        "fire_mode",
     }
     header_columns = set(text.splitlines()[0].split("\t"))
     missing_columns = sorted(required_columns - header_columns)
@@ -122,6 +125,9 @@ def main() -> int:
         "replan_if": ["lost_los", "stuck", "low_health"],
         "sequence_number": 7,
         "decision_cadence_ms": 750,
+        "turn_policy": "turn_to_enemy",
+        "navigation_target": "opponent",
+        "fire_mode": "burst",
         "issued_at_ms": now_ms(),
     }
     status, _ = post_json(server_url, "/api/arena/participant-intents", extended_payload)
@@ -129,7 +135,7 @@ def main() -> int:
     status, body = request(server_url, "GET", "/api/arena/participant-intents")
     expect(status, {200}, "GET extended /api/arena/participant-intents")
     extended_text = body.decode("utf-8", errors="replace")
-    for expected in ("alternate", "circle", "burst_when_aligned", "kite", "lost_los,stuck,low_health", "\t7\t750"):
+    for expected in ("alternate", "circle", "burst_when_aligned", "kite", "lost_los,stuck,low_health", "\t7\t750", "turn_to_enemy", "opponent", "burst"):
         if expected not in extended_text:
             raise RuntimeError(f"extended participant intent TSV missing {expected!r}")
     print("ok extended tactical payload persisted")
@@ -142,6 +148,9 @@ def main() -> int:
         ("invalid movement_bias", {**payload, "movement_bias": "wander"}),
         ("invalid fire_policy", {**payload, "fire_policy": "spray"}),
         ("invalid distance_policy", {**payload, "distance_policy": "teleport"}),
+        ("invalid turn_policy", {**payload, "turn_policy": "spin"}),
+        ("invalid navigation_target", {**payload, "navigation_target": "secret_room"}),
+        ("invalid fire_mode", {**payload, "fire_mode": "spray"}),
         ("invalid replan_if", {**payload, "replan_if": ["lost_los", "hungry"]}),
         ("invalid decision_cadence_ms", {**payload, "decision_cadence_ms": 0}),
         ("expired intent", {**payload, "issued_at_ms": issued - 3000, "expires_at_ms": issued - 1000}),
@@ -150,14 +159,45 @@ def main() -> int:
         status, _ = post_json(server_url, "/api/arena/participant-intents", invalid_payload)
         expect(status, {400}, f"POST {label}")
 
-    status, _ = post_json(server_url, "/api/arena/reset", reset_payload)
+    status, body = post_json(server_url, "/api/arena/reset", reset_payload)
     expect(status, {200}, "POST reset clears intents")
+    reset_after_clear = json.loads(body.decode("utf-8"))
 
     status, body = request(server_url, "GET", "/api/arena/participant-intents")
     expect(status, {200}, "GET cleared /api/arena/participant-intents")
     cleared = body.decode("utf-8", errors="replace").splitlines()
     if len([line for line in cleared if line.strip()]) != 1:
         raise RuntimeError("participant intents were not cleared on reset")
+
+    finished_state = "\n".join(
+        [
+            "run_id\tscenario_id\tkind\tentity_id\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\thealth\talive\tdamage_dealt\tshots_fired\tshots_hit",
+            f"{reset_after_clear['run_id']}\t{reset_after_clear['scenario_id']}\tmatch\tmatch\tfinished\tplayer_1\tplayer_2_dead\t1.0\t120\t0\t0\t0\t0\t0",
+            f"{reset_after_clear['run_id']}\t{reset_after_clear['scenario_id']}\tparticipant\tplayer_1\tfinished\tplayer_1\tplayer_2_dead\t1.0\t120\t100\t1\t100\t5\t5",
+            f"{reset_after_clear['run_id']}\t{reset_after_clear['scenario_id']}\tparticipant\tplayer_2\tfinished\tplayer_1\tplayer_2_dead\t1.0\t120\t0\t0\t0\t0\t0",
+            "",
+        ]
+    )
+    status, _ = request(
+        server_url,
+        "POST",
+        "/api/arena/state",
+        finished_state.encode("utf-8"),
+        "text/tab-separated-values; charset=utf-8",
+    )
+    expect(status, {200}, "POST finished /api/arena/state")
+
+    status, _ = post_json(
+        server_url,
+        "/api/arena/participant-intents",
+        {
+            **payload,
+            "run_id": reset_after_clear["run_id"],
+            "scenario_id": reset_after_clear["scenario_id"],
+            "issued_at_ms": now_ms(),
+        },
+    )
+    expect(status, {409}, "POST post-finish participant intent")
 
     print("participant intent API smoke test passed")
     return 0

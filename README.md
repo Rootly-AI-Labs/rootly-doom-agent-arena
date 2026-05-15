@@ -1,8 +1,8 @@
 # Doom Agent Arena
 
-Local Doom WASM benchmark arena for Codex-vs-Claude duels.
+Local Doom WASM benchmark arena for two-player MCP duels.
 
-The current MVP focuses on duel mode: `player_1` is controlled by Codex, `player_2` is controlled by Claude, and both agents send high-level MCP intents while Doom executes real-time movement, aiming, firing, and safety behavior.
+The current MVP focuses on duel mode: `player_1` and `player_2` are controlled by separate MCP chat agents. The browser can label those agents with model names such as Codex or Claude, but generated prompts identify the agents as `player_1` and `player_2` so the instructions are not hard-coded to a provider. Both agents send high-level MCP intents while Doom executes real-time movement, aiming, firing, and safety behavior. MCP policies now include optional movement primitives, turn policy, navigation target, fire mode, spacing bounds, LOS-loss behavior, and stuck-recovery strategy.
 
 
 <img width="1095" height="560" alt="Screenshot 2026-05-13 161902" src="https://github.com/user-attachments/assets/4b2d2ea5-de23-4f25-b674-4758644d11a5" />
@@ -29,13 +29,17 @@ http://127.0.0.1:8001/
 ```
 
 2. Pick the run settings in the browser, then click `Start Duel`.
-3. Copy the generated Codex prompt from the Player 1 panel and paste it into Codex.
-4. Copy the generated Claude prompt from the Player 2 panel and paste it into Claude.
+3. Copy the generated Player 1 prompt from the Player 1 panel and paste it into the first MCP chat agent.
+4. Copy the generated Player 2 prompt from the Player 2 panel and paste it into the second MCP chat agent.
 
 The browser writes fresh controller tokens and instruction files for each run.
-Each run folder under `benchmarks/results/run_*` also gets `stats.json`, which records HTTP MCP tool-call latency and whether participant intents were superseded before their duration expired.
+Multi-round browser sessions are written under `benchmarks/results/session_*/round_NN_run_*`; one-off runs may still use `benchmarks/results/run_*`. Each round folder gets `config.json`, controller tokens, generated prompts, `stats.json`, and `events.jsonl`; `summary.json` is written after Doom reports `phase=finished`. `stats.json` records HTTP MCP tool-call latency, inferred chat decision latency, superseded intents, stale-intent continuation time, and post-finish intent rejections.
 
-The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset.
+The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Each agent can choose an actual opening action; Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset or next-round transition.
+
+By default, each duel participant starts at `300` health. The browser POV panels show Doom-style health bars plus position and view-angle telemetry for both players.
+
+For multi-round sessions, click `Next Round` after the current round finishes. That preserves the same session folder, creates the next `round_NN_run_*` folder, and returns directly to the duel prompt view with fresh prompts and controller tokens.
 
 ## MCP Setup
 
@@ -68,7 +72,7 @@ For Codex, configure the repo-level MCP server to use the same HTTP endpoint:
 url = "http://127.0.0.1:8001/mcp"
 ```
 
-Then restart Codex in this repo and check `/mcp`. Both Codex and Claude should expose:
+Then restart Codex in this repo and check `/mcp`. Both chat agents should expose:
 
 ```text
 set_participant_ready
@@ -84,9 +88,10 @@ Do not manually run `py scripts\doom_arena_mcp.py` for normal play. That stdio M
 
 ## Control Split
 
-- **Codex/Claude MCP agents:** choose high-level tactical policies with `set_participant_intent`.
+- **Player MCP agents:** choose high-level tactical policies with `set_participant_intent`.
 - **Doom-side autopilot:** executes low-level movement, aiming, firing, LOS handling, and stuck recovery every tick.
-- **Browser/server session:** resets runs, writes fresh tokens/prompts, and shows copyable MCP prompts.
+- **Sticky chatbot mode:** if a chat response is slow, Doom keeps executing the last LLM-authored intent as `stale` until a newer sequence number arrives.
+- **Browser/server session:** starts sessions, advances rounds, writes fresh tokens/prompts, and shows copyable MCP prompts.
 
 See [Control Architecture](docs/control-architecture.md) for the full split.
 
@@ -99,8 +104,9 @@ See [Control Architecture](docs/control-architecture.md) for the full split.
 
 ## Important Rules
 
-- Do not run `scripts\doom_arena_mcp.py` manually in a terminal for normal play; Codex/Claude should connect to the arena server's HTTP MCP endpoint.
-- Click `Start Duel` once per comparison, then use only the newly generated prompts.
+- Do not run `scripts\doom_arena_mcp.py` manually in a terminal for normal play; chat agents should connect to the arena server's HTTP MCP endpoint.
+- Click `Start Duel` to begin a new comparison session. Click `Next Round` only after `phase=finished` when continuing the same session.
+- Use only the newly generated prompts and controller tokens for the current round.
 - Keep one browser tab active for a comparison.
 
 ## License

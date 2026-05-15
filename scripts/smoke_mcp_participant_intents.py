@@ -35,6 +35,20 @@ def request(server_url: str, method: str, path: str) -> tuple[int, bytes]:
         return exc.code, exc.read()
 
 
+def post_json(server_url: str, path: str, payload: object) -> tuple[int, bytes]:
+    req = urllib.request.Request(
+        server_url.rstrip("/") + path,
+        data=json.dumps(payload).encode("utf-8"),
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as response:
+            return response.status, response.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read()
+
+
 def parse_json_object(label: str, text: str) -> dict[str, Any]:
     payload = json.loads(text)
     if not isinstance(payload, dict):
@@ -99,6 +113,19 @@ def main() -> int:
         "replan_if",
         "sequence_number",
         "decision_cadence_ms",
+        "aim_tolerance",
+        "fire_burst_ms",
+        "min_fire_alignment",
+        "min_distance",
+        "max_distance",
+        "retreat_if_closer_than",
+        "push_if_farther_than",
+        "los_lost_action",
+        "stuck_recovery_strategy",
+        "movement_primitive",
+        "turn_policy",
+        "navigation_target",
+        "fire_mode",
     }:
         if name not in intent_properties:
             raise AssertionError(f"set_participant_intent schema missing {name}")
@@ -117,29 +144,40 @@ def main() -> int:
         "token",
         True,
         decision_cadence_ms=750,
-        intent_duration_ms=3000,
+        intent_duration_ms=25000,
     )
     for snippet in (
         "set_participant_ready",
         "wait_for_match_start",
         "waiting_for_agents",
-        "opening high-level intent",
+        "synchronized opening intent",
         "both agents have submitted their first high-level intent",
         "immediately observe again",
         "Do not call `Start-Sleep`",
         "sequence_number",
         "increment it on every decision",
-        "Doom continues executing the latest valid policy",
+        "Doom may mark the policy `stale` but still executes it",
+        "duration_ms=25000",
+        "Actively choose `fire_policy`, `fire_mode`, `distance_policy`, `movement_bias`, `movement_primitive`, `turn_policy`, `navigation_target`, and `strafe_direction`",
+        "los_lost_action",
+        "movement_primitive",
+        "turn_policy",
+        "navigation_target",
+        "fire_mode",
+        "distance_bucket",
+        "pressure_state",
+        "policy_compliance_reason",
     ):
         if snippet not in instruction_text:
             raise AssertionError(f"generated instructions missing snippet: {snippet}")
-    print("ok generated instructions mention ready handshake, immediate chatbot loop, and sequence_number")
+    print("ok generated instructions mention ready handshake, tactical controls, and compliance fields")
 
     client = DoomArenaClient(args.server_url)
     previous_tokens = CONTROLLER_TOKENS_PATH.read_bytes() if CONTROLLER_TOKENS_PATH.exists() else None
     try:
         reset = parse_json_object("reset_duel", client.reset_duel("codex", "claude", 1, 42, 120))
         run_id = str(reset["run_id"])
+        scenario_id = str(reset["scenario_id"])
         p1_token = secrets.token_urlsafe(18)
         p2_token = secrets.token_urlsafe(18)
         CONTROLLER_TOKENS_PATH.write_text(
@@ -227,12 +265,67 @@ def main() -> int:
                 replan_if=["lost_los", "stuck"],
                 sequence_number=3,
                 decision_cadence_ms=750,
+                aim_tolerance=12,
+                fire_burst_ms=280,
+                min_fire_alignment=7,
+                min_distance=300,
+                max_distance=900,
+                retreat_if_closer_than=250,
+                push_if_farther_than=1000,
+                los_lost_action="advance_last_seen",
+                stuck_recovery_strategy="strafe_out",
+                movement_primitive="circle_right",
+                turn_policy="turn_to_enemy",
+                navigation_target="opponent",
+                fire_mode="burst",
             ),
         )
         normalized = p2_intent.get("normalized_intent", {})
-        if normalized.get("strafe_direction") != "alternate" or normalized.get("decision_cadence_ms") != 750:
+        if (
+            normalized.get("strafe_direction") != "alternate"
+            or normalized.get("decision_cadence_ms") != 750
+            or normalized.get("movement_primitive") != "circle_right"
+            or normalized.get("turn_policy") != "turn_to_enemy"
+            or normalized.get("navigation_target") != "opponent"
+            or normalized.get("fire_mode") != "burst"
+            or normalized.get("los_lost_action") != "advance_last_seen"
+            or normalized.get("aim_tolerance") != 12
+        ):
             raise AssertionError("extended player_2 tactical intent fields were not normalized")
         print("ok correct player_2 token can set extended tactical intent")
+
+        telemetry_started = p2_intent.get("issued_at_ms", 0)
+        status, body = post_json(
+            args.server_url,
+            "/api/arena/mcp-call-telemetry",
+            {
+                "call_id": "external_player_2_smoke_call",
+                "tool_name": "set_participant_intent",
+                "participant_id": "player_2",
+                "run_id": run_id,
+                "scenario_id": scenario_id,
+                "started_at_ms": telemetry_started,
+                "completed_at_ms": int(telemetry_started) + 17,
+                "is_error": False,
+                "result": p2_intent,
+            },
+        )
+        if status != 200:
+            raise AssertionError(f"MCP telemetry endpoint returned HTTP {status}: {body.decode('utf-8', errors='replace')}")
+        telemetry_stats_path = REPO_ROOT / "benchmarks" / "results" / run_id / "stats.json"
+        telemetry_stats = parse_json_object("telemetry stats.json", telemetry_stats_path.read_text(encoding="utf-8"))
+        p2_bucket = telemetry_stats.get("by_participant", {}).get("player_2", {})
+        p2_lifecycle = next(
+            (
+                row for row in telemetry_stats.get("intent_lifecycles", [])
+                if row.get("participant_id") == "player_2"
+                and row.get("intent_id") == p2_intent.get("intent_id")
+            ),
+            {},
+        )
+        if p2_bucket.get("count", 0) < 1 or p2_lifecycle.get("mcp_call_latency_ms") != 17:
+            raise AssertionError("external MCP telemetry did not attach player_2 latency to stats.json")
+        print("ok external player_2 MCP telemetry attaches call latency")
 
         expect_doom_error(
             "wrong token rejected",
@@ -282,6 +375,42 @@ def main() -> int:
                 "player_1",
                 "hold",
                 decision_cadence_ms=0,
+                controller_token=p1_token,
+            ),
+        )
+        expect_doom_error(
+            "invalid movement primitive rejected",
+            lambda: client.set_participant_intent(
+                "player_1",
+                "hold",
+                movement_primitive="teleport",
+                controller_token=p1_token,
+            ),
+        )
+        expect_doom_error(
+            "invalid turn policy rejected",
+            lambda: client.set_participant_intent(
+                "player_1",
+                "hold",
+                turn_policy="spin_forever",
+                controller_token=p1_token,
+            ),
+        )
+        expect_doom_error(
+            "invalid navigation target rejected",
+            lambda: client.set_participant_intent(
+                "player_1",
+                "hold",
+                navigation_target="secret_room",
+                controller_token=p1_token,
+            ),
+        )
+        expect_doom_error(
+            "invalid fire mode rejected",
+            lambda: client.set_participant_intent(
+                "player_1",
+                "hold",
+                fire_mode="spray",
                 controller_token=p1_token,
             ),
         )

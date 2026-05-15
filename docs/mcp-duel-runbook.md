@@ -1,6 +1,6 @@
 # MCP Duel Runbook
 
-This is the current setup for a real Codex-vs-Claude Doom Arena duel.
+This is the current setup for a real two-agent Doom Arena MCP duel.
 
 ## Terminal Layout
 
@@ -8,7 +8,7 @@ Use three active surfaces:
 
 - Terminal 1: arena server/browser launcher
 - Browser: Doom/WASM duel tab with copyable MCP prompts
-- Chat/terminal 2 and 3: Codex and Claude agents
+- Chat/terminal 2 and 3: Player 1 and Player 2 MCP chat agents
 
 ## Clean Start
 
@@ -48,37 +48,50 @@ Open and keep this tab running:
 http://127.0.0.1:8001/
 ```
 
-Choose the run settings, then click `Start Duel`. The browser/server will reset the duel, write fresh controller tokens, generate both instruction files, and show copyable prompts in the Player 1 and Player 2 panels.
+Choose the run settings, then click `Start Duel`. The browser/server will reset the duel, write fresh controller tokens, generate both instruction files, and show copyable prompts in the Player 1 and Player 2 panels. The generated prompts identify the agents as `player_1` and `player_2`; model labels are metadata only.
 
 The browser exports WASM state into `src/arena_game_state.local.tsv`.
 
-The run folder under `benchmarks/results/run_*` contains:
+Browser sessions write a parent folder under:
+
+```text
+benchmarks/results/session_*
+```
+
+Each round writes a child folder such as:
+
+```text
+benchmarks/results/session_*/round_01_run_*
+```
+
+One-off legacy/debug runs may still write directly under `benchmarks/results/run_*`. A round folder contains:
 
 ```text
 config.json
 controller_tokens.json
+events.jsonl
 player_1_mcp_instructions.md
 player_2_mcp_instructions.md
 stats.json
 summary.json after the browser reports phase=finished
 ```
 
-`stats.json` is updated as HTTP MCP calls arrive. It includes per-tool latency, error status, in-flight overlap, and intent lifecycle data such as `superseded_before_expiry`, `unused_duration_ms`, and gaps after expiry. Use it to tune `Intent Duration MS`.
+`stats.json` is updated as MCP calls arrive. It includes per-tool latency, per-participant latency, inferred chat decision latency, error status, in-flight overlap, and intent lifecycle data such as `superseded_before_expiry`, `unused_duration_ms`, gap after expiry, and stale continuation after nominal expiry. Browser-created chatbot runs preserve `events.jsonl` in each round folder. Use these files to tune `Intent Duration MS`; the browser default is intentionally long enough to cover slow chatbot turns.
 
-## Chat 2: Codex
+## Chat 2: Player 1 Agent
 
-Open a Codex chat with the repo-level `doom-arena` MCP server connected. Copy the Player 1/Codex prompt from the browser and paste it into Codex.
+Open the first chat agent with the repo-level `doom-arena` MCP server connected. Copy the Player 1 prompt from the browser and paste it into that agent.
 
-## Chat 3: Claude
+## Chat 3: Player 2 Agent
 
-Open Claude Code separately in the repo:
+Open the second chat agent separately in the repo. For Claude Code, for example:
 
 ```powershell
 cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
 claude
 ```
 
-Confirm `/mcp` shows `doom-arena`, then copy the Player 2/Claude prompt from the browser and paste it into Claude.
+Confirm `/mcp` shows `doom-arena`, then copy the Player 2 prompt from the browser and paste it into the second agent.
 
 ## MCP Tool Check
 
@@ -94,6 +107,8 @@ get_match_result
 get_duel_events
 ```
 
+`set_participant_intent` accepts the tactical policy fields shown in the generated prompt, including optional `movement_primitive`, `turn_policy`, `navigation_target`, `fire_mode`, spacing bounds, LOS-loss behavior, and stuck-recovery strategy. These are still high-level policies; Doom converts them into per-frame movement and attack inputs. Do not send `movement_primitive` by default; use it only as a short one-policy override and do not keep repeating `circle_left` or `circle_right` after line of sight is lost.
+
 Low-level movement tools are hidden by default. For local debugging only, expose them by launching the MCP server with:
 
 ```powershell
@@ -108,7 +123,7 @@ The duel starts in:
 phase=waiting_for_agents
 ```
 
-Doom freezes both participants until both agents have signaled readiness through `set_participant_ready` and both agents have submitted an opening `set_participant_intent`. The opening intents are held until both are present, then Doom starts executing both on the same tick. This prevents one agent from moving before the other is connected or before the other agent has chosen its first high-level action.
+Doom freezes both participants until both agents have signaled readiness through `set_participant_ready` and both agents have submitted an opening `set_participant_intent`. The opening intent is no longer forced to `hold`; each agent should observe the waiting state and choose the best first high-level action. The opening intents are held until both are present, then Doom starts executing both on the same tick. This prevents one agent from moving before the other is connected or before the other agent has chosen its first high-level action.
 
 ## One-Command Bootstrap
 
@@ -117,6 +132,25 @@ This starts the server, opens the browser, and keeps the server alive:
 ```powershell
 py scripts\start_doom_arena_duel.py
 ```
+
+## Multi-Round Sessions
+
+Set `Rounds` before clicking `Start Duel` if you want a multi-round session. After a round reaches `phase=finished`, click `Next Round`. This preserves the same `session_*` parent folder, creates the next `round_NN_run_*` child folder, writes fresh prompts/tokens, and returns directly to the duel prompt view.
+
+Use the new prompts after every `Next Round`. Do not keep using prompts from the previous round because the controller tokens and run id are round-specific.
+
+Click `Start Duel` again only when you want a new session.
+
+## Prompt Recovery
+
+If a prompt panel is blank after reload or after `Next Round`, do not start a new duel immediately. Hard refresh the current duel URL first. The server can recover the current round prompt text from memory or from the round folder files:
+
+```text
+player_1_mcp_instructions.md
+player_2_mcp_instructions.md
+```
+
+If the browser still does not show a prompt, verify that the current URL is the duel prompt view and that the active round folder contains those instruction files. Starting a new duel creates a new session and should be reserved for intentional resets.
 
 ## Run-Id Mismatch Fix
 
@@ -131,7 +165,7 @@ Do this:
 
 1. Stop extra servers on `8001`.
 2. Hard refresh `http://127.0.0.1:8001/`.
-3. Click `Start Duel`.
+3. Click `Start Duel` for a new session, or `Next Round` if the existing session is finished and has remaining rounds.
 4. Use only the newly generated browser prompts.
 
 Do not reuse older prompts after a reset.

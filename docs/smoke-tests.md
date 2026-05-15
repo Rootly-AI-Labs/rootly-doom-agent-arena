@@ -38,7 +38,7 @@ py scripts\smoke_mcp_participant_intents.py --server-url http://127.0.0.1:8001
 py scripts\smoke_duel_participant_commands.py --server-url http://127.0.0.1:8001
 ```
 
-`smoke_mcp_participant_intents.py` also verifies that HTTP MCP intent calls are captured in `benchmarks/results/run_*/stats.json`.
+`smoke_mcp_participant_intents.py` also verifies that HTTP MCP intent calls are captured in `stats.json`. Browser sessions write this under `benchmarks/results/session_*/round_NN_run_*/stats.json`; one-off runs may write under `benchmarks/results/run_*/stats.json`.
 
 ## Browser-Backed Autopilot
 
@@ -54,7 +54,10 @@ It verifies:
 - `waiting_for_agents` ready/opening-intent gate
 - one ready signal or one opening intent alone does not start combat
 - both intents start autopilot
-- state export includes intent/autopilot fields
+- state export includes intent/autopilot fields, including MCP-selected fire, distance, LOS-loss, stuck recovery, movement primitive, turn policy, navigation target, and fire mode controls
+- expired intents continue as stale MCP policies until replaced or cleared
+- post-finish participant intents are rejected
+- browser event logs are preserved as `events.jsonl`
 - clear/stop returns to fallback mode
 - wrong controller token is rejected
 - low-level debug path still works after clearing intents

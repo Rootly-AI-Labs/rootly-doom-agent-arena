@@ -53,7 +53,7 @@ static void write_intents(const char *rows)
         fail("could not write intent TSV");
     }
 
-    fputs("run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n", file);
+    fputs("run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\n", file);
     if (rows != NULL)
     {
         fputs(rows, file);
@@ -102,6 +102,33 @@ static void expect_active(arena_participant_id_t participant, const char *intent
     printf("ok %s -> active intent=%s style=%s target=%d\n", label, intent.intent, intent.style, intent.target_participant);
 }
 
+static void expect_active_status(arena_participant_id_t participant,
+                                 const char *intent_name,
+                                 const char *style,
+                                 const char *status,
+                                 const char *label)
+{
+    arena_participant_intent_t intent;
+
+    intent = ArenaParticipantIntent_Get(participant);
+    if (!intent.active)
+    {
+        fprintf(stderr, "FAIL: %s expected active, got status %s (%s)\n", label, intent.status, intent.reason);
+        exit(1);
+    }
+    if (strcmp(intent.intent, intent_name) || strcmp(intent.style, style))
+    {
+        fprintf(stderr, "FAIL: %s expected %s/%s, got %s/%s\n", label, intent_name, style, intent.intent, intent.style);
+        exit(1);
+    }
+    if (strcmp(intent.status, status))
+    {
+        fprintf(stderr, "FAIL: %s expected status %s, got %s (%s)\n", label, status, intent.status, intent.reason);
+        exit(1);
+    }
+    printf("ok %s -> active status=%s intent=%s style=%s\n", label, intent.status, intent.intent, intent.style);
+}
+
 static void expect_tactical_fields(arena_participant_id_t participant,
                                    const char *strafe_direction,
                                    const char *movement_bias,
@@ -145,6 +172,45 @@ static void expect_tactical_fields(arena_participant_id_t participant,
     printf("ok %s -> tactical fields parsed\n", label);
 }
 
+static void expect_extended_fields(arena_participant_id_t participant,
+                                   int aim_tolerance,
+                                   int fire_burst_ms,
+                                   int min_fire_alignment,
+                                   int min_distance,
+                                   int max_distance,
+                                   int retreat_if_closer_than,
+                                   int push_if_farther_than,
+                                   const char *los_lost_action,
+                                   const char *stuck_recovery_strategy,
+                                   const char *movement_primitive,
+                                   const char *turn_policy,
+                                   const char *navigation_target,
+                                   const char *fire_mode,
+                                   const char *label)
+{
+    arena_participant_intent_t intent;
+
+    intent = ArenaParticipantIntent_Get(participant);
+    if (intent.aim_tolerance != aim_tolerance
+        || intent.fire_burst_ms != fire_burst_ms
+        || intent.min_fire_alignment != min_fire_alignment
+        || intent.min_distance != min_distance
+        || intent.max_distance != max_distance
+        || intent.retreat_if_closer_than != retreat_if_closer_than
+        || intent.push_if_farther_than != push_if_farther_than
+        || strcmp(intent.los_lost_action, los_lost_action)
+        || strcmp(intent.stuck_recovery_strategy, stuck_recovery_strategy)
+        || strcmp(intent.movement_primitive, movement_primitive)
+        || strcmp(intent.turn_policy, turn_policy)
+        || strcmp(intent.navigation_target, navigation_target)
+        || strcmp(intent.fire_mode, fire_mode))
+    {
+        fprintf(stderr, "FAIL: %s extended fields mismatch\n", label);
+        exit(1);
+    }
+    printf("ok %s -> extended fields parsed\n", label);
+}
+
 int main(void)
 {
     ArenaParticipantIntent_Init();
@@ -174,15 +240,30 @@ int main(void)
                            0,
                            0,
                            "legacy row defaults");
+    expect_extended_fields(ARENA_PARTICIPANT_PLAYER_1,
+                           0,
+                           0,
+                           0,
+                           0,
+                           0,
+                           0,
+                           0,
+                           "sweep",
+                           "default",
+                           "",
+                           "auto",
+                           "opponent",
+                           "auto",
+                           "legacy extended defaults");
 
     write_intents(
-        "run_test\tduel_e1m8\tp1_extended\t1100\t3600\tplayer_1\tstrafe_attack\taggressive\tplayer_2\t500\t0.8\t2500\talternate\tcircle\tburst_when_aligned\tkite\tlost_los,stuck\t4\t750\n"
+        "run_test\tduel_e1m8\tp1_extended\t1100\t3600\tplayer_1\tstrafe_attack\taggressive\tplayer_2\t500\t0.8\t2500\tswitch_if_hit\tcircle\tburst_when_aligned\tkite\tlost_los,stuck\t4\t750\t12\t280\t7\t300\t900\t250\t1000\tadvance_last_seen\tstrafe_out\tcircle_right\tturn_to_enemy\topponent\tburst\n"
     );
     fake_now_ms = 15;
     ArenaParticipantIntent_TickOrRefresh();
     expect_active(ARENA_PARTICIPANT_PLAYER_1, "strafe_attack", "aggressive", "valid extended player_1 intent");
     expect_tactical_fields(ARENA_PARTICIPANT_PLAYER_1,
-                           "alternate",
+                           "switch_if_hit",
                            "circle",
                            "burst_when_aligned",
                            "kite",
@@ -190,6 +271,21 @@ int main(void)
                            4,
                            750,
                            "extended row fields");
+    expect_extended_fields(ARENA_PARTICIPANT_PLAYER_1,
+                           12,
+                           280,
+                           7,
+                           300,
+                           900,
+                           250,
+                           1000,
+                           "advance_last_seen",
+                           "strafe_out",
+                           "circle_right",
+                           "turn_to_enemy",
+                           "opponent",
+                           "burst",
+                           "extended movement control fields");
 
     write_intents(
         "run_test\tduel_e1m8\tp1_1000\t1000\t3500\tplayer_1\tengage_opponent\tbalanced\tplayer_2\t600\t0.5\t2500\n"
@@ -226,6 +322,13 @@ int main(void)
     fake_now_ms = 46;
     ArenaParticipantIntent_TickOrRefresh();
     expect_inactive(ARENA_PARTICIPANT_PLAYER_1, "invalid", "invalid cadence");
+
+    write_intents(
+        "run_test\tduel_e1m8\tp1_invalid_movement_primitive\t3700\t6200\tplayer_1\thold\tcautious\tplayer_2\t600\t0.5\t2500\tauto\tdirect\tonly_when_aligned\tmaintain\t\t\t750\t\t\t\t\t\t\t\tsweep\tdefault\tteleport\n"
+    );
+    fake_now_ms = 47;
+    ArenaParticipantIntent_TickOrRefresh();
+    expect_inactive(ARENA_PARTICIPANT_PLAYER_1, "invalid", "invalid movement primitive");
 
     write_intents(
         "run_test\tduel_e1m8\tp1_wrong_target\t4000\t6500\tplayer_1\tsearch\tbalanced\tplayer_1\t600\t0.5\t2500\n"
@@ -318,7 +421,7 @@ int main(void)
     expect_active(ARENA_PARTICIPANT_PLAYER_1, "search", "balanced", "local duration grace");
     fake_now_ms = 4601;
     ArenaParticipantIntent_TickOrRefresh();
-    expect_inactive(ARENA_PARTICIPANT_PLAYER_1, "expired", "local duration expiry");
+    expect_active_status(ARENA_PARTICIPANT_PLAYER_1, "search", "balanced", "stale", "local duration expiry sticks to last MCP intent");
 
     printf("participant intent parser smoke test passed\n");
     return 0;

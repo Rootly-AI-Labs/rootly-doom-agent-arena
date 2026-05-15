@@ -264,7 +264,7 @@ def participant_has_active_autopilot(player: dict[str, Any], expected_intent: st
     return (
         player.get("controller_mode") == "autopilot"
         and player.get("intent") == expected_intent
-        and player.get("intent_status") == "active"
+        and player.get("intent_status") in {"active", "stale"}
         and bool(player.get("intent_id"))
         and bool(player.get("intent_style"))
         and bool(player.get("autopilot_action"))
@@ -277,6 +277,19 @@ def active_autopilot_check(client: DoomArenaClient, run_id: str, p1_intent: str,
     return {
         "_ok": participant_has_active_autopilot(state.get("player_1", {}), p1_intent)
         and participant_has_active_autopilot(state.get("player_2", {}), p2_intent),
+        "state": state,
+    }
+
+
+def stale_autopilot_check(client: DoomArenaClient, run_id: str, p1_intent: str, p2_intent: str) -> dict[str, Any]:
+    state = get_state(client, run_id)
+    return {
+        "_ok": (
+            participant_has_active_autopilot(state.get("player_1", {}), p1_intent)
+            and participant_has_active_autopilot(state.get("player_2", {}), p2_intent)
+            and state.get("player_1", {}).get("intent_status") == "stale"
+            and state.get("player_2", {}).get("intent_status") == "stale"
+        ),
         "state": state,
     }
 
@@ -318,15 +331,14 @@ def wait_for_events(client: DoomArenaClient, run_id: str, timeout_seconds: int) 
     latest: list[dict[str, Any]] = []
     seen_text = ""
     while time.time() < deadline:
-        latest = parse_json_object("get_duel_events", client.get_duel_events(run_id, 100)).get("events", [])
+        latest = parse_json_object("get_duel_events", client.get_duel_events(run_id, 2000)).get("events", [])
         event_text = "\n".join(str(event.get("event", "")) for event in latest)
         seen_text += "\n" + event_text
         if (
             "intent_set:" in seen_text
             and "autopilot_action:" in seen_text
-            and "intent_expired:" in seen_text
         ):
-            log_ok("event log includes intent_set, autopilot_action, and intent_expired")
+            log_ok("event log includes intent_set and autopilot_action")
             return latest
         time.sleep(0.5)
     raise RuntimeError(f"Timed out waiting for autopilot events; latest={json.dumps(latest[-20:], indent=2)}")
@@ -481,6 +493,31 @@ def main() -> int:
                 )
             )
         log_ok("state export includes extended tactical intent metadata")
+        for participant_id in ("player_1", "player_2"):
+            participant_state = active_state.get(participant_id, {})
+            for key in (
+                "health_delta",
+                "distance_bucket",
+                "los_status",
+                "pressure_state",
+                "requested_fire_policy",
+                "executed_fire_action",
+                "requested_distance_policy",
+                "executed_movement_action",
+                "requested_strafe_direction",
+                "executed_strafe_direction",
+                "policy_compliance_reason",
+            ):
+                if key not in participant_state:
+                    raise RuntimeError(
+                        f"state export missing tactical compliance field {key} for {participant_id}: "
+                        + json.dumps(participant_state, indent=2)
+                    )
+        if active_state.get("player_1", {}).get("requested_distance_policy") != "maintain":
+            raise RuntimeError("player_1 requested_distance_policy did not mirror MCP distance_policy")
+        if active_state.get("player_2", {}).get("requested_distance_policy") != "kite":
+            raise RuntimeError("player_2 requested_distance_policy did not mirror MCP distance_policy")
+        log_ok("state export includes tactical context and MCP-vs-Doom compliance metadata")
         if (
             not active_state.get("player_1", {}).get("replan_recommended")
             or "target_far" not in active_state.get("player_1", {}).get("replan_reasons", [])
@@ -497,12 +534,12 @@ def main() -> int:
             min(args.timeout_seconds, 20),
         )
 
-        expired_state = wait_for(
-            lambda: fallback_check(client, run_id),
-            "expired intents stop applying",
+        stale_state = wait_for(
+            lambda: stale_autopilot_check(client, run_id, "search", "search"),
+            "expired intents remain sticky while waiting for next MCP update",
             min(args.timeout_seconds, 20),
         )
-        log_ok("expired intents export inactive status")
+        log_ok("expired intents export stale autopilot status")
 
         client.set_participant_intent(
             "player_1",
@@ -554,6 +591,7 @@ def main() -> int:
             "run_id": run_id,
             "initial_tick": initial_state.get("tick"),
             "active_tick": active_state.get("tick"),
+            "stale_tick": stale_state.get("tick"),
             "fallback_tick": fallback_state.get("tick"),
             "low_level_tick": low_level_state.get("tick"),
             "player_1_active": {
@@ -577,6 +615,17 @@ def main() -> int:
                     "expires_at_ms",
                     "replan_recommended",
                     "replan_reasons",
+                    "health_delta",
+                    "distance_bucket",
+                    "los_status",
+                    "pressure_state",
+                    "requested_fire_policy",
+                    "executed_fire_action",
+                    "requested_distance_policy",
+                    "executed_movement_action",
+                    "requested_strafe_direction",
+                    "executed_strafe_direction",
+                    "policy_compliance_reason",
                 )
             },
             "player_2_active": {
@@ -600,6 +649,17 @@ def main() -> int:
                     "expires_at_ms",
                     "replan_recommended",
                     "replan_reasons",
+                    "health_delta",
+                    "distance_bucket",
+                    "los_status",
+                    "pressure_state",
+                    "requested_fire_policy",
+                    "executed_fire_action",
+                    "requested_distance_policy",
+                    "executed_movement_action",
+                    "requested_strafe_direction",
+                    "executed_strafe_direction",
+                    "policy_compliance_reason",
                 )
             },
             "events_sample": events[-8:],

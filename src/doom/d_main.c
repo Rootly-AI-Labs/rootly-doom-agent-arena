@@ -225,8 +225,18 @@ boolean D_Display(void)
     if (gamestate == GS_LEVEL && !automapactive && gametic)
     {
         R_RenderPlayerView(&players[displayplayer]);
-        ArenaDuel_RenderPlayer1View();
-        ArenaDuel_RenderPlayer2View();
+        if (ArenaDuel_IsEnabled())
+        {
+            // Alternate secondary POV updates across ticks to reduce per-frame cost.
+            if ((gametic & 1) == 0)
+            {
+                ArenaDuel_RenderPlayer1View();
+            }
+            else
+            {
+                ArenaDuel_RenderPlayer2View();
+            }
+        }
     }
 
     if (gamestate == GS_LEVEL && gametic) HU_Drawer();

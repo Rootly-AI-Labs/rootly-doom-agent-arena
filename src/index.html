@@ -3,6 +3,14 @@
     <head>
         <title>Websockets Doom</title>
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <script>
+            (function () {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get("autoStart") === "1" && (params.get("duel") === "1" || params.get("arenaMode") === "duel")) {
+                    document.documentElement.classList.add("duel-autostart");
+                }
+            })();
+        </script>
         <style>
             @font-face {
                 font-family: "VT323";
@@ -62,6 +70,10 @@
                 text-align: center;
             }
 
+            html.duel-autostart #arena-launcher {
+                display: none;
+            }
+
             .arena-launcher-card {
                 width: min(520px, calc(100% - 32px));
                 padding: 28px;
@@ -89,20 +101,41 @@
                 gap: 12px;
             }
 
-            .arena-model-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 14px;
-                margin: 18px 0;
+            .arena-agent-setup {
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                background: #10130d;
+                color: #d3d0ad;
+                padding: 10px;
+                margin: 14px 0;
                 text-align: left;
+                font: 700 12px/1.45 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-agent-setup strong {
+                color: #b8e986;
             }
 
             .arena-config-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr;
                 gap: 10px;
-                margin: 12px 0;
+                margin: 10px 0 0;
                 text-align: left;
+            }
+
+            .arena-advanced-settings {
+                margin: 4px 0 0;
+                text-align: left;
+                border-top: 1px solid rgba(255, 255, 255, 0.14);
+                padding-top: 10px;
+            }
+
+            .arena-advanced-settings summary {
+                cursor: pointer;
+                color: #ffce6b;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
             }
 
             .arena-model-field label {
@@ -206,8 +239,36 @@
                 display: block;
                 margin: 0 0 7px;
                 color: #b8e986;
-                font: 700 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 14px/1 "Trebuchet MS", Verdana, sans-serif;
                 text-transform: uppercase;
+            }
+
+            .duel-pov-title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .duel-agent-status {
+                display: none;
+                margin: 0 0 7px;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            #duel-pov-grid.duel-active .duel-agent-status {
+                display: block;
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-agent-status {
+                color: #ff5c5c;
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-agent-status {
+                color: #69dc78;
             }
 
             #player-2-pov-card {
@@ -220,19 +281,19 @@
 
             .duel-pov-frame {
                 position: relative;
-                outline: 2px solid rgba(255, 92, 92, 0.42);
+                outline: 4px solid rgba(255, 92, 92, 0.42);
                 outline-offset: 0;
                 transition: outline-color 120ms ease, box-shadow 120ms ease;
             }
 
             #duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-pov-frame {
-                outline-color: rgba(255, 92, 92, 0.48);
-                box-shadow: 0 0 0 1px rgba(255, 92, 92, 0.14);
+                outline-color: rgba(255, 92, 92, 0.72);
+                box-shadow: 0 0 0 2px rgba(255, 92, 92, 0.18);
             }
 
             #duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-pov-frame {
-                outline-color: rgba(105, 220, 120, 0.58);
-                box-shadow: 0 0 0 1px rgba(105, 220, 120, 0.18);
+                outline-color: rgba(105, 220, 120, 0.78);
+                box-shadow: 0 0 0 2px rgba(105, 220, 120, 0.22);
             }
 
             #duel-pov-grid.duel-active canvas.frame {
@@ -301,7 +362,6 @@
             }
 
             #duel-header,
-            .duel-shared,
             .duel-breakdown {
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 background: #171914;
@@ -314,8 +374,29 @@
                 justify-content: space-between;
                 gap: 10px;
                 align-items: center;
-                font-weight: 700;
+            }
+
+            #duel-header-main {
+                min-width: 0;
+            }
+
+            #duel-title {
+                color: #b8e986;
+                font: 700 12px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0;
                 text-transform: uppercase;
+                -webkit-font-smoothing: antialiased;
+                text-rendering: geometricPrecision;
+            }
+
+            .duel-shared {
+                margin-top: 5px;
+                color: #b8e986;
+                font: 700 12px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0;
+                text-transform: uppercase;
+                -webkit-font-smoothing: antialiased;
+                text-rendering: geometricPrecision;
             }
 
             #duel-header button {
@@ -326,6 +407,12 @@
                 padding: 7px 9px;
                 font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
                 text-transform: uppercase;
+            }
+
+            #duel-header-actions {
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
 
             .duel-panels {
@@ -352,6 +439,58 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 5px 10px;
+            }
+
+            .duel-pov-card .duel-stat-grid {
+                margin: 0 0 8px;
+                padding: 7px 8px;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: #10130d;
+                color: #f7f5d8;
+            }
+
+            .duel-health-bar {
+                margin: 0 0 8px;
+                border: 2px solid #050505;
+                background: #050505;
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+            }
+
+            .duel-health-bar-track {
+                position: relative;
+                height: 18px;
+                overflow: hidden;
+                background:
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 20px),
+                    #270f0f;
+            }
+
+            .duel-health-bar-fill {
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(180deg, #b8ff78 0%, #4fb746 48%, #1f5d22 100%);
+                transition: width 120ms linear, background 120ms linear;
+            }
+
+            .duel-health-bar.health-low .duel-health-bar-fill {
+                background: linear-gradient(180deg, #ffe66b 0%, #c8901e 52%, #6f430c 100%);
+            }
+
+            .duel-health-bar.health-critical .duel-health-bar-fill {
+                background: linear-gradient(180deg, #ff7a57 0%, #cc2c23 52%, #650d10 100%);
+            }
+
+            .duel-health-bar-label {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #f7f5d8;
+                font: 900 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+                text-transform: uppercase;
             }
 
             .duel-prompt-card {
@@ -394,7 +533,9 @@
                 padding-top: 8px;
                 border-top: 1px solid rgba(255, 255, 255, 0.14);
                 color: #d3d0ad;
-                min-height: 74px;
+                display: flex;
+                flex-direction: column;
+                height: clamp(180px, 28vh, 320px);
                 overflow: hidden;
             }
 
@@ -405,27 +546,29 @@
                 text-transform: uppercase;
             }
 
+            .duel-player-log-body {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: #10130d;
+                padding: 2px 6px;
+            }
+
             .duel-log-line {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
 
-            .duel-player-log .duel-log-line {
+            .duel-player-log-body .duel-log-line {
                 white-space: normal;
                 overflow: visible;
                 text-overflow: clip;
-                padding: 2px 0;
+                padding: 6px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 font: 11px/1.3 Consolas, "Courier New", monospace;
-            }
-
-            .duel-game-log {
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                background: #171914;
-                padding: 10px;
-                margin-bottom: 8px;
-                min-height: 92px;
-                overflow: hidden;
             }
 
             .duel-breakdown[hidden] {
@@ -439,8 +582,7 @@
                 margin: 8px 0 10px;
             }
 
-            .duel-breakdown-stat,
-            .duel-breakdown-list {
+            .duel-breakdown-stat {
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 background: #10130d;
                 padding: 8px;
@@ -458,17 +600,24 @@
                 font: 700 13px/1.25 "Trebuchet MS", Verdana, sans-serif;
             }
 
-            .duel-breakdown-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
+            .duel-results-link {
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                color: #d3d0ad;
+                font: 700 11px/1.35 "Trebuchet MS", Verdana, sans-serif;
             }
 
-            .duel-breakdown-line {
-                padding: 4px 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            .duel-results-link a {
+                color: #ffce6b;
+                text-transform: uppercase;
+            }
+
+            .duel-results-path {
+                margin-top: 4px;
                 color: #d3d0ad;
-                font: 11px/1.3 Consolas, "Courier New", monospace;
+                font: 11px/1.35 Consolas, "Courier New", monospace;
+                word-break: break-all;
             }
 
             #arena-debug-panel .debug-row {
@@ -503,58 +652,63 @@
         <div id="container" class="noselect">
             <div id="arena-launcher">
                 <div class="arena-launcher-card">
-                    <h1 id="arena-launcher-title">Welcome to Doom Arena</h1>
-                    <p id="arena-launcher-message">Select two model controllers, then start the duel.</p>
-                    <div class="arena-model-grid">
-                        <div class="arena-model-field">
-                            <label for="player-1-model">Player 1 Model</label>
-                            <select id="player-1-model">
-                                <option value="codex" selected>Codex</option>
-                                <option value="claude">Claude</option>
-                                <option value="baseline">Baseline</option>
-                            </select>
-                        </div>
-                        <div class="arena-model-field">
-                            <label for="player-2-model">Player 2 Model</label>
-                            <select id="player-2-model">
-                                <option value="codex">Codex</option>
-                                <option value="claude" selected>Claude</option>
-                                <option value="baseline">Baseline</option>
-                            </select>
-                        </div>
+                    <h1 id="arena-launcher-title">Doom Arena Duel</h1>
+                    <p id="arena-launcher-message">Set up both MCP agents, then start the duel.</p>
+                    <div class="arena-agent-setup">
+                        <strong>Agent MCP setup:</strong> connect both agents to the Doom Arena MCP server. After Start Duel, copy the generated Player 1 and Player 2 prompts into their agent chats.
                     </div>
-                    <div class="arena-config-grid">
-                        <div class="arena-model-field">
-                            <label for="arena-round">Round</label>
-                            <input id="arena-round" type="number" min="1" value="1" />
+                    <details class="arena-advanced-settings">
+                        <summary>Advanced Settings</summary>
+                        <div class="arena-config-grid">
+                            <div class="arena-model-field">
+                                <label for="arena-round">Rounds</label>
+                                <input id="arena-round" type="number" min="1" value="1" />
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-timeout-seconds">Timeout Sec</label>
+                                <input id="arena-timeout-seconds" type="number" min="1" value="120" />
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-intent-duration-ms">Intent Duration MS</label>
+                                <input id="arena-intent-duration-ms" type="number" min="1" value="25000" />
+                            </div>
                         </div>
-                        <div class="arena-model-field">
-                            <label for="arena-seed">Seed</label>
-                            <input id="arena-seed" type="number" value="42" />
-                        </div>
-                        <div class="arena-model-field">
-                            <label for="arena-timeout-seconds">Timeout Sec</label>
-                            <input id="arena-timeout-seconds" type="number" min="1" value="120" />
-                        </div>
-                        <div class="arena-model-field">
-                            <label for="arena-intent-duration-ms">Intent Duration MS</label>
-                            <input id="arena-intent-duration-ms" type="number" min="1" value="3000" />
-                        </div>
-                    </div>
+                    </details>
                     <button id="arena-start-game" type="button">Start Duel</button>
                     <div id="arena-countdown"></div>
                     <div id="arena-launcher-status"></div>
                 </div>
             </div>
             <div id="duel-header">
-                <div id="duel-title">Doom Arena | Codex vs Claude | Round 1 | Seed 42 | Waiting</div>
-                <div>
+                <div id="duel-header-main">
+                    <div id="duel-title">Doom Arena | Player 1 vs Player 2 | Round 1 | Seed 42 | Waiting</div>
+                    <div class="duel-shared" id="duel-shared-state">Tick: - | Phase: - | Distance: - | LOS: - | Winner: -</div>
+                </div>
+                <div id="duel-header-actions">
+                    <button type="button" id="duel-next-round" hidden>Next Round</button>
                     <button type="button" id="duel-reset">Reset</button>
                 </div>
             </div>
             <div id="duel-pov-grid">
                 <div class="duel-pov-card" id="player-1-pov-card">
-                    <h2 id="player-1-pov-title">Player 1 POV</h2>
+                    <div class="duel-pov-title-row">
+                        <h2 id="player-1-pov-title">Player 1 POV</h2>
+                        <div class="duel-agent-status" id="player-1-agent-status">Agent not connected</div>
+                    </div>
+                    <div class="duel-stat-grid">
+                        <div>Health: <span id="duel-p1-health">300</span></div>
+                        <div>Move: <span id="duel-p1-action">-</span></div>
+                        <div>Shots: <span id="duel-p1-shots">-</span></div>
+                        <div>Damage: <span id="duel-p1-damage">-</span></div>
+                        <div>X,Y: <span id="duel-p1-xy">-</span></div>
+                        <div>POV Degrees: <span id="duel-p1-angle">-</span></div>
+                    </div>
+                    <div class="duel-health-bar" id="duel-p1-health-bar">
+                        <div class="duel-health-bar-track">
+                            <div class="duel-health-bar-fill" id="duel-p1-health-fill"></div>
+                            <div class="duel-health-bar-label" id="duel-p1-health-label">HP 300 / 300</div>
+                        </div>
+                    </div>
                     <div class="duel-pov-frame">
                         <canvas class="frame" id="player-1-canvas" width="320" height="200"></canvas>
                         <div class="duel-death-overlay" id="player-1-death-overlay" hidden>
@@ -567,7 +721,24 @@
                     <div id="player-1-pov-status">Waiting for Player 1 camera</div>
                 </div>
                 <div class="duel-pov-card" id="player-2-pov-card">
-                    <h2 id="player-2-pov-title">Player 2 POV</h2>
+                    <div class="duel-pov-title-row">
+                        <h2 id="player-2-pov-title">Player 2 POV</h2>
+                        <div class="duel-agent-status" id="player-2-agent-status">Agent not connected</div>
+                    </div>
+                    <div class="duel-stat-grid">
+                        <div>Health: <span id="duel-p2-health">300</span></div>
+                        <div>Move: <span id="duel-p2-action">-</span></div>
+                        <div>Shots: <span id="duel-p2-shots">-</span></div>
+                        <div>Damage: <span id="duel-p2-damage">-</span></div>
+                        <div>X,Y: <span id="duel-p2-xy">-</span></div>
+                        <div>POV Degrees: <span id="duel-p2-angle">-</span></div>
+                    </div>
+                    <div class="duel-health-bar" id="duel-p2-health-bar">
+                        <div class="duel-health-bar-track">
+                            <div class="duel-health-bar-fill" id="duel-p2-health-fill"></div>
+                            <div class="duel-health-bar-label" id="duel-p2-health-label">HP 300 / 300</div>
+                        </div>
+                    </div>
                     <div class="duel-pov-frame">
                         <canvas class="frame" id="player-2-canvas" width="320" height="200"></canvas>
                         <div class="duel-death-overlay" id="player-2-death-overlay" hidden>
@@ -583,59 +754,36 @@
                 <div class="duel-panels">
                     <div class="duel-player-panel">
                         <h2 id="duel-player-1-name">Player 1</h2>
-                        <div class="duel-stat-grid">
-                            <div>Health: <span id="duel-p1-health">-</span></div>
-                            <div>Move: <span id="duel-p1-action">-</span></div>
-                            <div>Shots: <span id="duel-p1-shots">-</span></div>
-                            <div>Damage: <span id="duel-p1-damage">-</span></div>
-                        </div>
-                        <details class="duel-prompt-card" id="duel-p1-prompt-card" open>
-                            <summary>Codex MCP Prompt</summary>
-                            <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
-                            <textarea id="duel-p1-prompt" readonly placeholder="Click Start Duel to generate the Codex prompt."></textarea>
-                        </details>
                         <div class="duel-player-log">
                             <div class="duel-log-title">Player 1 High-Level MCP Commands</div>
-                            <div id="duel-p1-log"></div>
+                            <div class="duel-player-log-body" id="duel-p1-log"></div>
                         </div>
+                        <details class="duel-prompt-card" id="duel-p1-prompt-card" open>
+                            <summary>Player 1 MCP Prompt</summary>
+                            <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                            <textarea id="duel-p1-prompt" readonly placeholder="Click Start Duel to generate the Player 1 prompt."></textarea>
+                        </details>
                     </div>
                     <div class="duel-player-panel">
                         <h2 id="duel-player-2-name">Player 2</h2>
-                        <div class="duel-stat-grid">
-                            <div>Health: <span id="duel-p2-health">-</span></div>
-                            <div>Move: <span id="duel-p2-action">-</span></div>
-                            <div>Shots: <span id="duel-p2-shots">-</span></div>
-                            <div>Damage: <span id="duel-p2-damage">-</span></div>
-                        </div>
-                        <details class="duel-prompt-card" id="duel-p2-prompt-card" open>
-                            <summary>Claude MCP Prompt</summary>
-                            <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
-                            <textarea id="duel-p2-prompt" readonly placeholder="Click Start Duel to generate the Claude prompt."></textarea>
-                        </details>
                         <div class="duel-player-log">
                             <div class="duel-log-title">Player 2 High-Level MCP Commands</div>
-                            <div id="duel-p2-log"></div>
+                            <div class="duel-player-log-body" id="duel-p2-log"></div>
                         </div>
+                        <details class="duel-prompt-card" id="duel-p2-prompt-card" open>
+                            <summary>Player 2 MCP Prompt</summary>
+                            <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                            <textarea id="duel-p2-prompt" readonly placeholder="Click Start Duel to generate the Player 2 prompt."></textarea>
+                        </details>
                     </div>
                 </div>
-                <div class="duel-shared" id="duel-shared-state">Tick: - | Phase: - | Distance: - | LOS: - | Winner: -</div>
                 <div class="duel-breakdown" id="duel-breakdown" hidden>
                     <div class="duel-log-title">Match Breakdown</div>
                     <div class="duel-breakdown-summary" id="duel-breakdown-summary"></div>
-                    <div class="duel-breakdown-grid">
-                        <div class="duel-breakdown-list">
-                            <div class="duel-log-title">Player 1 High-Level Commands</div>
-                            <div id="duel-p1-breakdown"></div>
-                        </div>
-                        <div class="duel-breakdown-list">
-                            <div class="duel-log-title">Player 2 High-Level Commands</div>
-                            <div id="duel-p2-breakdown"></div>
-                        </div>
+                    <div class="duel-results-link" id="duel-results-link" hidden>
+                        <a id="duel-results-anchor" href="/api/arena/run-results" target="_blank" rel="noopener">View Match Results</a>
+                        <div class="duel-results-path" id="duel-results-path"></div>
                     </div>
-                </div>
-                <div class="duel-game-log">
-                    <div class="duel-log-title">Game State Log</div>
-                    <div id="duel-game-log"></div>
                 </div>
             </div>
             <div id="arena-debug-panel">
@@ -682,7 +830,7 @@
             var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
             var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
             var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
-            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\n";
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
@@ -690,6 +838,8 @@
             var arenaRunMetadataEndpoint = "/api/arena/run-metadata";
             var arenaResetEndpoint = "/api/arena/reset";
             var arenaDuelSessionEndpoint = "/api/arena/duel-session";
+            var arenaDuelInstructionsEndpoint = "/api/arena/run-instructions";
+            var duelSessionStorageKey = "doomArenaDuelSessionPayload";
             var arenaScoreEndpoint = "/api/arena/score";
             var arenaRunStatsEndpoint = "/api/arena/run-stats";
             var arenaEventsPath = "arena_duel_events.local.tsv";
@@ -700,6 +850,7 @@
             var lastLoadedPlayerCommand = "";
             var lastLoadedParticipantCommands = "";
             var lastLoadedParticipantIntents = "";
+            var latestParticipantIntentRows = [];
             var lastLoadedParticipantReady = "";
             var lastLoadedRunMetadata = "";
             var currentArenaRunId = "run_unknown";
@@ -708,8 +859,10 @@
             var currentPlayer1Model = "";
             var currentPlayer2Model = "";
             var currentArenaRound = 1;
+            var currentArenaTotalRounds = 1;
             var currentArenaSeed = 0;
             var currentArenaTimeoutSeconds = 300;
+            var DUEL_MAX_HEALTH = 300;
             var selectedArenaDataMode = "mock";
             var selectedArenaDataSourcePath = arenaDataMockPath;
             var doomScriptLoaded = false;
@@ -719,6 +872,8 @@
             var pendingArenaDataMode = null;
             var player1PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
             var player2PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
+            var fastDuelPovRendering = true;
+            var duelPovAnimationFrame = 0;
             // legacy aliases kept for any remaining references
             var player2PovContext = null;
             var player2PovImageData = null;
@@ -731,6 +886,7 @@
             var runStatsFetchInFlight = false;
             var lastRunStatsFetchAt = 0;
             var duelLauncherHidePending = false;
+            var duelAutoStartAfterReloadPending = false;
 
             function updateArenaBanner() {
                 var label = document.getElementById("arena-data-label");
@@ -838,7 +994,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=dual-pov-21";
+                script.src = "websockets-doom.js?v=dual-pov-22";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -991,12 +1147,14 @@
                         return response.text();
                     })
                     .then(function (intentText) {
-                        if (!Module.FS) {
-                            return;
-                        }
-
                         if (!intentText) {
                             intentText = arenaParticipantIntentHeader;
+                        }
+
+                        latestParticipantIntentRows = parseTsv(intentText);
+
+                        if (!Module.FS) {
+                            return;
                         }
 
                         if (intentText === lastLoadedParticipantIntents) {
@@ -1117,6 +1275,41 @@
                     });
             }
 
+            function loadDuelSessionStateForLauncher() {
+                return fetch(arenaResetEndpoint, {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return null;
+                        }
+
+                        return response.json();
+                    })
+                    .then(function (payload) {
+                        if (!payload || payload.arena_mode !== "duel") {
+                            return payload;
+                        }
+
+                        applyDuelSessionPayload(payload, buildDuelSessionPayload(true));
+                        return loadDuelInstructionPromptsIfMissing(payload);
+                    });
+            }
+
+            function reloadIntoDuelRun(autoStart) {
+                var url = new URL(window.location.href);
+
+                url.searchParams.set("duel", "1");
+                url.searchParams.delete("arenaData");
+                if (autoStart) {
+                    url.searchParams.set("autoStart", "1");
+                } else {
+                    url.searchParams.delete("autoStart");
+                }
+
+                window.location.href = url.toString();
+            }
+
             function syncArenaRunMetadataNow() {
                 var request;
 
@@ -1138,21 +1331,11 @@
             }
 
             function setArenaLauncherButtonsDisabled(disabled) {
-                var buttons = document.querySelectorAll("[data-arena-mode], #arena-start-game, #player-1-model, #player-2-model");
+                var buttons = document.querySelectorAll("[data-arena-mode], #arena-start-game, #duel-reset, #duel-next-round");
 
                 buttons.forEach(function (button) {
                     button.disabled = disabled;
                 });
-            }
-
-            function selectedModelValue(id, fallback) {
-                var node = document.getElementById(id);
-
-                if (node === null || !node.value) {
-                    return fallback;
-                }
-
-                return node.value;
             }
 
             function selectedNumberValue(id, fallback) {
@@ -1171,16 +1354,19 @@
                 return value;
             }
 
-            function buildDuelSessionPayload() {
+            function buildDuelSessionPayload(continueSession) {
+                var rounds = selectedNumberValue("arena-round", 1);
                 return {
                     arena_mode: "duel",
-                    player_1_model: selectedModelValue("player-1-model", "codex"),
-                    player_2_model: selectedModelValue("player-2-model", "claude"),
-                    round: selectedNumberValue("arena-round", 1),
-                    seed: selectedNumberValue("arena-seed", 42),
+                    player_1_model: "codex",
+                    player_2_model: "claude",
+                    rounds: rounds,
+                    round: 1,
+                    seed: 42,
                     timeout_seconds: selectedNumberValue("arena-timeout-seconds", 120),
                     decision_cadence_ms: 750,
-                    intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 3000),
+                    intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
+                    continue_session: !!continueSession,
                 };
             }
 
@@ -1205,7 +1391,13 @@
                     body: JSON.stringify(payload || {}),
                 }).then(function (response) {
                     if (!response.ok) {
-                        throw new Error("Duel session failed with HTTP " + response.status);
+                        return response.json().catch(function () { return null; }).then(function (errorPayload) {
+                            var message = "Duel session failed with HTTP " + response.status;
+                            if (errorPayload && errorPayload.error) {
+                                message += ": " + errorPayload.error;
+                            }
+                            throw new Error(message);
+                        });
                     }
 
                     return response.json();
@@ -1220,14 +1412,169 @@
                 }
             }
 
+            function storedDuelSessionPayload() {
+                var raw;
+
+                try {
+                    raw = window.sessionStorage ? window.sessionStorage.getItem(duelSessionStorageKey) : "";
+                    return raw ? JSON.parse(raw) : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function persistDuelSessionForReload(session) {
+                if (!session || !window.sessionStorage) {
+                    return;
+                }
+
+                try {
+                    window.sessionStorage.setItem(duelSessionStorageKey, JSON.stringify(session));
+                } catch (error) {
+                    console.warn("Doom Agent Arena: failed to persist duel session for reload", error);
+                }
+            }
+
+            function mergeStoredDuelSessionPayload(session) {
+                var stored = storedDuelSessionPayload();
+                var merged = Object.assign({}, session || {});
+
+                if (!stored) {
+                    return merged;
+                }
+                if (merged.run_id && stored.run_id && merged.run_id !== stored.run_id) {
+                    return merged;
+                }
+
+                if (!merged.player_1_prompt && stored.player_1_prompt) {
+                    merged.player_1_prompt = stored.player_1_prompt;
+                }
+                if (!merged.player_2_prompt && stored.player_2_prompt) {
+                    merged.player_2_prompt = stored.player_2_prompt;
+                }
+                if (!merged.results_dir && stored.results_dir) {
+                    merged.results_dir = stored.results_dir;
+                }
+                if (!merged.round_results_dir && stored.round_results_dir) {
+                    merged.round_results_dir = stored.round_results_dir;
+                }
+                if (!merged.duel_session_id && stored.duel_session_id) {
+                    merged.duel_session_id = stored.duel_session_id;
+                }
+                if (!merged.total_rounds && stored.total_rounds) {
+                    merged.total_rounds = stored.total_rounds;
+                }
+                if (!merged.current_round && stored.current_round) {
+                    merged.current_round = stored.current_round;
+                }
+                if (typeof merged.has_next_round !== "boolean" && typeof stored.has_next_round === "boolean") {
+                    merged.has_next_round = stored.has_next_round;
+                }
+
+                return merged;
+            }
+
+            function restoreDuelSessionFromReload() {
+                var stored = storedDuelSessionPayload();
+
+                if (!stored) {
+                    return null;
+                }
+
+                renderDuelSessionPrompts(stored);
+                currentArenaRunId = stored.run_id || currentArenaRunId;
+                currentArenaScenarioId = stored.scenario_id || currentArenaScenarioId;
+                currentArenaMode = stored.arena_mode || currentArenaMode;
+                currentArenaRound = stored.current_round || stored.round || currentArenaRound;
+                currentArenaTotalRounds = stored.total_rounds || currentArenaTotalRounds;
+                currentArenaSeed = stored.seed || currentArenaSeed;
+                currentArenaTimeoutSeconds = stored.timeout_seconds || currentArenaTimeoutSeconds;
+                return stored;
+            }
+
             function renderDuelSessionPrompts(session) {
-                currentDuelSession = session || currentDuelSession;
+                session = mergeStoredDuelSessionPayload(session || {});
+                var previousSession = currentDuelSession || {};
+                currentDuelSession = Object.assign({}, previousSession, session || {});
                 if (!currentDuelSession) {
                     return;
+                }
+                if (!currentDuelSession.player_1_prompt && previousSession.player_1_prompt) {
+                    currentDuelSession.player_1_prompt = previousSession.player_1_prompt;
+                }
+                if (!currentDuelSession.player_2_prompt && previousSession.player_2_prompt) {
+                    currentDuelSession.player_2_prompt = previousSession.player_2_prompt;
                 }
 
                 setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
                 setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+            }
+
+            function fetchDuelInstructionPrompt(participantId) {
+                return fetch(arenaDuelInstructionsEndpoint + "?participant_id=" + encodeURIComponent(participantId), {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return "";
+                        }
+
+                        return response.json();
+                    })
+                    .then(function (payload) {
+                        return payload && payload.prompt ? payload.prompt : "";
+                    })
+                    .catch(function () {
+                        return "";
+                    });
+            }
+
+            function loadDuelInstructionPromptsIfMissing(session) {
+                var promptSession = mergeStoredDuelSessionPayload(session || currentDuelSession || {});
+
+                if (promptSession.player_1_prompt && promptSession.player_2_prompt) {
+                    return Promise.resolve(promptSession);
+                }
+
+                return Promise.all([
+                    promptSession.player_1_prompt ? Promise.resolve(promptSession.player_1_prompt) : fetchDuelInstructionPrompt("player_1"),
+                    promptSession.player_2_prompt ? Promise.resolve(promptSession.player_2_prompt) : fetchDuelInstructionPrompt("player_2"),
+                ]).then(function (prompts) {
+                    if (prompts[0]) {
+                        promptSession.player_1_prompt = prompts[0];
+                    }
+                    if (prompts[1]) {
+                        promptSession.player_2_prompt = prompts[1];
+                    }
+                    renderDuelSessionPrompts(promptSession);
+                    return promptSession;
+                });
+            }
+
+            function retryDuelInstructionPromptsIfMissing() {
+                window.setTimeout(function () {
+                    if (
+                        currentArenaMode === "duel" &&
+                        (!currentDuelSession || !currentDuelSession.player_1_prompt || !currentDuelSession.player_2_prompt)
+                    ) {
+                        loadDuelInstructionPromptsIfMissing(currentDuelSession);
+                    }
+                }, 1000);
+            }
+
+            function applyDuelSessionPayload(resetPayload, payload) {
+                resetPayload = mergeStoredDuelSessionPayload(resetPayload || {});
+                payload = payload || {};
+                currentArenaRunId = resetPayload.run_id || currentArenaRunId;
+                currentArenaScenarioId = resetPayload.scenario_id || currentArenaScenarioId;
+                currentArenaMode = resetPayload.arena_mode || "duel";
+                currentPlayer1Model = resetPayload.player_1_model || payload.player_1_model;
+                currentPlayer2Model = resetPayload.player_2_model || payload.player_2_model;
+                currentArenaRound = resetPayload.current_round || resetPayload.round || currentArenaRound;
+                currentArenaTotalRounds = resetPayload.total_rounds || payload.rounds || currentArenaTotalRounds;
+                currentArenaSeed = resetPayload.seed || payload.seed;
+                currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
+                renderDuelSessionPrompts(resetPayload);
             }
 
             function copyPromptText(id) {
@@ -1351,8 +1698,9 @@
                 });
             }
 
-            function startDuel() {
+            function startDuel(options) {
                 var payload;
+                var continueSession = !!(options && options.continueSession);
 
                 updateLauncherStatus("");
                 setArenaLauncherButtonsDisabled(true);
@@ -1361,21 +1709,28 @@
                 resetDuelPovFrameState();
                 resetDuelStatsState();
                 clearDuelBreakdown();
+                duelAutoStartAfterReloadPending = continueSession;
 
-                payload = buildDuelSessionPayload();
+                payload = buildDuelSessionPayload(continueSession);
+                if (!continueSession) {
+                    currentDuelSession = null;
+                    currentArenaRound = 1;
+                    currentArenaTotalRounds = payload.rounds || 1;
+                }
 
                 postDuelSession(payload)
                     .then(function (resetPayload) {
-                        currentArenaRunId = resetPayload.run_id || currentArenaRunId;
-                        currentArenaScenarioId = resetPayload.scenario_id || currentArenaScenarioId;
-                        currentArenaMode = resetPayload.arena_mode || "duel";
-                        currentPlayer1Model = resetPayload.player_1_model || payload.player_1_model;
-                        currentPlayer2Model = resetPayload.player_2_model || payload.player_2_model;
-                        currentArenaRound = resetPayload.round || payload.round;
-                        currentArenaSeed = resetPayload.seed || payload.seed;
-                        currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
-                        renderDuelSessionPrompts(resetPayload);
+                        applyDuelSessionPayload(resetPayload, payload);
+                        persistDuelSessionForReload(mergeStoredDuelSessionPayload(resetPayload));
                         updateArenaBanner();
+                        if (
+                            doomScriptLoaded &&
+                            resetPayload.run_id &&
+                            resetPayload.run_id !== loadedDoomRunId
+                        ) {
+                            reloadIntoDuelRun(continueSession);
+                            return new Promise(function () {});
+                        }
                         return runDuelCountdown();
                     })
                     .then(function () {
@@ -1394,37 +1749,45 @@
                 updateLauncherStatus("Starting duel...");
                 setArenaLauncherButtonsDisabled(true);
                 currentArenaMode = "duel";
+                restoreDuelSessionFromReload();
                 clearDuelDeathOverlays();
                 resetParticipantReadyState();
                 resetDuelPovFrameState();
                 resetDuelStatsState();
                 clearDuelBreakdown();
 
-                payload = buildDuelSessionPayload();
+                payload = buildDuelSessionPayload(false);
 
-                loadArenaRunMetadataForLauncher()
-                    .then(function (metadataText) {
-                        if (!metadataText || currentArenaMode !== "duel") {
+                Promise.all([
+                    loadArenaRunMetadataForLauncher(),
+                    loadDuelSessionStateForLauncher(),
+                ])
+                    .then(function (results) {
+                        var metadataText = results[0];
+                        var sessionPayload = results[1];
+
+                        if (
+                            !metadataText ||
+                            currentArenaMode !== "duel" ||
+                            !sessionPayload ||
+                            sessionPayload.arena_mode !== "duel" ||
+                            !sessionPayload.duel_session_id
+                        ) {
                             updateLauncherStatus("Creating duel session...");
                             return postDuelSession(payload).then(function (resetPayload) {
-                                currentArenaRunId = resetPayload.run_id || currentArenaRunId;
-                                currentArenaScenarioId = resetPayload.scenario_id || currentArenaScenarioId;
-                                currentArenaMode = resetPayload.arena_mode || "duel";
-                                currentPlayer1Model = resetPayload.player_1_model || payload.player_1_model;
-                                currentPlayer2Model = resetPayload.player_2_model || payload.player_2_model;
-                                currentArenaRound = resetPayload.round || payload.round;
-                                currentArenaSeed = resetPayload.seed || payload.seed;
-                                currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
-                                renderDuelSessionPrompts(resetPayload);
+                                applyDuelSessionPayload(resetPayload, payload);
+                                persistDuelSessionForReload(mergeStoredDuelSessionPayload(resetPayload));
                                 return resetPayload;
                             });
                         }
 
                         currentArenaMode = "duel";
+                        persistDuelSessionForReload(mergeStoredDuelSessionPayload(sessionPayload));
                         return null;
                     })
                     .then(function () {
                         updateArenaBanner();
+                        retryDuelInstructionPromptsIfMissing();
                         return runDuelCountdown();
                     })
                     .then(function () {
@@ -1478,12 +1841,45 @@
                 }
             }
 
+            function updateDuelHealthBar(prefix, rawHealth) {
+                var bar = document.getElementById(prefix + "-health-bar");
+                var fill = document.getElementById(prefix + "-health-fill");
+                var label = document.getElementById(prefix + "-health-label");
+                var health = rawHealth === null || rawHealth === undefined || rawHealth === ""
+                    ? DUEL_MAX_HEALTH
+                    : parseInt(rawHealth, 10);
+                var clamped;
+                var percent;
+
+                if (!Number.isFinite(health)) {
+                    health = 0;
+                }
+
+                clamped = Math.max(0, Math.min(DUEL_MAX_HEALTH, health));
+                percent = (clamped / DUEL_MAX_HEALTH) * 100;
+
+                if (fill !== null) {
+                    fill.style.width = percent.toFixed(1) + "%";
+                }
+                if (label !== null) {
+                    label.textContent = "HP " + health + " / " + DUEL_MAX_HEALTH;
+                }
+                if (bar !== null) {
+                    bar.classList.toggle("health-critical", clamped > 0 && clamped <= DUEL_MAX_HEALTH * 0.25);
+                    bar.classList.toggle("health-low", clamped > DUEL_MAX_HEALTH * 0.25 && clamped <= DUEL_MAX_HEALTH * 0.5);
+                }
+            }
+
             function renderLogLines(id, lines) {
                 var node = document.getElementById(id);
 
                 if (node === null) {
                     return;
                 }
+
+                var nextRenderKey = lines.join("\n");
+                var contentChanged = node.dataset.renderKey !== nextRenderKey;
+                var previousScrollTop = node.scrollTop;
 
                 node.innerHTML = "";
                 lines.forEach(function (text) {
@@ -1492,22 +1888,9 @@
                     line.textContent = text;
                     node.appendChild(line);
                 });
-            }
 
-            function renderBreakdownLines(id, lines) {
-                var node = document.getElementById(id);
-
-                if (node === null) {
-                    return;
-                }
-
-                node.innerHTML = "";
-                lines.forEach(function (text) {
-                    var line = document.createElement("div");
-                    line.className = "duel-breakdown-line";
-                    line.textContent = text;
-                    node.appendChild(line);
-                });
+                node.dataset.renderKey = nextRenderKey;
+                node.scrollTop = contentChanged ? node.scrollHeight : previousScrollTop;
             }
 
             function appendBreakdownStat(parent, label, value) {
@@ -1530,6 +1913,10 @@
             }
 
             function formatMillis(value) {
+                if (value === null || value === undefined || value === "") {
+                    return "-";
+                }
+
                 var parsed = Number(value);
 
                 if (!Number.isFinite(parsed)) {
@@ -1578,7 +1965,7 @@
                 }
 
                 relativeMs = base === null ? parsed : Math.max(0, parsed - base);
-                return "[" + (relativeMs / 1000).toFixed(3) + "s / " + Math.round(relativeMs) + "ms]";
+                return "[" + (relativeMs / 1000).toFixed(3) + "s]";
             }
 
             function currentPlayerIntentLine(player) {
@@ -1586,106 +1973,339 @@
                 var intentStatus = player.intent_status || "inactive";
                 var elapsed = numericValue(player.elapsed_time_seconds);
                 var timestamp = elapsed !== null
-                    ? "[" + elapsed.toFixed(3) + "s / " + Math.round(elapsed * 1000) + "ms]"
+                    ? "[" + elapsed.toFixed(3) + "s]"
                     : "[time -]";
 
                 if (intent === "none" || intentStatus === "inactive") {
-                    return "No high-level MCP command has been accepted yet.";
+                    return "> No high-level MCP command has been accepted yet.";
                 }
 
-                return timestamp + " current -> " + intent +
+                return "> " + timestamp + " current -> " + intent +
                     " / " + (player.intent_style || "-") +
                     " | seq " + (player.sequence_number || "-") +
                     " | duration " + formatMillis((numericValue(player.expires_at_ms) || 0) - (numericValue(player.issued_at_ms) || 0));
             }
 
-            function highLevelMcpCommandLines(stats, participantId, fallbackPlayer) {
-                var rows = [];
+            function formatCompactValue(value) {
+                if (value === null || value === undefined || value === "") {
+                    return "-";
+                }
+                return String(value);
+            }
 
-                if (stats && Array.isArray(stats.intent_lifecycles)) {
-                    rows = stats.intent_lifecycles.filter(function (row) {
-                        return row.participant_id === participantId;
+            function formatReplanIf(value) {
+                if (Array.isArray(value)) {
+                    return value.length > 0 ? value.join(",") : "-";
+                }
+                return formatCompactValue(value);
+            }
+
+            function executedFireActionFromPlayer(player) {
+                return player && player.autopilot_action && player.autopilot_action.indexOf("attack") >= 0
+                    ? "attack"
+                    : "hold_fire";
+            }
+
+            function executedMovementActionFromPlayer(player) {
+                if (!player || !player.autopilot_action || player.autopilot_action === "none") {
+                    return "none";
+                }
+                return player.autopilot_action.replace("+attack", "");
+            }
+
+            function executedStrafeDirectionFromPlayer(player) {
+                var action = player && player.autopilot_action ? player.autopilot_action : "";
+                var requested = player && player.strafe_direction ? player.strafe_direction : "";
+
+                if (!/(strafe|circle|kite|evasive|backoff|unstick)/.test(action)) {
+                    return "none";
+                }
+                if (requested === "left" || requested === "right") {
+                    return requested;
+                }
+                if (requested === "alternate") {
+                    return "alternating";
+                }
+                return requested || "auto";
+            }
+
+            function applyCurrentExecutionToRows(rows, player) {
+                var currentIntentId = player && player.intent_id ? player.intent_id : "";
+
+                if (!player || !currentIntentId) {
+                    return rows;
+                }
+
+                return rows.map(function (row) {
+                    if (row.intent_id !== currentIntentId) {
+                        return row;
+                    }
+
+                    return Object.assign({}, row, {
+                        executed_fire_action: executedFireActionFromPlayer(player),
+                        executed_movement_action: executedMovementActionFromPlayer(player),
+                        executed_strafe_direction: executedStrafeDirectionFromPlayer(player),
+                        policy_compliance_reason: player.autopilot_reason || "current_doom_execution",
+                        current_autopilot_action: player.autopilot_action || ""
                     });
-                }
-
-                if (rows.length === 0) {
-                    return [currentPlayerIntentLine(fallbackPlayer || {})];
-                }
-
-                return rows.slice(-8).map(function (row) {
-                    var sequence = row.sequence_number !== null && row.sequence_number !== undefined ? row.sequence_number : "-";
-                    var tactics = [
-                        row.movement_bias ? "move " + row.movement_bias : "",
-                        row.strafe_direction ? "strafe " + row.strafe_direction : "",
-                        row.fire_policy ? "fire " + row.fire_policy : "",
-                        row.distance_policy ? "distance " + row.distance_policy : ""
-                    ].filter(Boolean).join(" | ");
-
-                    return formatRunTimestamp(row.issued_at_ms, stats) +
-                        " seq " + sequence +
-                        " -> " + (row.intent || "unknown") +
-                        " / " + (row.style || "-") +
-                        " | duration " + formatMillis(row.duration_ms) +
-                        " | latency " + formatMillis(row.mcp_call_latency_ms) +
-                        (tactics ? " | " + tactics : "");
                 });
             }
 
-            function intentLifecycleLines(stats, participantId, fallbackPlayer) {
+            function participantIntentTsvFallbackRows(participantId) {
+                return latestParticipantIntentRows.filter(function (row) {
+                    return row.participant_id === participantId;
+                }).map(function (row) {
+                    return {
+                        source: "participant_intents_tsv",
+                        participant_id: row.participant_id,
+                        intent_id: row.intent_id,
+                        intent: row.intent,
+                        style: row.style,
+                        target_id: row.target_id,
+                        preferred_distance: row.preferred_distance,
+                        aggression: row.aggression,
+                        duration_ms: row.duration_ms,
+                        strafe_direction: row.strafe_direction,
+                        movement_bias: row.movement_bias,
+                        fire_policy: row.fire_policy,
+                        distance_policy: row.distance_policy,
+                        aim_tolerance: row.aim_tolerance,
+                        fire_burst_ms: row.fire_burst_ms,
+                        min_fire_alignment: row.min_fire_alignment,
+                        min_distance: row.min_distance,
+                        max_distance: row.max_distance,
+                        retreat_if_closer_than: row.retreat_if_closer_than,
+                        push_if_farther_than: row.push_if_farther_than,
+                        los_lost_action: row.los_lost_action,
+                        stuck_recovery_strategy: row.stuck_recovery_strategy,
+                        movement_primitive: row.movement_primitive,
+                        turn_policy: row.turn_policy,
+                        navigation_target: row.navigation_target,
+                        fire_mode: row.fire_mode,
+                        replan_if: row.replan_if
+                            ? row.replan_if.split(",").filter(Boolean)
+                            : [],
+                        sequence_number: row.sequence_number,
+                        decision_cadence_ms: row.decision_cadence_ms,
+                        issued_at_ms: row.issued_at_ms,
+                        expires_at_ms: row.expires_at_ms,
+                        mcp_call_latency_ms: null,
+                        superseded_before_expiry: false,
+                        expired_before_next_intent: false,
+                        executed_fire_action: "",
+                        executed_movement_action: "",
+                        executed_strafe_direction: "",
+                        policy_compliance_reason: ""
+                    };
+                });
+            }
+
+            function fallbackPlayerIntentRow(participantId, player) {
+                var durationMs;
+
+                if (!player || !player.intent || player.intent === "none" || player.intent_status === "inactive") {
+                    return null;
+                }
+
+                durationMs = (numericValue(player.expires_at_ms) || 0) - (numericValue(player.issued_at_ms) || 0);
+                return {
+                    source: "state_current",
+                    participant_id: participantId,
+                    intent_id: player.intent_id || "",
+                    intent: player.intent,
+                    style: player.intent_style || "",
+                    target_id: participantId === "player_1" ? "player_2" : "player_1",
+                    preferred_distance: player.preferred_distance,
+                    aggression: "",
+                    duration_ms: durationMs > 0 ? durationMs : "",
+                    strafe_direction: player.strafe_direction,
+                    movement_bias: player.movement_bias,
+                    fire_policy: player.fire_policy,
+                    distance_policy: player.distance_policy,
+                    aim_tolerance: player.aim_tolerance,
+                    fire_burst_ms: player.fire_burst_ms,
+                    min_fire_alignment: player.min_fire_alignment,
+                    min_distance: player.min_distance,
+                    max_distance: player.max_distance,
+                    retreat_if_closer_than: player.retreat_if_closer_than,
+                    push_if_farther_than: player.push_if_farther_than,
+                    los_lost_action: player.los_lost_action,
+                    stuck_recovery_strategy: player.stuck_recovery_strategy,
+                    movement_primitive: player.movement_primitive,
+                    turn_policy: player.turn_policy,
+                    navigation_target: player.navigation_target,
+                    fire_mode: player.fire_mode,
+                    replan_if: player.replan_if || [],
+                    sequence_number: player.sequence_number >= 0 ? player.sequence_number : "",
+                    decision_cadence_ms: player.decision_cadence_ms,
+                    issued_at_ms: player.issued_at_ms,
+                    expires_at_ms: player.expires_at_ms,
+                    mcp_call_latency_ms: null,
+                    superseded_before_expiry: false,
+                    expired_before_next_intent: false,
+                    executed_fire_action: executedFireActionFromPlayer(player),
+                    executed_movement_action: executedMovementActionFromPlayer(player),
+                    executed_strafe_direction: executedStrafeDirectionFromPlayer(player),
+                    policy_compliance_reason: player.autopilot_reason || "current_doom_execution",
+                    current_autopilot_action: player.autopilot_action || ""
+                };
+            }
+
+            function highLevelMcpCommandLine(row, stats) {
+                var sequence = row.sequence_number !== null && row.sequence_number !== undefined && row.sequence_number !== ""
+                    ? row.sequence_number
+                    : "-";
+                var lifecycle = row.superseded_before_expiry
+                    ? "superseded"
+                    : row.expired_before_next_intent
+                        ? "expired"
+                        : row.source === "state_current" || row.source === "participant_intents_tsv"
+                            ? "current"
+                            : "active/final";
+
+                return "> " + formatRunTimestamp(row.issued_at_ms, stats) +
+                    " set_participant_intent" +
+                    " | seq " + sequence +
+                    " | MCP requested: intent=" + (row.intent || "unknown") +
+                    " | style=" + formatCompactValue(row.style) +
+                    " | target=" + formatCompactValue(row.target_id) +
+                    " | aggression=" + formatCompactValue(row.aggression) +
+                    " | preferred_distance=" + formatCompactValue(row.preferred_distance) +
+                    " | duration=" + formatMillis(row.duration_ms) +
+                    " | movement_bias=" + formatCompactValue(row.movement_bias) +
+                    " | strafe_direction=" + formatCompactValue(row.strafe_direction) +
+                    " | fire_policy=" + formatCompactValue(row.fire_policy) +
+                    " | distance_policy=" + formatCompactValue(row.distance_policy) +
+                    " | aim_tolerance=" + formatCompactValue(row.aim_tolerance) +
+                    " | fire_burst_ms=" + formatCompactValue(row.fire_burst_ms) +
+                    " | min_fire_alignment=" + formatCompactValue(row.min_fire_alignment) +
+                    " | min_distance=" + formatCompactValue(row.min_distance) +
+                    " | max_distance=" + formatCompactValue(row.max_distance) +
+                    " | retreat_if_closer_than=" + formatCompactValue(row.retreat_if_closer_than) +
+                    " | push_if_farther_than=" + formatCompactValue(row.push_if_farther_than) +
+                    " | los_lost_action=" + formatCompactValue(row.los_lost_action) +
+                    " | stuck_recovery_strategy=" + formatCompactValue(row.stuck_recovery_strategy) +
+                    " | movement_primitive=" + formatCompactValue(row.movement_primitive) +
+                    " | turn_policy=" + formatCompactValue(row.turn_policy) +
+                    " | navigation_target=" + formatCompactValue(row.navigation_target) +
+                    " | fire_mode=" + formatCompactValue(row.fire_mode) +
+                    " | replan_if=" + formatReplanIf(row.replan_if) +
+                    " | Doom executed: move=" + formatCompactValue(row.executed_movement_action) +
+                    " | fire=" + formatCompactValue(row.executed_fire_action) +
+                    " | strafe=" + formatCompactValue(row.executed_strafe_direction) +
+                    " | reason=" + formatCompactValue(row.policy_compliance_reason) +
+                    " | latency=" + formatMillis(row.mcp_call_latency_ms) +
+                    " | " + lifecycle;
+            }
+
+            function highLevelMcpCommandLines(stats, participantId, fallbackPlayer) {
                 var rows = [];
+                var fallbackRows;
+                var fallbackRow;
 
                 if (stats && Array.isArray(stats.intent_lifecycles)) {
                     rows = stats.intent_lifecycles.filter(function (row) {
                         return row.participant_id === participantId;
+                    }).sort(function (left, right) {
+                        return (numericValue(left.issued_at_ms) || 0) - (numericValue(right.issued_at_ms) || 0);
                     });
                 }
 
-                if (rows.length === 0) {
-                    if (fallbackPlayer && fallbackPlayer.intent && fallbackPlayer.intent !== "none") {
-                        return [
-                            "Current: " + fallbackPlayer.intent + " / " + (fallbackPlayer.intent_style || "-") +
-                            " | seq " + (fallbackPlayer.sequence_number || "-") +
-                            " | action " + (fallbackPlayer.autopilot_action || "none")
-                        ];
+                fallbackRows = participantIntentTsvFallbackRows(participantId);
+                fallbackRows.forEach(function (row) {
+                    var duplicate = rows.some(function (existing) {
+                        return existing.intent_id && existing.intent_id === row.intent_id;
+                    });
+                    if (!duplicate) {
+                        rows.push(row);
                     }
-                    return ["No high-level intents captured for " + playerName(participantId) + "."];
+                });
+                rows = applyCurrentExecutionToRows(rows, fallbackPlayer || {});
+
+                if (rows.length === 0) {
+                    fallbackRow = fallbackPlayerIntentRow(participantId, fallbackPlayer || {});
+                    return fallbackRow
+                        ? [highLevelMcpCommandLine(fallbackRow, stats)]
+                        : [currentPlayerIntentLine(fallbackPlayer || {})];
                 }
 
-                return rows.slice(-10).map(function (row, index) {
-                    var sequence = row.sequence_number !== null && row.sequence_number !== undefined ? "seq " + row.sequence_number : "seq -";
-                    var status = "active/final";
-                    var detail = "";
-
-                    if (row.superseded_before_expiry) {
-                        status = "superseded";
-                        detail = " | used " + formatMillis(row.effective_duration_ms) + " | unused " + formatMillis(row.unused_duration_ms);
-                    } else if (row.expired_before_next_intent) {
-                        status = "expired";
-                        detail = " | gap " + formatMillis(row.gap_after_expiry_before_next_ms);
-                    }
-
-                    return (
-                        (index + 1) + ". " +
-                        formatRunTimestamp(row.issued_at_ms, stats) + " " +
-                        sequence + " | " +
-                        (row.intent || "unknown") + " / " + (row.style || "-") +
-                        " | duration " + formatMillis(row.duration_ms) +
-                        " | latency " + formatMillis(row.mcp_call_latency_ms) +
-                        " | " + status +
-                        detail
-                    );
+                return rows.sort(function (left, right) {
+                    return (numericValue(left.issued_at_ms) || 0) - (numericValue(right.issued_at_ms) || 0);
+                }).map(function (row) {
+                    return highLevelMcpCommandLine(row, stats);
                 });
             }
 
             function clearDuelBreakdown() {
                 var panel = document.getElementById("duel-breakdown");
+                var resultsLink = document.getElementById("duel-results-link");
 
                 if (panel !== null) {
                     panel.hidden = true;
                 }
-                renderBreakdownLines("duel-p1-breakdown", []);
-                renderBreakdownLines("duel-p2-breakdown", []);
+                if (resultsLink !== null) {
+                    resultsLink.hidden = true;
+                }
                 setText("duel-breakdown-summary", "");
+                updateNextRoundButton("running");
+            }
+
+            function updateNextRoundButton(phase) {
+                var button = document.getElementById("duel-next-round");
+                var totalRounds;
+                var currentRound;
+                var hasNextRound;
+                var nextRoundNumber;
+
+                if (button === null) {
+                    return;
+                }
+                if (currentArenaMode !== "duel") {
+                    button.hidden = true;
+                    button.disabled = true;
+                    return;
+                }
+
+                totalRounds = currentDuelSession && currentDuelSession.total_rounds
+                    ? parseInt(currentDuelSession.total_rounds, 10)
+                    : currentArenaTotalRounds;
+                currentRound = currentDuelSession && currentDuelSession.current_round
+                    ? parseInt(currentDuelSession.current_round, 10)
+                    : currentArenaRound;
+                if (!Number.isFinite(totalRounds) || totalRounds < 1) {
+                    totalRounds = 1;
+                }
+                if (!Number.isFinite(currentRound) || currentRound < 1) {
+                    currentRound = 1;
+                }
+
+                hasNextRound = currentDuelSession && typeof currentDuelSession.has_next_round === "boolean"
+                    ? currentDuelSession.has_next_round
+                    : currentRound < totalRounds;
+                nextRoundNumber = Math.min(totalRounds, currentRound + 1);
+
+                button.hidden = !hasNextRound;
+                button.disabled = phase !== "finished";
+                button.textContent = "Next Round (" + nextRoundNumber + "/" + totalRounds + ")";
+            }
+
+            function renderMatchResultsLink() {
+                var resultsLink = document.getElementById("duel-results-link");
+                var resultsAnchor = document.getElementById("duel-results-anchor");
+                var resultsPath = document.getElementById("duel-results-path");
+                var resultsDir = currentDuelSession && currentDuelSession.results_dir
+                    ? currentDuelSession.results_dir
+                    : "";
+
+                if (resultsLink === null || resultsAnchor === null) {
+                    return;
+                }
+
+                resultsAnchor.href = "/api/arena/run-results";
+                if (resultsPath !== null) {
+                    resultsPath.textContent = resultsDir ? "Folder: " + resultsDir : "Run: " + currentArenaRunId;
+                }
+                resultsLink.hidden = false;
             }
 
             function renderMatchBreakdown(match, player1, player2, stats) {
@@ -1710,10 +2330,12 @@
                 appendBreakdownStat(summaryNode, "Shots", "P1 " + (player1.shots_fired || "0") + "/" + (player1.shots_hit || "0") + " | P2 " + (player2.shots_fired || "0") + "/" + (player2.shots_hit || "0"));
                 appendBreakdownStat(summaryNode, "MCP Intents", String(statsSummary.intents_sent || "0"));
                 appendBreakdownStat(summaryNode, "Superseded", String(statsSummary.intents_superseded_before_expiry || "0"));
+                appendBreakdownStat(summaryNode, "Avg Chat Decision", formatMillis(statsSummary.average_inferred_chat_decision_latency_ms));
+                appendBreakdownStat(summaryNode, "Max Chat Decision", formatMillis(statsSummary.max_inferred_chat_decision_latency_ms));
+                appendBreakdownStat(summaryNode, "Stale Continuations", String(statsSummary.intents_continued_stale_after_expiry || "0"));
+                appendBreakdownStat(summaryNode, "Max Stale Extension", formatMillis(statsSummary.max_stale_intent_extension_ms));
                 appendBreakdownStat(summaryNode, "Avg Unused Intent", formatMillis(statsSummary.average_unused_intent_duration_ms));
-
-                renderBreakdownLines("duel-p1-breakdown", intentLifecycleLines(stats, "player_1", player1));
-                renderBreakdownLines("duel-p2-breakdown", intentLifecycleLines(stats, "player_2", player2));
+                renderMatchResultsLink();
             }
 
             function refreshDuelBreakdown(match, player1, player2, phase, stats) {
@@ -1812,6 +2434,7 @@
 
             function updatePovConnectionBorder(participantId, connected) {
                 var card = document.getElementById(participantId.replace("_", "-") + "-pov-card");
+                var status = document.getElementById(participantId.replace("_", "-") + "-agent-status");
 
                 if (card === null) {
                     return;
@@ -1819,6 +2442,10 @@
 
                 card.classList.toggle("llm-connected", !!connected);
                 card.classList.toggle("llm-disconnected", !connected);
+
+                if (status !== null) {
+                    status.textContent = connected ? "Agent connected" : "Agent not connected";
+                }
             }
 
             function updatePovConnectionBorders() {
@@ -1842,24 +2469,6 @@
                     }
                 });
                 updatePovConnectionBorders();
-            }
-
-            function gameStateLogLines(match, player1, player2, phase, winner, terminalReason) {
-                return [
-                    "Tick: " + (match.tick || player1.tick || "-") + " | Elapsed: " + (match.elapsed_time_seconds || player1.elapsed_time_seconds || "-") + "s / " + (match.timeout_seconds || player1.timeout_seconds || currentArenaTimeoutSeconds) + "s",
-                    "Phase: " + phase + " | Winner: " + (winner || "none") + (terminalReason ? " | Reason: " + terminalReason : ""),
-                    "Distance: " + (player1.distance_to_player || "-") + " | LOS: " + (truthyTsv(player1.line_of_sight) ? "true" : "false"),
-                    "P1 pos: " + (player1.x || "-") + "," + (player1.y || "-") + " angle " + (player1.angle || "-") + " | P2 pos: " + (player2.x || "-") + "," + (player2.y || "-") + " angle " + (player2.angle || "-"),
-                    "P1 mode: " + (player1.controller_mode || "-") + " | P2 mode: " + (player2.controller_mode || "-")
-                ];
-            }
-
-            function formatModel(value, fallback) {
-                if (!value) {
-                    return fallback;
-                }
-
-                return value.charAt(0).toUpperCase() + value.slice(1);
             }
 
             function setDuelPovActive(active) {
@@ -2003,6 +2612,16 @@
                     state.height = height;
                 } else if (state.context === null) {
                     state.context = canvas.getContext("2d");
+                }
+
+                if (fastDuelPovRendering) {
+                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    state.imageData.data.set(source);
+                    state.context.putImageData(state.imageData, 0, 0);
+                    state.lastFrame = frame;
+                    maybeHideDuelLauncherAfterFirstFrames();
+                    if (statusEl !== null) { statusEl.textContent = ""; }
+                    return;
                 }
 
                 jsNonzeroPixels = 0;
@@ -2206,37 +2825,87 @@
                 );
             }
 
+            function refreshDuelPovsOnAnimationFrame() {
+                refreshPlayer1Pov();
+                refreshPlayer2Pov();
+                duelPovAnimationFrame = window.requestAnimationFrame(refreshDuelPovsOnAnimationFrame);
+            }
+
+            function startDuelPovRefreshLoop() {
+                if (duelPovAnimationFrame) {
+                    return;
+                }
+                duelPovAnimationFrame = window.requestAnimationFrame(refreshDuelPovsOnAnimationFrame);
+            }
+
             function updateDuelDashboard(rows) {
                 var dashboard = document.getElementById("arena-duel-dashboard");
                 var match = rows.find(function (row) { return row.kind === "match"; }) || {};
                 var player1 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_1"; }) || {};
                 var player2 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_2"; }) || {};
-                var p1Model = formatModel(player1.model || currentPlayer1Model, "Codex");
-                var p2Model = formatModel(player2.model || currentPlayer2Model, "Claude");
                 var phase = match.phase || player1.phase || "combat";
                 var winner = match.winner || player1.winner || "";
                 var terminalReason = match.terminal_reason || player1.terminal_reason || "";
+                var elapsed = match.elapsed_time_seconds || player1.elapsed_time_seconds || "-";
+                var roundNumber = parseInt(match.round || player1.round || currentArenaRound, 10);
+                var totalRounds = currentDuelSession && currentDuelSession.total_rounds
+                    ? parseInt(currentDuelSession.total_rounds, 10)
+                    : currentArenaTotalRounds;
+                var roundLabel;
+                var player1XY = "-";
+                var player1Angle = "-";
+                var player2XY = "-";
+                var player2Angle = "-";
 
                 if (dashboard !== null && currentArenaMode === "duel") {
                     dashboard.style.display = "block";
                 }
                 setDuelPovActive(currentArenaMode === "duel");
 
-                setText("duel-title", "Doom Arena | " + p1Model + " vs " + p2Model + " | Round " + (match.round || player1.round || currentArenaRound) + " | Seed " + (match.seed || player1.seed || currentArenaSeed) + " | " + (phase === "finished" ? "Finished" : "Running"));
-                setText("duel-player-1-name", "Player 1: " + p1Model);
-                setText("duel-player-2-name", "Player 2: " + p2Model);
+                if (!Number.isFinite(roundNumber) || roundNumber < 1) {
+                    roundNumber = currentArenaRound;
+                }
+                if (!Number.isFinite(totalRounds) || totalRounds < 1) {
+                    totalRounds = 1;
+                }
+                roundLabel = totalRounds > 1
+                    ? String(roundNumber) + "/" + String(totalRounds)
+                    : String(roundNumber);
+                setText("duel-title", "Doom Arena | Player 1 vs Player 2 | Round " + roundLabel + " | Seed " + (match.seed || player1.seed || currentArenaSeed) + " | Elapsed " + elapsed + "s | " + (phase === "finished" ? "Finished" : "Running"));
+                setText("duel-player-1-name", "Player 1");
+                setText("duel-player-2-name", "Player 2");
                 setText("duel-p1-health", player1.health || "-");
                 setText("duel-p2-health", player2.health || "-");
+                updateDuelHealthBar("duel-p1", player1.health);
+                updateDuelHealthBar("duel-p2", player2.health);
                 setText("duel-p1-action", player1.last_action || "-");
                 setText("duel-p2-action", player2.last_action || "-");
                 setText("duel-p1-shots", (player1.shots_fired || "0") + " fired / " + (player1.shots_hit || "0") + " hit");
                 setText("duel-p2-shots", (player2.shots_fired || "0") + " fired / " + (player2.shots_hit || "0") + " hit");
                 setText("duel-p1-damage", player1.damage_dealt || "0");
                 setText("duel-p2-damage", player2.damage_dealt || "0");
+                if ((player1.x !== undefined && player1.x !== "") || (player1.y !== undefined && player1.y !== "")) {
+                    player1XY = (player1.x !== undefined && player1.x !== "" ? player1.x : "-") + ", " +
+                        (player1.y !== undefined && player1.y !== "" ? player1.y : "-");
+                }
+                if (player1.angle !== undefined && player1.angle !== "") {
+                    player1Angle = player1.angle;
+                }
+                if ((player2.x !== undefined && player2.x !== "") || (player2.y !== undefined && player2.y !== "")) {
+                    player2XY = (player2.x !== undefined && player2.x !== "" ? player2.x : "-") + ", " +
+                        (player2.y !== undefined && player2.y !== "" ? player2.y : "-");
+                }
+                if (player2.angle !== undefined && player2.angle !== "") {
+                    player2Angle = player2.angle;
+                }
+                setText("duel-p1-xy", player1XY);
+                setText("duel-p1-angle", player1Angle);
+                setText("duel-p2-xy", player2XY);
+                setText("duel-p2-angle", player2Angle);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
-                renderLogLines("duel-game-log", gameStateLogLines(match, player1, player2, phase, winner, terminalReason));
                 updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
+                updateNextRoundButton(phase);
                 setText(
                     "duel-shared-state",
                     "Tick: " + (match.tick || player1.tick || "-") +
@@ -2253,6 +2922,7 @@
                     setDuelPovActive(false);
                     clearDuelDeathOverlays();
                     clearDuelBreakdown();
+                    updateNextRoundButton("running");
                     return;
                 }
 
@@ -2337,7 +3007,7 @@
             }
 
             function postParticipantIntentDebugCommand(participantId, intent) {
-                var durationMs = 3000;
+                var durationMs = selectedNumberValue("arena-intent-duration-ms", 25000);
                 var timing = commandTiming(durationMs, "browser_participant_intent");
                 var payload = {
                     run_id: timing.run_id,
@@ -2356,6 +3026,19 @@
                     movement_bias: intent === "strafe_attack" ? "circle" : "direct",
                     fire_policy: "only_when_aligned",
                     distance_policy: "maintain",
+                    aim_tolerance: "",
+                    fire_burst_ms: "",
+                    min_fire_alignment: "",
+                    min_distance: "",
+                    max_distance: "",
+                    retreat_if_closer_than: "",
+                    push_if_farther_than: "",
+                    los_lost_action: "sweep",
+                    stuck_recovery_strategy: "default",
+                    movement_primitive: "",
+                    turn_policy: "auto",
+                    navigation_target: "opponent",
+                    fire_mode: "auto",
                     replan_if: [],
                     decision_cadence_ms: 750,
                 };
@@ -2438,8 +3121,8 @@
                             }
 
                             if (payload.arena_mode === "duel") {
-                                url.searchParams.set("duel", "1");
-                                url.searchParams.delete("arenaData");
+                                reloadIntoDuelRun(duelAutoStartAfterReloadPending);
+                                return;
                             } else {
                                 url.searchParams.set("arenaData", "mock");
                                 url.searchParams.delete("duel");
@@ -2522,14 +3205,17 @@
                 });
 
                 document.getElementById("arena-start-game").addEventListener("click", function () {
-                    startDuel();
+                    startDuel({ continueSession: false });
+                });
+                document.getElementById("duel-next-round").addEventListener("click", function () {
+                    startDuel({ continueSession: true });
                 });
                 document.getElementById("duel-reset").addEventListener("click", function () {
-                    startDuel();
+                    startDuel({ continueSession: false });
                 });
                 document.querySelectorAll("[data-duel-restart]").forEach(function (button) {
                     button.addEventListener("click", function () {
-                        startDuel();
+                        startDuel({ continueSession: false });
                     });
                 });
                 document.getElementById("duel-p1-copy-prompt").addEventListener("click", function (event) {
@@ -2581,15 +3267,17 @@
                 disableDoomPointerCapture();
 
                 if (queryDuel && queryAutoStart) {
+                    restoreDuelSessionFromReload();
                     startDuelFromExistingRun();
                     return;
                 }
 
                 if (queryDuel) {
                     currentArenaMode = "duel";
-                    currentPlayer1Model = selectedModelValue("player-1-model", "codex");
-                    currentPlayer2Model = selectedModelValue("player-2-model", "claude");
-                    setLauncherCopy("Doom Arena Duel", "Choose run settings, then click Start Duel.");
+                    currentPlayer1Model = "codex";
+                    currentPlayer2Model = "claude";
+                    restoreDuelSessionFromReload();
+                    setLauncherCopy("Doom Arena Duel", "Set up both MCP agents, then start the duel.");
                     updateArenaBanner();
                     return;
                 }
@@ -2608,24 +3296,23 @@
                     callMain(commonArgs);
                     disableDoomPointerCapture();
                     window.setInterval(syncArenaRunMetadata, 1000);
-                    window.setInterval(syncAgenticState, 250);
-                    window.setInterval(syncArenaEvents, 250);
-                    window.setInterval(syncAgenticCommands, 100);
-                    window.setInterval(syncArenaPlayerCommand, 100);
-                    window.setInterval(syncArenaParticipantCommands, 100);
+                    window.setInterval(syncAgenticState, 500);
+                    window.setInterval(syncArenaEvents, 500);
+                    window.setInterval(syncAgenticCommands, 250);
+                    window.setInterval(syncArenaPlayerCommand, 250);
+                    window.setInterval(syncArenaParticipantCommands, 250);
                     window.setInterval(syncArenaParticipantIntents, 100);
-                    window.setInterval(syncArenaParticipantReady, 100);
+                    window.setInterval(syncArenaParticipantReady, 250);
                     window.setInterval(refreshArenaScore, 1000);
                     window.setInterval(refreshDuelState, 1000);
-                    window.setInterval(refreshPlayer1Pov, 100);
-                    window.setInterval(refreshPlayer2Pov, 100);
+                    startDuelPovRefreshLoop();
                     window.setInterval(pollArenaReset, 1000);
                     window.setInterval(disableDoomPointerCapture, 1000);
                 },
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=dual-pov-20";
+                        return path + "?v=dual-pov-22";
                     }
 
                     return path;

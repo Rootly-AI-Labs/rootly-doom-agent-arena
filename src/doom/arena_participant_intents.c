@@ -11,7 +11,7 @@
 
 #define ARENA_PARTICIPANT_INTENT_GRACE_MS 2000
 #define ARENA_PARTICIPANT_INTENT_LEGACY_FIELD_COUNT 12
-#define ARENA_PARTICIPANT_INTENT_FIELD_COUNT 19
+#define ARENA_PARTICIPANT_INTENT_FIELD_COUNT 32
 
 extern const char *Arena_RunId(void);
 extern const char *Arena_ScenarioId(void);
@@ -38,6 +38,19 @@ typedef struct
     char replan_if[128];
     char sequence_number[32];
     char decision_cadence_ms[32];
+    char aim_tolerance[32];
+    char fire_burst_ms[32];
+    char min_fire_alignment[32];
+    char min_distance[32];
+    char max_distance[32];
+    char retreat_if_closer_than[32];
+    char push_if_farther_than[32];
+    char los_lost_action[32];
+    char stuck_recovery_strategy[32];
+    char movement_primitive[32];
+    char turn_policy[32];
+    char navigation_target[32];
+    char fire_mode[32];
 } arena_participant_intent_row_t;
 
 typedef struct
@@ -154,6 +167,8 @@ static int ValidStrafeDirection(const char *value)
     return !strcmp(value, "left")
         || !strcmp(value, "right")
         || !strcmp(value, "alternate")
+        || !strcmp(value, "hold_direction")
+        || !strcmp(value, "switch_if_hit")
         || !strcmp(value, "auto");
 }
 
@@ -178,6 +193,74 @@ static int ValidDistancePolicy(const char *value)
     return !strcmp(value, "close")
         || !strcmp(value, "maintain")
         || !strcmp(value, "kite");
+}
+
+static int ValidLosLostAction(const char *value)
+{
+    return !strcmp(value, "turn_left")
+        || !strcmp(value, "turn_right")
+        || !strcmp(value, "advance_last_seen")
+        || !strcmp(value, "hold_angle")
+        || !strcmp(value, "sweep");
+}
+
+static int ValidStuckRecoveryStrategy(const char *value)
+{
+    return !strcmp(value, "back_up")
+        || !strcmp(value, "turn_left")
+        || !strcmp(value, "turn_right")
+        || !strcmp(value, "strafe_out")
+        || !strcmp(value, "default");
+}
+
+static int ValidMovementPrimitive(const char *value)
+{
+    return value == NULL
+        || value[0] == '\0'
+        || !strcmp(value, "advance")
+        || !strcmp(value, "retreat")
+        || !strcmp(value, "strafe_left")
+        || !strcmp(value, "strafe_right")
+        || !strcmp(value, "circle_left")
+        || !strcmp(value, "circle_right")
+        || !strcmp(value, "hold_position");
+}
+
+static int ValidTurnPolicy(const char *value)
+{
+    return value == NULL
+        || value[0] == '\0'
+        || !strcmp(value, "auto")
+        || !strcmp(value, "turn_to_enemy")
+        || !strcmp(value, "sweep_left")
+        || !strcmp(value, "sweep_right")
+        || !strcmp(value, "hold_angle")
+        || !strcmp(value, "face_last_seen");
+}
+
+static int ValidNavigationTarget(const char *value)
+{
+    return value == NULL
+        || value[0] == '\0'
+        || !strcmp(value, "none")
+        || !strcmp(value, "opponent")
+        || !strcmp(value, "last_seen_enemy")
+        || !strcmp(value, "center")
+        || !strcmp(value, "left_lane")
+        || !strcmp(value, "right_lane")
+        || !strcmp(value, "keep_distance");
+}
+
+static int ValidFireMode(const char *value)
+{
+    return value == NULL
+        || value[0] == '\0'
+        || !strcmp(value, "auto")
+        || !strcmp(value, "hold_fire")
+        || !strcmp(value, "fire_when_aligned")
+        || !strcmp(value, "single_shot")
+        || !strcmp(value, "burst")
+        || !strcmp(value, "suppressive");
 }
 
 static int OptionalPositiveInt(const char *value)
@@ -364,6 +447,14 @@ static arena_participant_intent_t InactiveIntent(arena_participant_id_t particip
     CopyField(intent.fire_policy, sizeof(intent.fire_policy), "only_when_aligned");
     CopyField(intent.distance_policy, sizeof(intent.distance_policy), "maintain");
     intent.replan_if[0] = '\0';
+    CopyField(intent.los_lost_action, sizeof(intent.los_lost_action), "sweep");
+    CopyField(intent.stuck_recovery_strategy,
+              sizeof(intent.stuck_recovery_strategy),
+              "default");
+    intent.movement_primitive[0] = '\0';
+    CopyField(intent.turn_policy, sizeof(intent.turn_policy), "auto");
+    CopyField(intent.navigation_target, sizeof(intent.navigation_target), "opponent");
+    CopyField(intent.fire_mode, sizeof(intent.fire_mode), "auto");
     CopyField(intent.status, sizeof(intent.status), status);
     CopyField(intent.reason, sizeof(intent.reason), reason);
     return intent;
@@ -379,10 +470,18 @@ static void SetInactive(arena_participant_id_t participant,
     intent_slots[participant].duration_ms = 0;
 }
 
-static void SetExpired(arena_participant_id_t participant, const char *reason)
+static void MarkStickyExpired(arena_participant_intent_slot_t *slot,
+                              const char *reason)
 {
-    intent_slots[participant].intent = InactiveIntent(participant, "expired", reason);
-    intent_slots[participant].duration_ms = 0;
+    if (slot == NULL || !slot->intent.active || !slot->intent.valid)
+    {
+        return;
+    }
+
+    CopyField(slot->intent.status, sizeof(slot->intent.status), "stale");
+    CopyField(slot->intent.reason,
+              sizeof(slot->intent.reason),
+              reason == NULL ? "retaining last MCP intent" : reason);
 }
 
 static int SlotIntentStillLive(const arena_participant_intent_slot_t *slot,
@@ -508,6 +607,45 @@ static void StoreCandidate(arena_participant_intent_row_t *row,
     CopyRowField(row->decision_cadence_ms,
                  sizeof(row->decision_cadence_ms),
                  field_count > 18 ? fields[18] : "");
+    CopyRowField(row->aim_tolerance,
+                 sizeof(row->aim_tolerance),
+                 field_count > 19 ? fields[19] : "");
+    CopyRowField(row->fire_burst_ms,
+                 sizeof(row->fire_burst_ms),
+                 field_count > 20 ? fields[20] : "");
+    CopyRowField(row->min_fire_alignment,
+                 sizeof(row->min_fire_alignment),
+                 field_count > 21 ? fields[21] : "");
+    CopyRowField(row->min_distance,
+                 sizeof(row->min_distance),
+                 field_count > 22 ? fields[22] : "");
+    CopyRowField(row->max_distance,
+                 sizeof(row->max_distance),
+                 field_count > 23 ? fields[23] : "");
+    CopyRowField(row->retreat_if_closer_than,
+                 sizeof(row->retreat_if_closer_than),
+                 field_count > 24 ? fields[24] : "");
+    CopyRowField(row->push_if_farther_than,
+                 sizeof(row->push_if_farther_than),
+                 field_count > 25 ? fields[25] : "");
+    CopyRowField(row->los_lost_action,
+                 sizeof(row->los_lost_action),
+                 field_count > 26 ? fields[26] : "sweep");
+    CopyRowField(row->stuck_recovery_strategy,
+                 sizeof(row->stuck_recovery_strategy),
+                 field_count > 27 ? fields[27] : "default");
+    CopyRowField(row->movement_primitive,
+                 sizeof(row->movement_primitive),
+                 field_count > 28 ? fields[28] : "");
+    CopyRowField(row->turn_policy,
+                 sizeof(row->turn_policy),
+                 field_count > 29 ? fields[29] : "auto");
+    CopyRowField(row->navigation_target,
+                 sizeof(row->navigation_target),
+                 field_count > 30 ? fields[30] : "opponent");
+    CopyRowField(row->fire_mode,
+                 sizeof(row->fire_mode),
+                 field_count > 31 ? fields[31] : "auto");
 }
 
 static void ApplyCandidate(arena_participant_id_t participant,
@@ -581,10 +719,88 @@ static void ApplyCandidate(arena_participant_id_t participant,
         return;
     }
 
+    if (!OptionalNonNegativeInt(row->aim_tolerance)
+        || (row->aim_tolerance[0] != '\0' && atoi(row->aim_tolerance) > 180))
+    {
+        SetInactive(participant, "invalid", "invalid aim_tolerance");
+        return;
+    }
+
+    if (!OptionalNonNegativeInt(row->fire_burst_ms))
+    {
+        SetInactive(participant, "invalid", "invalid fire_burst_ms");
+        return;
+    }
+
+    if (!OptionalNonNegativeInt(row->min_fire_alignment)
+        || (row->min_fire_alignment[0] != '\0' && atoi(row->min_fire_alignment) > 180))
+    {
+        SetInactive(participant, "invalid", "invalid min_fire_alignment");
+        return;
+    }
+
+    if (!OptionalNonNegativeInt(row->min_distance)
+        || !OptionalNonNegativeInt(row->max_distance)
+        || !OptionalNonNegativeInt(row->retreat_if_closer_than)
+        || !OptionalNonNegativeInt(row->push_if_farther_than))
+    {
+        SetInactive(participant, "invalid", "invalid distance bound");
+        return;
+    }
+
+    if (row->min_distance[0] != '\0'
+        && row->max_distance[0] != '\0'
+        && atoi(row->min_distance) > atoi(row->max_distance))
+    {
+        SetInactive(participant, "invalid", "min_distance greater than max_distance");
+        return;
+    }
+
+    if (!ValidLosLostAction(row->los_lost_action))
+    {
+        SetInactive(participant, "invalid", "invalid los_lost_action");
+        return;
+    }
+
+    if (!ValidStuckRecoveryStrategy(row->stuck_recovery_strategy))
+    {
+        SetInactive(participant, "invalid", "invalid stuck_recovery_strategy");
+        return;
+    }
+
+    if (!ValidMovementPrimitive(row->movement_primitive))
+    {
+        SetInactive(participant, "invalid", "invalid movement_primitive");
+        return;
+    }
+
+    if (!ValidTurnPolicy(row->turn_policy))
+    {
+        SetInactive(participant, "invalid", "invalid turn_policy");
+        return;
+    }
+
+    if (!ValidNavigationTarget(row->navigation_target))
+    {
+        SetInactive(participant, "invalid", "invalid navigation_target");
+        return;
+    }
+
+    if (!ValidFireMode(row->fire_mode))
+    {
+        SetInactive(participant, "invalid", "invalid fire_mode");
+        return;
+    }
+
     if (RowStaleForSlot(row, slot))
     {
-        if (SlotIntentStillLive(slot, now))
+        if (slot->intent.active && slot->intent.valid)
         {
+            if (!SlotIntentStillLive(slot, now))
+            {
+                MarkStickyExpired(slot,
+                                  "ignored stale row; retaining last MCP intent");
+            }
             return;
         }
         SetInactive(participant, "stale", "ignored older intent");
@@ -614,7 +830,7 @@ static void ApplyCandidate(arena_participant_id_t participant,
     slot->duration_ms = duration_ms;
     if (now - slot->start_ms > duration_ms + ARENA_PARTICIPANT_INTENT_GRACE_MS)
     {
-        SetExpired(participant, "intent duration elapsed");
+        MarkStickyExpired(slot, "intent duration elapsed; retaining last MCP intent");
         return;
     }
 
@@ -637,6 +853,27 @@ static void ApplyCandidate(arena_participant_id_t participant,
     intent.decision_cadence_ms = row->decision_cadence_ms[0] == '\0'
         ? 0
         : atoi(row->decision_cadence_ms);
+    intent.aim_tolerance = row->aim_tolerance[0] == '\0'
+        ? 0
+        : atoi(row->aim_tolerance);
+    intent.fire_burst_ms = row->fire_burst_ms[0] == '\0'
+        ? 0
+        : atoi(row->fire_burst_ms);
+    intent.min_fire_alignment = row->min_fire_alignment[0] == '\0'
+        ? 0
+        : atoi(row->min_fire_alignment);
+    intent.min_distance = row->min_distance[0] == '\0'
+        ? 0
+        : atoi(row->min_distance);
+    intent.max_distance = row->max_distance[0] == '\0'
+        ? 0
+        : atoi(row->max_distance);
+    intent.retreat_if_closer_than = row->retreat_if_closer_than[0] == '\0'
+        ? 0
+        : atoi(row->retreat_if_closer_than);
+    intent.push_if_farther_than = row->push_if_farther_than[0] == '\0'
+        ? 0
+        : atoi(row->push_if_farther_than);
     CopyField(intent.intent_id, sizeof(intent.intent_id), row->intent_id);
     CopyField(intent.intent, sizeof(intent.intent), row->intent);
     CopyField(intent.style, sizeof(intent.style), row->style);
@@ -655,6 +892,24 @@ static void ApplyCandidate(arena_participant_id_t participant,
     CopyField(intent.replan_if,
               sizeof(intent.replan_if),
               row->replan_if);
+    CopyField(intent.los_lost_action,
+              sizeof(intent.los_lost_action),
+              row->los_lost_action);
+    CopyField(intent.stuck_recovery_strategy,
+              sizeof(intent.stuck_recovery_strategy),
+              row->stuck_recovery_strategy);
+    CopyField(intent.movement_primitive,
+              sizeof(intent.movement_primitive),
+              row->movement_primitive);
+    CopyField(intent.turn_policy,
+              sizeof(intent.turn_policy),
+              row->turn_policy);
+    CopyField(intent.navigation_target,
+              sizeof(intent.navigation_target),
+              row->navigation_target);
+    CopyField(intent.fire_mode,
+              sizeof(intent.fire_mode),
+              row->fire_mode);
     if (now - slot->start_ms > duration_ms)
     {
         CopyField(intent.status, sizeof(intent.status), "grace");
@@ -673,7 +928,7 @@ static void ApplyCandidate(arena_participant_id_t participant,
 void ArenaParticipantIntent_TickOrRefresh(void)
 {
     FILE *file;
-    char line[768];
+    char line[1536];
     char *fields[ARENA_PARTICIPANT_INTENT_FIELD_COUNT];
     int line_number;
     int field_count;

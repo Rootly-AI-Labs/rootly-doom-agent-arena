@@ -454,7 +454,7 @@ void Agentic_ExportState(void)
     }
 
     fprintf(file,
-            "run_id\tscenario_id\ttick\tkind\tentity_id\tteam\ttype\tlabel\tx\ty\tangle\thealth\talive\tdistance_to_player\trelative_angle_to_player\tline_of_sight\tcurrent_command\tready_weapon\tammo_bullets\tammo_shells\tammo_cells\tammo_rockets\tlast_x\tlast_y\tposition_delta\tstuck_ticks\tcommand_status\tlast_action\tmode\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\tmodel\tdamage_dealt\tshots_fired\tshots_hit\tinvalid_actions\tround\tseed\tintent\tintent_status\tintent_id\tintent_style\tautopilot_action\tautopilot_reason\taim_error\tpreferred_distance\tstuck_recovery\tcontroller_mode\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\tissued_at_ms\texpires_at_ms\treplan_recommended\treplan_reasons\n");
+            "run_id\tscenario_id\ttick\tkind\tentity_id\tteam\ttype\tlabel\tx\ty\tangle\thealth\talive\tdistance_to_player\trelative_angle_to_player\tline_of_sight\tcurrent_command\tready_weapon\tammo_bullets\tammo_shells\tammo_cells\tammo_rockets\tlast_x\tlast_y\tposition_delta\tstuck_ticks\tcommand_status\tlast_action\tmode\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\tmodel\tdamage_dealt\tshots_fired\tshots_hit\tinvalid_actions\tround\tseed\tintent\tintent_status\tintent_id\tintent_style\tautopilot_action\tautopilot_reason\taim_error\tpreferred_distance\tstuck_recovery\tcontroller_mode\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\tissued_at_ms\texpires_at_ms\treplan_recommended\treplan_reasons\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\texecuted_los_lost_action\texecuted_stuck_recovery_strategy\texecuted_movement_primitive\texecuted_turn_policy\texecuted_navigation_target\texecuted_fire_mode\n");
 
     if (ArenaDuel_IsEnabled())
     {
@@ -524,7 +524,7 @@ void Agentic_ExportState(void)
             : ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_COUNT);
 
         fprintf(file,
-                "%s\t%s\t%d\t%s\t%s\tplayer\tdoomguy\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\n",
+                "%s\t%s\t%d\t%s\t%s\tplayer\tdoomguy\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 Arena_RunId(),
                 Arena_ScenarioId(),
                 leveltime,
@@ -588,7 +588,26 @@ void Agentic_ExportState(void)
                 debug.issued_at_ms,
                 debug.expires_at_ms,
                 debug.replan_recommended,
-                debug.replan_reasons);
+                debug.replan_reasons,
+                debug.aim_tolerance,
+                debug.fire_burst_ms,
+                debug.min_fire_alignment,
+                debug.min_distance,
+                debug.max_distance,
+                debug.retreat_if_closer_than,
+                debug.push_if_farther_than,
+                debug.los_lost_action,
+                debug.stuck_recovery_strategy,
+                debug.movement_primitive,
+                debug.turn_policy,
+                debug.navigation_target,
+                debug.fire_mode,
+                debug.executed_los_lost_action,
+                debug.executed_stuck_recovery_strategy,
+                debug.executed_movement_primitive,
+                debug.executed_turn_policy,
+                debug.executed_navigation_target,
+                debug.executed_fire_mode);
 
         agentic_last_player_x = player->mo->x;
         agentic_last_player_y = player->mo->y;
@@ -633,7 +652,7 @@ void Agentic_ExportState(void)
             debug = ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_PLAYER_2);
 
             fprintf(file,
-                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t1\t%d\t0\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\n",
+                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t1\t%d\t0\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                     Arena_RunId(),
                     Arena_ScenarioId(),
                     leveltime,
@@ -681,7 +700,26 @@ void Agentic_ExportState(void)
                     debug.issued_at_ms,
                     debug.expires_at_ms,
                     debug.replan_recommended,
-                    debug.replan_reasons);
+                    debug.replan_reasons,
+                    debug.aim_tolerance,
+                    debug.fire_burst_ms,
+                    debug.min_fire_alignment,
+                    debug.min_distance,
+                    debug.max_distance,
+                    debug.retreat_if_closer_than,
+                    debug.push_if_farther_than,
+                    debug.los_lost_action,
+                    debug.stuck_recovery_strategy,
+                    debug.movement_primitive,
+                    debug.turn_policy,
+                    debug.navigation_target,
+                    debug.fire_mode,
+                    debug.executed_los_lost_action,
+                    debug.executed_stuck_recovery_strategy,
+                    debug.executed_movement_primitive,
+                    debug.executed_turn_policy,
+                    debug.executed_navigation_target,
+                    debug.executed_fire_mode);
             continue;
         }
 

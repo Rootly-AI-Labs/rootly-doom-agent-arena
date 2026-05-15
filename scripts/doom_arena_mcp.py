@@ -33,17 +33,34 @@ PARTICIPANT_INTENT_LEGACY_HEADER = (
 PARTICIPANT_INTENT_HEADER = (
     "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\t"
     "participant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\t"
-    "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\n"
+    "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
+    "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
+    "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
+    "turn_policy\tnavigation_target\tfire_mode\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANTS = {"player_1", "player_2"}
 VALID_PARTICIPANT_INTENTS = {"hold", "engage_opponent", "strafe_attack", "search"}
 VALID_PARTICIPANT_INTENT_STYLES = {"balanced", "aggressive", "evasive", "cautious"}
-VALID_STRAFE_DIRECTIONS = {"left", "right", "alternate", "auto"}
+VALID_STRAFE_DIRECTIONS = {"left", "right", "alternate", "auto", "hold_direction", "switch_if_hit"}
 VALID_MOVEMENT_BIASES = {"direct", "circle", "evasive", "cautious"}
 VALID_FIRE_POLICIES = {"hold_fire", "only_when_aligned", "burst_when_aligned", "suppressive"}
 VALID_DISTANCE_POLICIES = {"close", "maintain", "kite"}
 VALID_REPLAN_TRIGGERS = {"lost_los", "stuck", "low_health", "target_far", "target_close"}
+VALID_LOS_LOST_ACTIONS = {"turn_left", "turn_right", "advance_last_seen", "hold_angle", "sweep"}
+VALID_STUCK_RECOVERY_STRATEGIES = {"back_up", "turn_left", "turn_right", "strafe_out", "default"}
+VALID_MOVEMENT_PRIMITIVES = {
+    "advance",
+    "retreat",
+    "strafe_left",
+    "strafe_right",
+    "circle_left",
+    "circle_right",
+    "hold_position",
+}
+VALID_TURN_POLICIES = {"auto", "turn_to_enemy", "sweep_left", "sweep_right", "hold_angle", "face_last_seen"}
+VALID_NAVIGATION_TARGETS = {"none", "opponent", "last_seen_enemy", "center", "left_lane", "right_lane", "keep_distance"}
+VALID_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "burst", "suppressive"}
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MCP_LOG_PATH = os.environ.get("DOOM_ARENA_MCP_LOG", str(REPO_ROOT / "src" / "arena_mcp_stdio.log"))
@@ -55,6 +72,8 @@ def env_flag(name: str) -> bool:
 
 
 EXPOSE_LOW_LEVEL_PARTICIPANT_MCP = env_flag("DOOM_ARENA_EXPOSE_LOW_LEVEL_MCP")
+PARTICIPANT_TELEMETRY: dict[tuple[str, str], dict[str, int | None]] = {}
+EXTERNAL_MCP_CALL_COUNTER = 0
 
 
 def now_ms() -> int:
@@ -137,7 +156,7 @@ class DoomArenaClient:
             rows = []
         if run_id:
             rows = [row for row in rows if row.get("run_id", "") in {"", run_id}]
-        limit = clamp_int(limit, 1, 500, 25)
+        limit = clamp_int(limit, 1, 5000, 25)
         return json.dumps({"events": rows[-limit:]}, indent=2)
 
     def get_participant_observation(self, participant_id: str, controller_token: str | None = None) -> str:
@@ -307,7 +326,7 @@ class DoomArenaClient:
         target_id: str | None = None,
         preferred_distance: int = 600,
         aggression: float = 0.5,
-        duration_ms: int = 7000,
+        duration_ms: int = 25000,
         controller_token: str | None = None,
         *,
         strafe_direction: str = "auto",
@@ -317,6 +336,19 @@ class DoomArenaClient:
         replan_if: Any = None,
         sequence_number: Any = None,
         decision_cadence_ms: Any = None,
+        aim_tolerance: Any = None,
+        fire_burst_ms: Any = None,
+        min_fire_alignment: Any = None,
+        min_distance: Any = None,
+        max_distance: Any = None,
+        retreat_if_closer_than: Any = None,
+        push_if_farther_than: Any = None,
+        los_lost_action: str = "sweep",
+        stuck_recovery_strategy: str = "default",
+        movement_primitive: str = "",
+        turn_policy: str = "auto",
+        navigation_target: str = "opponent",
+        fire_mode: str = "auto",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -325,7 +357,7 @@ class DoomArenaClient:
         target_id = normalize_participant_target(participant_id, target_id)
         preferred_distance = clamp_int(preferred_distance, 1, 10000, 600)
         aggression = clamp_float(aggression, 0.0, 1.0, 0.5)
-        duration_ms = clamp_int(duration_ms, 100, 60000, 7000)
+        duration_ms = clamp_int(duration_ms, 100, 60000, 25000)
         strafe_direction = normalize_tactical_enum(
             strafe_direction,
             "auto",
@@ -353,6 +385,75 @@ class DoomArenaClient:
         replan_if_text = normalize_replan_if(replan_if)
         sequence_number_text = normalize_optional_nonnegative_int(sequence_number, "sequence_number")
         decision_cadence_ms_text = normalize_optional_positive_int(decision_cadence_ms, "decision_cadence_ms")
+        aim_tolerance_text = normalize_optional_int_range(
+            aim_tolerance,
+            "aim_tolerance",
+            minimum=0,
+            maximum=180,
+        )
+        fire_burst_ms_text = normalize_optional_int_range(
+            fire_burst_ms,
+            "fire_burst_ms",
+            minimum=0,
+            maximum=60000,
+        )
+        min_fire_alignment_text = normalize_optional_int_range(
+            min_fire_alignment,
+            "min_fire_alignment",
+            minimum=0,
+            maximum=180,
+        )
+        min_distance_text = normalize_optional_int_range(min_distance, "min_distance", minimum=0)
+        max_distance_text = normalize_optional_int_range(max_distance, "max_distance", minimum=0)
+        retreat_if_closer_than_text = normalize_optional_int_range(
+            retreat_if_closer_than,
+            "retreat_if_closer_than",
+            minimum=0,
+        )
+        push_if_farther_than_text = normalize_optional_int_range(
+            push_if_farther_than,
+            "push_if_farther_than",
+            minimum=0,
+        )
+        if min_distance_text and max_distance_text and int(min_distance_text) > int(max_distance_text):
+            raise DoomArenaError("min_distance must be <= max_distance")
+        los_lost_action = normalize_tactical_enum(
+            los_lost_action,
+            "sweep",
+            VALID_LOS_LOST_ACTIONS,
+            "los_lost_action",
+        )
+        stuck_recovery_strategy = normalize_tactical_enum(
+            stuck_recovery_strategy,
+            "default",
+            VALID_STUCK_RECOVERY_STRATEGIES,
+            "stuck_recovery_strategy",
+        )
+        movement_primitive = normalize_tactical_enum(
+            movement_primitive,
+            "",
+            VALID_MOVEMENT_PRIMITIVES,
+            "movement_primitive",
+            allow_blank=True,
+        )
+        turn_policy = normalize_tactical_enum(
+            turn_policy,
+            "auto",
+            VALID_TURN_POLICIES,
+            "turn_policy",
+        )
+        navigation_target = normalize_tactical_enum(
+            navigation_target,
+            "opponent",
+            VALID_NAVIGATION_TARGETS,
+            "navigation_target",
+        )
+        fire_mode = normalize_tactical_enum(
+            fire_mode,
+            "auto",
+            VALID_FIRE_MODES,
+            "fire_mode",
+        )
         issued = now_ms()
         intent_id = f"{participant_id}_intent_{issued}"
         payload = {
@@ -375,6 +476,19 @@ class DoomArenaClient:
             "replan_if": replan_if_text.split(",") if replan_if_text else [],
             "sequence_number": sequence_number_text,
             "decision_cadence_ms": decision_cadence_ms_text,
+            "aim_tolerance": aim_tolerance_text,
+            "fire_burst_ms": fire_burst_ms_text,
+            "min_fire_alignment": min_fire_alignment_text,
+            "min_distance": min_distance_text,
+            "max_distance": max_distance_text,
+            "retreat_if_closer_than": retreat_if_closer_than_text,
+            "push_if_farther_than": push_if_farther_than_text,
+            "los_lost_action": los_lost_action,
+            "stuck_recovery_strategy": stuck_recovery_strategy,
+            "movement_primitive": movement_primitive,
+            "turn_policy": turn_policy,
+            "navigation_target": navigation_target,
+            "fire_mode": fire_mode,
         }
         response_text = self._request(
             "POST",
@@ -406,6 +520,19 @@ class DoomArenaClient:
                     "replan_if": replan_if_text.split(",") if replan_if_text else [],
                     "sequence_number": int(sequence_number_text) if sequence_number_text else None,
                     "decision_cadence_ms": int(decision_cadence_ms_text) if decision_cadence_ms_text else None,
+                    "aim_tolerance": int(aim_tolerance_text) if aim_tolerance_text else None,
+                    "fire_burst_ms": int(fire_burst_ms_text) if fire_burst_ms_text else None,
+                    "min_fire_alignment": int(min_fire_alignment_text) if min_fire_alignment_text else None,
+                    "min_distance": int(min_distance_text) if min_distance_text else None,
+                    "max_distance": int(max_distance_text) if max_distance_text else None,
+                    "retreat_if_closer_than": int(retreat_if_closer_than_text) if retreat_if_closer_than_text else None,
+                    "push_if_farther_than": int(push_if_farther_than_text) if push_if_farther_than_text else None,
+                    "los_lost_action": los_lost_action,
+                    "stuck_recovery_strategy": stuck_recovery_strategy,
+                    "movement_primitive": movement_primitive,
+                    "turn_policy": turn_policy,
+                    "navigation_target": navigation_target,
+                    "fire_mode": fire_mode,
                 },
                 "server_response": parse_optional_json(response_text),
             },
@@ -746,6 +873,17 @@ class DoomArenaClient:
                 "Run: py scripts\\doom_arena_server.py --port 8001"
             ) from exc
 
+    def post_mcp_call_telemetry(self, payload: dict[str, Any]) -> None:
+        try:
+            self._request(
+                "POST",
+                "/api/arena/mcp-call-telemetry",
+                json.dumps(payload).encode("utf-8"),
+                "application/json; charset=utf-8",
+            )
+        except DoomArenaError as exc:
+            log_mcp(f"failed to post MCP telemetry: {exc}")
+
 
 ENEMY_COMMAND_KEYS = [
     "run_id",
@@ -795,6 +933,19 @@ PARTICIPANT_INTENT_KEYS = [
     "replan_if",
     "sequence_number",
     "decision_cadence_ms",
+    "aim_tolerance",
+    "fire_burst_ms",
+    "min_fire_alignment",
+    "min_distance",
+    "max_distance",
+    "retreat_if_closer_than",
+    "push_if_farther_than",
+    "los_lost_action",
+    "stuck_recovery_strategy",
+    "movement_primitive",
+    "turn_policy",
+    "navigation_target",
+    "fire_mode",
 ]
 PARTICIPANT_INTENT_LEGACY_KEYS = PARTICIPANT_INTENT_KEYS[:12]
 
@@ -858,9 +1009,18 @@ def normalize_participant_target(participant_id: str, target_id: str | None) -> 
     return target
 
 
-def normalize_tactical_enum(value: Any, default: str, allowed: set[str], field_name: str) -> str:
+def normalize_tactical_enum(
+    value: Any,
+    default: str,
+    allowed: set[str],
+    field_name: str,
+    *,
+    allow_blank: bool = False,
+) -> str:
     text = str(value if value is not None else default).strip().lower()
     if not text:
+        if allow_blank:
+            return ""
         text = default
     if text not in allowed:
         raise DoomArenaError(f"{field_name} must be one of " + ", ".join(sorted(allowed)))
@@ -908,6 +1068,26 @@ def normalize_optional_positive_int(value: Any, field_name: str) -> str:
         raise DoomArenaError(f"{field_name} must be an integer") from exc
     if parsed <= 0:
         raise DoomArenaError(f"{field_name} must be positive")
+    return str(parsed)
+
+
+def normalize_optional_int_range(
+    value: Any,
+    field_name: str,
+    *,
+    minimum: int | None = None,
+    maximum: int | None = None,
+) -> str:
+    if value is None or value == "":
+        return ""
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError) as exc:
+        raise DoomArenaError(f"{field_name} must be an integer") from exc
+    if minimum is not None and parsed < minimum:
+        raise DoomArenaError(f"{field_name} must be >= {minimum}")
+    if maximum is not None and parsed > maximum:
+        raise DoomArenaError(f"{field_name} must be <= {maximum}")
     return str(parsed)
 
 
@@ -959,6 +1139,19 @@ def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
         row.setdefault("replan_if", "")
         row.setdefault("sequence_number", "")
         row.setdefault("decision_cadence_ms", "")
+        row.setdefault("aim_tolerance", "")
+        row.setdefault("fire_burst_ms", "")
+        row.setdefault("min_fire_alignment", "")
+        row.setdefault("min_distance", "")
+        row.setdefault("max_distance", "")
+        row.setdefault("retreat_if_closer_than", "")
+        row.setdefault("push_if_farther_than", "")
+        row.setdefault("los_lost_action", "sweep")
+        row.setdefault("stuck_recovery_strategy", "default")
+        row.setdefault("movement_primitive", "")
+        row.setdefault("turn_policy", "auto")
+        row.setdefault("navigation_target", "opponent")
+        row.setdefault("fire_mode", "auto")
         if (
             row["participant_id"] in PARTICIPANTS
             and row["target_id"] in PARTICIPANTS
@@ -969,6 +1162,12 @@ def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
             and row["movement_bias"] in VALID_MOVEMENT_BIASES
             and row["fire_policy"] in VALID_FIRE_POLICIES
             and row["distance_policy"] in VALID_DISTANCE_POLICIES
+            and row["los_lost_action"] in VALID_LOS_LOST_ACTIONS
+            and row["stuck_recovery_strategy"] in VALID_STUCK_RECOVERY_STRATEGIES
+            and (row["movement_primitive"] == "" or row["movement_primitive"] in VALID_MOVEMENT_PRIMITIVES)
+            and row["turn_policy"] in VALID_TURN_POLICIES
+            and row["navigation_target"] in VALID_NAVIGATION_TARGETS
+            and row["fire_mode"] in VALID_FIRE_MODES
         ):
             rows.append(row)
     return rows
@@ -1042,6 +1241,148 @@ def first_value(rows: list[dict[str, str]], key: str, default: str = "") -> str:
     return default
 
 
+def distance_bucket(distance: int, preferred_distance: int) -> str:
+    preferred = preferred_distance if preferred_distance > 0 else 600
+    if distance <= 0:
+        return "unknown"
+    if distance < max(1, int(preferred * 0.7)):
+        return "close"
+    if distance > max(1, int(preferred * 1.5)):
+        return "far"
+    return "ideal"
+
+
+def pressure_state(health: int, opponent_health: int) -> str:
+    if health <= 0:
+        return "dead"
+    if health <= 25:
+        return "critical"
+    delta = health - opponent_health
+    if delta >= 25:
+        return "winning"
+    if delta <= -25:
+        return "losing"
+    return "even"
+
+
+def executed_fire_action(autopilot_action: str) -> str:
+    return "attack" if "attack" in autopilot_action else "hold_fire"
+
+
+def executed_movement_action(autopilot_action: str) -> str:
+    if not autopilot_action or autopilot_action == "none":
+        return "none"
+    return autopilot_action.replace("+attack", "")
+
+
+def executed_strafe_direction(strafe_direction: str, autopilot_action: str) -> str:
+    if not any(part in autopilot_action for part in ("strafe", "circle", "kite", "evasive", "backoff", "unstick")):
+        return "none"
+    if strafe_direction in {"left", "right"}:
+        return strafe_direction
+    if strafe_direction == "alternate":
+        return "alternating"
+    return "auto"
+
+
+def policy_compliance_reason(observation: dict[str, Any]) -> str:
+    reasons = []
+    if observation.get("fire_policy") == "hold_fire" and observation.get("executed_fire_action") == "hold_fire":
+        reasons.append("fire_policy_obeyed")
+    elif observation.get("fire_policy") == "suppressive" and observation.get("executed_fire_action") == "attack":
+        reasons.append("suppressive_fire_allowed")
+    elif observation.get("executed_fire_action") == "hold_fire":
+        reasons.append("fire_gated_by_los_ammo_or_aim")
+
+    movement = str(observation.get("executed_movement_action", ""))
+    distance = observation.get("distance_policy", "")
+    if distance == "kite" and ("kite" in movement or "backoff" in movement or "evasive" in movement):
+        reasons.append("distance_policy_obeyed")
+    elif distance == "close" and ("close" in movement or "forward" in movement):
+        reasons.append("distance_policy_obeyed")
+    elif distance == "maintain":
+        reasons.append("distance_policy_obeyed")
+
+    if observation.get("strafe_direction") in {"left", "right", "alternate"}:
+        reasons.append("strafe_policy_requested")
+    if observation.get("stuck_recovery"):
+        reasons.append("stuck_recovery_safety_override")
+    if observation.get("replan_recommended"):
+        reasons.append("replan_recommended")
+
+    return ",".join(reasons) if reasons else "default_execution"
+
+
+def update_participant_timing(
+    run_id: str,
+    participant_id: str,
+    health: int,
+    damage_dealt: int,
+) -> tuple[int | None, int | None]:
+    key = (run_id, participant_id)
+    current = PARTICIPANT_TELEMETRY.get(key)
+    current_ms = now_ms()
+    if current is None:
+        current = {
+            "health": health,
+            "damage_dealt": damage_dealt,
+            "last_damage_taken_ms": None,
+            "last_damage_dealt_ms": None,
+        }
+        PARTICIPANT_TELEMETRY[key] = current
+        return None, None
+
+    if health < int(current.get("health") or 0):
+        current["last_damage_taken_ms"] = current_ms
+    if damage_dealt > int(current.get("damage_dealt") or 0):
+        current["last_damage_dealt_ms"] = current_ms
+    current["health"] = health
+    current["damage_dealt"] = damage_dealt
+    return current.get("last_damage_taken_ms"), current.get("last_damage_dealt_ms")
+
+
+def enrich_participant_state(
+    observation: dict[str, Any],
+    opponent: dict[str, Any],
+    run_id: str,
+) -> dict[str, Any]:
+    preferred_distance = int(observation.get("preferred_distance") or 0)
+    distance = int(observation.get("opponent_distance") or 0)
+    last_taken_ms, last_dealt_ms = update_participant_timing(
+        run_id,
+        str(observation.get("participant_id", "")),
+        int(observation.get("health") or 0),
+        int(observation.get("damage_dealt") or 0),
+    )
+
+    observation["health_delta"] = int(observation.get("health") or 0) - int(opponent.get("health") or 0)
+    observation["distance_bucket"] = distance_bucket(distance, preferred_distance)
+    observation["los_status"] = "visible" if observation.get("opponent_visible") else "lost_los"
+    observation["pressure_state"] = pressure_state(
+        int(observation.get("health") or 0),
+        int(opponent.get("health") or 0),
+    )
+    observation["last_damage_taken_ms"] = last_taken_ms
+    observation["last_damage_dealt_ms"] = last_dealt_ms
+    observation["requested_fire_policy"] = observation.get("fire_policy", "")
+    observation["executed_fire_action"] = executed_fire_action(str(observation.get("autopilot_action", "")))
+    observation["requested_distance_policy"] = observation.get("distance_policy", "")
+    observation["executed_movement_action"] = executed_movement_action(str(observation.get("autopilot_action", "")))
+    observation["requested_strafe_direction"] = observation.get("strafe_direction", "")
+    observation["executed_strafe_direction"] = executed_strafe_direction(
+        str(observation.get("strafe_direction", "")),
+        str(observation.get("autopilot_action", "")),
+    )
+    observation["requested_los_lost_action"] = observation.get("los_lost_action", "")
+    observation["requested_stuck_recovery_strategy"] = observation.get("stuck_recovery_strategy", "")
+    observation["requested_movement_primitive"] = observation.get("movement_primitive", "")
+    observation["requested_turn_policy"] = observation.get("turn_policy", "")
+    observation["requested_navigation_target"] = observation.get("navigation_target", "")
+    observation["requested_fire_mode"] = observation.get("fire_mode", "")
+    observation["policy_compliance_reason"] = policy_compliance_reason(observation)
+    return observation
+
+
 def participant_state(row: dict[str, str]) -> dict[str, Any]:
     observation = {
         "participant_id": row.get("entity_id", ""),
@@ -1068,6 +1409,22 @@ def participant_state(row: dict[str, str]) -> dict[str, Any]:
         "movement_bias": row.get("movement_bias", ""),
         "fire_policy": row.get("fire_policy", ""),
         "distance_policy": row.get("distance_policy", ""),
+        "aim_tolerance": as_int(row, "aim_tolerance") if row.get("aim_tolerance", "") else None,
+        "fire_burst_ms": as_int(row, "fire_burst_ms") if row.get("fire_burst_ms", "") else None,
+        "min_fire_alignment": as_int(row, "min_fire_alignment") if row.get("min_fire_alignment", "") else None,
+        "min_distance": as_int(row, "min_distance") if row.get("min_distance", "") else None,
+        "max_distance": as_int(row, "max_distance") if row.get("max_distance", "") else None,
+        "retreat_if_closer_than": as_int(row, "retreat_if_closer_than") if row.get("retreat_if_closer_than", "") else None,
+        "push_if_farther_than": as_int(row, "push_if_farther_than") if row.get("push_if_farther_than", "") else None,
+        "los_lost_action": row.get("los_lost_action", ""),
+        "stuck_recovery_strategy": row.get("stuck_recovery_strategy", ""),
+        "movement_primitive": row.get("movement_primitive", ""),
+        "turn_policy": row.get("turn_policy", ""),
+        "navigation_target": row.get("navigation_target", ""),
+        "fire_mode": row.get("fire_mode", ""),
+        "executed_turn_policy": row.get("executed_turn_policy", ""),
+        "executed_navigation_target": row.get("executed_navigation_target", ""),
+        "executed_fire_mode": row.get("executed_fire_mode", ""),
         "replan_if": [part for part in row.get("replan_if", "").split(",") if part],
         "sequence_number": as_int(row, "sequence_number") if row.get("sequence_number", "") else None,
         "decision_cadence_ms": as_int(row, "decision_cadence_ms") if row.get("decision_cadence_ms", "") else None,
@@ -1099,6 +1456,11 @@ def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
     run_id = match.get("run_id") or first_value(rows, "run_id")
     scenario_id = match.get("scenario_id") or first_value(rows, "scenario_id")
     mode = match.get("mode") or match.get("arena_mode") or first_value(rows, "mode", "duel")
+    player_1 = participant_state(player_1_row)
+    player_2 = participant_state(player_2_row)
+    if player_1_row or player_2_row:
+        enrich_participant_state(player_1, player_2, run_id)
+        enrich_participant_state(player_2, player_1, run_id)
     state = {
         "mode": mode,
         "run_id": run_id,
@@ -1109,8 +1471,8 @@ def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
         "phase": match.get("phase", player_1_row.get("phase", "")),
         "winner": match.get("winner", player_1_row.get("winner", "")),
         "terminal_reason": match.get("terminal_reason", player_1_row.get("terminal_reason", "")),
-        "player_1": participant_state(player_1_row),
-        "player_2": participant_state(player_2_row),
+        "player_1": player_1,
+        "player_2": player_2,
         "distance_between_players": as_int(match, "distance_between_players", as_int(player_1_row, "distance_to_player")),
         "line_of_sight": (match.get("line_of_sight") or player_1_row.get("line_of_sight", "0")) == "1",
         "relative_angle_player_1_to_player_2": as_int(
@@ -1188,6 +1550,7 @@ def make_enemy_observation(rows: list[dict[str, str]]) -> dict[str, Any]:
 
 def make_participant_observation(rows: list[dict[str, str]], participant_id: str) -> dict[str, Any]:
     match = next((row for row in rows if row.get("kind") == "match"), {})
+    state = make_shared_arena_state(rows)
     participant = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == participant_id),
         {},
@@ -1197,12 +1560,14 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == opponent_id),
         {},
     )
+    self_state = state.get(participant_id, {})
+    opponent_state = state.get(opponent_id, {})
 
     return {
         "participant_id": participant_id,
         "opponent_id": opponent_id,
         "state_mode": "shared_full",
-        "state": make_shared_arena_state(rows),
+        "state": state,
         "self": {
             "health": as_int(participant, "health"),
             "alive": participant.get("alive", "0") == "1",
@@ -1216,6 +1581,28 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "shots_fired": as_int(participant, "shots_fired"),
             "shots_hit": as_int(participant, "shots_hit"),
             "invalid_actions": as_int(participant, "invalid_actions"),
+            "health_delta": self_state.get("health_delta"),
+            "distance_bucket": self_state.get("distance_bucket"),
+            "los_status": self_state.get("los_status"),
+            "pressure_state": self_state.get("pressure_state"),
+            "last_damage_taken_ms": self_state.get("last_damage_taken_ms"),
+            "last_damage_dealt_ms": self_state.get("last_damage_dealt_ms"),
+            "requested_fire_policy": self_state.get("requested_fire_policy"),
+            "executed_fire_action": self_state.get("executed_fire_action"),
+            "requested_distance_policy": self_state.get("requested_distance_policy"),
+            "executed_movement_action": self_state.get("executed_movement_action"),
+            "requested_strafe_direction": self_state.get("requested_strafe_direction"),
+            "executed_strafe_direction": self_state.get("executed_strafe_direction"),
+            "requested_los_lost_action": self_state.get("requested_los_lost_action"),
+            "requested_stuck_recovery_strategy": self_state.get("requested_stuck_recovery_strategy"),
+            "requested_movement_primitive": self_state.get("requested_movement_primitive"),
+            "requested_turn_policy": self_state.get("requested_turn_policy"),
+            "requested_navigation_target": self_state.get("requested_navigation_target"),
+            "requested_fire_mode": self_state.get("requested_fire_mode"),
+            "executed_turn_policy": self_state.get("executed_turn_policy"),
+            "executed_navigation_target": self_state.get("executed_navigation_target"),
+            "executed_fire_mode": self_state.get("executed_fire_mode"),
+            "policy_compliance_reason": self_state.get("policy_compliance_reason"),
         },
         "opponent": {
             "participant_id": opponent_id,
@@ -1228,6 +1615,50 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "visible": participant.get("line_of_sight", "0") == "1",
             "distance": as_int(participant, "distance_to_player"),
             "relative_angle": as_int(participant, "relative_angle_to_player"),
+            "pressure_state": opponent_state.get("pressure_state"),
+            "distance_bucket": opponent_state.get("distance_bucket"),
+            "los_status": opponent_state.get("los_status"),
+            "requested_fire_policy": opponent_state.get("requested_fire_policy"),
+            "executed_fire_action": opponent_state.get("executed_fire_action"),
+            "requested_distance_policy": opponent_state.get("requested_distance_policy"),
+            "executed_movement_action": opponent_state.get("executed_movement_action"),
+            "requested_strafe_direction": opponent_state.get("requested_strafe_direction"),
+            "executed_strafe_direction": opponent_state.get("executed_strafe_direction"),
+            "requested_los_lost_action": opponent_state.get("requested_los_lost_action"),
+            "requested_stuck_recovery_strategy": opponent_state.get("requested_stuck_recovery_strategy"),
+            "requested_movement_primitive": opponent_state.get("requested_movement_primitive"),
+            "requested_turn_policy": opponent_state.get("requested_turn_policy"),
+            "requested_navigation_target": opponent_state.get("requested_navigation_target"),
+            "requested_fire_mode": opponent_state.get("requested_fire_mode"),
+            "executed_turn_policy": opponent_state.get("executed_turn_policy"),
+            "executed_navigation_target": opponent_state.get("executed_navigation_target"),
+            "executed_fire_mode": opponent_state.get("executed_fire_mode"),
+        },
+        "tactical_context": {
+            "health_delta": self_state.get("health_delta"),
+            "distance_bucket": self_state.get("distance_bucket"),
+            "los_status": self_state.get("los_status"),
+            "pressure_state": self_state.get("pressure_state"),
+            "last_damage_taken_ms": self_state.get("last_damage_taken_ms"),
+            "last_damage_dealt_ms": self_state.get("last_damage_dealt_ms"),
+            "replan_recommended": self_state.get("replan_recommended"),
+            "replan_reasons": self_state.get("replan_reasons"),
+            "requested_fire_policy": self_state.get("requested_fire_policy"),
+            "executed_fire_action": self_state.get("executed_fire_action"),
+            "requested_distance_policy": self_state.get("requested_distance_policy"),
+            "executed_movement_action": self_state.get("executed_movement_action"),
+            "requested_strafe_direction": self_state.get("requested_strafe_direction"),
+            "executed_strafe_direction": self_state.get("executed_strafe_direction"),
+            "requested_los_lost_action": self_state.get("requested_los_lost_action"),
+            "requested_stuck_recovery_strategy": self_state.get("requested_stuck_recovery_strategy"),
+            "requested_movement_primitive": self_state.get("requested_movement_primitive"),
+            "requested_turn_policy": self_state.get("requested_turn_policy"),
+            "requested_navigation_target": self_state.get("requested_navigation_target"),
+            "requested_fire_mode": self_state.get("requested_fire_mode"),
+            "executed_turn_policy": self_state.get("executed_turn_policy"),
+            "executed_navigation_target": self_state.get("executed_navigation_target"),
+            "executed_fire_mode": self_state.get("executed_fire_mode"),
+            "policy_compliance_reason": self_state.get("policy_compliance_reason"),
         },
         "match": {
             "phase": match.get("phase", participant.get("phase", "")),
@@ -1243,6 +1674,19 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "movement_bias": sorted(VALID_MOVEMENT_BIASES),
             "fire_policy": sorted(VALID_FIRE_POLICIES),
             "distance_policy": sorted(VALID_DISTANCE_POLICIES),
+            "los_lost_action": sorted(VALID_LOS_LOST_ACTIONS),
+            "stuck_recovery_strategy": sorted(VALID_STUCK_RECOVERY_STRATEGIES),
+            "movement_primitive": sorted(VALID_MOVEMENT_PRIMITIVES),
+            "turn_policy": sorted(VALID_TURN_POLICIES),
+            "navigation_target": sorted(VALID_NAVIGATION_TARGETS),
+            "fire_mode": sorted(VALID_FIRE_MODES),
+            "aim_tolerance": [0, 180],
+            "fire_burst_ms": [0, 60000],
+            "min_fire_alignment": [0, 180],
+            "min_distance": [0, 10000],
+            "max_distance": [0, 10000],
+            "retreat_if_closer_than": [0, 10000],
+            "push_if_farther_than": [0, 10000],
             "replan_if": sorted(VALID_REPLAN_TRIGGERS),
             "decision_cadence_ms_recommended": [500, 3000],
         },
@@ -1294,7 +1738,7 @@ def tool_definitions() -> list[dict[str, Any]]:
                 "type": "object",
                 "properties": {
                     "run_id": {"type": "string"},
-                    "limit": {"type": "integer", "minimum": 1, "maximum": 500},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 5000},
                 },
                 "additionalProperties": False,
             },
@@ -1476,6 +1920,19 @@ def participant_intent_schema() -> dict[str, Any]:
             "movement_bias": {"type": "string", "enum": sorted(VALID_MOVEMENT_BIASES)},
             "fire_policy": {"type": "string", "enum": sorted(VALID_FIRE_POLICIES)},
             "distance_policy": {"type": "string", "enum": sorted(VALID_DISTANCE_POLICIES)},
+            "aim_tolerance": {"type": "integer", "minimum": 0, "maximum": 180},
+            "fire_burst_ms": {"type": "integer", "minimum": 0, "maximum": 60000},
+            "min_fire_alignment": {"type": "integer", "minimum": 0, "maximum": 180},
+            "min_distance": {"type": "integer", "minimum": 0},
+            "max_distance": {"type": "integer", "minimum": 0},
+            "retreat_if_closer_than": {"type": "integer", "minimum": 0},
+            "push_if_farther_than": {"type": "integer", "minimum": 0},
+            "los_lost_action": {"type": "string", "enum": sorted(VALID_LOS_LOST_ACTIONS)},
+            "stuck_recovery_strategy": {"type": "string", "enum": sorted(VALID_STUCK_RECOVERY_STRATEGIES)},
+            "movement_primitive": {"type": "string", "enum": sorted(VALID_MOVEMENT_PRIMITIVES)},
+            "turn_policy": {"type": "string", "enum": sorted(VALID_TURN_POLICIES)},
+            "navigation_target": {"type": "string", "enum": sorted(VALID_NAVIGATION_TARGETS)},
+            "fire_mode": {"type": "string", "enum": sorted(VALID_FIRE_MODES)},
             "replan_if": {
                 "type": "array",
                 "items": {"type": "string", "enum": sorted(VALID_REPLAN_TRIGGERS)},
@@ -1571,7 +2028,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             optional_string(arguments.get("target_id")),
             int(arguments.get("preferred_distance", 600)),
             float(arguments.get("aggression", 0.5)),
-            int(arguments.get("duration_ms", 7000)),
+            int(arguments.get("duration_ms", 25000)),
             optional_string(arguments.get("controller_token")),
             strafe_direction=str(arguments.get("strafe_direction", "auto")),
             movement_bias=str(arguments.get("movement_bias", "direct")),
@@ -1580,6 +2037,19 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             replan_if=arguments.get("replan_if"),
             sequence_number=arguments.get("sequence_number"),
             decision_cadence_ms=arguments.get("decision_cadence_ms"),
+            aim_tolerance=arguments.get("aim_tolerance"),
+            fire_burst_ms=arguments.get("fire_burst_ms"),
+            min_fire_alignment=arguments.get("min_fire_alignment"),
+            min_distance=arguments.get("min_distance"),
+            max_distance=arguments.get("max_distance"),
+            retreat_if_closer_than=arguments.get("retreat_if_closer_than"),
+            push_if_farther_than=arguments.get("push_if_farther_than"),
+            los_lost_action=str(arguments.get("los_lost_action", "sweep")),
+            stuck_recovery_strategy=str(arguments.get("stuck_recovery_strategy", "default")),
+            movement_primitive=str(arguments.get("movement_primitive", "")),
+            turn_policy=str(arguments.get("turn_policy", "auto")),
+            navigation_target=str(arguments.get("navigation_target", "opponent")),
+            fire_mode=str(arguments.get("fire_mode", "auto")),
         )
     if name == "stop_participant_intent":
         return client.stop_participant_intent(
@@ -1714,11 +2184,50 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
     if method in {"notifications/cancelled", "notifications/progress"}:
         return True
     if method == "tools/call":
+        global EXTERNAL_MCP_CALL_COUNTER
         params = message.get("params") or {}
+        tool_name = str(params.get("name"))
+        arguments = params.get("arguments") or {}
+        if not isinstance(arguments, dict):
+            arguments = {}
+        EXTERNAL_MCP_CALL_COUNTER += 1
+        started_at = now_ms()
+        call_id = f"stdio_mcp_{os.getpid()}_{EXTERNAL_MCP_CALL_COUNTER:06d}"
         try:
-            text = call_tool(client, str(params.get("name")), params.get("arguments") or {})
+            text = call_tool(client, tool_name, arguments)
+            completed_at = now_ms()
+            result_payload = parse_optional_json(text)
+            client.post_mcp_call_telemetry(
+                {
+                    "call_id": call_id,
+                    "jsonrpc_id": message_id,
+                    "tool_name": tool_name,
+                    "participant_id": str(arguments.get("participant_id", "")),
+                    "run_id": client.run_id,
+                    "scenario_id": client.scenario_id,
+                    "started_at_ms": started_at,
+                    "completed_at_ms": completed_at,
+                    "is_error": False,
+                    "result": result_payload if isinstance(result_payload, dict) else {},
+                }
+            )
             send_response(message_id, {"content": [{"type": "text", "text": text}], "isError": False})
         except (KeyError, TypeError, ValueError, DoomArenaError) as exc:
+            completed_at = now_ms()
+            client.post_mcp_call_telemetry(
+                {
+                    "call_id": call_id,
+                    "jsonrpc_id": message_id,
+                    "tool_name": tool_name,
+                    "participant_id": str(arguments.get("participant_id", "")),
+                    "run_id": client.run_id,
+                    "scenario_id": client.scenario_id,
+                    "started_at_ms": started_at,
+                    "completed_at_ms": completed_at,
+                    "is_error": True,
+                    "error": str(exc),
+                }
+            )
             send_response(message_id, {"content": [{"type": "text", "text": str(exc)}], "isError": True})
         return True
     if method == "shutdown":

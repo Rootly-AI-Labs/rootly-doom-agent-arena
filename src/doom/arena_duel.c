@@ -34,9 +34,10 @@
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
-#define ARENA_DUEL_MAX_EVENTS 32
+#define ARENA_DUEL_MAX_EVENTS 4096
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
+#define ARENA_DUEL_PARTICIPANT_HEALTH 300
 #define ARENA_DUEL_PLAYER2_BULLETS 50
 
 static mobj_t *arena_duel_player2;
@@ -80,6 +81,7 @@ static int arena_duel_player2_autopilot_stuck_ticks;
 static boolean arena_duel_player2_have_autopilot_position;
 static boolean arena_duel_waiting_event_logged;
 static boolean arena_duel_waiting_first_intents_event_logged;
+static boolean arena_duel_player1_health_initialized;
 
 static void ArenaDuel_CopyField(char *dest, size_t dest_size, const char *value)
 {
@@ -239,6 +241,26 @@ static void ArenaDuel_EnsurePlayer1Label(void)
             "player_1",
             sizeof(mobj->arena_label) - 1);
     mobj->arena_label[sizeof(mobj->arena_label) - 1] = '\0';
+}
+
+static void ArenaDuel_EnsurePlayer1StartingHealth(void)
+{
+    player_t *player;
+
+    if (arena_duel_player1_health_initialized)
+    {
+        return;
+    }
+
+    player = &players[consoleplayer];
+    if (player->mo == NULL)
+    {
+        return;
+    }
+
+    player->health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    player->mo->health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    arena_duel_player1_health_initialized = true;
 }
 
 static void ArenaDuel_Chomp(char *line)
@@ -696,14 +718,15 @@ void ArenaDuel_InitLevel(void)
     arena_duel_finished = false;
     arena_duel_winner[0] = '\0';
     arena_duel_terminal_reason[0] = '\0';
-    arena_duel_last_player1_health = 100;
-    arena_duel_last_player2_health = 100;
+    arena_duel_last_player1_health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    arena_duel_last_player2_health = ARENA_DUEL_PARTICIPANT_HEALTH;
     arena_duel_last_player1_attack_command_id[0] = '\0';
     arena_duel_event_count = 0;
     arena_duel_player2_view_frame = 0;
     arena_duel_player2_view_nonzero_pixels = 0;
     arena_duel_player2_have_autopilot_position = false;
     arena_duel_player2_autopilot_stuck_ticks = 0;
+    arena_duel_player1_health_initialized = false;
     arena_duel_waiting_event_logged = false;
     arena_duel_waiting_first_intents_event_logged = false;
     memset(arena_duel_last_intent_id, 0, sizeof(arena_duel_last_intent_id));
@@ -730,6 +753,7 @@ void ArenaDuel_SpawnPlayer2(void)
     }
 
     ArenaDuel_EnsurePlayer1Label();
+    ArenaDuel_EnsurePlayer1StartingHealth();
 
     if (!Arena_GetSpawnSlot(0, &x, &y, &angle))
     {
@@ -741,7 +765,7 @@ void ArenaDuel_SpawnPlayer2(void)
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
     (void) angle;
     mobj->angle = ANG270;
-    mobj->health = 100;
+    mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;
     strncpy(mobj->arena_entity_id,
@@ -777,6 +801,7 @@ void ArenaDuel_Ticker(void)
     }
 
     ArenaDuel_EnsurePlayer1Label();
+    ArenaDuel_EnsurePlayer1StartingHealth();
     ArenaDuel_RefillPlayer1Ammo();
     arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
 

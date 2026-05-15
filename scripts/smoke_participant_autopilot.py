@@ -37,6 +37,11 @@ static arena_participant_intent_t make_intent(const char *intent_name)
     strcpy(intent.movement_bias, "direct");
     strcpy(intent.fire_policy, "only_when_aligned");
     strcpy(intent.distance_policy, "maintain");
+    strcpy(intent.los_lost_action, "sweep");
+    strcpy(intent.stuck_recovery_strategy, "default");
+    strcpy(intent.turn_policy, "auto");
+    strcpy(intent.navigation_target, "opponent");
+    strcpy(intent.fire_mode, "auto");
     strcpy(intent.status, "valid");
     return intent;
 }
@@ -253,6 +258,25 @@ int main(void)
     command = ArenaParticipantAutopilot_Decide(&input);
     expect_exact_command("fire_policy burst_when_aligned cools down", command, 0, 0, 0, 0);
 
+    input = base_input("hold");
+    input.relative_angle = 12;
+    input.intent.aim_tolerance = 15;
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("aim_tolerance loosens only_when_aligned threshold", command, 0, 0, 1, 1);
+
+    input = base_input("hold");
+    input.relative_angle = 6;
+    input.intent.min_fire_alignment = 5;
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("min_fire_alignment tightens fire threshold", command, 0, 0, 0, 0);
+
+    input = base_input("hold");
+    input.relative_angle = 0;
+    input.tick = 1;
+    strcpy(input.intent.fire_mode, "single_shot");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("fire_mode single_shot pulses attack timing", command, 0, 0, 0, 0);
+
     input = base_input("strafe_attack");
     input.distance = 300;
     strcpy(input.intent.distance_policy, "kite");
@@ -264,6 +288,47 @@ int main(void)
     strcpy(input.intent.movement_bias, "evasive");
     command = ArenaParticipantAutopilot_Decide(&input);
     expect_command("movement_bias evasive reduces direct forward movement", command, 1, 0, 1, 0, 1, 0);
+
+    input = base_input("search");
+    input.line_of_sight = 0;
+    strcpy(input.intent.los_lost_action, "turn_left");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("los_lost_action turn_left controls search", command, 0, 0, -1, 0);
+
+    input = base_input("hold");
+    input.relative_angle = 0;
+    strcpy(input.intent.turn_policy, "sweep_left");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("turn_policy sweep_left controls turning", command, 0, 0, -1, 1);
+
+    input = base_input("engage_opponent");
+    strcpy(input.intent.navigation_target, "left_lane");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_command("navigation_target left_lane adds left strafe", command, 1, 1, 1, 0, 1, 0);
+
+    input = base_input("engage_opponent");
+    strcpy(input.intent.movement_primitive, "retreat");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_exact_command("movement_primitive retreat overrides engage movement", command, -1, 0, 0, 1);
+
+    input = base_input("engage_opponent");
+    input.distance = 200;
+    input.intent.retreat_if_closer_than = 300;
+    strcpy(input.intent.movement_primitive, "advance");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_command("strict spacing overrides unsafe movement primitive", command, 1, -1, 1, 0, 1, 0);
+
+    input = base_input("engage_opponent");
+    input.stuck_ticks = 9;
+    strcpy(input.intent.stuck_recovery_strategy, "turn_right");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_command("stuck_recovery_strategy turn_right overrides default", command, 1, 0, 0, 1, 1, 1);
+
+    input = base_input("strafe_attack");
+    input.distance = 800;
+    input.intent.max_distance = 700;
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_command("max_distance requests push when too far", command, 1, 1, 1, 0, 1, 0);
 
     input = base_input("engage_opponent");
     input.line_of_sight = 0;
