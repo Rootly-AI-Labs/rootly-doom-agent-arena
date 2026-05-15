@@ -37,7 +37,7 @@ Multi-round browser sessions are written under `benchmarks/results/session_*/rou
 
 The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Each agent can choose an actual opening action; Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset or next-round transition.
 
-By default, each duel participant starts at `300` health. The browser POV panels show Doom-style health bars plus position and view-angle telemetry for both players.
+By default, each duel participant starts at `150` health. The browser POV panels show Doom-style health bars plus position and view-angle telemetry for both players.
 
 For multi-round sessions, click `Next Round` after the current round finishes. That preserves the same session folder, creates the next `round_NN_run_*` folder, and returns directly to the duel prompt view with fresh prompts and controller tokens.
 

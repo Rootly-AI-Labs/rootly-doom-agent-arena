@@ -696,7 +696,7 @@
                         <div class="duel-agent-status" id="player-1-agent-status">Agent not connected</div>
                     </div>
                     <div class="duel-stat-grid">
-                        <div>Health: <span id="duel-p1-health">300</span></div>
+                        <div>Health: <span id="duel-p1-health">150</span></div>
                         <div>Move: <span id="duel-p1-action">-</span></div>
                         <div>Shots: <span id="duel-p1-shots">-</span></div>
                         <div>Damage: <span id="duel-p1-damage">-</span></div>
@@ -706,7 +706,7 @@
                     <div class="duel-health-bar" id="duel-p1-health-bar">
                         <div class="duel-health-bar-track">
                             <div class="duel-health-bar-fill" id="duel-p1-health-fill"></div>
-                            <div class="duel-health-bar-label" id="duel-p1-health-label">HP 300 / 300</div>
+                            <div class="duel-health-bar-label" id="duel-p1-health-label">HP 150 / 150</div>
                         </div>
                     </div>
                     <div class="duel-pov-frame">
@@ -726,7 +726,7 @@
                         <div class="duel-agent-status" id="player-2-agent-status">Agent not connected</div>
                     </div>
                     <div class="duel-stat-grid">
-                        <div>Health: <span id="duel-p2-health">300</span></div>
+                        <div>Health: <span id="duel-p2-health">150</span></div>
                         <div>Move: <span id="duel-p2-action">-</span></div>
                         <div>Shots: <span id="duel-p2-shots">-</span></div>
                         <div>Damage: <span id="duel-p2-damage">-</span></div>
@@ -736,7 +736,7 @@
                     <div class="duel-health-bar" id="duel-p2-health-bar">
                         <div class="duel-health-bar-track">
                             <div class="duel-health-bar-fill" id="duel-p2-health-fill"></div>
-                            <div class="duel-health-bar-label" id="duel-p2-health-label">HP 300 / 300</div>
+                            <div class="duel-health-bar-label" id="duel-p2-health-label">HP 150 / 150</div>
                         </div>
                     </div>
                     <div class="duel-pov-frame">
@@ -862,7 +862,7 @@
             var currentArenaTotalRounds = 1;
             var currentArenaSeed = 0;
             var currentArenaTimeoutSeconds = 300;
-            var DUEL_MAX_HEALTH = 300;
+            var DUEL_MAX_HEALTH = 150;
             var selectedArenaDataMode = "mock";
             var selectedArenaDataSourcePath = arenaDataMockPath;
             var doomScriptLoaded = false;
@@ -994,7 +994,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=dual-pov-22";
+                script.src = "websockets-doom.js?v=duel-health-150";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -3312,7 +3312,7 @@
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=dual-pov-22";
+                        return path + "?v=duel-health-150";
                     }
 
                     return path;
