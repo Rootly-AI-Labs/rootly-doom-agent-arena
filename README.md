@@ -10,9 +10,13 @@ The current MVP focuses on duel mode: `player_1` and `player_2` are controlled b
 
 ## Quick Start
 
-Use this flow for a manual MCP chat comparison.
+Prerequisites:
 
-1. Start Docker Desktop, then start the Doom Arena runtime from the repo root:
+- Docker Desktop or Docker Engine
+- Python 3 on the host
+- Two MCP-capable chat agents connected to this repo
+
+1. Start the arena from the repo root:
 
 ```powershell
 cd C:\path\to\doom-wasm
@@ -26,15 +30,47 @@ cd /path/to/doom-wasm
 bash scripts/start-docker.sh
 ```
 
-The launcher builds/starts Docker Compose, waits for the arena health endpoint, opens `http://127.0.0.1:8001/`, and prints:
+The launcher starts Docker Compose, waits for the health endpoint, opens `http://127.0.0.1:8001/`, and prints:
 
 ```text
 DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
 ```
 
-Docker serves the existing prebuilt `src/websockets-doom.{html,js,wasm}` files and writes results to `benchmarks/results`.
+2. Confirm your MCP client uses the host-side stdio server from the repo root:
 
-Common local commands:
+```toml
+[mcp_servers.doom-arena]
+command = "python"
+args = ["scripts/doom_arena_mcp.py"]
+env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
+```
+
+JSON-style clients can use the same shape:
+
+```json
+{
+  "mcpServers": {
+    "doom-arena": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["scripts/doom_arena_mcp.py"],
+      "env": {
+        "DOOM_ARENA_BASE_URL": "http://127.0.0.1:8001"
+      }
+    }
+  }
+}
+```
+
+The committed `.mcp.json` already uses this portable setup. If your MCP client needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
+
+3. In the browser, choose run settings and click `Start Duel`.
+
+4. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
+
+The duel waits until both agents are ready and both have submitted an opening high-level intent. Use fresh prompts after every `Start Duel` or `Next Round`.
+
+## Common Commands
 
 ```powershell
 .\scripts\start-docker.ps1 -NoOpenBrowser
@@ -44,91 +80,17 @@ py scripts\smoke_docker_setup.py
 docker compose down
 ```
 
-Native launcher fallback:
+Native Python fallback:
 
 ```powershell
 py scripts\start_doom_arena_duel.py
-py scripts\doom_arena_server.py --port 8001
 ```
 
-```text
-http://127.0.0.1:8001/
-```
+## Results
 
-2. Pick the run settings in the browser, then click `Start Duel`.
-3. Copy the generated Player 1 prompt from the Player 1 panel and paste it into the first MCP chat agent.
-4. Copy the generated Player 2 prompt from the Player 2 panel and paste it into the second MCP chat agent.
+Docker serves the prebuilt `src/websockets-doom.{html,js,wasm}` files and writes benchmark artifacts to `benchmarks/results`.
 
-The browser writes fresh controller tokens and instruction files for each run.
-Multi-round browser sessions are written under `benchmarks/results/session_*/round_NN_run_*`; one-off runs may still use `benchmarks/results/run_*`. Each round folder gets `config.json`, controller tokens, generated prompts, `stats.json`, and `events.jsonl`; `summary.json` is written after Doom reports `phase=finished`. `stats.json` records MCP tool-call latency, inferred chat decision latency, superseded intents, stale-intent continuation time, and post-finish intent rejections.
-
-The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Each agent can choose an actual opening action; Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset or next-round transition.
-
-By default, each duel participant starts at `150` health. The browser POV panels show Doom-style health bars plus position and view-angle telemetry for both players.
-
-For multi-round sessions, click `Next Round` after the current round finishes. That preserves the same session folder, creates the next `round_NN_run_*` folder, and returns directly to the duel prompt view with fresh prompts and controller tokens.
-
-## MCP Setup
-
-Start the arena backend first with `.\scripts\start-docker.ps1`. Desktop MCP clients should launch the host-side stdio script and point it at the arena backend:
-
-```text
-DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
-```
-
-The arena advertises the suggested MCP config at:
-
-```powershell
-Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8001/api/arena/mcp-config
-```
-
-For Codex, configure stdio from the repo root. The committed `.mcp.json` uses this portable shape:
-
-```toml
-[mcp_servers.doom-arena]
-command = "python"
-args = ["scripts/doom_arena_mcp.py"]
-env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
-```
-
-For Claude-style stdio setup, use the same command and environment variable:
-
-```bash
-DOOM_ARENA_BASE_URL=http://127.0.0.1:8001 claude mcp add doom-arena -- python scripts/doom_arena_mcp.py
-```
-
-```json
-{
-  "mcpServers": {
-    "doom-arena": {
-      "type": "stdio",
-      "command": "python",
-      "args": [
-        "scripts/doom_arena_mcp.py"
-      ],
-      "env": {
-        "DOOM_ARENA_BASE_URL": "http://127.0.0.1:8001"
-      }
-    }
-  }
-}
-```
-
-If an MCP client cannot resolve relative script paths, keep the absolute-path variant in an ignored local file such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` is available as a local wrapper, but it should not be committed with a user-specific drive path.
-
-Then restart the MCP client and check `/mcp`. Both chat agents should expose:
-
-```text
-set_participant_ready
-wait_for_match_start
-get_participant_observation
-set_participant_intent
-stop_participant_intent
-get_match_result
-get_duel_events
-```
-
-The server still exposes `/mcp` over HTTP for compatibility and internal smoke tests, but local desktop clients should use host-side stdio for the Docker setup.
+Multi-round browser sessions are written under `benchmarks/results/session_*/round_NN_run_*`. Each round includes config, controller tokens, generated prompts, `stats.json`, `events.jsonl`, and a final `summary.json`.
 
 ## Control Split
 
