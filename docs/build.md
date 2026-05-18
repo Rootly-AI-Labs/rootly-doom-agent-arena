@@ -22,6 +22,22 @@ src/websockets-doom.js
 src/websockets-doom.wasm
 ```
 
+## Docker Runtime Assets
+
+The v1 Docker setup is runtime-only. It does not rebuild Emscripten/WASM inside Docker; it serves the prebuilt files above.
+
+Normal Docker runs copy `src/` into the image, so rebuilt assets require either a rebuild of the runtime image or dev mode. After rebuilding locally, run Docker in dev mode so the container serves your current `src/` working tree:
+
+```powershell
+.\scripts\start-docker.ps1 -Dev
+```
+
+```bash
+bash scripts/start-docker.sh --dev
+```
+
+Then hard refresh the browser tab.
+
 ## Why WSL
 
 The generated Makefiles point to Linux Emscripten paths such as:

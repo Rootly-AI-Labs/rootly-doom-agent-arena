@@ -133,7 +133,7 @@ Doom continues executing the current intent between chat tool calls. When the ne
 
 ## MCP Timing Stats
 
-The browser/server flow writes `stats.json` for each duel round. Multi-round browser sessions use `benchmarks/results/session_*/round_NN_run_*/stats.json`; one-off debug runs may still use `benchmarks/results/run_*/stats.json`. The file records local MCP tool-call latency, completion/error status, and whether an in-flight call was overlapped by a later call for the same participant. Browser-created chatbot runs also accept telemetry from stdio MCP clients, so both Player 1 and Player 2 calls can be correlated to accepted intent rows.
+The browser/server flow writes `stats.json` for each duel round. Multi-round browser sessions use `benchmarks/results/session_*/round_NN_run_*/stats.json`; one-off debug runs may still use `benchmarks/results/run_*/stats.json`. The file records MCP tool-call latency, completion/error status, and whether an in-flight call was overlapped by a later call for the same participant. Browser-created chatbot runs also accept telemetry from stdio MCP clients, so both Player 1 and Player 2 calls can be correlated to accepted intent rows.
 
 For accepted `set_participant_intent` calls, it also records intent lifecycle timing:
 
@@ -146,7 +146,7 @@ For accepted `set_participant_intent` calls, it also records intent lifecycle ti
 - `average_stale_intent_extension_ms`
 - `average_inferred_chat_decision_latency_ms`
 
-These fields are meant to help tune `Intent Duration MS`: large unused durations mean new intents are arriving well before expiry, while large stale extensions mean the chatbot is taking longer than the configured intent lease. `latency_ms` is the local HTTP MCP call latency; inferred chat decision latency approximates the time from an observation response to the next intent request.
+These fields are meant to help tune `Intent Duration MS`: large unused durations mean new intents are arriving well before expiry, while large stale extensions mean the chatbot is taking longer than the configured intent lease. `latency_ms` is the local MCP proxy/tool latency; inferred chat decision latency approximates the time from an observation response to the next intent request.
 
 The server mirrors the current duel event TSV into `events.jsonl` in the active run or round folder whenever browser event logs arrive. It also rejects new participant intents after the match state reaches `phase=finished`, so delayed chatbot responses do not pollute finished-run logs.
 

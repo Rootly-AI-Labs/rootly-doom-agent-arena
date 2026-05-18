@@ -10,6 +10,7 @@ py -m py_compile `
   scripts\doom_arena_duel_prompts.py `
   scripts\doom_arena_server.py `
   scripts\start_doom_arena_duel.py `
+  scripts\smoke_docker_setup.py `
   scripts\smoke_participant_intents_api.py `
   scripts\smoke_mcp_participant_intents.py `
   scripts\smoke_duel_autopilot.py
@@ -22,9 +23,31 @@ py scripts\smoke_participant_intents_parser.py
 py scripts\smoke_participant_autopilot.py
 ```
 
-## Server-Backed API/MCP
+## Docker Runtime
 
-Start the server:
+This starts Docker Compose, waits for the arena health endpoint, checks the browser route and API, verifies host-side stdio MCP connectivity through `DOOM_ARENA_BASE_URL`, and confirms results persist under `benchmarks/results`:
+
+```powershell
+py scripts\smoke_docker_setup.py
+```
+
+Use a non-default port if needed:
+
+```powershell
+py scripts\smoke_docker_setup.py --port 8010
+```
+
+Launcher smoke:
+
+```powershell
+.\scripts\start-docker.ps1 -NoOpenBrowser
+```
+
+## Native Server API/MCP
+
+Docker is the default local runtime. Use this native path for server debugging or when Docker is unavailable.
+
+Start the native server:
 
 ```powershell
 py scripts\doom_arena_server.py --port 8001
@@ -38,11 +61,11 @@ py scripts\smoke_mcp_participant_intents.py --server-url http://127.0.0.1:8001
 py scripts\smoke_duel_participant_commands.py --server-url http://127.0.0.1:8001
 ```
 
-`smoke_mcp_participant_intents.py` also verifies that HTTP MCP intent calls are captured in `stats.json`. Browser sessions write this under `benchmarks/results/session_*/round_NN_run_*/stats.json`; one-off runs may write under `benchmarks/results/run_*/stats.json`.
+`smoke_mcp_participant_intents.py` also verifies that HTTP-compatible MCP calls are captured in `stats.json`. Browser sessions write this under `benchmarks/results/session_*/round_NN_run_*/stats.json`; one-off runs may write under `benchmarks/results/run_*`.
 
 ## Browser-Backed Autopilot
 
-This starts a local server if needed and opens a headless browser:
+This starts a local server if needed and opens a headless browser. If Docker is already running, pass the Docker backend URL:
 
 ```powershell
 py scripts\smoke_duel_autopilot.py --server-url http://127.0.0.1:8001 --timeout-seconds 60

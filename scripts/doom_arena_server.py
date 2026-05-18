@@ -340,6 +340,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.read_file(ARENA_STATE_TSV, "arena_game_state.local.tsv")
             return
 
+        if path == "/api/arena/health":
+            self.read_health()
+            return
+
         if path == "/api/arena/player-command":
             self.read_file(ARENA_PLAYER_COMMAND_TSV, "arena_player_command.local.tsv")
             return
@@ -402,6 +406,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         length_header = self.headers.get("Content-Length")
         length = int(length_header or "0")
         return self.rfile.read(length)
+
+    def read_health(self) -> None:
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "run_id": self.server.run_id,
+                "scenario_id": self.server.scenario_id,
+                "arena_mode": self.server.arena_mode,
+                "started_at_ms": self.server.started_at_ms,
+            },
+        )
 
     def run_dir(self, run_id: str | None = None) -> Path:
         selected_run_id = run_id or self.server.run_id
@@ -836,7 +852,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "scenario_id": self.server.scenario_id,
             "started_at_ms": self.server.started_at_ms,
             "generated_at_ms": generated_at,
-            "note": "latency_ms is local HTTP MCP tool-call latency measured by the arena server, not LLM think time. inferred_chat_decision_latency_ms approximates time from observation completion to the next intent request.",
+            "note": "latency_ms is local MCP proxy/tool-call latency measured by the arena server, not LLM think time. inferred_chat_decision_latency_ms approximates time from observation completion to the next intent request.",
             "summary": {
                 "total_mcp_calls": len(calls),
                 "completed_mcp_calls": sum(1 for call in calls if not call.get("is_error")),
@@ -2304,28 +2320,37 @@ def write_run_metadata(server: DoomArenaServer) -> None:
 
 
 def mcp_config_payload(host: str, port: int) -> dict[str, Any]:
-    server_url = f"http://{host}:{port}"
+    public_host = "127.0.0.1" if host in {"0.0.0.0", "::"} else host
+    server_url = f"http://{public_host}:{port}"
     return {
         "ok": True,
-        "transport": "http",
+        "transport": "stdio",
         "server_url": server_url,
+        "base_url_env": f"DOOM_ARENA_BASE_URL={server_url}",
         "mcp_url": f"{server_url}/mcp",
-        "claude": f"claude mcp add --transport http doom-arena {server_url}/mcp",
-        "codex_config": f'url = "{server_url}/mcp"',
+        "claude_stdio": (
+            "DOOM_ARENA_BASE_URL="
+            f"{server_url} claude mcp add doom-arena -- python scripts/doom_arena_mcp.py"
+        ),
+        "codex_stdio_config": (
+            'command = "python"\n'
+            'args = ["scripts/doom_arena_mcp.py"]\n'
+            f'env = {{ DOOM_ARENA_BASE_URL = "{server_url}" }}'
+        ),
         "note": (
-            "Doom Arena also supports stdio via scripts\\doom_arena_mcp.py, but HTTP MCP "
-            "is preferred on native Windows to avoid stdio pipe issues."
+            "Docker runs the arena backend; desktop MCP clients should launch the host-side "
+            "stdio script and point DOOM_ARENA_BASE_URL at this server URL."
         ),
     }
 
 
 def print_mcp_help(host: str, port: int) -> None:
     config = mcp_config_payload(host, port)
-    print("MCP endpoint for Codex/Claude:")
-    print(f"  {config['mcp_url']}")
-    print("MCP config endpoint:")
+    print("MCP backend URL for host-side stdio clients:")
+    print(f"  {config['base_url_env']}")
+    print("MCP config helper endpoint:")
     print(f"  {config['server_url']}/api/arena/mcp-config")
-    print("Note: HTTP MCP is preferred on native Windows; stdio remains available for debugging.")
+    print("Launch MCP with scripts/doom_arena_mcp.py from the host.")
 
 
 def main() -> int:

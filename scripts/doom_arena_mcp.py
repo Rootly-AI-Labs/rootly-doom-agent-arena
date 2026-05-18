@@ -92,9 +92,13 @@ def log_mcp(message: str) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="MCP server for Doom Agent Arena.")
+    default_server_url = os.environ.get(
+        "DOOM_ARENA_BASE_URL",
+        os.environ.get("DOOM_ARENA_SERVER", "http://127.0.0.1:8001"),
+    )
     parser.add_argument(
         "--server-url",
-        default=os.environ.get("DOOM_ARENA_SERVER", "http://127.0.0.1:8001"),
+        default=default_server_url,
         help="Root URL of scripts/doom_arena_server.py.",
     )
     return parser.parse_args()

@@ -10,17 +10,44 @@ The current MVP focuses on duel mode: `player_1` and `player_2` are controlled b
 
 ## Quick Start
 
-Use this flow for a manual MCP chat comparison:
+Use this flow for a manual MCP chat comparison.
 
-1. Start the arena server and open the browser:
+1. Start Docker Desktop, then start the Doom Arena runtime from the repo root:
+
+```powershell
+cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
+.\scripts\start-docker.ps1
+```
+
+macOS/Linux equivalent:
+
+```bash
+cd /path/to/doom-wasm
+bash scripts/start-docker.sh
+```
+
+The launcher builds/starts Docker Compose, waits for the arena health endpoint, opens `http://127.0.0.1:8001/`, and prints:
+
+```text
+DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
+```
+
+Docker serves the existing prebuilt `src/websockets-doom.{html,js,wasm}` files and writes results to `benchmarks/results`.
+
+Common local commands:
+
+```powershell
+.\scripts\start-docker.ps1 -NoOpenBrowser
+.\scripts\start-docker.ps1 -Port 8010
+.\scripts\start-docker.ps1 -Dev
+py scripts\smoke_docker_setup.py
+docker compose down
+```
+
+Native launcher fallback:
 
 ```powershell
 py scripts\start_doom_arena_duel.py
-```
-
-Or run the server directly and open the browser yourself:
-
-```powershell
 py scripts\doom_arena_server.py --port 8001
 ```
 
@@ -33,7 +60,7 @@ http://127.0.0.1:8001/
 4. Copy the generated Player 2 prompt from the Player 2 panel and paste it into the second MCP chat agent.
 
 The browser writes fresh controller tokens and instruction files for each run.
-Multi-round browser sessions are written under `benchmarks/results/session_*/round_NN_run_*`; one-off runs may still use `benchmarks/results/run_*`. Each round folder gets `config.json`, controller tokens, generated prompts, `stats.json`, and `events.jsonl`; `summary.json` is written after Doom reports `phase=finished`. `stats.json` records HTTP MCP tool-call latency, inferred chat decision latency, superseded intents, stale-intent continuation time, and post-finish intent rejections.
+Multi-round browser sessions are written under `benchmarks/results/session_*/round_NN_run_*`; one-off runs may still use `benchmarks/results/run_*`. Each round folder gets `config.json`, controller tokens, generated prompts, `stats.json`, and `events.jsonl`; `summary.json` is written after Doom reports `phase=finished`. `stats.json` records MCP tool-call latency, inferred chat decision latency, superseded intents, stale-intent continuation time, and post-finish intent rejections.
 
 The duel waits in `phase=waiting_for_agents` until both agents have signaled readiness and both have submitted their opening high-level intent. Each agent can choose an actual opening action; Doom holds both opening intents and starts executing them on the same tick. Do not reuse old prompt files or tokens after a reset or next-round transition.
 
@@ -43,36 +70,50 @@ For multi-round sessions, click `Next Round` after the current round finishes. T
 
 ## MCP Setup
 
-Start the arena server first; it hosts the MCP endpoint at:
+Start the arena backend first with `.\scripts\start-docker.ps1`. Desktop MCP clients should launch the host-side stdio script and point it at the arena backend:
 
 ```text
-http://127.0.0.1:8001/mcp
+DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
 ```
 
-You can verify the advertised MCP config with:
+The arena advertises the suggested MCP config at:
 
 ```powershell
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8001/api/arena/mcp-config
 ```
 
-For Claude Code, add the project MCP server from this repo:
-
-```powershell
-cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
-claude mcp add --transport http doom-arena http://127.0.0.1:8001/mcp
-claude
-```
-
-Then run `/mcp` in Claude and confirm `doom-arena` is connected.
-
-For Codex, configure the repo-level MCP server to use the same HTTP endpoint:
+For Codex, configure stdio from the repo root:
 
 ```toml
 [mcp_servers.doom-arena]
-url = "http://127.0.0.1:8001/mcp"
+command = "python"
+args = ["scripts/doom_arena_mcp.py"]
+env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
 ```
 
-Then restart Codex in this repo and check `/mcp`. Both chat agents should expose:
+For Claude-style stdio setup, use the same command and environment variable:
+
+```bash
+DOOM_ARENA_BASE_URL=http://127.0.0.1:8001 claude mcp add doom-arena -- python scripts/doom_arena_mcp.py
+```
+
+On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command:
+
+```json
+{
+  "mcpServers": {
+    "doom-arena": {
+      "type": "stdio",
+      "command": "C:\\Users\\muhha\\OneDrive\\Desktop\\doom-wasm\\scripts\\doom_arena_mcp.cmd",
+      "env": {
+        "DOOM_ARENA_BASE_URL": "http://127.0.0.1:8001"
+      }
+    }
+  }
+}
+```
+
+Then restart the MCP client and check `/mcp`. Both chat agents should expose:
 
 ```text
 set_participant_ready
@@ -84,7 +125,7 @@ get_match_result
 get_duel_events
 ```
 
-Do not manually run `py scripts\doom_arena_mcp.py` for normal play. That stdio MCP path is only for debugging; HTTP MCP is preferred on native Windows.
+The server still exposes `/mcp` over HTTP for compatibility and internal smoke tests, but local desktop clients should use host-side stdio for the Docker setup.
 
 ## Control Split
 
@@ -98,13 +139,14 @@ See [Control Architecture](docs/control-architecture.md) for the full split.
 ## Docs
 
 - [MCP Duel Runbook](docs/mcp-duel-runbook.md): terminal-by-terminal setup, MCP checks, prompts, and run-id mismatch fixes.
+- [Docker Runtime](docs/docker.md): runtime-only Docker setup, stdio MCP wiring, dev mounts, logs, and smoke checks.
 - [Control Architecture](docs/control-architecture.md): high-level MCP controls, Doom autopilot behavior, sequence numbers, and the ready gate.
 - [Build](docs/build.md): WSL/Emscripten rebuild commands and browser cache notes.
 - [Smoke Tests](docs/smoke-tests.md): API, MCP, and browser-backed smoke commands.
 
 ## Important Rules
 
-- Do not run `scripts\doom_arena_mcp.py` manually in a terminal for normal play; chat agents should connect to the arena server's HTTP MCP endpoint.
+- Keep the arena backend running before starting MCP clients. Docker and native server modes both use `DOOM_ARENA_BASE_URL` for host-side stdio MCP.
 - Click `Start Duel` to begin a new comparison session. Click `Next Round` only after `phase=finished` when continuing the same session.
 - Use only the newly generated prompts and controller tokens for the current round.
 - Keep one browser tab active for a comparison.

@@ -1,0 +1,28 @@
+services:
+  arena:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - python
+      - scripts/doom_arena_server.py
+      - --host
+      - 0.0.0.0
+      - --port
+      - ${DOOM_ARENA_PORT:-8001}
+    environment:
+      DOOM_ARENA_PORT: ${DOOM_ARENA_PORT:-8001}
+    ports:
+      - "127.0.0.1:${DOOM_ARENA_PORT:-8001}:${DOOM_ARENA_PORT:-8001}"
+    volumes:
+      - ./benchmarks/results:/app/benchmarks/results
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import os,urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:%s/api/arena/health' %
+          os.environ.get('DOOM_ARENA_PORT', '8001'), timeout=2).read()"
+      interval: 5s
+      timeout: 3s
+      retries: 12

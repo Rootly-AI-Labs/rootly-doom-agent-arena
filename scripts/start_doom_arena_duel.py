@@ -63,8 +63,8 @@ def main() -> int:
 
         print("", flush=True)
         print(f"Open browser: {server_url}/", flush=True)
-        print("MCP endpoint for Codex and Claude:", flush=True)
-        print(f"  {server_url}/mcp", flush=True)
+        print("Host-side stdio MCP backend URL:", flush=True)
+        print(f"  DOOM_ARENA_BASE_URL={server_url}", flush=True)
         print("", flush=True)
 
         if not args.no_open_browser:

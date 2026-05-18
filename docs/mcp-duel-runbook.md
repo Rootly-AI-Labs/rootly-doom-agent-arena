@@ -4,6 +4,8 @@ This is the current setup for a real two-agent Doom Arena MCP duel.
 
 ## Terminal Layout
 
+Use Docker as the default arena backend. Use the native Python launcher only for debugging or if Docker is unavailable.
+
 Use three active surfaces:
 
 - Terminal 1: arena server/browser launcher
@@ -20,21 +22,41 @@ Get-NetTCPConnection -LocalPort 8001 -ErrorAction SilentlyContinue |
   ForEach-Object { Stop-Process -Id $_ -Force }
 ```
 
-## Terminal 1: Server And Browser
+## Terminal 1: Docker Server And Browser
+
+Start Docker Desktop, then run:
+
+```powershell
+.\scripts\start-docker.ps1
+```
+
+macOS/Linux:
+
+```bash
+bash scripts/start-docker.sh
+```
+
+Native fallback:
 
 ```powershell
 py scripts\start_doom_arena_duel.py
 ```
 
-Keep this terminal running. It starts the server and opens the browser.
+Keep the backend running. The launchers start the arena server and open the browser.
 
-The server exposes MCP at:
+The backend URL for host-side stdio MCP is:
+
+```text
+DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
+```
+
+The server advertises MCP setup details at:
 
 ```powershell
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8001/api/arena/mcp-config
 ```
 
-Direct server-only equivalent:
+Direct native server-only equivalent:
 
 ```powershell
 py scripts\doom_arena_server.py --port 8001
@@ -80,7 +102,7 @@ summary.json after the browser reports phase=finished
 
 ## Chat 2: Player 1 Agent
 
-Open the first chat agent with the repo-level `doom-arena` MCP server connected. Copy the Player 1 prompt from the browser and paste it into that agent.
+Open the first chat agent with the repo-level `doom-arena` stdio MCP server connected. Copy the Player 1 prompt from the browser and paste it into that agent.
 
 ## Chat 3: Player 2 Agent
 
@@ -88,10 +110,22 @@ Open the second chat agent separately in the repo. For Claude Code, for example:
 
 ```powershell
 cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
+$env:DOOM_ARENA_BASE_URL="http://127.0.0.1:8001"
 claude
 ```
 
 Confirm `/mcp` shows `doom-arena`, then copy the Player 2 prompt from the browser and paste it into the second agent.
+
+Example Codex-style stdio config:
+
+```toml
+[mcp_servers.doom-arena]
+command = "python"
+args = ["scripts/doom_arena_mcp.py"]
+env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
+```
+
+On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command.
 
 ## MCP Tool Check
 
@@ -127,10 +161,22 @@ Doom freezes both participants until both agents have signaled readiness through
 
 ## One-Command Bootstrap
 
-This starts the server, opens the browser, and keeps the server alive:
+This starts the Docker runtime, opens the browser, and prints the stdio MCP backend URL:
+
+```powershell
+.\scripts\start-docker.ps1
+```
+
+Native equivalent:
 
 ```powershell
 py scripts\start_doom_arena_duel.py
+```
+
+Stop the Docker backend with:
+
+```powershell
+docker compose down
 ```
 
 ## Multi-Round Sessions
