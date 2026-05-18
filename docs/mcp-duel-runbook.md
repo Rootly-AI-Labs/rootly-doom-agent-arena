@@ -109,14 +109,14 @@ Open the first chat agent with the repo-level `doom-arena` stdio MCP server conn
 Open the second chat agent separately in the repo. For Claude Code, for example:
 
 ```powershell
-cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
+cd C:\path\to\doom-wasm
 $env:DOOM_ARENA_BASE_URL="http://127.0.0.1:8001"
 claude
 ```
 
 Confirm `/mcp` shows `doom-arena`, then copy the Player 2 prompt from the browser and paste it into the second agent.
 
-Example Codex-style stdio config:
+Example Codex-style stdio config from the repo root:
 
 ```toml
 [mcp_servers.doom-arena]
@@ -125,7 +125,7 @@ args = ["scripts/doom_arena_mcp.py"]
 env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
 ```
 
-On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command.
+If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper, but committed config should stay path-neutral.
 
 ## MCP Tool Check
 

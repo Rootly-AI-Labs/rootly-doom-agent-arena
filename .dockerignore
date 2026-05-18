@@ -3,6 +3,8 @@
 .claude
 autom4te.cache
 benchmarks/results/*
+src/.emscripten_cache/
+src/.emscripten_browser
 src/*.local.tsv
 src/*.local.json
 src/*.log

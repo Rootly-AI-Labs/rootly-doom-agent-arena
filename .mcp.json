@@ -2,8 +2,10 @@
   "mcpServers": {
     "doom-arena": {
       "type": "stdio",
-      "command": "C:\\Users\\muhha\\OneDrive\\Desktop\\doom-wasm\\scripts\\doom_arena_mcp.cmd",
-      "args": [],
+      "command": "python",
+      "args": [
+        "scripts/doom_arena_mcp.py"
+      ],
       "env": {
         "DOOM_ARENA_BASE_URL": "http://127.0.0.1:8001"
       }

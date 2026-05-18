@@ -5,13 +5,15 @@ Use WSL with the Emscripten SDK. Do not use Windows `mingw32-make` for the WASM 
 ## Rebuild Doom Library
 
 ```powershell
-wsl -d Ubuntu-24.04 -e bash -lc "cd /mnt/c/Users/muhha/OneDrive/Desktop/doom-wasm/src/doom && source /root/emsdk/emsdk_env.sh >/dev/null && make -f Makefile -o Makefile libdoom.a"
+$wslRepo = (wsl -d Ubuntu-24.04 -e wslpath -a (Get-Location).Path).Trim()
+wsl -d Ubuntu-24.04 -e bash -lc "cd '$wslRepo/src/doom' && source /root/emsdk/emsdk_env.sh >/dev/null && make -f Makefile -o Makefile libdoom.a"
 ```
 
 ## Rebuild Browser WASM
 
 ```powershell
-wsl -d Ubuntu-24.04 -e bash -lc "cd /mnt/c/Users/muhha/OneDrive/Desktop/doom-wasm/src && source /root/emsdk/emsdk_env.sh >/dev/null && make -f Makefile -o Makefile -o doom/Makefile websockets-doom.html"
+$wslRepo = (wsl -d Ubuntu-24.04 -e wslpath -a (Get-Location).Path).Trim()
+wsl -d Ubuntu-24.04 -e bash -lc "cd '$wslRepo/src' && source /root/emsdk/emsdk_env.sh >/dev/null && make -f Makefile -o Makefile -o doom/Makefile websockets-doom.html"
 ```
 
 This rebuilds:

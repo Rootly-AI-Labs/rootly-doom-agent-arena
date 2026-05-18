@@ -1,6 +1,7 @@
 autom4te.cache
 autotools
 configure
+*~
 Makefile
 aclocal.m4
 config.hin
@@ -29,9 +30,14 @@ src/arena_run_metadata.local.tsv
 src/agentic_monster_commands.local.json
 .githelp
 .env
+.claude/
+.mcp.local.json
+src/.emscripten_cache/
+src/.emscripten_browser
 src/*.local.tsv
 src/*.local.json
 src/*.log
+*.log
 benchmarks/results/
 __pycache__/
 *.py[cod]

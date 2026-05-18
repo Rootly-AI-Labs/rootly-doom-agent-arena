@@ -16,7 +16,7 @@ Start Docker Desktop or Docker Engine first, then run the launcher from the repo
 Windows PowerShell:
 
 ```powershell
-cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
+cd C:\path\to\doom-wasm
 .\scripts\start-docker.ps1
 ```
 
@@ -68,7 +68,7 @@ The MCP command still runs on the host:
 python scripts/doom_arena_mcp.py
 ```
 
-Example Codex-style stdio config:
+Example Codex-style stdio config from the repo root:
 
 ```toml
 [mcp_servers.doom-arena]
@@ -83,7 +83,7 @@ Example Claude-style command from the repo root:
 DOOM_ARENA_BASE_URL=http://127.0.0.1:8001 claude mcp add doom-arena -- python scripts/doom_arena_mcp.py
 ```
 
-On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command. Keep the Docker backend running while the MCP client is connected.
+If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper, but committed config should stay path-neutral. Keep the Docker backend running while the MCP client is connected.
 
 The repo `.mcp.json` is configured for this host-side stdio shape and defaults to:
 

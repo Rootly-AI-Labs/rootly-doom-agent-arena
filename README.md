@@ -15,7 +15,7 @@ Use this flow for a manual MCP chat comparison.
 1. Start Docker Desktop, then start the Doom Arena runtime from the repo root:
 
 ```powershell
-cd C:\Users\muhha\OneDrive\Desktop\doom-wasm
+cd C:\path\to\doom-wasm
 .\scripts\start-docker.ps1
 ```
 
@@ -82,7 +82,7 @@ The arena advertises the suggested MCP config at:
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8001/api/arena/mcp-config
 ```
 
-For Codex, configure stdio from the repo root:
+For Codex, configure stdio from the repo root. The committed `.mcp.json` uses this portable shape:
 
 ```toml
 [mcp_servers.doom-arena]
@@ -97,14 +97,15 @@ For Claude-style stdio setup, use the same command and environment variable:
 DOOM_ARENA_BASE_URL=http://127.0.0.1:8001 claude mcp add doom-arena -- python scripts/doom_arena_mcp.py
 ```
 
-On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command:
-
 ```json
 {
   "mcpServers": {
     "doom-arena": {
       "type": "stdio",
-      "command": "C:\\Users\\muhha\\OneDrive\\Desktop\\doom-wasm\\scripts\\doom_arena_mcp.cmd",
+      "command": "python",
+      "args": [
+        "scripts/doom_arena_mcp.py"
+      ],
       "env": {
         "DOOM_ARENA_BASE_URL": "http://127.0.0.1:8001"
       }
@@ -112,6 +113,8 @@ On Windows, `scripts\doom_arena_mcp.cmd` can be used as the stdio command:
   }
 }
 ```
+
+If an MCP client cannot resolve relative script paths, keep the absolute-path variant in an ignored local file such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` is available as a local wrapper, but it should not be committed with a user-specific drive path.
 
 Then restart the MCP client and check `/mcp`. Both chat agents should expose:
 
