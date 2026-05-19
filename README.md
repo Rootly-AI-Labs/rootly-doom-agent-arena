@@ -8,7 +8,7 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 ## Leaderboard
 
-| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Cost ROI |
+| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
 |---|---|---:|---:|---|---|---:|
 | 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) | 0.15× |
 | 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) | **1.00×** |
@@ -17,7 +17,7 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`.
 
-`Cost ROI` is `win_rate / output_token_price`, normalized so the most cost-effective model = 1.00×. Output-token price is used because it dominates per-call cost for chatty LLM agents. Pricing (USD per 1M output tokens, May 2026 OpenAI API): gpt-5.5 $30, gpt-5.4-mini $4.50, gpt-5.3-codex $14, gpt-5.3-codex-spark research-preview pricing not published.
+`Win rate / cost` divides each model's win rate by its output-token price, normalized so the most cost-effective model = 1.00×. Output-token price is used because it dominates per-call cost for chatty LLM agents. Pricing (USD per 1M output tokens, May 2026 OpenAI API): gpt-5.5 $30, gpt-5.4-mini $4.50, gpt-5.3-codex $14, gpt-5.3-codex-spark research-preview pricing not published.
 
 ## Methodology
 
