@@ -8,7 +8,6 @@ src/.emscripten_browser
 src/*.local.tsv
 src/*.local.json
 src/*.log
-src/doom1.wad
 __pycache__
 *.pyc
 *.pyo

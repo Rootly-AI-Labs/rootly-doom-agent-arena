@@ -3,6 +3,9 @@ Makefile.in
 .deps
 *.rc
 websockets-doom.*
+!websockets-doom.html
+!websockets-doom.js
+!websockets-doom.wasm
 arena_game_state.local.tsv
 arena_duel_events.local.tsv
 arena_player_command.local.tsv
@@ -15,6 +18,7 @@ arena_controller_tokens.local.json
 arena_mcp_stdio.log
 *.log
 *.cfg
+!default.cfg
 *.exe
 *.desktop
 *.txt
