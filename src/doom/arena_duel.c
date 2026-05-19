@@ -552,6 +552,21 @@ static void ArenaDuel_RefillPlayer1Ammo(void)
     player->ammo[1] = 200;
     player->ammo[2] = 200;
     player->ammo[3] = 200;
+
+    // The deathmatch init / level reload flow zeros player_t for
+    // player_1, including readyweapon and weaponowned[]. After that
+    // the player ends up holding wp_fist (readyweapon=0) with nothing
+    // owned, so the autopilot swings a fist at thin air even when the
+    // opponent is 1500 units away. Re-stamp the basic loadout every
+    // tick so the state stays consistent.
+    if (player->readyweapon == 0 /* wp_fist */
+        || !player->weaponowned[1] /* wp_pistol */)
+    {
+        player->weaponowned[0] = true;   // wp_fist (always)
+        player->weaponowned[1] = true;   // wp_pistol
+        player->readyweapon = 1;          // wp_pistol
+        player->pendingweapon = 1;        // wp_pistol
+    }
 }
 
 static void ArenaDuel_Player2Attack(void)
