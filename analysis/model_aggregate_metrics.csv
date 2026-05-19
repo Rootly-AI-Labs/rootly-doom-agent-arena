@@ -1,0 +1,5 @@
+model,total_rounds,total_wins,total_losses,total_draws,overall_win_rate,mirrored_win_rate,win_rate_as_player_1,win_rate_as_player_2,average_damage_dealt,average_damage_differential,average_final_health,average_round_duration,timeout_rate,best_matchup,worst_matchup,total_mcp_calls,completed_mcp_calls,errored_mcp_calls,mcp_error_rate,stale_intent_count,stale_intent_duration,average_inferred_decision_latency,p95_inferred_decision_latency,elo_style_rating
+gpt-5-5,60,35,25,0,0.5833,0.5833,0.3667,0.8,130.833,10.167,29.75,25.88,0.0667,gpt-5-3-codex (85.0%),gpt-5-4-mini (35.0%),562,498,64,0.1139,5,71452,6513.93,14120.0,1542.2
+gpt-5-4-mini,60,34,26,0,0.5667,0.5667,0.2667,0.8667,137.167,7.333,20.917,15.092,0.0167,gpt-5-5 (65.0%),gpt-5-3-codex-spark (45.0%),630,558,72,0.1143,2,32422,7054.294,24612.0,1533.7
+gpt-5-3-codex,60,28,32,0,0.4667,0.4667,0.2333,0.7,128.917,-4.167,16.917,14.247,0.0167,gpt-5-3-codex-spark (85.0%),gpt-5-5 (15.0%),405,343,62,0.1531,3,24177,8444.043,28214.0,1483.3
+gpt-5-3-codex-spark,60,23,37,0,0.3833,0.3833,0.1667,0.6,125.917,-13.333,10.75,17.438,0.0333,gpt-5-4-mini (55.0%),gpt-5-3-codex (15.0%),972,915,57,0.0586,4,29815,3437.623,14250.0,1440.8

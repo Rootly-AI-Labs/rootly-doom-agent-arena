@@ -1,0 +1,7 @@
+pair_id,pair_folder,model_a,model_b,total_rounds,model_a_wins,model_b_wins,draws,model_a_raw_win_rate,model_b_raw_win_rate,model_a_mirrored_win_rate,model_b_mirrored_win_rate,player_1_side_win_rate,player_2_side_win_rate,timeout_count,mean_round_duration,median_round_duration,p95_round_duration,mean_damage_differential,mean_final_health_differential
+pair-01,pair-01__gpt-5-5-vs-gpt-5-3-codex,gpt-5-5,gpt-5-3-codex,20,17,3,0,0.85,0.15,0.85,0.15,0.35,0.65,1,20.69,10.15,93.6,49.5,49.5
+pair-02,pair-02__gpt-5-5-vs-gpt-5-3-codex-spark,gpt-5-5,gpt-5-3-codex-spark,20,11,9,0,0.55,0.45,0.55,0.45,0.25,0.75,2,32.13,9.05,120.2,4.25,5.5
+pair-03,pair-03__gpt-5-5-vs-gpt-5-4-mini,gpt-5-5,gpt-5-4-mini,20,7,13,0,0.35,0.65,0.35,0.65,0.25,0.75,1,24.82,9.7,96.7,-23.25,-25.5
+pair-04,pair-04__gpt-5-3-codex-vs-gpt-5-3-codex-spark,gpt-5-3-codex,gpt-5-3-codex-spark,20,17,3,0,0.85,0.15,0.85,0.15,0.35,0.65,0,10.89,8.55,14.3,37.25,37.25
+pair-05,pair-05__gpt-5-3-codex-vs-gpt-5-4-mini,gpt-5-3-codex,gpt-5-4-mini,20,8,12,0,0.4,0.6,0.4,0.6,0.1,0.9,0,11.16,8.15,21.2,-0.25,-0.25
+pair-06,pair-06__gpt-5-3-codex-spark-vs-gpt-5-4-mini,gpt-5-3-codex-spark,gpt-5-4-mini,20,11,9,0,0.55,0.45,0.55,0.45,0.25,0.75,0,9.295,8.65,12.7,1.5,1.5
