@@ -34,7 +34,9 @@ Both launchers:
 - open `http://127.0.0.1:8001/`
 - print the MCP backend environment variable
 
-After the browser opens, click `Start Duel`, copy the generated Player 1 and Player 2 prompts into separate MCP agents, and use fresh prompts after every `Next Round`.
+After the browser opens, click `Start Duel`, then manually paste the generated Player 1 and Player 2 prompts into two separate MCP agents. Use fresh prompts after every `Next Round`.
+
+The prompt handoff is manual by design in the current architecture. Docker runs the arena backend and the browser generates round-specific prompts and controller tokens, but the two chat agents still live outside the arena so the setup stays provider-neutral.
 
 Use a different port when needed:
 
