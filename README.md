@@ -11,7 +11,7 @@ An MCP-native arena for real-time model-vs-model evaluations.
 | Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
 |---|---|---:|---:|---|---|---:|
 | 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) | 0.15× |
-| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) | **1.00×** |
+| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) | **1.00× 💰** |
 | 3 | gpt-5.3-codex | 46.7% | 28-32 | vs gpt-5.3-codex-spark (85%) | vs gpt-5.5 (15%) | 0.27× |
 | 4 | gpt-5.3-codex-spark | 38.3% | 23-37 | vs gpt-5.4-mini (55%) | vs gpt-5.3-codex (15%) | n/a |
 
