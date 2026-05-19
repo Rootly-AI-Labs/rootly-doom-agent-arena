@@ -637,14 +637,6 @@
                 text-transform: uppercase;
             }
 
-            #arena-countdown {
-                display: none;
-                margin-top: 16px;
-                color: #ffce6b;
-                font: 700 34px/1 "Trebuchet MS", Verdana, sans-serif;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-            }
         </style>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
     </head>
@@ -675,7 +667,6 @@
                         </div>
                     </details>
                     <button id="arena-start-game" type="button">Start Duel</button>
-                    <div id="arena-countdown"></div>
                     <div id="arena-launcher-status"></div>
                 </div>
             </div>
@@ -1672,32 +1663,6 @@
                 });
             }
 
-            function runDuelCountdown() {
-                var countdown = document.getElementById("arena-countdown");
-                var values = ["3", "2", "1", "FIGHT"];
-                var index = 0;
-
-                if (countdown === null) {
-                    return Promise.resolve();
-                }
-
-                countdown.style.display = "block";
-                countdown.textContent = values[index];
-
-                return new Promise(function (resolve) {
-                    var timer = window.setInterval(function () {
-                        index++;
-                        if (index >= values.length) {
-                            window.clearInterval(timer);
-                            resolve();
-                            return;
-                        }
-
-                        countdown.textContent = values[index];
-                    }, 700);
-                });
-            }
-
             function startDuel(options) {
                 var payload;
                 var continueSession = !!(options && options.continueSession);
@@ -1731,7 +1696,7 @@
                             reloadIntoDuelRun(continueSession);
                             return new Promise(function () {});
                         }
-                        return runDuelCountdown();
+                        return Promise.resolve();
                     })
                     .then(function () {
                         startDoom("mock", false);
@@ -1788,7 +1753,7 @@
                     .then(function () {
                         updateArenaBanner();
                         retryDuelInstructionPromptsIfMissing();
-                        return runDuelCountdown();
+                        return Promise.resolve();
                     })
                     .then(function () {
                         startDoom("mock", false);

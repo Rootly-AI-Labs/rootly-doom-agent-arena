@@ -714,10 +714,15 @@ void P_SpawnPlayer (mapthing_t* mthing)
         // Emscripten builds even though we booted with -warp 1 8, so
         // gating on it would skip the arena-designated spawn. We only
         // spawn the duel on E1M8, so gamemap == 8 is sufficient.
+        //
+        // Place player_1 on the west wall of the open boss arena.
+        // The original (412, 2456) puts it in the narrow central
+        // corridor where the autopilot pins against geometry every
+        // tick (stuck_recovery state, mobj never translates).
         arena_start = *mthing;
-        arena_start.x = 412;
-        arena_start.y = 2456;
-        arena_start.angle = 90;
+        arena_start.x = -553;
+        arena_start.y = 3347;
+        arena_start.angle = 0;  // face east toward player_2
         mthing = &arena_start;
     }
 		
