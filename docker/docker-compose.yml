@@ -1,8 +1,10 @@
+name: doom-benchmark
+
 services:
   arena:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     command:
       - python
       - scripts/doom_arena_server.py
@@ -15,13 +17,13 @@ services:
     ports:
       - "127.0.0.1:${DOOM_ARENA_PORT:-8001}:${DOOM_ARENA_PORT:-8001}"
     volumes:
-      - ./benchmarks/results:/app/benchmarks/results
+      - ../benchmarks/results:/app/benchmarks/results
       # Bind-mount the controller-tokens file so the in-container server
       # and the host-side MCP server (scripts/doom_arena_mcp.py) read the
       # same tokens. Without this every RESET silently leaves the host
       # file stale and the MCP server rejects every fresh token with
       # "Controller token file is for run_id X, but MCP client is on Y".
-      - ./src/arena_controller_tokens.local.json:/app/src/arena_controller_tokens.local.json
+      - ../src/arena_controller_tokens.local.json:/app/src/arena_controller_tokens.local.json
     healthcheck:
       test:
         - CMD-SHELL

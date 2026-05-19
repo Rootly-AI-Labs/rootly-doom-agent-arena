@@ -4,14 +4,14 @@ Updated `docs/benchmark-paper-draft.md` to integrate the finalized analysis CSVs
 
 ## Inputs Used
 
-- `analysis/model_aggregate_metrics.csv`
-- `analysis/pairwise_matchup_matrix.csv`
-- `analysis/tactical_behavior_by_model.csv`
-- `analysis/intent_lifecycle_by_model.csv`
-- `analysis/tool_reliability_by_model.csv`
-- `analysis/reproducibility_metadata.md`
-- `analysis/figure_manifest.md`
-- `figures/*.png`
+- `benchmarks/analysis/model_aggregate_metrics.csv`
+- `benchmarks/analysis/pairwise_matchup_matrix.csv`
+- `benchmarks/analysis/tactical_behavior_by_model.csv`
+- `benchmarks/analysis/intent_lifecycle_by_model.csv`
+- `benchmarks/analysis/tool_reliability_by_model.csv`
+- `benchmarks/analysis/reproducibility_metadata.md`
+- `benchmarks/analysis/figure_manifest.md`
+- `benchmarks/figures/*.png`
 
 ## Main Changes
 

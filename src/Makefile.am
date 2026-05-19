@@ -5,9 +5,9 @@ execgamesdir = ${bindir}
 
 execgames_PROGRAMS = @PROGRAM_PREFIX@doom
 
-AM_CFLAGS = -I$(top_srcdir)/textscreen            \
-            -I$(top_srcdir)/opl                   \
-            -I$(top_srcdir)/pcsound               \
+AM_CFLAGS = -I$(top_srcdir)/chocolate-doom/textscreen            \
+            -I$(top_srcdir)/chocolate-doom/opl                   \
+            -I$(top_srcdir)/chocolate-doom/pcsound               \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
@@ -95,13 +95,13 @@ deh_text.c
 SOURCE_FILES = $(COMMON_SOURCE_FILES) $(GAME_SOURCE_FILES)
 SOURCE_FILES_WITH_DEH = $(SOURCE_FILES) $(DEHACKED_SOURCE_FILES)
 
-EXTRA_LIBS =                                               \
-               $(top_builddir)/textscreen/libtextscreen.a  \
-               $(top_builddir)/pcsound/libpcsound.a        \
-               $(top_builddir)/opl/libopl.a                \
-               @LDFLAGS@                                   \
-               @SDL_LIBS@                                  \
-               @SDLMIXER_LIBS@                             \
+EXTRA_LIBS =                                                              \
+               $(top_builddir)/chocolate-doom/textscreen/libtextscreen.a  \
+               $(top_builddir)/chocolate-doom/pcsound/libpcsound.a        \
+               $(top_builddir)/chocolate-doom/opl/libopl.a                \
+               @LDFLAGS@                                                  \
+               @SDL_LIBS@                                                 \
+               @SDLMIXER_LIBS@                                            \
                @SDLNET_LIBS@
 
 if HAVE_WINDRES
@@ -130,8 +130,8 @@ CLEANFILES = $(execgames_SCRIPTS)
 
 if HAVE_ICONS
 
-icon.c : $(top_builddir)/data/doom.png
-	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
+icon.c : $(top_builddir)/chocolate-doom/data/doom.png
+	$(top_builddir)/chocolate-doom/data/convert-icon $(top_builddir)/chocolate-doom/data/doom.png $@
 
 endif
 

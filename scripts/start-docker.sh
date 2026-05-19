@@ -49,9 +49,9 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-COMPOSE_FILES=(-f docker-compose.yml)
+COMPOSE_FILES=(-f docker/docker-compose.yml)
 if [ "$DEV" -eq 1 ]; then
-  COMPOSE_FILES+=(-f docker-compose.dev.yml)
+  COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
 fi
 
 BASE_URL="http://127.0.0.1:$PORT"

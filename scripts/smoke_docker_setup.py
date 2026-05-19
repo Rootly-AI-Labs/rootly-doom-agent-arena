@@ -25,15 +25,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Smoke-test Docker Doom Arena setup.")
     parser.add_argument("--port", type=int, default=int(os.environ.get("DOOM_ARENA_PORT", "8001")))
     parser.add_argument("--timeout-seconds", type=int, default=90)
-    parser.add_argument("--dev", action="store_true", help="Include docker-compose.dev.yml.")
+    parser.add_argument("--dev", action="store_true", help="Include docker/docker-compose.dev.yml.")
     parser.add_argument("--no-build", action="store_true", help="Skip --build when starting Docker Compose.")
     return parser.parse_args()
 
 
 def compose_files(dev: bool) -> list[str]:
-    files = ["-f", "docker-compose.yml"]
+    files = ["-f", "docker/docker-compose.yml"]
     if dev:
-        files += ["-f", "docker-compose.dev.yml"]
+        files += ["-f", "docker/docker-compose.dev.yml"]
     return files
 
 

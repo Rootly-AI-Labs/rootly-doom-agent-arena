@@ -220,4 +220,4 @@ Do not reuse older prompts after a reset.
 
 ## Controller-Token Mismatch
 
-If agents get `Controller token file is for run_id X, but MCP client is on run_id Y`, your `docker-compose.yml` is missing the `arena_controller_tokens.local.json` bind-mount. Restart Docker with the committed compose and it'll work.
+If agents get `Controller token file is for run_id X, but MCP client is on run_id Y`, your `docker/docker-compose.yml` is missing the `arena_controller_tokens.local.json` bind-mount. Restart Docker with the committed compose and it'll work.

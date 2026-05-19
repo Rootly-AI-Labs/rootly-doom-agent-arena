@@ -2,7 +2,7 @@
 
 Generated at: `2026-05-19T14:14:57+00:00`
 
-This is a first-pass paper results extraction from `analysis/normalized_round_metrics.csv`. It does not include plots and does not claim formal statistical significance beyond the side-bias binomial check.
+This is a first-pass paper results extraction from `benchmarks/analysis/normalized_round_metrics.csv`. It does not include plots and does not claim formal statistical significance beyond the side-bias binomial check.
 
 ## Complete Ranking by Mirrored Win Rate
 

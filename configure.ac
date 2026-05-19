@@ -203,16 +203,16 @@ AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 AC_OUTPUT([
 Makefile
-opl/Makefile
-opl/examples/Makefile
-pcsound/Makefile
-data/Makefile
+chocolate-doom/opl/Makefile
+chocolate-doom/opl/examples/Makefile
+chocolate-doom/pcsound/Makefile
+chocolate-doom/data/Makefile
 src/Makefile
 src/doom/Makefile
 src/resource.rc
 src/setup-res.rc
-textscreen/Makefile
-textscreen/examples/Makefile
-textscreen/fonts/Makefile
+chocolate-doom/textscreen/Makefile
+chocolate-doom/textscreen/examples/Makefile
+chocolate-doom/textscreen/fonts/Makefile
 ])
 

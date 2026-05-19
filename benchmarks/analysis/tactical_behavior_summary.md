@@ -1,6 +1,6 @@
 # Tactical Behavior Summary
 
-Source inputs: `analysis/normalized_round_metrics.csv`, raw `stats.json` / `events.jsonl`, and `analysis/reproducibility_metadata.json`.
+Source inputs: `benchmarks/analysis/normalized_round_metrics.csv`, raw `stats.json` / `events.jsonl`, and `benchmarks/analysis/reproducibility_metadata.json`.
 
 Behavioral distributions are attributed through `participant_id` and the normalized `player_1_model` / `player_2_model` mapping. Only accepted `set_participant_intent` calls are used for requested tactical-policy distributions.
 

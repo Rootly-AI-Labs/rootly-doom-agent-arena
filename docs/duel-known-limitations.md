@@ -1,6 +1,6 @@
 # Duel Mode — Known Limitations
 
-The published benchmark already documented a statistically significant `player_2` side bias (~74% win rate, see `analysis/results_overview.md`). Mirrored evaluation is the recommended way to control for it. The asymmetries below are why that bias exists.
+The published benchmark already documented a statistically significant `player_2` side bias (~74% win rate, see `benchmarks/analysis/results_overview.md`). Mirrored evaluation is the recommended way to control for it. The asymmetries below are why that bias exists.
 
 ## Player ability asymmetry
 

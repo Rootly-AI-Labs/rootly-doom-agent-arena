@@ -53,7 +53,7 @@ Inside Docker, the arena server binds to `0.0.0.0`. The host port is published o
 Stop the backend with:
 
 ```bash
-docker compose down
+docker compose -f docker/docker-compose.yml down
 ```
 
 ## MCP Stdio Setup
@@ -129,7 +129,7 @@ That mount is for development only. It lets locally rebuilt `websockets-doom.{ht
 
 ## Controller-Token Sync
 
-The committed `docker-compose.yml` bind-mounts `src/arena_controller_tokens.local.json` into the container so the in-container arena server's per-run token writes reach the host MCP server. Don't remove that volume entry.
+The committed `docker/docker-compose.yml` bind-mounts `src/arena_controller_tokens.local.json` into the container so the in-container arena server's per-run token writes reach the host MCP server. Don't remove that volume entry.
 
 ## Results And Logs
 
@@ -156,7 +156,7 @@ Each round can include `config.json`, `controller_tokens.json`, generated MCP pr
 View backend logs with:
 
 ```bash
-docker compose logs -f arena
+docker compose -f docker/docker-compose.yml logs -f arena
 ```
 
 The host-side stdio MCP log defaults to:

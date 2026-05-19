@@ -18,7 +18,7 @@ Converted content:
   - Conclusion
   - Impact Statement
 - Core benchmark tables converted to LaTeX `booktabs` tables.
-- Requested figures included using PDF assets from `figures/` via `\graphicspath{{../../figures/}}`.
+- Requested figures included using PDF assets from `benchmarks/figures/` via `\graphicspath{{../../benchmarks/figures/}}`.
 - Model names, code identifiers, paths, and parameters formatted with `\texttt{}`.
 - Underscores in identifiers and paths escaped for LaTeX.
 
