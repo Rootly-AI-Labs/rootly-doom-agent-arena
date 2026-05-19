@@ -38,7 +38,7 @@
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
-#define ARENA_DUEL_PLAYER2_BULLETS 50
+#define ARENA_DUEL_PLAYER2_BULLETS 200
 
 static mobj_t *arena_duel_player2;
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
