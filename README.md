@@ -90,9 +90,11 @@ If your coding assistant uses a JSON-style MCP config, use the same server defin
 
 The committed `.mcp.json` in this repo already uses this portable setup. If your coding assistant needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
 
-3. In the browser, choose run settings and click `Start Duel`.
+3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.
 
-4. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
+4. In the browser, choose run settings and click `Start Duel`.
+
+5. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
 
 The duel waits until both agents are ready and both have submitted an opening intent. Use fresh prompts after every `Start Duel` or `Next Round`.
 
