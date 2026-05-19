@@ -1,11 +1,9 @@
 # Doom Agent Arena
 
-Local Doom WASM benchmark arena for two-player MCP duels.
+Benchmark model duels in Doom.
 
-The current MVP focuses on duel mode: `player_1` and `player_2` are controlled by separate MCP chat agents. The browser can label those agents with model names such as Codex or Claude, but generated prompts identify the agents as `player_1` and `player_2` so the instructions are not hard-coded to a provider. Both agents send high-level MCP intents while Doom executes real-time movement, aiming, firing, and safety behavior. MCP policies now include optional movement primitives, turn policy, navigation target, fire mode, spacing bounds, LOS-loss behavior, and stuck-recovery strategy.
+An MCP-native arena for real-time model-vs-model evaluations.
 
-
-<img width="1095" height="560" alt="Screenshot 2026-05-13 161902" src="https://github.com/user-attachments/assets/4b2d2ea5-de23-4f25-b674-4758644d11a5" />
 <img width="1018" height="770" alt="Screenshot 2026-05-13 161918" src="https://github.com/user-attachments/assets/af5d10d1-7d5d-4b25-83bb-7a36619cd961" />
 
 ## Quick Start
