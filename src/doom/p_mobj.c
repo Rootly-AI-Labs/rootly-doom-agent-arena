@@ -716,10 +716,16 @@ void P_SpawnPlayer (mapthing_t* mthing)
         // player_1 into a random deathmatch start (often right next to
         // player_2). We only spawn the duel on E1M8, so gamemap == 8
         // is sufficient confirmation.
+        //
+        // Spawn on the WEST side of the E1M8 boss arena, facing east
+        // toward player_2's spawn on the NORTH side. The original
+        // hardcoded (412, 2456) put player_1 in the same narrow N-S
+        // corridor as player_2's (424, 4041), so they'd run into each
+        // other and get stuck before any tactical play could happen.
         arena_start = *mthing;
-        arena_start.x = 412;
-        arena_start.y = 2456;
-        arena_start.angle = 90;
+        arena_start.x = -553;
+        arena_start.y = 3347;
+        arena_start.angle = 0;
         mthing = &arena_start;
     }
 		
