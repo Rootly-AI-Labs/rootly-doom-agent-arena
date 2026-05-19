@@ -545,13 +545,13 @@ static void ArenaDuel_RefillPlayer1Ammo(void)
     // struct), the previous "ammo[i] = maxammo[i]" copy left every
     // weapon empty and player_1 could never fire.
     player->maxammo[0] = 200;   // am_clip
-    player->maxammo[1] = 50;    // am_shell
-    player->maxammo[2] = 300;   // am_cell
-    player->maxammo[3] = 50;    // am_misl
+    player->maxammo[1] = 200;   // am_shell
+    player->maxammo[2] = 200;   // am_cell
+    player->maxammo[3] = 200;   // am_misl
     player->ammo[0] = 200;
-    player->ammo[1] = 50;
-    player->ammo[2] = 300;
-    player->ammo[3] = 50;
+    player->ammo[1] = 200;
+    player->ammo[2] = 200;
+    player->ammo[3] = 200;
 }
 
 static void ArenaDuel_Player2Attack(void)
