@@ -29,23 +29,7 @@ cd src
 emmake make clean && emmake make -j4
 ```
 
-This produces `src/websockets-doom.{html,js,wasm}` directly on the host (no
-WSL or Docker needed for the build itself — Docker is only for serving them).
-
-### Modern-Emscripten quirks
-
-Recent Emscripten (~3.1+, which is what `brew install emscripten` ships) drops
-some legacy globals that older Win builds relied on. The patches in
-`src/index.html` already work around these:
-
-- `Module.HEAPU8` is no longer attached by default; we fall back to the
-  global `HEAPU8` for POV canvas reads
-- An `Asyncify.currData` guard in the POV render loop must be removed,
-  otherwise the canvases stay black because the read is always blocked
-  while the Doom main loop is yielded
-
-If you rebuild on a *much* older Emscripten (e.g., 2.x) you may not need
-those fallbacks, but leaving them in is harmless.
+This produces `src/websockets-doom.{html,js,wasm}` directly on the host.
 
 ## Linux
 

@@ -129,40 +129,7 @@ That mount is for development only. It lets locally rebuilt `websockets-doom.{ht
 
 ## Controller-Token Sync
 
-The MCP server (host-side stdio) and the arena server (in-container) both
-read controller tokens from `src/arena_controller_tokens.local.json`. The
-in-container server writes fresh tokens to that path on every `Start Duel`
-/ `Next Round` / `Reset`. For the MCP server (running on the host) to see
-those writes, the file must be bind-mounted into the container:
-
-```yaml
-volumes:
-  - ./src/arena_controller_tokens.local.json:/app/src/arena_controller_tokens.local.json
-```
-
-This mount is in the committed `docker-compose.yml`. **Don't remove it.**
-Without it, the MCP server stays pinned to whatever tokens were on the
-host file at startup, and every fresh round you start in the browser
-gets rejected with:
-
-```text
-Controller token file is for run_id X, but MCP client is on run_id Y
-```
-
-If you ever see that error, the symptoms are:
-- Browser shows a new run_id but agents can't submit `set_participant_ready`
-- The `participant-ready.local.tsv` file stays empty
-- The phase never leaves `waiting_for_agents`
-
-Recovery (one-shot, until you can rebuild Docker with the mount):
-
-```bash
-LATEST=$(ls -t benchmarks/results/ | head -1)
-cp benchmarks/results/$LATEST/round_01_run_*/controller_tokens.json \
-   src/arena_controller_tokens.local.json
-```
-
-Then have your agents retry their `set_participant_ready` call.
+The committed `docker-compose.yml` bind-mounts `src/arena_controller_tokens.local.json` into the container so the in-container arena server's per-run token writes reach the host MCP server. Don't remove that volume entry.
 
 ## Results And Logs
 

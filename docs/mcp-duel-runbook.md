@@ -218,47 +218,6 @@ Do this:
 
 Do not reuse older prompts after a reset.
 
-## Controller-Token Mismatch ("Controller token file is for run_id X, but MCP client is on run_id Y")
+## Controller-Token Mismatch
 
-This error means the MCP server (host-side stdio) is reading **stale tokens
-from disk** while the in-container arena server is on a fresh run. Symptoms:
-
-- Browser shows a new `run_id` after `Start Duel` / `Next Round` / `Reset`
-- Agents call `set_participant_ready` and get the mismatch error
-- `participant-ready.local.tsv` stays empty
-- `phase` stays at `waiting_for_agents` forever
-
-Root cause: the in-container server writes fresh tokens to
-`/app/src/arena_controller_tokens.local.json` on every new run, but those
-writes only reach the host file when that path is bind-mounted. The
-committed `docker-compose.yml` has the required mount:
-
-```yaml
-volumes:
-  - ./src/arena_controller_tokens.local.json:/app/src/arena_controller_tokens.local.json
-```
-
-Fix (in order):
-
-1. **Confirm the mount exists** for the running container:
-   ```bash
-   docker inspect doom-benchmark-arena-1 --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
-   ```
-   You should see `arena_controller_tokens.local.json` in the list.
-
-2. **If the mount is missing**, restart Docker so the current
-   `docker-compose.yml` takes effect:
-   ```bash
-   docker compose down
-   bash scripts/start-docker.sh
-   ```
-
-3. **One-shot manual fix** (for an in-flight session you don't want to
-   interrupt) — copy the current run's tokens onto the host file the MCP
-   server reads:
-   ```bash
-   LATEST=$(ls -t benchmarks/results/ | head -1)
-   cp benchmarks/results/$LATEST/round_01_run_*/controller_tokens.json \
-      src/arena_controller_tokens.local.json
-   ```
-   Then have the agents retry `set_participant_ready`.
+If agents get `Controller token file is for run_id X, but MCP client is on run_id Y`, your `docker-compose.yml` is missing the `arena_controller_tokens.local.json` bind-mount. Restart Docker with the committed compose and it'll work.
