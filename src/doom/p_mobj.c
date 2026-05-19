@@ -708,10 +708,14 @@ void P_SpawnPlayer (mapthing_t* mthing)
     if (!playeringame[mthing->type-1])
 	return;					
 
-    if (Arena_ModeEnabled()
-        && gameepisode == 1
-        && gamemap == 8)
+    if (Arena_ModeEnabled() && gamemap == 8)
     {
+        // gameepisode is reset to 0 after deathmatch init on modern
+        // Emscripten builds even though we booted with -warp 1 8, so
+        // gating on it would skip the arena-designated spawn and drop
+        // player_1 into a random deathmatch start (often right next to
+        // player_2). We only spawn the duel on E1M8, so gamemap == 8
+        // is sufficient confirmation.
         arena_start = *mthing;
         arena_start.x = 412;
         arena_start.y = 2456;
