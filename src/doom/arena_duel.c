@@ -719,6 +719,24 @@ void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
     arena_duel_player1_cached_mo = mobj;
 }
 
+void ArenaDuel_RestorePlayer1Mobj(void)
+{
+    // Called from P_Ticker BEFORE P_PlayerThink so that the autopilot
+    // path (Arena_PlayerApplyAutopilotCommand) sees a valid
+    // players[consoleplayer].mo. Doing this only inside ArenaDuel_Ticker
+    // happens too late — by then the autopilot has already dropped the
+    // intent with reason "missing_participant_state".
+    if (arena_duel_player1_cached_mo == NULL)
+    {
+        return;
+    }
+    if (players[consoleplayer].mo == NULL)
+    {
+        players[consoleplayer].mo = arena_duel_player1_cached_mo;
+        arena_duel_player1_cached_mo->player = &players[consoleplayer];
+    }
+}
+
 void ArenaDuel_InitLevel(void)
 {
     arena_duel_player2 = NULL;

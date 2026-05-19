@@ -13,6 +13,7 @@
 void ArenaDuel_InitLevel(void);
 void ArenaDuel_SpawnPlayer2(void);
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj);
+void ArenaDuel_RestorePlayer1Mobj(void);
 void ArenaDuel_Ticker(void);
 boolean ArenaDuel_IsEnabled(void);
 boolean ArenaDuel_IsFinished(void);

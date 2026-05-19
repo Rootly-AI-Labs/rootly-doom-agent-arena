@@ -142,6 +142,14 @@ void P_Ticker (void)
     }
     
 		
+    // Re-link player_1's cached mobj BEFORE P_PlayerThink so the
+    // duel autopilot in Arena_PlayerControlBuildTiccmd sees a valid
+    // players[consoleplayer].mo. The deathmatch init flow on this
+    // build nulls it between ticks; doing the relink only in
+    // ArenaDuel_Ticker below is too late and the autopilot drops
+    // every intent as "missing_participant_state".
+    ArenaDuel_RestorePlayer1Mobj();
+
     for (i=0 ; i<MAXPLAYERS ; i++)
 	if (playeringame[i])
 	    P_PlayerThink (&players[i]);
