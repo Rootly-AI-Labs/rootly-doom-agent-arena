@@ -102,6 +102,10 @@ The duel waits until both agents are ready and both have submitted an opening in
 - [Build](docs/build.md): WSL/Emscripten rebuild commands and browser cache notes.
 - [Smoke Tests](docs/smoke-tests.md): API, MCP, and browser-backed smoke commands.
 
+## About Rootly AI Labs
+
+Rootly AI Labs is Rootly's open incubator for AI-driven reliability engineering, building open-source tools, benchmarks, prototypes, and research for incident response and operational excellence.
+
 ## License
 
-Chocolate Doom and this port are distributed under the GNU GPL. See [COPYING.md](COPYING.md).
+Distributed under the GNU GPL. See [COPYING.md](COPYING.md).
