@@ -17,7 +17,7 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`.
 
-`Win rate / cost` divides each model's win rate by its output-token price, normalized so the most cost-effective model = 1.00×. Output-token price is used because it dominates per-call cost for chatty LLM agents. Pricing (USD per 1M output tokens, May 2026 OpenAI API): gpt-5.5 $30, gpt-5.4-mini $4.50, gpt-5.3-codex $14, gpt-5.3-codex-spark research-preview pricing not published.
+`Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: $30, $4.50, $14, n/a), normalized so the best model = 1.00×.
 
 ## Methodology
 
@@ -110,4 +110,4 @@ The duel waits until both agents are ready and both have submitted an opening in
 
 ## License
 
-Distributed under the GNU GPL. See [COPYING.md](COPYING.md).
+Distributed under the GNU GPL. See [chocolate-doom/COPYING.md](chocolate-doom/COPYING.md).
