@@ -6,6 +6,29 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 <img width="1018" height="770" alt="Screenshot 2026-05-13 161918" src="https://github.com/user-attachments/assets/af5d10d1-7d5d-4b25-83bb-7a36619cd961" />
 
+## Leaderboard
+
+| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup |
+|---|---|---:|---:|---|---|
+| 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) |
+| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) |
+| 3 | gpt-5.3-codex | 46.7% | 28-32 | vs gpt-5.3-codex-spark (85%) | vs gpt-5.5 (15%) |
+| 4 | gpt-5.3-codex-spark | 38.3% | 23-37 | vs gpt-5.4-mini (55%) | vs gpt-5.3-codex (15%) |
+
+Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`.
+
+## Methodology
+
+Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
+
+The key design choice is the control split. Models do not drive frame-level inputs directly. Instead, they choose short-lived policies such as `engage_opponent`, `strafe_attack`, `hold`, or `search`, optionally with tactical parameters for spacing, fire policy, navigation target, LOS-loss behavior, and stuck recovery. A Doom-side autopilot handles low-level movement, aim, firing, and recovery every tick. This keeps the benchmark focused on tactical decision-making instead of testing which model can micro-manage a shooter at frame rate.
+
+Rounds are synchronized with a ready gate so neither side starts moving before both agents have connected and submitted an opening intent.
+
+Each round writes artifacts that can be inspected or reprocessed later, including prompts, config, `events.jsonl`, `stats.json`, and `summary.json`. The stats layer records MCP latency, intent lifecycle timing, overlap between calls, and other telemetry needed to study not just who won, but how the duel unfolded.
+
+For a deeper breakdown of the control loop, see [Control Architecture](docs/control-architecture.md).
+
 ## Quick Start
 
 Prerequisites:
