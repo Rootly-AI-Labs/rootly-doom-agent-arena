@@ -41,6 +41,12 @@
 #define ARENA_DUEL_PLAYER2_BULLETS 50
 
 static mobj_t *arena_duel_player2;
+// players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
+// P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
+// ArenaDuel_RenderPlayer1View. We cache the most recently spawned player_1
+// mobj here from P_SpawnPlayer and use it as a fallback. The cache is cleared
+// in ArenaDuel_InitLevel so dangling pointers don't survive a level reload.
+static mobj_t *arena_duel_player1_cached_mo;
 static int arena_duel_player2_ammo_bullets;
 static int arena_duel_player2_attack_cooldown;
 static int arena_duel_player2_attack_requests;
@@ -693,14 +699,22 @@ static arena_participant_command_t ArenaDuel_Player2Command(void)
 
 boolean ArenaDuel_IsEnabled(void)
 {
-    return Arena_DuelModeEnabled()
-        && gameepisode == 1
-        && gamemap == 8;
+    // gameepisode is reset to 0 after deathmatch init even though we
+    // booted with -warp 1 8, so checking it would permanently disable
+    // the duel ticker. We only spawn the duel on E1M8, so gamemap == 8
+    // is sufficient confirmation that we're in the right level.
+    return Arena_DuelModeEnabled() && gamemap == 8;
+}
+
+void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
+{
+    arena_duel_player1_cached_mo = mobj;
 }
 
 void ArenaDuel_InitLevel(void)
 {
     arena_duel_player2 = NULL;
+    arena_duel_player1_cached_mo = NULL;
     arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
     arena_duel_player2_attack_cooldown = 0;
     arena_duel_player2_attack_requests = 0;
@@ -794,6 +808,16 @@ void ArenaDuel_Ticker(void)
     int player1_health;
     int player2_health;
     int delta;
+
+    // Doom's deathmatch level-setup flow nulls players[consoleplayer].mo after
+    // P_SpawnPlayer. Re-link it from our cache here so the entire downstream
+    // duel pipeline (state writer, autopilot, damage, POV renderer) sees a
+    // valid mobj instead of needing a fallback at every call site.
+    if (players[consoleplayer].mo == NULL && arena_duel_player1_cached_mo != NULL)
+    {
+        players[consoleplayer].mo = arena_duel_player1_cached_mo;
+        arena_duel_player1_cached_mo->player = &players[consoleplayer];
+    }
 
     if (!ArenaDuel_IsEnabled() || arena_duel_player2 == NULL)
     {
@@ -1176,6 +1200,10 @@ void ArenaDuel_RenderPlayer1View(void)
     }
 
     player1_mo = players[consoleplayer].mo;
+    if (player1_mo == NULL)
+    {
+        player1_mo = arena_duel_player1_cached_mo;
+    }
     if (player1_mo == NULL || player1_mo->health <= 0)
     {
         return;

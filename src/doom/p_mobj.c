@@ -33,6 +33,7 @@
 
 #include "doomstat.h"
 #include "arena_enemies.h"
+#include "arena_duel.h"
 
 
 void G_PlayerReborn (int player);
@@ -737,7 +738,14 @@ void P_SpawnPlayer (mapthing_t* mthing)
     mobj->health = p->health;
 
     p->mo = mobj;
-    p->playerstate = PST_LIVE;	
+    p->playerstate = PST_LIVE;
+    if (mthing->type == 1)
+    {
+        // See arena_duel.c: players[consoleplayer].mo gets nulled later in the
+        // deathmatch level-setup flow, so we cache the spawned mobj here for
+        // the duel POV renderer to fall back on.
+        ArenaDuel_CachePlayer1Mobj(mobj);
+    }
     p->refire = 0;
     p->message = NULL;
     p->damagecount = 0;
