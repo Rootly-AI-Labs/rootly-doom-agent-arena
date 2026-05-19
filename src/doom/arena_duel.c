@@ -537,13 +537,21 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
 static void ArenaDuel_RefillPlayer1Ammo(void)
 {
     player_t *player;
-    int i;
 
     player = &players[consoleplayer];
-    for (i = 0; i < NUMAMMO; i++)
-    {
-        player->ammo[i] = player->maxammo[i];
-    }
+    // Hardcode maxammo + ammo. On builds where players[consoleplayer]'s
+    // maxammo array stays at zeros (which has been observed when
+    // P_SpawnPlayer runs after the deathmatch init resets the player
+    // struct), the previous "ammo[i] = maxammo[i]" copy left every
+    // weapon empty and player_1 could never fire.
+    player->maxammo[0] = 200;   // am_clip
+    player->maxammo[1] = 50;    // am_shell
+    player->maxammo[2] = 300;   // am_cell
+    player->maxammo[3] = 50;    // am_misl
+    player->ammo[0] = 200;
+    player->ammo[1] = 50;
+    player->ammo[2] = 300;
+    player->ammo[3] = 50;
 }
 
 static void ArenaDuel_Player2Attack(void)
