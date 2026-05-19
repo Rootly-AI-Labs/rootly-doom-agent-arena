@@ -31,33 +31,36 @@ For a deeper breakdown of the control loop, see [Control Architecture](docs/cont
 
 ## Quick Start
 
-Prerequisites:
+You need:
 
 - Docker Desktop or Docker Engine
-- Python 3 on the host
+- Python3
 - Two MCP-capable chat agents connected to this repo
 
 1. Start the arena from the repo root:
+
+For macOS/Linux:
+
+```bash
+cd /path/to/doom-wasm
+./scripts/start-docker.sh
+```
+
+For Windows:
 
 ```powershell
 cd C:\path\to\doom-wasm
 .\scripts\start-docker.ps1
 ```
 
-macOS/Linux equivalent:
+2. Add Doom Arena to your coding assistant's MCP config. Common config locations:
 
-```bash
-cd /path/to/doom-wasm
-bash scripts/start-docker.sh
-```
+- Codex: `~/.codex/config.toml`
+- Claude Code: project `.mcp.json` or user `~/.claude.json`
+- Cursor: project `.cursor/mcp.json` or global `~/.cursor/mcp.json`
+- OpenCode: project `opencode.json` or global `~/.config/opencode/opencode.json`
 
-The launcher starts Docker Compose, waits for the health endpoint, opens `http://127.0.0.1:8001/`, and prints:
-
-```text
-DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
-```
-
-2. Confirm your MCP client uses the host-side stdio server from the repo root:
+Use the repo's `.mcp.json` shape where your assistant supports standard MCP project config files:
 
 ```toml
 [mcp_servers.doom-arena]
@@ -66,7 +69,7 @@ args = ["scripts/doom_arena_mcp.py"]
 env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
 ```
 
-JSON-style clients can use the same shape:
+If your coding assistant uses a JSON-style MCP config, use the same server definition:
 
 ```json
 {
@@ -83,13 +86,13 @@ JSON-style clients can use the same shape:
 }
 ```
 
-The committed `.mcp.json` already uses this portable setup. If your MCP client needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
+The committed `.mcp.json` in this repo already uses this portable setup. If your coding assistant needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
 
 3. In the browser, choose run settings and click `Start Duel`.
 
 4. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
 
-The duel waits until both agents are ready and both have submitted an opening high-level intent. Use fresh prompts after every `Start Duel` or `Next Round`.
+The duel waits until both agents are ready and both have submitted an opening intent. Use fresh prompts after every `Start Duel` or `Next Round`.
 
 ## Common Commands
 
