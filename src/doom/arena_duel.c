@@ -795,18 +795,16 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
 
-    // Hardcode east-wall floor-level spawn instead of pulling from slot 0
-    // (which is (424, 4041) — inside the central N-S approach corridor /
-    // raised lift, geometrically blocked from player_1's spawn). Picking
-    // a wall-to-wall layout in the open arena gives both players a clean
-    // line of sight and walkable space to maneuver.
-    x = 1323;
-    y = 3312;
-    angle = 199;
-    (void) angle;
+    if (!Arena_GetSpawnSlot(0, &x, &y, &angle))
+    {
+        x = 424;
+        y = 4041;
+        angle = 267;
+    }
 
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
-    mobj->angle = ANG180;  // 180 deg = facing west, toward player_1
+    (void) angle;
+    mobj->angle = ANG270;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;

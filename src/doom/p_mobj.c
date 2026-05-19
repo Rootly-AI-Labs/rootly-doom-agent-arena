@@ -712,19 +712,12 @@ void P_SpawnPlayer (mapthing_t* mthing)
     {
         // gameepisode is reset to 0 after deathmatch init on modern
         // Emscripten builds even though we booted with -warp 1 8, so
-        // gating on it would skip the arena-designated spawn and drop
-        // player_1 into a random deathmatch start. We only spawn the
-        // duel on E1M8, so gamemap == 8 is sufficient confirmation.
-        //
-        // The original (412, 2456) puts player_1 on E1M8's central raised
-        // lift / approach corridor that's geometrically unreachable from
-        // player_2's spawn. Use the west-wall floor-level slot instead so
-        // both spawns are in the open boss arena with no central lift
-        // between them.
+        // gating on it would skip the arena-designated spawn. We only
+        // spawn the duel on E1M8, so gamemap == 8 is sufficient.
         arena_start = *mthing;
-        arena_start.x = -553;
-        arena_start.y = 3347;
-        arena_start.angle = 0;  // 0 deg = facing east, toward player_2
+        arena_start.x = 412;
+        arena_start.y = 2456;
+        arena_start.angle = 90;
         mthing = &arena_start;
     }
 		
