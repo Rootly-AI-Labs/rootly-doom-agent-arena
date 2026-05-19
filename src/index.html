@@ -816,7 +816,7 @@
             </div>
         </div>
         <script>
-            var commonArgs = ["-iwad", "doom1.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+            var commonArgs = ["-iwad", "doom1.wad", "-warp", "1", "8", "-deathmatch", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
             var arenaDataMockPath = "arena_enemies.mock.tsv";
@@ -2503,7 +2503,11 @@
                     return;
                 }
 
-                if (player1PovState.lastFrame < 0 || player2PovState.lastFrame < 0) {
+                // Hide as soon as EITHER POV starts rendering. Player 1 POV
+                // currently stays blank (engine bug: consoleplayer's mobj is
+                // nulled after spawn), so requiring both frames would leave the
+                // launcher overlay stuck on "Loading duel view..." forever.
+                if (player1PovState.lastFrame < 0 && player2PovState.lastFrame < 0) {
                     return;
                 }
 
@@ -2541,10 +2545,11 @@
                 var source, palettedSource, paletteSource, pixelIndex, colorIndex, renderMode, value, x, y, jsNonzeroPixels, paintedPixels, paintedData;
                 var imageDataPixels, firstImageDataPixel, testPaintedPixels, testData, canvasRect, canvasStyle, paintError, readbackError, testError, shouldLogDiagnostic;
 
-                if (typeof Asyncify !== "undefined" && Asyncify.currData) {
-                    if (statusEl !== null && state.lastFrame < 0) { statusEl.textContent = label + " camera waiting for WASM"; }
-                    return;
-                }
+                // The Asyncify.currData guard was overly conservative: Emscripten
+                // sets Asyncify.currData while the Doom main loop is yielded to
+                // the browser, which is exactly when we want to read POV state.
+                // The ccalls below are pure reads of cached buffer pointers and
+                // are safe to run mid-yield.
 
                 try {
                     frame = Module.ccall(frameGetter, "number", [], []);
@@ -2615,7 +2620,7 @@
                 }
 
                 if (fastDuelPovRendering) {
-                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    source = (Module.HEAPU8 || HEAPU8).subarray(pointer, pointer + width * height * 4);
                     state.imageData.data.set(source);
                     state.context.putImageData(state.imageData, 0, 0);
                     state.lastFrame = frame;
@@ -2626,7 +2631,7 @@
 
                 jsNonzeroPixels = 0;
                 if (pointer && nonzeroPixels > 0) {
-                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    source = (Module.HEAPU8 || HEAPU8).subarray(pointer, pointer + width * height * 4);
                     state.imageData.data.set(source);
                     for (pixelIndex = 0; pixelIndex < width * height * 4; pixelIndex += 4) {
                         if (source[pixelIndex] !== 0 || source[pixelIndex + 1] !== 0 || source[pixelIndex + 2] !== 0) {
@@ -2636,8 +2641,8 @@
                     }
                     renderMode = "rgba";
                     if (jsNonzeroPixels === 0 && palettedPointer && palettePointer) {
-                        palettedSource = Module.HEAPU8.subarray(palettedPointer, palettedPointer + width * height);
-                        paletteSource = Module.HEAPU8.subarray(palettePointer, palettePointer + 256 * 4);
+                        palettedSource = (Module.HEAPU8 || HEAPU8).subarray(palettedPointer, palettedPointer + width * height);
+                        paletteSource = (Module.HEAPU8 || HEAPU8).subarray(palettePointer, palettePointer + 256 * 4);
                         for (pixelIndex = 0; pixelIndex < width * height; pixelIndex++) {
                             colorIndex = palettedSource[pixelIndex];
                             state.imageData.data[pixelIndex * 4 + 0] = paletteSource[colorIndex * 4 + 0];
@@ -2651,7 +2656,7 @@
                         renderMode = "js-palette";
                     }
                 } else if (palettedPointer && nonzeroPixels > 0) {
-                    palettedSource = Module.HEAPU8.subarray(palettedPointer, palettedPointer + width * height);
+                    palettedSource = (Module.HEAPU8 || HEAPU8).subarray(palettedPointer, palettedPointer + width * height);
                     jsNonzeroPixels = 0;
                     for (pixelIndex = 0; pixelIndex < width * height; pixelIndex++) {
                         colorIndex = palettedSource[pixelIndex];
@@ -2682,7 +2687,7 @@
                         renderMode = "false-color";
                     }
                 } else {
-                    source = Module.HEAPU8.subarray(pointer, pointer + width * height * 4);
+                    source = (Module.HEAPU8 || HEAPU8).subarray(pointer, pointer + width * height * 4);
                     state.imageData.data.set(source);
                     for (pixelIndex = 3; pixelIndex < width * height * 4; pixelIndex += 4) {
                         state.imageData.data[pixelIndex] = 255;
