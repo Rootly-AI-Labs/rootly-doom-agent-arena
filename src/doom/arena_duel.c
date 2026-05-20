@@ -810,18 +810,15 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
 
-    // Hardcode east-wall spawn (not slot 0 which is in the central
-    // corridor with player_1's original spot). Wall-to-wall placement
-    // in the open boss arena gives both players ~1893 units of LOS
-    // and walkable space; nobody gets pinned in stuck_recovery from
-    // tick 1 like (424, 4041) does.
-    x = 1323;
-    y = 3312;
-    angle = 199;
+    // North-center open-floor spawn, diagonal from player_1's
+    // southwest spawn (-206, 2142). ~2000 units apart in open space.
+    x = 424;
+    y = 4041;
+    angle = 267;
     (void) angle;
 
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
-    mobj->angle = ANG180;  // face west toward player_1
+    mobj->angle = ANG270;  // face south toward player_1
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;
