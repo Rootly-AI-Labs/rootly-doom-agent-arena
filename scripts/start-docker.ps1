@@ -6,12 +6,26 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $RepoRoot
 
 function Fail($Message) {
     Write-Host "ERROR: $Message" -ForegroundColor Red
     exit 1
+}
+
+function EnsureFile($Path, $DefaultContent) {
+    if (Test-Path -LiteralPath $Path -PathType Container) {
+        $Children = @(Get-ChildItem -LiteralPath $Path -Force)
+        if ($Children.Count -gt 0) {
+            Fail "$Path is a directory and is not empty. Remove it or move its contents before starting Docker."
+        }
+        Remove-Item -LiteralPath $Path -Force
+    }
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        Set-Content -LiteralPath $Path -Value $DefaultContent -Encoding UTF8 -NoNewline
+    }
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -33,6 +47,9 @@ $ComposeFiles = @("-f", "docker/docker-compose.yml")
 if ($Dev) {
     $ComposeFiles += @("-f", "docker/docker-compose.dev.yml")
 }
+
+$ControllerTokensPath = Join-Path $RepoRoot "src/arena_controller_tokens.local.json"
+EnsureFile $ControllerTokensPath "{}"
 
 Write-Host "Starting Doom Arena Docker backend on http://127.0.0.1:$Port ..."
 try {

@@ -49,6 +49,23 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
+ensure_file() {
+  local path="$1"
+  local default_content="$2"
+
+  if [ -d "$path" ]; then
+    if [ "$(find "$path" -mindepth 1 -print -quit)" ]; then
+      echo "ERROR: $path is a directory and is not empty. Remove it or move its contents before starting Docker." >&2
+      exit 1
+    fi
+    rmdir "$path"
+  fi
+
+  if [ ! -f "$path" ]; then
+    printf '%s' "$default_content" > "$path"
+  fi
+}
+
 COMPOSE_FILES=(-f docker/docker-compose.yml)
 if [ "$DEV" -eq 1 ]; then
   COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
@@ -87,6 +104,8 @@ if [ ! -f "$REPO_ROOT/src/doom1.wad" ] && [ ! -f "$REPO_ROOT/src/freedoom1.wad" 
   echo "  Put either src/doom1.wad or src/freedoom1.wad in the repo before starting Doom Arena." >&2
   exit 1
 fi
+
+ensure_file "$REPO_ROOT/src/arena_controller_tokens.local.json" "{}"
 
 echo "Starting Doom Arena Docker backend on $BASE_URL ..."
 DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" up -d --build
