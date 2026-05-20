@@ -958,8 +958,19 @@ void ArenaParticipantIntent_TickOrRefresh(void)
 
     if (file == NULL)
     {
+        int now_ms = I_GetTimeMS();
         for (i = 0; i < ARENA_PARTICIPANT_COUNT; i++)
         {
+            arena_participant_intent_slot_t *slot = &intent_slots[i];
+            // Same MEMFS-flicker guard as in ApplyCandidate: if the
+            // file is briefly missing between browser sync writes,
+            // don't blow away a slot whose intent is still within
+            // its duration + grace window. The next tick will read
+            // the file successfully and re-confirm the intent.
+            if (slot->intent.active && SlotIntentStillLive(slot, now_ms))
+            {
+                continue;
+            }
             SetInactive((arena_participant_id_t) i, "missing", "intent file missing");
             LogIntentChange((arena_participant_id_t) i);
         }

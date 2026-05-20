@@ -985,7 +985,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=duel-debug-p1-20260519";
+                script.src = "websockets-doom.js?v=duel-flicker-fix-2";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -3282,7 +3282,7 @@
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=duel-debug-p1-20260519";
+                        return path + "?v=duel-flicker-fix-2";
                     }
 
                     return path;
