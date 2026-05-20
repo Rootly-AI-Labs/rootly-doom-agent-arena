@@ -41,6 +41,8 @@
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
+#define ARENA_DUEL_PLAYER1_START_X (-190)
+#define ARENA_DUEL_PLAYER1_START_Y 2135
 #define ARENA_DUEL_PLAYER2_BULLETS 200
 
 static mobj_t *arena_duel_player2;
@@ -264,6 +266,7 @@ static void ArenaDuel_EnsurePlayer1Label(void)
 static void ArenaDuel_EnsurePlayer1StartingHealth(void)
 {
     player_t *player;
+    mobj_t *mobj;
 
     if (arena_duel_player1_health_initialized)
     {
@@ -276,8 +279,22 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
         return;
     }
 
+    mobj = player->mo;
+    P_UnsetThingPosition(mobj);
+    mobj->x = (fixed_t) ARENA_DUEL_PLAYER1_START_X * FRACUNIT;
+    mobj->y = (fixed_t) ARENA_DUEL_PLAYER1_START_Y * FRACUNIT;
+    mobj->momx = 0;
+    mobj->momy = 0;
+    P_SetThingPosition(mobj);
+    if (mobj->subsector != NULL && mobj->subsector->sector != NULL)
+    {
+        mobj->floorz = mobj->subsector->sector->floorheight;
+        mobj->ceilingz = mobj->subsector->sector->ceilingheight;
+    }
+    mobj->z = mobj->floorz;
+
     player->health = ARENA_DUEL_PARTICIPANT_HEALTH;
-    player->mo->health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     player->armortype = 0;
     player->armorpoints = 0;
     arena_duel_player1_health_initialized = true;
@@ -937,7 +954,7 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_EnsurePlayer1StartingHealth();
 
     // North-center open-floor spawn, diagonal from player_1's
-    // southwest spawn (-206, 2142). ~2000 units apart in open space.
+    // southwest spawn. ~2000 units apart in open space.
     x = 424;
     y = 4041;
     angle = 267;
