@@ -24,6 +24,7 @@
 #include "deh_misc.h"
 
 #include "m_random.h"
+#include "arena_duel.h"
 #include "p_local.h"
 #include "s_sound.h"
 
@@ -240,6 +241,8 @@ void P_FireWeapon (player_t* player)
 	
     if (!P_CheckAmmo (player))
 	return;
+
+    ArenaDuel_RecordPlayer1WeaponFired();
 	
     P_SetMobjState (player->mo, S_PLAY_ATK1);
     newstate = weaponinfo[player->readyweapon].atkstate;
@@ -883,5 +886,4 @@ void P_MovePsprites (player_t* player)
     player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 }
-
 

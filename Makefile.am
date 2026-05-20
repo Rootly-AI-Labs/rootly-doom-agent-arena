@@ -17,6 +17,6 @@ EXTRA_DIST=                             \
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-SUBDIRS=textscreen opl pcsound data src
+SUBDIRS=chocolate-doom/textscreen chocolate-doom/opl chocolate-doom/pcsound chocolate-doom/data src
 
 DIST_SUBDIRS=$(SUBDIRS)

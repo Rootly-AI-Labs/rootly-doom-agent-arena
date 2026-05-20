@@ -29,9 +29,9 @@ catch {
 }
 
 $env:DOOM_ARENA_PORT = [string]$Port
-$ComposeFiles = @("-f", "docker-compose.yml")
+$ComposeFiles = @("-f", "docker/docker-compose.yml")
 if ($Dev) {
-    $ComposeFiles += @("-f", "docker-compose.dev.yml")
+    $ComposeFiles += @("-f", "docker/docker-compose.dev.yml")
 }
 
 Write-Host "Starting Doom Arena Docker backend on http://127.0.0.1:$Port ..."

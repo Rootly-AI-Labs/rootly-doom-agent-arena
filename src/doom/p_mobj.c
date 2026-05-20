@@ -33,6 +33,7 @@
 
 #include "doomstat.h"
 #include "arena_enemies.h"
+#include "arena_duel.h"
 
 
 void G_PlayerReborn (int player);
@@ -707,14 +708,19 @@ void P_SpawnPlayer (mapthing_t* mthing)
     if (!playeringame[mthing->type-1])
 	return;					
 
-    if (Arena_ModeEnabled()
-        && gameepisode == 1
-        && gamemap == 8)
+    if (Arena_ModeEnabled() && gamemap == 8)
     {
+        // gameepisode is reset to 0 after deathmatch init on modern
+        // Emscripten builds even though we booted with -warp 1 8, so
+        // gating on it would skip the arena-designated spawn. We only
+        // spawn the duel on E1M8, so gamemap == 8 is sufficient.
+        //
+        // Southwest open-floor slot in the boss arena, diagonal from
+        // player_2's north-center spawn (424, 4041).
         arena_start = *mthing;
-        arena_start.x = 412;
-        arena_start.y = 2456;
-        arena_start.angle = 90;
+        arena_start.x = -206;
+        arena_start.y = 2142;
+        arena_start.angle = 45;  // northeast, toward player_2
         mthing = &arena_start;
     }
 		
@@ -737,7 +743,14 @@ void P_SpawnPlayer (mapthing_t* mthing)
     mobj->health = p->health;
 
     p->mo = mobj;
-    p->playerstate = PST_LIVE;	
+    p->playerstate = PST_LIVE;
+    if (mthing->type == 1)
+    {
+        // See arena_duel.c: players[consoleplayer].mo gets nulled later in the
+        // deathmatch level-setup flow, so we cache the spawned mobj here for
+        // the duel POV renderer to fall back on.
+        ArenaDuel_CachePlayer1Mobj(mobj);
+    }
     p->refire = 0;
     p->message = NULL;
     p->damagecount = 0;

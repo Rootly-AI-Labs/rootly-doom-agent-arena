@@ -1,15 +1,64 @@
 # Build
 
-Use WSL with the Emscripten SDK. Do not use Windows `mingw32-make` for the WASM build.
+The WASM build needs Emscripten. Three supported paths: macOS native (Homebrew),
+Linux native, or Windows via WSL. Do not use Windows `mingw32-make` for the
+WASM build.
 
-## Rebuild Doom Library
+## macOS
+
+One-time setup:
+
+```bash
+brew install automake libtool emscripten
+cd src
+autoreconf -fi
+emconfigure ./configure
+```
+
+Then every time you change C sources:
+
+```bash
+cd src
+emmake make -j4
+```
+
+For a full clean rebuild:
+
+```bash
+cd src
+emmake make clean && emmake make -j4
+```
+
+This produces `src/websockets-doom.{html,js,wasm}` directly on the host.
+
+## Linux
+
+Same as macOS but install Emscripten via your distro or the
+[emsdk](https://emscripten.org/docs/getting_started/downloads.html):
+
+```bash
+sudo apt install automake libtool
+# Install emsdk separately, then:
+source /path/to/emsdk_env.sh
+cd src
+autoreconf -fi
+emconfigure ./configure
+emmake make -j4
+```
+
+## Windows (WSL)
+
+The generated Makefiles point to Linux Emscripten paths such as
+`/root/emsdk/upstream/emscripten/emcc`, so run the build inside WSL:
+
+### Rebuild Doom Library
 
 ```powershell
 $wslRepo = (wsl -d Ubuntu-24.04 -e wslpath -a (Get-Location).Path).Trim()
 wsl -d Ubuntu-24.04 -e bash -lc "cd '$wslRepo/src/doom' && source /root/emsdk/emsdk_env.sh >/dev/null && make -f Makefile -o Makefile libdoom.a"
 ```
 
-## Rebuild Browser WASM
+### Rebuild Browser WASM
 
 ```powershell
 $wslRepo = (wsl -d Ubuntu-24.04 -e wslpath -a (Get-Location).Path).Trim()

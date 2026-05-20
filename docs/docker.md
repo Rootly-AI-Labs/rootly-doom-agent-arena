@@ -34,7 +34,9 @@ Both launchers:
 - open `http://127.0.0.1:8001/`
 - print the MCP backend environment variable
 
-After the browser opens, click `Start Duel`, copy the generated Player 1 and Player 2 prompts into separate MCP agents, and use fresh prompts after every `Next Round`.
+After the browser opens, click `Start Duel`, then manually paste the generated Player 1 and Player 2 prompts into two separate MCP agents. Use fresh prompts after every `Next Round`.
+
+The prompt handoff is manual by design in the current architecture. Docker runs the arena backend and the browser generates round-specific prompts and controller tokens, but the two chat agents still live outside the arena so the setup stays provider-neutral.
 
 Use a different port when needed:
 
@@ -51,7 +53,7 @@ Inside Docker, the arena server binds to `0.0.0.0`. The host port is published o
 Stop the backend with:
 
 ```bash
-docker compose down
+docker compose -f docker/docker-compose.yml down
 ```
 
 ## MCP Stdio Setup
@@ -125,6 +127,10 @@ Dev mode adds:
 
 That mount is for development only. It lets locally rebuilt `websockets-doom.{html,js,wasm}` files take effect after a browser hard refresh.
 
+## Controller-Token Sync
+
+The committed `docker/docker-compose.yml` bind-mounts `src/arena_controller_tokens.local.json` into the container so the in-container arena server's per-run token writes reach the host MCP server. Don't remove that volume entry.
+
 ## Results And Logs
 
 Docker and non-Docker runs share:
@@ -150,7 +156,7 @@ Each round can include `config.json`, `controller_tokens.json`, generated MCP pr
 View backend logs with:
 
 ```bash
-docker compose logs -f arena
+docker compose -f docker/docker-compose.yml logs -f arena
 ```
 
 The host-side stdio MCP log defaults to:

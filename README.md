@@ -8,14 +8,16 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 ## Leaderboard
 
-| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup |
-|---|---|---:|---:|---|---|
-| 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) |
-| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) |
-| 3 | gpt-5.3-codex | 46.7% | 28-32 | vs gpt-5.3-codex-spark (85%) | vs gpt-5.5 (15%) |
-| 4 | gpt-5.3-codex-spark | 38.3% | 23-37 | vs gpt-5.4-mini (55%) | vs gpt-5.3-codex (15%) |
+| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
+|---|---|---:|---:|---|---|---:|
+| 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) | 0.15× |
+| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) | **1.00× 💰** |
+| 3 | gpt-5.3-codex | 46.7% | 28-32 | vs gpt-5.3-codex-spark (85%) | vs gpt-5.5 (15%) | 0.27× |
+| 4 | gpt-5.3-codex-spark | 38.3% | 23-37 | vs gpt-5.4-mini (55%) | vs gpt-5.3-codex (15%) | n/a |
 
 Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`.
+
+`Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: $30, $4.50, $14, n/a), normalized so the best model = 1.00×.
 
 ## Methodology
 
@@ -88,9 +90,11 @@ If your coding assistant uses a JSON-style MCP config, use the same server defin
 
 The committed `.mcp.json` in this repo already uses this portable setup. If your coding assistant needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
 
-3. In the browser, choose run settings and click `Start Duel`.
+3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.
 
-4. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
+4. In the browser, choose run settings and click `Start Duel`.
+
+5. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one.
 
 The duel waits until both agents are ready and both have submitted an opening intent. Use fresh prompts after every `Start Duel` or `Next Round`.
 
@@ -104,8 +108,8 @@ The duel waits until both agents are ready and both have submitted an opening in
 
 ## About Rootly AI Labs
 
-Rootly AI Labs is Rootly's open incubator for AI-driven reliability engineering, building open-source tools, benchmarks, prototypes, and research for incident response and operational excellence.
+[Rootly AI Labs](https://rootly.com/ai-labs) is Rootly's open incubator for AI-driven reliability engineering, building open-source tools, benchmarks, prototypes, and research for incident response and operational excellence.
 
 ## License
 
-Distributed under the GNU GPL. See [COPYING.md](COPYING.md).
+Distributed under the GNU GPL. See [chocolate-doom/COPYING.md](chocolate-doom/COPYING.md).

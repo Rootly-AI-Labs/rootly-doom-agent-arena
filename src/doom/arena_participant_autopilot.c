@@ -809,9 +809,11 @@ static arena_participant_autopilot_command_t StuckRecoveryCommand(
 {
     arena_participant_autopilot_command_t command;
     int direction;
+    int retreat_distance;
 
     command = NoopCommand("stuck_recovery");
     direction = TacticalStrafeDirection(input, 12);
+    retreat_distance = RetreatThreshold(input, ARENA_AUTOPILOT_MIN_DISTANCE);
     command.active = true;
     if (IntentFieldEquals(input->intent.stuck_recovery_strategy, "back_up"))
     {
@@ -843,7 +845,11 @@ static arena_participant_autopilot_command_t StuckRecoveryCommand(
         command.strafe = direction;
         command.turn = -direction;
     }
-    command.attack = AttackAllowed(input, aim_error);
+    command.attack = AttackAllowed(input, aim_error)
+        && (input == NULL
+            || input->distance <= 0
+            || retreat_distance <= 0
+            || input->distance >= retreat_distance);
     command.aim_error = aim_error;
     command.stuck_recovery = true;
     CopyField(command.action,

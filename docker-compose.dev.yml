@@ -1,5 +1,0 @@
-services:
-  arena:
-    volumes:
-      - ./benchmarks/results:/app/benchmarks/results
-      - ./src:/app/src

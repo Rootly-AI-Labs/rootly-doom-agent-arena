@@ -72,6 +72,8 @@ http://127.0.0.1:8001/
 
 Choose the run settings, then click `Start Duel`. The browser/server will reset the duel, write fresh controller tokens, generate both instruction files, and show copyable prompts in the Player 1 and Player 2 panels. The generated prompts identify the agents as `player_1` and `player_2`; model labels are metadata only.
 
+The next step is still manual in the current flow: copy each prompt from the browser into its matching external MCP chat agent. This boundary is intentional for now so the arena can work with different MCP-capable clients instead of one built-in agent runner.
+
 The browser exports WASM state into `src/arena_game_state.local.tsv`.
 
 Browser sessions write a parent folder under:
@@ -215,3 +217,7 @@ Do this:
 4. Use only the newly generated browser prompts.
 
 Do not reuse older prompts after a reset.
+
+## Controller-Token Mismatch
+
+If agents get `Controller token file is for run_id X, but MCP client is on run_id Y`, your `docker/docker-compose.yml` is missing the `arena_controller_tokens.local.json` bind-mount. Restart Docker with the committed compose and it'll work.

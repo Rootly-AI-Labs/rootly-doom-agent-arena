@@ -49,13 +49,44 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-COMPOSE_FILES=(-f docker-compose.yml)
+COMPOSE_FILES=(-f docker/docker-compose.yml)
 if [ "$DEV" -eq 1 ]; then
-  COMPOSE_FILES+=(-f docker-compose.dev.yml)
+  COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
 fi
 
 BASE_URL="http://127.0.0.1:$PORT"
 HEALTH_URL="$BASE_URL/api/arena/health"
+REQUIRED_ASSETS=(
+  "$REPO_ROOT/src/websockets-doom.html"
+  "$REPO_ROOT/src/websockets-doom.js"
+  "$REPO_ROOT/src/websockets-doom.wasm"
+  "$REPO_ROOT/src/default.cfg"
+)
+
+missing_assets=()
+for asset in "${REQUIRED_ASSETS[@]}"; do
+  if [ ! -f "$asset" ]; then
+    missing_assets+=("${asset#$REPO_ROOT/}")
+  fi
+done
+
+if [ "${#missing_assets[@]}" -gt 0 ]; then
+  echo "ERROR: Missing prebuilt Doom WASM assets:" >&2
+  for asset in "${missing_assets[@]}"; do
+    echo "  - $asset" >&2
+  done
+  echo "" >&2
+  echo "This Docker runtime does not build Emscripten assets for you." >&2
+  echo "Rebuild the browser bundle first, then rerun this command." >&2
+  echo "See docs/build.md for the documented rebuild flow." >&2
+  exit 1
+fi
+
+if [ ! -f "$REPO_ROOT/src/doom1.wad" ] && [ ! -f "$REPO_ROOT/src/freedoom1.wad" ]; then
+  echo "ERROR: Missing IWAD file." >&2
+  echo "  Put either src/doom1.wad or src/freedoom1.wad in the repo before starting Doom Arena." >&2
+  exit 1
+fi
 
 echo "Starting Doom Arena Docker backend on $BASE_URL ..."
 DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" up -d --build

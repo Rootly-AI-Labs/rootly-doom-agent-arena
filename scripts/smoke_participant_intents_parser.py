@@ -287,13 +287,23 @@ int main(void)
                            "burst",
                            "extended movement control fields");
 
+    ArenaParticipantIntent_Init();
     write_intents(
         "run_test\tduel_e1m8\tp1_1000\t1000\t3500\tplayer_1\tengage_opponent\tbalanced\tplayer_2\t600\t0.5\t2500\n"
         "run_test\tduel_e1m8\tp2_1200\t1200\t3700\tplayer_2\tstrafe_attack\taggressive\tplayer_1\t500\t0.8\t2500\n"
     );
     fake_now_ms = 20;
     ArenaParticipantIntent_TickOrRefresh();
+    expect_active(ARENA_PARTICIPANT_PLAYER_1, "engage_opponent", "balanced", "valid player_1 with both participant rows");
     expect_active(ARENA_PARTICIPANT_PLAYER_2, "strafe_attack", "aggressive", "valid player_2 intent");
+
+    write_intents(
+        "run_test\tduel_e1m8\tp2_1300\t1300\t3800\tplayer_2\tengage_opponent\tbalanced\tplayer_1\t600\t0.5\t2500\n"
+    );
+    fake_now_ms = 25;
+    ArenaParticipantIntent_TickOrRefresh();
+    expect_active(ARENA_PARTICIPANT_PLAYER_1, "engage_opponent", "balanced", "player_1 sticky while row temporarily missing");
+    expect_active(ARENA_PARTICIPANT_PLAYER_2, "engage_opponent", "balanced", "player_2 updates while player_1 sticks");
 
     write_intents(
         "run_test\tduel_e1m8\tp1_invalid_intent\t2000\t4500\tplayer_1\tteleport_attack\tbalanced\tplayer_2\t600\t0.5\t2500\n"

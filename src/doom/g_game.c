@@ -47,6 +47,7 @@
 #include "d_main.h"
 
 #include "am_map.h"
+#include "arena_duel.h"
 #include "arena_enemies.h"
 #include "arena_player_control.h"
 #include "hu_stuff.h"
@@ -748,6 +749,11 @@ void G_Ticker(void)
     int i;
     int buf;
     ticcmd_t *cmd;
+
+    if (Arena_DuelModeEnabled() && gamemap == 8)
+    {
+        playeringame[consoleplayer] = true;
+    }
 
     // do player reborns if needed
     for (i = 0; i < MAXPLAYERS; i++)
@@ -2069,4 +2075,3 @@ boolean G_CheckDemoStatus(void)
 
     return false;
 }
-
