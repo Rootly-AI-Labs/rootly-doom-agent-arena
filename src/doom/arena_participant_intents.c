@@ -661,6 +661,17 @@ static void ApplyCandidate(arena_participant_id_t participant,
     now = I_GetTimeMS();
     if (!row->present)
     {
+        // The host -> MEMFS intent file gets rewritten by the browser
+        // sync loop and is briefly empty between writes. Without this
+        // guard the slot would flicker active -> inactive every couple
+        // of ticks, which made player_1 stop moving every time the
+        // sync hit an empty-file window. Keep the current intent live
+        // while its time-based duration + grace window is still in
+        // effect; only clear once the natural expiry passes.
+        if (slot->intent.active && SlotIntentStillLive(slot, now))
+        {
+            return;
+        }
         SetInactive(participant, "missing", "no active intent row");
         return;
     }
