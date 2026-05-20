@@ -325,6 +325,14 @@ int main(void)
     expect_command("stuck_recovery_strategy turn_right overrides default", command, 1, 0, 0, 1, 1, 1);
 
     input = base_input("strafe_attack");
+    input.distance = 80;
+    input.stuck_ticks = 9;
+    input.relative_angle = 0;
+    strcpy(input.intent.stuck_recovery_strategy, "strafe_out");
+    command = ArenaParticipantAutopilot_Decide(&input);
+    expect_command("point-blank stuck recovery suppresses attack to separate", command, 1, 0, 1, 0, 0, 1);
+
+    input = base_input("strafe_attack");
     input.distance = 800;
     input.intent.max_distance = 700;
     command = ArenaParticipantAutopilot_Decide(&input);

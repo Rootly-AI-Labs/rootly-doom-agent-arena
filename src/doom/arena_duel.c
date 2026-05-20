@@ -22,6 +22,7 @@
 #include "arena_participant_autopilot.h"
 #include "arena_participant_commands.h"
 #include "arena_participant_intents.h"
+#include "arena_player_control.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -34,6 +35,8 @@
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
+#define ARENA_DUEL_UNSTICK_DISTANCE 128
+#define ARENA_DUEL_UNSTICK_PUSH_SPEED (0x24 * 2048)
 #define ARENA_DUEL_MAX_EVENTS 4096
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
@@ -66,7 +69,6 @@ static char arena_duel_winner[16];
 static char arena_duel_terminal_reason[32];
 static int arena_duel_last_player1_health;
 static int arena_duel_last_player2_health;
-static char arena_duel_last_player1_attack_command_id[64];
 static char arena_duel_events[ARENA_DUEL_MAX_EVENTS][192];
 static int arena_duel_event_count;
 static char arena_duel_last_intent_id[ARENA_PARTICIPANT_COUNT][64];
@@ -139,6 +141,16 @@ static int ArenaDuel_Player1Health(void)
     }
 
     return player->mo->health;
+}
+
+static mobj_t *ArenaDuel_Player1Mobj(void)
+{
+    if (players[consoleplayer].mo != NULL)
+    {
+        return players[consoleplayer].mo;
+    }
+
+    return arena_duel_player1_cached_mo;
 }
 
 static boolean ArenaDuel_EnsurePlayer1ViewBuffers(void)
@@ -266,7 +278,29 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
 
     player->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     player->mo->health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    player->armortype = 0;
+    player->armorpoints = 0;
     arena_duel_player1_health_initialized = true;
+}
+
+static void ArenaDuel_EnsurePlayer1CombatState(void)
+{
+    player_t *player;
+
+    player = &players[consoleplayer];
+    if (player->mo == NULL)
+    {
+        return;
+    }
+
+    // Duel playback is on a flat arena floor. Keep the real player grounded
+    // and unarmored so arena movement/damage reflect visible combat instead
+    // of inheriting incidental single-player spawn state.
+    player->armortype = 0;
+    player->armorpoints = 0;
+    player->mo->z = player->mo->floorz;
+    player->mo->momz = 0;
+    player->mo->reactiontime = 0;
 }
 
 static void ArenaDuel_Chomp(char *line)
@@ -534,6 +568,88 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
     mobj->momy += FixedMul(move, finesine[fine_angle]);
 }
 
+static void ArenaDuel_SeparateParticipantsIfStuck(void)
+{
+    arena_participant_autopilot_debug_t player1_debug;
+    arena_participant_autopilot_debug_t player2_debug;
+    mobj_t *player1;
+    int distance;
+    angle_t angle_to_player2;
+
+    player1 = ArenaDuel_Player1Mobj();
+    if (player1 == NULL || arena_duel_player2 == NULL)
+    {
+        return;
+    }
+    if (player1->health <= 0 || arena_duel_player2->health <= 0)
+    {
+        return;
+    }
+
+    player1_debug = ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_PLAYER_1);
+    player2_debug = ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_PLAYER_2);
+    if (!player1_debug.stuck_recovery && !player2_debug.stuck_recovery)
+    {
+        return;
+    }
+
+    distance = P_AproxDistance(arena_duel_player2->x - player1->x,
+                               arena_duel_player2->y - player1->y) >> FRACBITS;
+    if (distance > ARENA_DUEL_UNSTICK_DISTANCE)
+    {
+        return;
+    }
+
+    angle_to_player2 = R_PointToAngle2(player1->x,
+                                       player1->y,
+                                       arena_duel_player2->x,
+                                       arena_duel_player2->y);
+    ArenaDuel_Thrust(player1, angle_to_player2 + ANG180, ARENA_DUEL_UNSTICK_PUSH_SPEED);
+    ArenaDuel_Thrust(arena_duel_player2, angle_to_player2, ARENA_DUEL_UNSTICK_PUSH_SPEED);
+}
+
+static void ArenaDuel_EnsurePlayer1AutopilotMomentum(void)
+{
+    player_t *player;
+    arena_participant_autopilot_command_t command;
+
+    player = &players[consoleplayer];
+    if (player->mo == NULL)
+    {
+        return;
+    }
+
+    command = Arena_PlayerLastAutopilotCommand();
+    if (!command.active || (!command.forward && !command.strafe))
+    {
+        return;
+    }
+
+    // P_PlayerThink should normally convert player_1's ticcmd into XY
+    // momentum. On the duel path we have observed runs where turn/fire are
+    // applied but movement thrust never materializes, leaving momx/momy at
+    // zero and the player pinned at spawn. Inject the same autopilot thrust
+    // here only when no XY momentum was produced.
+    if (player->mo->momx || player->mo->momy)
+    {
+        return;
+    }
+
+    if (command.forward != 0)
+    {
+        ArenaDuel_Thrust(player->mo,
+                         player->mo->angle,
+                         command.forward * ARENA_DUEL_MOVE_SPEED);
+    }
+
+    if (command.strafe != 0)
+    {
+        ArenaDuel_Thrust(player->mo,
+                         player->mo->angle - ANG90,
+                         command.strafe * ARENA_DUEL_SIDE_SPEED);
+    }
+}
+
 static void ArenaDuel_RefillPlayer1Ammo(void)
 {
     player_t *player;
@@ -734,6 +850,17 @@ void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
     arena_duel_player1_cached_mo = mobj;
 }
 
+void ArenaDuel_RecordPlayer1WeaponFired(void)
+{
+    if (!ArenaDuel_IsEnabled() || !arena_duel_started || arena_duel_finished)
+    {
+        return;
+    }
+
+    arena_duel_player1_shots_fired++;
+    ArenaDuel_AddEvent("participant_fired: player_1");
+}
+
 void ArenaDuel_RestorePlayer1Mobj(void)
 {
     // Called from P_Ticker BEFORE P_PlayerThink so that the autopilot
@@ -775,7 +902,6 @@ void ArenaDuel_InitLevel(void)
     arena_duel_terminal_reason[0] = '\0';
     arena_duel_last_player1_health = ARENA_DUEL_PARTICIPANT_HEALTH;
     arena_duel_last_player2_health = ARENA_DUEL_PARTICIPANT_HEALTH;
-    arena_duel_last_player1_attack_command_id[0] = '\0';
     arena_duel_event_count = 0;
     arena_duel_player2_view_frame = 0;
     arena_duel_player2_view_nonzero_pixels = 0;
@@ -844,7 +970,6 @@ void ArenaDuel_SpawnPlayer2(void)
 void ArenaDuel_Ticker(void)
 {
     arena_participant_command_t command;
-    arena_participant_command_t player1_command;
     int player1_health;
     int player2_health;
     int delta;
@@ -866,9 +991,11 @@ void ArenaDuel_Ticker(void)
 
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
+    ArenaDuel_EnsurePlayer1CombatState();
     ArenaDuel_RefillPlayer1Ammo();
     arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
 
+    Arena_LoadRunMetadata();
     ArenaParticipantCommands_Load();
     ArenaParticipantIntent_TickOrRefresh();
     ArenaDuel_LogIntentEvents();
@@ -889,18 +1016,6 @@ void ArenaDuel_Ticker(void)
     }
 
     ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_1);
-    player1_command = ArenaParticipantCommands_Command(ARENA_PARTICIPANT_PLAYER_1);
-
-    if (player1_command.attack
-        && strcmp(player1_command.command_id, arena_duel_last_player1_attack_command_id))
-    {
-        strncpy(arena_duel_last_player1_attack_command_id,
-                player1_command.command_id,
-                sizeof(arena_duel_last_player1_attack_command_id) - 1);
-        arena_duel_last_player1_attack_command_id[sizeof(arena_duel_last_player1_attack_command_id) - 1] = '\0';
-        arena_duel_player1_shots_fired++;
-        ArenaDuel_AddEvent("participant_fired: player_1");
-    }
 
     player1_health = ArenaDuel_Player1Health();
     player2_health = arena_duel_player2->health;
@@ -968,6 +1083,8 @@ void ArenaDuel_Ticker(void)
 
     command = ArenaDuel_Player2Command();
     ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_2);
+    ArenaDuel_EnsurePlayer1AutopilotMomentum();
+    ArenaDuel_SeparateParticipantsIfStuck();
 
     arena_duel_player2->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
 

@@ -171,3 +171,44 @@ def test_verify_controller_token_accepts_correct_token(tmp_path, monkeypatch):
     }
     client = _client_with_tokens(tmp_path, monkeypatch, tokens)
     client._verify_controller_token("player_1", "good-token")  # no exception
+
+
+def test_wait_for_match_start_does_not_false_positive_when_opening_intent_already_armed(tmp_path, monkeypatch):
+    tokens = {
+        "run_id": "run_current",
+        "player_1": {"model": "codex", "controller_token": "good-token"},
+        "enforce_controller_tokens": True,
+    }
+    client = _client_with_tokens(tmp_path, monkeypatch, tokens, run_id="run_current")
+    client.scenario_id = "duel_e1m8"
+    clock = iter((10_000, 10_001, 10_002, 10_250))
+    monkeypatch.setattr(mcp, "now_ms", lambda: next(clock, 10_250))
+
+    state_tsv = (
+        "run_id\tscenario_id\ttick\tkind\tentity_id\tteam\ttype\tlabel\tx\ty\tangle\thealth\talive\tdistance_to_player\trelative_angle_to_player\tline_of_sight\tcurrent_command\tready_weapon\tammo_bullets\tammo_shells\tammo_cells\tammo_rockets\tlast_x\tlast_y\tposition_delta\tstuck_ticks\tcommand_status\tlast_action\tmode\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\tmodel\tdamage_dealt\tshots_fired\tshots_hit\tinvalid_actions\tround\tseed\tintent\tintent_status\tintent_id\tintent_style\tautopilot_action\tautopilot_reason\taim_error\tpreferred_distance\tstuck_recovery\tcontroller_mode\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\tissued_at_ms\texpires_at_ms\treplan_recommended\treplan_reasons\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\texecuted_los_lost_action\texecuted_stuck_recovery_strategy\texecuted_movement_primitive\texecuted_turn_policy\texecuted_navigation_target\texecuted_fire_mode\n"
+        "run_current\tduel_e1m8\t1\tmatch\t\t\t\t\t0\t0\t0\t0\t0\t0\t0\t0\t\t\t0\t0\t0\t0\t0\t0\t0\t0\t\t\tduel\twaiting_for_agents\t\t\t0.0\t120\t\t0\t0\t0\t0\t1\t42\t\t\t\t\t\t\t0\t0\t0\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n"
+        "run_current\tduel_e1m8\t1\tparticipant\tplayer_1\tparticipant\tplayer\tplayer_1\t-206\t2142\t45\t150\t1\t2214\t26\t1\tnoop\tpistol\t200\t0\t0\t0\t-206\t2142\t0\t0\tmissing\tnoop\tduel\twaiting_for_agents\t\t\t0.0\t120\tcodex\t0\t0\t0\t0\t1\t42\tnone\tinactive\t\t\tnone\twaiting_for_both_agents\t0\t0\t0\tlow_level_command\tauto\tdirect\tonly_when_aligned\tmaintain\t\t-1\t0\t0\t0\t0\t\t0\t0\t0\t0\t0\t0\t0\tsweep\tdefault\t\tauto\topponent\tauto\t\t\t\t\t\t\n"
+    )
+    intent_tsv = (
+        "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\n"
+        "run_current\tduel_e1m8\tplayer_1_intent_1\t9000\t69000\tplayer_1\tengage_opponent\tbalanced\tplayer_2\t600\t0.500\t60000\talternate\tdirect\tonly_when_aligned\tclose\tlost_los,stuck,target_close\t1\t\t\t\t8\t256\t900\t192\t1200\tadvance_last_seen\tstrafe_out\t\tturn_to_enemy\topponent\tfire_when_aligned\n"
+    )
+    ready_tsv = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
+
+    def fake_request(method: str, path: str, body=None, content_type=None):
+        if method == "GET" and path == "/api/arena/state":
+            return state_tsv
+        if method == "GET" and path == "/api/arena/participant-intents":
+            return intent_tsv
+        if method == "GET" and path == "/api/arena/participant-ready":
+            return ready_tsv
+        raise AssertionError(f"unexpected request: {method} {path}")
+
+    monkeypatch.setattr(client, "_request", fake_request)
+    result = json.loads(client.wait_for_match_start("player_1", controller_token="good-token", timeout_ms=100, poll_ms=50))
+    assert result["started"] is False
+    assert result["phase"] == "waiting_for_agents"
+    assert "needs_opening_intent" not in result
+    assert result["intent_participants"] == ["player_1"]
+    assert result["missing_ready_participants"] == ["player_1", "player_2"]
+    assert result["missing_opening_intent_participants"] == ["player_2"]

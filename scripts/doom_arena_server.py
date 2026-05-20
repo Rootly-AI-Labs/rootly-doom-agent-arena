@@ -353,7 +353,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         if path == "/api/arena/participant-intents":
-            self.read_file(ARENA_PARTICIPANT_INTENT_TSV, "arena_participant_intents.local.tsv")
+            body = self.participant_intent_rows_to_tsv(self.current_run_participant_intent_rows())
+            self.write_tsv(body)
             return
 
         if path == "/api/arena/participant-ready":
@@ -1054,6 +1055,12 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         body = path.read_bytes()
+        self.write_tsv_bytes(body)
+
+    def write_tsv(self, body: str) -> None:
+        self.write_tsv_bytes(body.encode("utf-8"))
+
+    def write_tsv_bytes(self, body: bytes) -> None:
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", "text/tab-separated-values; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -1448,8 +1455,69 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         intent_row = self.normalize_participant_intent(payload)
         return self.update_participant_intent_row(intent_row)
 
+    def participant_intent_row_preferred(
+        self,
+        current: dict[str, str] | None,
+        candidate: dict[str, str] | None,
+    ) -> bool:
+        if candidate is None:
+            return False
+        if current is None:
+            return True
+
+        current_sequence = int(current.get("sequence_number", "") or 0)
+        candidate_sequence = int(candidate.get("sequence_number", "") or 0)
+        if candidate_sequence != current_sequence:
+            return candidate_sequence > current_sequence
+
+        current_issued = int(current.get("issued_at_ms", "0") or 0)
+        candidate_issued = int(candidate.get("issued_at_ms", "0") or 0)
+        if candidate_issued != current_issued:
+            return candidate_issued > current_issued
+
+        return candidate.get("intent_id", "") != current.get("intent_id", "")
+
+    def current_run_participant_intent_rows(self) -> list[dict[str, str]]:
+        rows_by_participant: dict[str, dict[str, str]] = {}
+        current_ms = now_ms()
+
+        for row in self.read_participant_intent_rows():
+            participant_id = row.get("participant_id", "")
+            if participant_id not in PARTICIPANTS:
+                continue
+            if row.get("run_id", "") != self.server.run_id:
+                continue
+            if row.get("scenario_id", "") != self.server.scenario_id:
+                continue
+            if int(row.get("expires_at_ms", "0") or 0) <= current_ms:
+                continue
+            if self.participant_intent_row_preferred(rows_by_participant.get(participant_id), row):
+                rows_by_participant[participant_id] = row
+
+        with self.server.stats_lock:
+            latest_by_participant = copy.deepcopy(self.server.latest_intent_by_participant)
+
+        for participant_id, intent in latest_by_participant.items():
+            if participant_id not in PARTICIPANTS:
+                continue
+            if str(intent.get("run_id", "")) != self.server.run_id:
+                continue
+            if str(intent.get("scenario_id", "")) != self.server.scenario_id:
+                continue
+            if int(intent.get("expires_at_ms") or 0) <= current_ms:
+                continue
+
+            row = self.normalize_participant_intent(intent)
+            if self.participant_intent_row_preferred(rows_by_participant.get(participant_id), row):
+                rows_by_participant[participant_id] = row
+
+        return [
+            rows_by_participant[participant_id]
+            for participant_id in sorted(rows_by_participant)
+        ]
+
     def update_participant_intent_row(self, intent_row: dict[str, str]) -> str:
-        rows = self.read_participant_intent_rows()
+        rows = self.current_run_participant_intent_rows()
         current_ms = now_ms()
         rows = [
             row for row in rows

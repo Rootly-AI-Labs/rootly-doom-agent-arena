@@ -39,6 +39,7 @@ PARTICIPANT_INTENT_HEADER = (
     "turn_policy\tnavigation_target\tfire_mode\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
+PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
 PARTICIPANTS = {"player_1", "player_2"}
 VALID_PARTICIPANT_INTENTS = {"hold", "engage_opponent", "strafe_attack", "search"}
 VALID_PARTICIPANT_INTENT_STYLES = {"balanced", "aggressive", "evasive", "cautious"}
@@ -210,6 +211,8 @@ class DoomArenaClient:
         poll_ms = clamp_int(poll_ms, 50, 5000, 250)
         started_at = now_ms()
         latest_state: dict[str, Any] = {}
+        ready_participants: set[str] = set()
+        intent_participants: set[str] = set()
         while now_ms() - started_at <= timeout_ms:
             try:
                 rows = parse_state(self._request("GET", "/api/arena/state"))
@@ -218,11 +221,36 @@ class DoomArenaClient:
                 latest_state = {"phase": "unavailable", "error": str(exc)}
             phase = str(latest_state.get("phase", ""))
             participant_state = latest_state.get(participant_id, {})
+            state_run_id = str(latest_state.get("run_id", self.run_id or ""))
+            state_scenario_id = str(latest_state.get("scenario_id", self.scenario_id or ""))
+            ready_participants = {
+                row.get("participant_id", "")
+                for row in self._read_participant_ready_rows()
+                if row.get("run_id", "") == state_run_id
+                and row.get("scenario_id", "") == state_scenario_id
+                and row.get("participant_id", "") in PARTICIPANTS
+                and row.get("status", "") == "ready"
+            }
+            try:
+                intent_rows = self._read_participant_intent_rows()
+                current_ms = now_ms()
+                intent_participants = {
+                    row.get("participant_id", "")
+                    for row in intent_rows
+                    if row.get("run_id", "") == state_run_id
+                    and row.get("scenario_id", "") == state_scenario_id
+                    and row.get("participant_id", "") in PARTICIPANTS
+                    and row.get("intent", "") not in {"", "none"}
+                    and int(row.get("expires_at_ms", "0") or 0) > current_ms
+                }
+            except DoomArenaError:
+                intent_participants = set()
             if (
                 phase == "waiting_for_agents"
                 and isinstance(participant_state, dict)
                 and str(participant_state.get("intent", "none")) in {"", "none"}
                 and str(participant_state.get("intent_status", "inactive")) == "inactive"
+                and participant_id not in intent_participants
             ):
                 return json.dumps(
                     {
@@ -261,6 +289,10 @@ class DoomArenaClient:
                 "elapsed_wait_ms": now_ms() - started_at,
                 "timeout_ms": timeout_ms,
                 "run_id": latest_state.get("run_id", ""),
+                "ready_participants": sorted(ready_participants),
+                "intent_participants": sorted(intent_participants),
+                "missing_ready_participants": sorted(PARTICIPANTS - ready_participants),
+                "missing_opening_intent_participants": sorted(PARTICIPANTS - intent_participants),
             },
             indent=2,
         )
@@ -804,6 +836,13 @@ class DoomArenaClient:
             "text/tab-separated-values; charset=utf-8",
         )
 
+    def _read_participant_ready_rows(self) -> list[dict[str, str]]:
+        try:
+            body = self._request("GET", "/api/arena/participant-ready")
+        except DoomArenaError:
+            return []
+        return parse_participant_ready_rows(body)
+
     def _read_enemy_command_rows(self) -> list[dict[str, str]]:
         try:
             body = self._request("GET", "/api/arena/enemy-commands")
@@ -1172,6 +1211,27 @@ def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
             and row["turn_policy"] in VALID_TURN_POLICIES
             and row["navigation_target"] in VALID_NAVIGATION_TARGETS
             and row["fire_mode"] in VALID_FIRE_MODES
+        ):
+            rows.append(row)
+    return rows
+
+
+def parse_participant_ready_rows(body: str) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    for line_number, line in enumerate(body.splitlines(), 1):
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        if line_number == 1 and parts == PARTICIPANT_READY_KEYS:
+            continue
+        if len(parts) != len(PARTICIPANT_READY_KEYS):
+            continue
+        row = dict(zip(PARTICIPANT_READY_KEYS, parts))
+        if (
+            row["participant_id"] in PARTICIPANTS
+            and row["status"] == "ready"
+            and row["ready_at_ms"].isdigit()
+            and int(row["ready_at_ms"]) > 0
         ):
             rows.append(row)
     return rows

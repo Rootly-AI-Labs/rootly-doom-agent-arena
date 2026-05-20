@@ -842,6 +842,8 @@
             var lastLoadedParticipantCommands = "";
             var lastLoadedParticipantIntents = "";
             var latestParticipantIntentRows = [];
+            var participantIntentSyncInFlight = false;
+            var participantIntentSyncRequestId = 0;
             var lastLoadedParticipantReady = "";
             var lastLoadedRunMetadata = "";
             var currentArenaRunId = "run_unknown";
@@ -985,7 +987,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=duel-flicker-fix-2";
+                script.src = "websockets-doom.js?v=cache-bust-1779235855";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -1127,6 +1129,16 @@
             }
 
             function syncArenaParticipantIntents() {
+                var requestId;
+
+                if (participantIntentSyncInFlight) {
+                    return;
+                }
+
+                participantIntentSyncInFlight = true;
+                participantIntentSyncRequestId++;
+                requestId = participantIntentSyncRequestId;
+
                 fetch(arenaParticipantIntentEndpoint, {
                     cache: "no-store",
                 })
@@ -1138,11 +1150,22 @@
                         return response.text();
                     })
                     .then(function (intentText) {
+                        var rows;
+
                         if (!intentText) {
                             intentText = arenaParticipantIntentHeader;
                         }
 
-                        latestParticipantIntentRows = parseTsv(intentText);
+                        if (requestId !== participantIntentSyncRequestId) {
+                            return;
+                        }
+
+                        rows = parseTsv(intentText);
+                        rows = mergeParticipantIntentRows(rows);
+                        latestParticipantIntentRows = rows;
+                        intentText = rows.length > 0
+                            ? participantIntentRowsToTsv(rows)
+                            : arenaParticipantIntentHeader;
 
                         if (!Module.FS) {
                             return;
@@ -1157,6 +1180,11 @@
                     })
                     .catch(function (error) {
                         console.warn("Doom Agent Arena: failed to load participant intent TSV", error);
+                    })
+                    .finally(function () {
+                        if (requestId === participantIntentSyncRequestId) {
+                            participantIntentSyncInFlight = false;
+                        }
                     });
             }
 
@@ -1795,6 +1823,66 @@
                         row[key] = values[index] || "";
                     });
                     return row;
+                });
+            }
+
+            function participantIntentHeaderKeys() {
+                return arenaParticipantIntentHeader.trim().split("\t");
+            }
+
+            function participantIntentRowsToTsv(rows) {
+                var keys = participantIntentHeaderKeys();
+                var body = arenaParticipantIntentHeader;
+
+                rows.forEach(function (row) {
+                    body += keys.map(function (key) {
+                        return row && row[key] !== undefined && row[key] !== null
+                            ? String(row[key])
+                            : "";
+                    }).join("\t") + "\n";
+                });
+
+                return body;
+            }
+
+            function mergeParticipantIntentRows(rows) {
+                var previousRows = latestParticipantIntentRows || [];
+                var nextRows = Array.isArray(rows) ? rows.slice() : [];
+                var mergedByParticipant = {};
+                var seenParticipant = {};
+                var sameRun;
+
+                if (previousRows.length === 0 || nextRows.length === 0) {
+                    return nextRows;
+                }
+
+                sameRun = previousRows.every(function (row) {
+                    return row.run_id === nextRows[0].run_id
+                        && row.scenario_id === nextRows[0].scenario_id;
+                });
+
+                if (!sameRun) {
+                    return nextRows;
+                }
+
+                nextRows.forEach(function (row) {
+                    if (row.participant_id === "player_1" || row.participant_id === "player_2") {
+                        seenParticipant[row.participant_id] = true;
+                    }
+                    mergedByParticipant[row.participant_id] = row;
+                });
+
+                previousRows.forEach(function (row) {
+                    if ((row.participant_id === "player_1" || row.participant_id === "player_2")
+                        && !seenParticipant[row.participant_id]) {
+                        mergedByParticipant[row.participant_id] = row;
+                    }
+                });
+
+                return ["player_1", "player_2"].filter(function (participantId) {
+                    return !!mergedByParticipant[participantId];
+                }).map(function (participantId) {
+                    return mergedByParticipant[participantId];
                 });
             }
 
@@ -3030,6 +3118,8 @@
                 })
                     .then(function () {
                         lastLoadedParticipantIntents = "";
+                        latestParticipantIntentRows = [];
+                        participantIntentSyncInFlight = false;
                         if (Module.FS) {
                             Module.FS.writeFile(arenaParticipantIntentPath, arenaParticipantIntentHeader);
                         }
@@ -3282,7 +3372,7 @@
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=duel-flicker-fix-2";
+                        return path + "?v=cache-bust-1779235855";
                     }
 
                     return path;

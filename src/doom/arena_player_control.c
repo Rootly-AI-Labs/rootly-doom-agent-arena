@@ -42,6 +42,8 @@ static fixed_t arena_player_last_autopilot_x;
 static fixed_t arena_player_last_autopilot_y;
 static int arena_player_autopilot_stuck_ticks;
 static boolean arena_player_have_autopilot_position;
+static arena_participant_autopilot_command_t arena_player_last_autopilot_command;
+static int arena_player_last_autopilot_command_ms;
 
 static int Arena_PlayerAngleDegrees(angle_t angle)
 {
@@ -122,16 +124,36 @@ static void Arena_PlayerApplyParticipantCommand(ticcmd_t *cmd)
     }
 }
 
+static void Arena_PlayerApplyAutopilotCommandToTiccmd(
+    ticcmd_t *cmd,
+    const arena_participant_autopilot_command_t *command);
+
 static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
 {
+    int now_ms;
     player_t *player;
     mobj_t *player2;
     angle_t angle_to_player2;
     arena_participant_autopilot_input_t input;
     arena_participant_autopilot_command_t command;
 
+    now_ms = I_GetTimeMS();
+
     if (!ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1))
     {
+        if (arena_player_last_autopilot_command.active
+            && now_ms - arena_player_last_autopilot_command_ms <= 250)
+        {
+            Arena_PlayerApplyAutopilotCommandToTiccmd(
+                cmd,
+                &arena_player_last_autopilot_command);
+            ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                     "retaining_last_autopilot_command");
+            return true;
+        }
+
+        memset(&arena_player_last_autopilot_command, 0, sizeof(arena_player_last_autopilot_command));
+        arena_player_last_autopilot_command_ms = 0;
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
                                                  "no_active_intent");
         return false;
@@ -141,6 +163,7 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
     player2 = ArenaDuel_Player2Mobj();
     if (player->mo == NULL || player2 == NULL)
     {
+        memset(&arena_player_last_autopilot_command, 0, sizeof(arena_player_last_autopilot_command));
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
                                                  "missing_participant_state");
         return false;
@@ -171,6 +194,8 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
     input.phase_finished = ArenaDuel_IsFinished() ? 1 : 0;
 
     command = ArenaParticipantAutopilot_Decide(&input);
+    arena_player_last_autopilot_command = command;
+    arena_player_last_autopilot_command_ms = now_ms;
     if (!command.active)
     {
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
@@ -182,21 +207,28 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
                                              &input.intent,
                                              &command);
 
-    cmd->forwardmove = command.forward * ARENA_PLAYER_FORWARD_SPEED;
-    cmd->sidemove = command.strafe * ARENA_PLAYER_SIDE_SPEED;
-    cmd->angleturn = -command.turn * ARENA_PLAYER_TURN_SPEED;
+    Arena_PlayerApplyAutopilotCommandToTiccmd(cmd, &command);
 
-    if (command.attack)
+    return true;
+}
+
+static void Arena_PlayerApplyAutopilotCommandToTiccmd(
+    ticcmd_t *cmd,
+    const arena_participant_autopilot_command_t *command)
+{
+    cmd->forwardmove = command->forward * ARENA_PLAYER_FORWARD_SPEED;
+    cmd->sidemove = command->strafe * ARENA_PLAYER_SIDE_SPEED;
+    cmd->angleturn = -command->turn * ARENA_PLAYER_TURN_SPEED;
+
+    if (command->attack)
     {
         cmd->buttons |= BT_ATTACK;
     }
 
-    if (command.use)
+    if (command->use)
     {
         cmd->buttons |= BT_USE;
     }
-
-    return true;
 }
 
 static void Arena_PlayerChomp(char *line)
@@ -334,6 +366,7 @@ boolean Arena_PlayerControlBuildTiccmd(ticcmd_t *cmd)
 {
     int now;
 
+    ArenaDuel_RestorePlayer1Mobj();
     Arena_PlayerLoadCommand();
 
     cmd->forwardmove = 0;
@@ -347,6 +380,7 @@ boolean Arena_PlayerControlBuildTiccmd(ticcmd_t *cmd)
         {
             return true;
         }
+        Arena_LoadRunMetadata();
         ArenaParticipantCommands_Load();
         ArenaParticipantIntent_TickOrRefresh();
         if (!ArenaDuel_IsStarted())
@@ -392,4 +426,9 @@ boolean Arena_PlayerControlBuildTiccmd(ticcmd_t *cmd)
     }
 
     return true;
+}
+
+arena_participant_autopilot_command_t Arena_PlayerLastAutopilotCommand(void)
+{
+    return arena_player_last_autopilot_command;
 }

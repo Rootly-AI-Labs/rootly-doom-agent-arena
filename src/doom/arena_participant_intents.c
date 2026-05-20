@@ -659,6 +659,18 @@ static void ApplyCandidate(arena_participant_id_t participant,
 
     slot = &intent_slots[participant];
     now = I_GetTimeMS();
+
+#define RETAIN_LIVE_SLOT_OR_SET_INACTIVE(_status, _reason)                  \
+    do                                                                      \
+    {                                                                       \
+        if (slot->intent.active && SlotIntentStillLive(slot, now))          \
+        {                                                                   \
+            return;                                                         \
+        }                                                                   \
+        SetInactive(participant, (_status), (_reason));                     \
+        return;                                                             \
+    } while (0)
+
     if (!row->present)
     {
         // The host -> MEMFS intent file gets rewritten by the browser
@@ -678,76 +690,94 @@ static void ApplyCandidate(arena_participant_id_t participant,
 
     if (row->intent_id[0] == '\0')
     {
-        SetInactive(participant, "invalid", "missing intent_id");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "missing intent_id");
     }
 
     if (!ValidIntent(row->intent))
     {
+        if (row->intent[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid intent");
+        }
         SetInactive(participant, "invalid", "invalid intent");
         return;
     }
 
     if (!ValidStyle(row->style))
     {
+        if (row->style[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid style");
+        }
         SetInactive(participant, "invalid", "invalid style");
         return;
     }
 
     if (!ValidStrafeDirection(row->strafe_direction))
     {
+        if (row->strafe_direction[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid strafe_direction");
+        }
         SetInactive(participant, "invalid", "invalid strafe_direction");
         return;
     }
 
     if (!ValidMovementBias(row->movement_bias))
     {
+        if (row->movement_bias[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid movement_bias");
+        }
         SetInactive(participant, "invalid", "invalid movement_bias");
         return;
     }
 
     if (!ValidFirePolicy(row->fire_policy))
     {
+        if (row->fire_policy[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid fire_policy");
+        }
         SetInactive(participant, "invalid", "invalid fire_policy");
         return;
     }
 
     if (!ValidDistancePolicy(row->distance_policy))
     {
+        if (row->distance_policy[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid distance_policy");
+        }
         SetInactive(participant, "invalid", "invalid distance_policy");
         return;
     }
 
     if (!OptionalNonNegativeInt(row->sequence_number))
     {
-        SetInactive(participant, "invalid", "invalid sequence_number");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid sequence_number");
     }
 
     if (!OptionalPositiveInt(row->decision_cadence_ms))
     {
-        SetInactive(participant, "invalid", "invalid decision_cadence_ms");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid decision_cadence_ms");
     }
 
     if (!OptionalNonNegativeInt(row->aim_tolerance)
         || (row->aim_tolerance[0] != '\0' && atoi(row->aim_tolerance) > 180))
     {
-        SetInactive(participant, "invalid", "invalid aim_tolerance");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid aim_tolerance");
     }
 
     if (!OptionalNonNegativeInt(row->fire_burst_ms))
     {
-        SetInactive(participant, "invalid", "invalid fire_burst_ms");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid fire_burst_ms");
     }
 
     if (!OptionalNonNegativeInt(row->min_fire_alignment)
         || (row->min_fire_alignment[0] != '\0' && atoi(row->min_fire_alignment) > 180))
     {
-        SetInactive(participant, "invalid", "invalid min_fire_alignment");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid min_fire_alignment");
     }
 
     if (!OptionalNonNegativeInt(row->min_distance)
@@ -755,50 +785,67 @@ static void ApplyCandidate(arena_participant_id_t participant,
         || !OptionalNonNegativeInt(row->retreat_if_closer_than)
         || !OptionalNonNegativeInt(row->push_if_farther_than))
     {
-        SetInactive(participant, "invalid", "invalid distance bound");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid distance bound");
     }
 
     if (row->min_distance[0] != '\0'
         && row->max_distance[0] != '\0'
         && atoi(row->min_distance) > atoi(row->max_distance))
     {
-        SetInactive(participant, "invalid", "min_distance greater than max_distance");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "min_distance greater than max_distance");
     }
 
     if (!ValidLosLostAction(row->los_lost_action))
     {
+        if (row->los_lost_action[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid los_lost_action");
+        }
         SetInactive(participant, "invalid", "invalid los_lost_action");
         return;
     }
 
     if (!ValidStuckRecoveryStrategy(row->stuck_recovery_strategy))
     {
+        if (row->stuck_recovery_strategy[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid stuck_recovery_strategy");
+        }
         SetInactive(participant, "invalid", "invalid stuck_recovery_strategy");
         return;
     }
 
     if (!ValidMovementPrimitive(row->movement_primitive))
     {
-        SetInactive(participant, "invalid", "invalid movement_primitive");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid movement_primitive");
     }
 
     if (!ValidTurnPolicy(row->turn_policy))
     {
+        if (row->turn_policy[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid turn_policy");
+        }
         SetInactive(participant, "invalid", "invalid turn_policy");
         return;
     }
 
     if (!ValidNavigationTarget(row->navigation_target))
     {
+        if (row->navigation_target[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid navigation_target");
+        }
         SetInactive(participant, "invalid", "invalid navigation_target");
         return;
     }
 
     if (!ValidFireMode(row->fire_mode))
     {
+        if (row->fire_mode[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "invalid fire_mode");
+        }
         SetInactive(participant, "invalid", "invalid fire_mode");
         return;
     }
@@ -821,6 +868,10 @@ static void ApplyCandidate(arena_participant_id_t participant,
     if (!ParseParticipant(row->target_id, &target_participant)
         || target_participant != OpponentOf(participant))
     {
+        if (row->target_id[0] == '\0')
+        {
+            RETAIN_LIVE_SLOT_OR_SET_INACTIVE("invalid", "target_id must be opposing participant");
+        }
         SetInactive(participant, "invalid", "target_id must be opposing participant");
         return;
     }
@@ -828,8 +879,7 @@ static void ApplyCandidate(arena_participant_id_t participant,
     duration_ms = IntentDurationMs(row);
     if (duration_ms <= 0)
     {
-        SetInactive(participant, "expired", "expires_at_ms is not after issued_at_ms");
-        return;
+        RETAIN_LIVE_SLOT_OR_SET_INACTIVE("expired", "expires_at_ms is not after issued_at_ms");
     }
 
     if (strcmp(slot->active_intent_id, row->intent_id))
@@ -934,6 +984,8 @@ static void ApplyCandidate(arena_participant_id_t participant,
         CopyField(intent.reason, sizeof(intent.reason), "active intent");
     }
     slot->intent = intent;
+
+#undef RETAIN_LIVE_SLOT_OR_SET_INACTIVE
 }
 
 void ArenaParticipantIntent_TickOrRefresh(void)
