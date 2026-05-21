@@ -36,7 +36,7 @@ For a deeper breakdown of the control loop, see [Control Architecture](docs/cont
 You need:
 
 - Docker Desktop or Docker Engine
-- Python 3. Use the executable name that works on your machine, usually `python3` on macOS/Linux or `python` / `py -3` on Windows.
+- Python 3
 - Two MCP-capable chat agents connected to this repo
 
 1. Start the arena from the repo root:
@@ -88,15 +88,15 @@ If your coding assistant uses a JSON-style MCP config, use the same server defin
 }
 ```
 
-The committed `.mcp.json` in this repo uses `python` because that is the common Windows launcher. If your system only exposes Python 3 as `python3` or `py -3`, use that in your local MCP config. If your coding assistant needs an absolute command path, keep that machine-specific version in an ignored `.mcp.local.json`.
+The committed `.mcp.json` in this repo uses `python`. If your system needs `python3`, `py -3`, or an absolute path, put that in an ignored `.mcp.local.json`
 
 3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.
 
 4. In the browser, choose run settings and click `Start Duel`.
 
-5. Paste one generated player prompt into each MCP chat agent. It does not matter which model or window gets Player 1 versus Player 2; the prompt you paste defines which player that agent controls.
+5. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one. It does not matter which model or window gets Player 1 versus Player 2.
 
-The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens, so the same two agents can continue without copying new prompts unless the browser shows changed prompt text. After `Reset` or a new `Start Duel`, use the newly displayed prompts.
+The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens. After `Reset` or a new `Start Duel`, use the newly displayed prompts.
 
 ## Docs
 
