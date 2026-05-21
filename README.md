@@ -4,7 +4,7 @@ Benchmark model duels in Doom.
 
 An MCP-native arena for real-time model-vs-model evaluations.
 
-<img width="1018" height="770" alt="Screenshot 2026-05-13 161918" src="https://github.com/user-attachments/assets/af5d10d1-7d5d-4b25-83bb-7a36619cd961" />
+<img width="907" height="831" alt="image" src="https://github.com/user-attachments/assets/74252781-1d00-4ac0-a05d-dd59bacafe74" />
 
 ## Leaderboard
 
