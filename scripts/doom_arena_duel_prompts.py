@@ -42,6 +42,8 @@ def instructions(
     enforce_tokens: bool,
     decision_cadence_ms: int = 750,
     intent_duration_ms: int = 25000,
+    current_round: int = 1,
+    total_rounds: int = 1,
 ) -> str:
     token_line = (
         f"Your controller_token is: `{controller_token}`\n\n"
@@ -51,6 +53,12 @@ def instructions(
         if enforce_tokens
         else "Controller token enforcement is disabled for this local trusted smoke run.\n"
     )
+    session_line = (
+        f"This benchmark session has `{total_rounds}` total matches. "
+        f"You are starting match `{current_round}`.\n"
+        if total_rounds > 1
+        else "This benchmark session has a single match.\n"
+    )
     return f"""# Doom Arena MCP Instructions: {participant_id}
 
 You are one of two separate MCP agents in Doom Arena Duel.
@@ -58,6 +66,7 @@ You are `{participant_id}`.
 You control only `{participant_id}`.
 
 {token_line}
+{session_line}
 Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.
@@ -66,9 +75,10 @@ Core rule:
 - After sending an intent, immediately observe again and choose the next intent; do not wait for the previous action to finish.
 - If the previous intent is still active, send a higher `sequence_number` to override it with the updated tactical policy.
 - Do not run your own timer, sleep loop, or `Start-Sleep`; keep updating as fast as the chat environment allows.
-- During the active match, use MCP tool calls only between decisions; do not add prose or explanations unless the match is finished or the user asks.
+- During the active match, use MCP tool calls only between decisions; do not add prose or explanations unless the benchmark session is finished or the user asks.
 - Use MCP tool `set_participant_intent` for normal play.
 - Do not use frame-level `forward`, `strafe`, `turn`, or `attack` controls.
+- Watch `run_id`, `current_round`, `total_rounds`, and `has_next_round` in observations and match results.
 
 Loop template:
 1. Call MCP tool `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
@@ -80,6 +90,8 @@ Loop template:
 7. Call MCP tool `set_participant_intent` once for this decision with `participant_id="{participant_id}"`, your controller token, the incremented `sequence_number`, and one normalized intent.
 8. Immediately call `get_participant_observation` again and choose the next high-level intent, even if the previous intent is still executing.
 9. Repeat observation and intent decisions until `get_match_result` shows `phase="finished"`.
+10. If `has_next_round=true`, stay in the same chat turn, keep polling `get_match_result` until `run_id` changes, then treat that as the next match: call `set_participant_ready` again, reset `sequence_number=1`, and repeat the opening flow.
+11. If `has_next_round=false`, stop after the final match result.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -156,7 +168,8 @@ Intent policy:
 
 | Situation | Intent and tactical controls |
 | --- | --- |
-| Match `phase` is `finished` | Call `stop_participant_intent`, then stop the loop. |
+| Match `phase` is `finished` and `has_next_round=false` | Call `stop_participant_intent`, then stop the loop. |
+| Match `phase` is `finished` and `has_next_round=true` | Keep polling `get_match_result` until `run_id` changes, then start the next match by calling `set_participant_ready` again and resetting `sequence_number` to `1`. |
 | Opponent hidden / `los_status=lost_los` | `search`, style `balanced`, `fire_policy=hold_fire`, `movement_bias=direct`, `distance_policy=maintain`, `navigation_target=last_seen_enemy`, omit `movement_primitive`. |
 | Opponent visible and far / `distance_bucket=far` | `engage_opponent`, style `balanced`, `distance_policy=close`, `movement_bias=direct`, `fire_policy=only_when_aligned`. |
 | Opponent visible and close / `distance_bucket=close` | `strafe_attack`, style `aggressive` or `evasive`, `distance_policy=kite` if pressured, otherwise `maintain`, `movement_bias=evasive` or `circle`, `fire_policy=suppressive`. |
@@ -190,6 +203,10 @@ Tactical parameter rules:
 
 State fields to watch:
 - `phase`
+- `run_id`
+- `current_round`
+- `total_rounds`
+- `has_next_round`
 - `winner`
 - `controller_mode`
 - `intent`
@@ -243,7 +260,7 @@ State fields to watch:
 - `opponent_visible` or line of sight if available
 
 Loop behavior:
-- Signal readiness once at the start with `set_participant_ready`.
+- Signal readiness at the start of each match with `set_participant_ready`.
 - Send one opening `set_participant_intent` before calling `wait_for_match_start`; choose the best current opening action from the observation. It is a synchronized start signal, not immediate movement.
 - Use a long opening intent duration such as `duration_ms=60000` so it stays armed while the other participant connects.
 - Use `wait_for_match_start` after the opening intent so both participants begin executing first actions together.
@@ -255,8 +272,9 @@ Loop behavior:
 - Treat every post-start intent as a replaceable tactical policy. If the last intent is still running, override it with the new higher-sequence intent.
 - Do not call `Start-Sleep` or run your own delay.
 - Reassess and refresh the intent before it expires if the same plan still makes sense.
-- Keep incrementing `sequence_number`; do not reuse an older number.
-- Stop when `get_match_result` returns `phase="finished"`.
+- Keep incrementing `sequence_number` within the current match; reset it to `1` when a new `run_id` starts.
+- Stop when `get_match_result` returns `phase="finished"` and `has_next_round=false`.
+- If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
 Rules:
@@ -267,10 +285,11 @@ Rules:
 - Only send your own opening high-level intent while phase is `waiting_for_agents`; Doom will hold it until both opening intents are present.
 - Use `get_participant_observation` before each high-level intent decision.
 - Use `set_participant_intent` once per decision during normal play.
-- If phase is finished, stop sending intents and controls.
+- If phase is finished and `has_next_round=false`, stop sending intents and controls.
+- If phase is finished and `has_next_round=true`, wait for the next `run_id`, then restart the ready/opening flow.
 - Do not call or request tools that directly mutate health, position, ammo, or winner.
 - Both players receive the same full shared state for this MVP.
-- Keep choosing high-level intents until the match is finished.
+- Keep choosing high-level intents until the benchmark session is finished.
 
 Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.

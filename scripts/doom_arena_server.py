@@ -255,6 +255,7 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.duel_controller_tokens: dict[str, Any] = {}
         self.duel_player_1_prompt = ""
         self.duel_player_2_prompt = ""
+        self.hide_enemy_position = False
 
 
 class DoomArenaHandler(SimpleHTTPRequestHandler):
@@ -345,7 +346,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         if path == "/api/arena/state":
-            self.read_file(ARENA_STATE_TSV, "arena_game_state.local.tsv")
+            self.read_arena_state_with_config()
             return
 
         if path == "/api/arena/health":
@@ -1217,6 +1218,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         body = path.read_bytes()
         self.write_tsv_bytes(body)
+
+    def read_arena_state_with_config(self) -> None:
+        if not ARENA_STATE_TSV.exists():
+            self.write_json(
+                HTTPStatus.NOT_FOUND,
+                {"ok": False, "error": "arena_game_state.local.tsv has not been written yet."},
+            )
+            return
+
+        text = ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace")
+        text = inject_arena_config_row(text, self.server.hide_enemy_position)
+        self.write_tsv_bytes(text.encode("utf-8"))
 
     def write_tsv(self, body: str) -> None:
         self.write_tsv_bytes(body.encode("utf-8"))
@@ -2309,6 +2322,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             effective_enforce_tokens,
             decision_cadence_ms,
             intent_duration_ms,
+            round_number,
+            total_rounds,
         )
         player_2_instructions = render_participant_instructions(
             "player_2",
@@ -2318,6 +2333,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             effective_enforce_tokens,
             decision_cadence_ms,
             intent_duration_ms,
+            round_number,
+            total_rounds,
         )
         player_1_path = run_dir / "player_1_mcp_instructions.md"
         player_2_path = run_dir / "player_2_mcp_instructions.md"
@@ -2407,6 +2424,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             )
         )
 
+        self.server.hide_enemy_position = bool(payload.get("hide_enemy_position", False))
+
         if arena_mode == "duel":
             self.server.player_1_model = str(
                 payload.get("player_1_model", DUEL_DEFAULTS["player_1_model"])
@@ -2485,6 +2504,35 @@ def read_arena_state() -> list[dict[str, str]]:
         return []
 
     return parse_tsv_rows(ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace"))
+
+
+CONFIG_COLUMN_HIDE_ENEMY = "hide_enemy_position"
+
+
+def inject_arena_config_row(text: str, hide_enemy_position: bool) -> str:
+    """Append a duel-config column + synthetic config row to the state TSV.
+
+    Doom WASM writes the file with a fixed header; we extend it with a single
+    config column so the existing zip-based parser picks up the value on an
+    `arena_config` row that the observation builder can find by kind.
+    """
+    lines = text.splitlines()
+    if not lines:
+        return text
+    header_cols = lines[0].split("\t")
+    if CONFIG_COLUMN_HIDE_ENEMY not in header_cols:
+        header_cols.append(CONFIG_COLUMN_HIDE_ENEMY)
+        lines[0] = "\t".join(header_cols)
+    try:
+        kind_idx = header_cols.index("kind")
+    except ValueError:
+        return text
+    config_idx = header_cols.index(CONFIG_COLUMN_HIDE_ENEMY)
+    row = [""] * len(header_cols)
+    row[kind_idx] = "arena_config"
+    row[config_idx] = "1" if hide_enemy_position else "0"
+    lines.append("\t".join(row))
+    return "\n".join(lines) + "\n"
 
 
 def parse_tsv_rows(text: str) -> list[dict[str, str]]:

@@ -172,6 +172,7 @@ class DoomArenaClient:
     def get_match_result(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
         state = make_shared_arena_state(rows)
+        duel_session = self._read_duel_session_status()
         if run_id and state.get("run_id") not in {"", run_id}:
             raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
         return json.dumps(
@@ -184,6 +185,10 @@ class DoomArenaClient:
                 "terminal_reason": state.get("terminal_reason", ""),
                 "elapsed_time_seconds": state.get("elapsed_time_seconds", 0),
                 "timeout_seconds": state.get("timeout_seconds", 120),
+                "duel_session_id": duel_session.get("duel_session_id", ""),
+                "current_round": duel_session.get("current_round", state.get("player_1", {}).get("round")),
+                "total_rounds": duel_session.get("total_rounds", 1),
+                "has_next_round": duel_session.get("has_next_round", False),
                 "player_1": state.get("player_1", {}),
                 "player_2": state.get("player_2", {}),
             },
@@ -204,7 +209,18 @@ class DoomArenaClient:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         state = parse_state(self._request("GET", "/api/arena/state"))
-        return json.dumps(make_participant_observation(state, participant_id), indent=2)
+        observation = make_participant_observation(state, participant_id)
+        duel_session = self._read_duel_session_status()
+        observation["duel_session_id"] = duel_session.get("duel_session_id", "")
+        observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
+        observation["total_rounds"] = duel_session.get("total_rounds", 1)
+        observation["has_next_round"] = duel_session.get("has_next_round", False)
+        if isinstance(observation.get("state"), dict):
+            observation["state"]["duel_session_id"] = observation["duel_session_id"]
+            observation["state"]["current_round"] = observation["current_round"]
+            observation["state"]["total_rounds"] = observation["total_rounds"]
+            observation["state"]["has_next_round"] = observation["has_next_round"]
+        return json.dumps(observation, indent=2)
 
     def set_participant_ready(self, participant_id: str, controller_token: str | None = None) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -880,6 +896,13 @@ class DoomArenaClient:
         except DoomArenaError:
             return []
         return parse_participant_ready_rows(body)
+
+    def _read_duel_session_status(self) -> dict[str, Any]:
+        try:
+            payload = json.loads(self._request("GET", "/api/arena/reset"))
+        except (DoomArenaError, json.JSONDecodeError):
+            return {}
+        return payload if isinstance(payload, dict) else {}
 
     def _read_enemy_command_rows(self) -> list[dict[str, str]]:
         try:
@@ -1652,6 +1675,8 @@ def make_enemy_observation(rows: list[dict[str, str]]) -> dict[str, Any]:
 
 def make_participant_observation(rows: list[dict[str, str]], participant_id: str) -> dict[str, Any]:
     match = next((row for row in rows if row.get("kind") == "match"), {})
+    config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
+    hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
     state = make_shared_arena_state(rows)
     participant = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == participant_id),
@@ -1664,12 +1689,59 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     )
     self_state = state.get(participant_id, {})
     opponent_state = state.get(opponent_id, {})
+    opponent_visible = participant.get("line_of_sight", "0") == "1"
+
+    if hide_enemy_position:
+        opponent_block: dict[str, Any] = {
+            "participant_id": opponent_id,
+            "alive": opponent.get("alive", "0") == "1",
+            "visible": opponent_visible,
+        }
+        if opponent_visible:
+            opponent_block.update(
+                {
+                    "distance": as_int(participant, "distance_to_player"),
+                    "relative_angle": as_int(participant, "relative_angle_to_player"),
+                    "distance_bucket": opponent_state.get("distance_bucket"),
+                    "los_status": opponent_state.get("los_status"),
+                }
+            )
+    else:
+        opponent_block = {
+            "participant_id": opponent_id,
+            "health": as_int(opponent, "health"),
+            "alive": opponent.get("alive", "0") == "1",
+            "x": as_int(opponent, "x"),
+            "y": as_int(opponent, "y"),
+            "angle": as_int(opponent, "angle"),
+            "ammo_bullets": as_int(opponent, "ammo_bullets"),
+            "visible": opponent_visible,
+            "distance": as_int(participant, "distance_to_player"),
+            "relative_angle": as_int(participant, "relative_angle_to_player"),
+            "pressure_state": opponent_state.get("pressure_state"),
+            "distance_bucket": opponent_state.get("distance_bucket"),
+            "los_status": opponent_state.get("los_status"),
+            "requested_fire_policy": opponent_state.get("requested_fire_policy"),
+            "executed_fire_action": opponent_state.get("executed_fire_action"),
+            "requested_distance_policy": opponent_state.get("requested_distance_policy"),
+            "executed_movement_action": opponent_state.get("executed_movement_action"),
+            "requested_strafe_direction": opponent_state.get("requested_strafe_direction"),
+            "executed_strafe_direction": opponent_state.get("executed_strafe_direction"),
+            "requested_los_lost_action": opponent_state.get("requested_los_lost_action"),
+            "requested_stuck_recovery_strategy": opponent_state.get("requested_stuck_recovery_strategy"),
+            "requested_movement_primitive": opponent_state.get("requested_movement_primitive"),
+            "requested_turn_policy": opponent_state.get("requested_turn_policy"),
+            "requested_navigation_target": opponent_state.get("requested_navigation_target"),
+            "requested_fire_mode": opponent_state.get("requested_fire_mode"),
+            "executed_turn_policy": opponent_state.get("executed_turn_policy"),
+            "executed_navigation_target": opponent_state.get("executed_navigation_target"),
+            "executed_fire_mode": opponent_state.get("executed_fire_mode"),
+        }
 
     return {
         "participant_id": participant_id,
         "opponent_id": opponent_id,
-        "state_mode": "shared_full",
-        "state": state,
+        "state_mode": "fog_of_war" if hide_enemy_position else "shared_full",
         "self": {
             "health": as_int(participant, "health"),
             "alive": participant.get("alive", "0") == "1",
@@ -1706,36 +1778,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "executed_fire_mode": self_state.get("executed_fire_mode"),
             "policy_compliance_reason": self_state.get("policy_compliance_reason"),
         },
-        "opponent": {
-            "participant_id": opponent_id,
-            "health": as_int(opponent, "health"),
-            "alive": opponent.get("alive", "0") == "1",
-            "x": as_int(opponent, "x"),
-            "y": as_int(opponent, "y"),
-            "angle": as_int(opponent, "angle"),
-            "ammo_bullets": as_int(opponent, "ammo_bullets"),
-            "visible": participant.get("line_of_sight", "0") == "1",
-            "distance": as_int(participant, "distance_to_player"),
-            "relative_angle": as_int(participant, "relative_angle_to_player"),
-            "pressure_state": opponent_state.get("pressure_state"),
-            "distance_bucket": opponent_state.get("distance_bucket"),
-            "los_status": opponent_state.get("los_status"),
-            "requested_fire_policy": opponent_state.get("requested_fire_policy"),
-            "executed_fire_action": opponent_state.get("executed_fire_action"),
-            "requested_distance_policy": opponent_state.get("requested_distance_policy"),
-            "executed_movement_action": opponent_state.get("executed_movement_action"),
-            "requested_strafe_direction": opponent_state.get("requested_strafe_direction"),
-            "executed_strafe_direction": opponent_state.get("executed_strafe_direction"),
-            "requested_los_lost_action": opponent_state.get("requested_los_lost_action"),
-            "requested_stuck_recovery_strategy": opponent_state.get("requested_stuck_recovery_strategy"),
-            "requested_movement_primitive": opponent_state.get("requested_movement_primitive"),
-            "requested_turn_policy": opponent_state.get("requested_turn_policy"),
-            "requested_navigation_target": opponent_state.get("requested_navigation_target"),
-            "requested_fire_mode": opponent_state.get("requested_fire_mode"),
-            "executed_turn_policy": opponent_state.get("executed_turn_policy"),
-            "executed_navigation_target": opponent_state.get("executed_navigation_target"),
-            "executed_fire_mode": opponent_state.get("executed_fire_mode"),
-        },
+        "opponent": opponent_block,
         "tactical_context": {
             "health_delta": self_state.get("health_delta"),
             "distance_bucket": self_state.get("distance_bucket"),
