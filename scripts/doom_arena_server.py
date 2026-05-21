@@ -42,13 +42,14 @@ ARENA_PARTICIPANT_INTENT_TSV = SRC_DIR / "arena_participant_intents.local.tsv"
 ARENA_PARTICIPANT_READY_TSV = SRC_DIR / "arena_participant_ready.local.tsv"
 ARENA_ENEMY_COMMAND_TSV = SRC_DIR / "arena_enemy_commands.local.tsv"
 ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
+MCP_PRESENCE_STALE_AFTER_MS = 45000
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
 DEFAULT_ARENA_MODE = "enemies"
 DUEL_DEFAULTS = {
     "arena_mode": "duel",
-    "player_1_model": "codex",
-    "player_2_model": "claude",
+    "player_1_model": "",
+    "player_2_model": "",
     "round": 1,
     "seed": 42,
     "timeout_seconds": 120,
@@ -240,6 +241,9 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.mcp_call_counter = 0
         self.mcp_calls: list[dict[str, Any]] = []
         self.active_mcp_calls: dict[str, dict[str, Any]] = {}
+        self.mcp_presence: dict[str, dict[str, Any]] = {}
+        self.mcp_presence_counter = 0
+        self.participant_ready_agents: dict[str, str] = {}
         self.intent_records: list[dict[str, Any]] = []
         self.latest_intent_by_participant: dict[str, dict[str, Any]] = {}
         self.summary_written_runs: set[str] = set()
@@ -303,6 +307,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.write_participant_ready()
             return
 
+        if path == "/api/arena/mcp-presence":
+            self.write_mcp_presence()
+            return
+
         if path == "/api/arena/mcp-call-telemetry":
             self.write_mcp_call_telemetry()
             return
@@ -359,6 +367,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/participant-ready":
             self.read_file(ARENA_PARTICIPANT_READY_TSV, "arena_participant_ready.local.tsv")
+            return
+
+        if path == "/api/arena/mcp-presence":
+            self.read_mcp_presence()
             return
 
         if path == "/api/arena/enemy-commands":
@@ -420,6 +432,133 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             },
         )
 
+    def write_mcp_presence(self) -> None:
+        payload = self.read_json_body()
+        record = self.record_mcp_presence(payload)
+        self.write_json(HTTPStatus.OK, {"ok": True, "client": record})
+
+    def record_mcp_presence(self, payload: dict[str, Any]) -> dict[str, Any]:
+        client_name = str(payload.get("client_name", "")).strip()
+        client_version = str(payload.get("client_version", "")).strip()
+        client_id = str(payload.get("client_id", "")).strip()
+        now = now_ms()
+
+        if not client_name:
+            client_name = "unknown MCP client"
+        if not client_id:
+            client_id = client_name.lower()
+
+        record = {
+            "client_id": client_id,
+            "client_name": client_name,
+            "client_version": client_version,
+            "source_addr": str(payload.get("source_addr", "")),
+            "connected_at_ms": int(payload.get("connected_at_ms", now)),
+            "last_seen_at_ms": now,
+            "status": "connected",
+        }
+
+        with self.server.stats_lock:
+            existing = self.server.mcp_presence.get(client_id)
+            if existing:
+                record["connected_at_ms"] = int(existing.get("connected_at_ms", record["connected_at_ms"]))
+            self.server.mcp_presence[client_id] = record
+
+        return record
+
+    def current_http_mcp_client_id(self) -> str:
+        session_id = self.headers.get("Mcp-Session-Id") or self.headers.get("mcp-session-id")
+        if session_id:
+            return f"http:{session_id}"
+        return f"http:{self.client_address[0]}"
+
+    def new_http_mcp_client_id(self) -> str:
+        session_id = self.headers.get("Mcp-Session-Id") or self.headers.get("mcp-session-id")
+        if session_id:
+            return f"http:{session_id}"
+        with self.server.stats_lock:
+            self.server.mcp_presence_counter += 1
+            counter = self.server.mcp_presence_counter
+        return f"http:{self.client_address[0]}:{counter:04d}"
+
+    def current_http_mcp_presence(self) -> dict[str, Any]:
+        client_id = self.current_http_mcp_client_id()
+        with self.server.stats_lock:
+            exact = self.server.mcp_presence.get(client_id)
+            if exact:
+                return copy.deepcopy(exact)
+            same_source = [
+                client for client in self.server.mcp_presence.values()
+                if client.get("source_addr") == self.client_address[0]
+            ]
+            if not same_source:
+                return {}
+            same_source.sort(key=lambda client: int(client.get("last_seen_at_ms", 0)), reverse=True)
+            return copy.deepcopy(same_source[0])
+
+    def touch_http_mcp_presence(self) -> None:
+        client_id = self.current_http_mcp_client_id()
+        now = now_ms()
+        with self.server.stats_lock:
+            exact = self.server.mcp_presence.get(client_id)
+            if exact:
+                exact["last_seen_at_ms"] = now
+                return
+            same_source = [
+                client for client in self.server.mcp_presence.values()
+                if client.get("source_addr") == self.client_address[0]
+            ]
+            if not same_source:
+                return
+            same_source.sort(key=lambda client: int(client.get("last_seen_at_ms", 0)), reverse=True)
+            same_source[0]["last_seen_at_ms"] = now
+
+    def remove_http_mcp_presence(self) -> None:
+        client_id = self.current_http_mcp_client_id()
+        with self.server.stats_lock:
+            if client_id in self.server.mcp_presence:
+                self.server.mcp_presence.pop(client_id, None)
+                return
+            same_source = [
+                client_id
+                for client_id, client in self.server.mcp_presence.items()
+                if client.get("source_addr") == self.client_address[0]
+            ]
+            if same_source:
+                same_source.sort(
+                    key=lambda selected_id: int(
+                        self.server.mcp_presence.get(selected_id, {}).get("last_seen_at_ms", 0)
+                    ),
+                    reverse=True,
+                )
+                self.server.mcp_presence.pop(same_source[0], None)
+
+    def read_mcp_presence(self) -> None:
+        cutoff_ms = now_ms() - MCP_PRESENCE_STALE_AFTER_MS
+        with self.server.stats_lock:
+            self.server.mcp_presence = {
+                client_id: client
+                for client_id, client in self.server.mcp_presence.items()
+                if int(client.get("last_seen_at_ms", 0)) >= cutoff_ms
+            }
+            clients = sorted(
+                (copy.deepcopy(client) for client in self.server.mcp_presence.values()),
+                key=lambda client: (
+                    str(client.get("client_name", "")).lower(),
+                    int(client.get("connected_at_ms", 0)),
+                ),
+            )
+            ready_agents = copy.deepcopy(self.server.participant_ready_agents)
+
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "clients": clients,
+                "ready_agents": ready_agents,
+            },
+        )
+
     def run_dir(self, run_id: str | None = None) -> Path:
         selected_run_id = run_id or self.server.run_id
         mapped = self.server.run_results_dirs.get(selected_run_id)
@@ -454,6 +593,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.mcp_call_counter = 0
             self.server.mcp_calls = []
             self.server.active_mcp_calls = {}
+            self.server.participant_ready_agents = {}
             self.server.intent_records = []
             self.server.latest_intent_by_participant = {}
             self.write_mcp_stats_locked()
@@ -976,6 +1116,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         params = message.get("params") or {}
 
         if method == "initialize":
+            client_info = params.get("clientInfo") if isinstance(params, dict) else {}
+            if not isinstance(client_info, dict):
+                client_info = {}
+            self.record_mcp_presence(
+                {
+                    "client_id": self.new_http_mcp_client_id(),
+                    "client_name": str(client_info.get("name", "") or "HTTP MCP client"),
+                    "client_version": str(client_info.get("version", "") or ""),
+                    "source_addr": self.client_address[0],
+                    "connected_at_ms": now_ms(),
+                }
+            )
             protocol_version = str(params.get("protocolVersion") or "2025-11-25")
             return {
                 "jsonrpc": "2.0",
@@ -1003,26 +1155,35 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             }
 
         if method == "notifications/initialized":
+            self.touch_http_mcp_presence()
             return None
 
-        if method == "ping":
-            return {"jsonrpc": "2.0", "id": message_id, "result": {}}
-
         if method == "tools/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"tools": tool_definitions()}}
 
         if method == "resources/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"resources": []}}
 
         if method == "prompts/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"prompts": []}}
+
+        if method == "shutdown":
+            self.remove_http_mcp_presence()
+            return {"jsonrpc": "2.0", "id": message_id, "result": None}
 
         if method == "tools/call":
             tool_name = str(params.get("name"))
             arguments = params.get("arguments") or {}
+            self.touch_http_mcp_presence()
             call_record = self.start_mcp_tool_call(tool_name, arguments if isinstance(arguments, dict) else {}, message_id)
             try:
                 client = DoomArenaClient(f"http://{self.server.args.host}:{self.server.args.port}")
+                presence = self.current_http_mcp_presence()
+                client.client_name = str(presence.get("client_name", "") or "HTTP MCP client")
+                client.client_version = str(presence.get("client_version", "") or "")
                 text = call_tool(client, tool_name, arguments if isinstance(arguments, dict) else {})
                 result = {"content": [{"type": "text", "text": text}], "isError": False}
             except (KeyError, TypeError, ValueError, DoomArenaError) as exc:
@@ -1380,6 +1541,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     rows = [self.normalize_participant_ready(row) for row in payload]
                     body = self.participant_ready_rows_to_tsv(rows).encode("utf-8")
                 elif isinstance(payload, dict):
+                    self.update_participant_ready_agent(payload)
                     body = self.update_participant_ready_json(payload).encode("utf-8")
                 else:
                     raise ValueError("JSON payload must be an object or list")
@@ -1401,6 +1563,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "bytes": len(body),
             },
         )
+
+    def update_participant_ready_agent(self, payload: dict[str, Any]) -> None:
+        participant_id = str(payload.get("participant_id", ""))
+        agent_label = str(payload.get("agent_label", "")).strip()
+
+        if participant_id not in PARTICIPANTS or not agent_label:
+            return
+
+        with self.server.stats_lock:
+            self.server.participant_ready_agents[participant_id] = agent_label
 
     def player_command_json_to_tsv(self, payload: dict[str, Any]) -> str:
         issued = int(payload.get("issued_at_ms", now_ms()))
@@ -1995,6 +2167,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ARENA_ENEMY_COMMAND_TSV.write_text(ENEMY_COMMAND_HEADER, encoding="utf-8")
         write_run_metadata(self.server)
         self.reset_mcp_stats()
+        if bool(payload.get("clear_duel_session", False)):
+            self.server.duel_session_id = ""
+            self.server.duel_total_rounds = 1
+            self.server.duel_current_round = 0
+            self.server.duel_controller_tokens = {}
+            self.server.duel_player_1_prompt = ""
+            self.server.duel_player_2_prompt = ""
 
         return {
             "ok": True,
@@ -2018,6 +2197,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         intent_duration_ms = int(payload.get("intent_duration_ms", 25000))
         enforce_tokens = bool(payload.get("enforce_controller_tokens", True))
         continue_session = bool(payload.get("continue_session", False))
+        restart_session = bool(payload.get("restart_session", False))
         try:
             requested_total_rounds = clamp_int(
                 payload.get("rounds", payload.get("round", DUEL_DEFAULTS["round"])),
@@ -2027,7 +2207,11 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         except (TypeError, ValueError):
             requested_total_rounds = int(DUEL_DEFAULTS["round"])
 
-        if continue_session and self.server.duel_session_id:
+        if restart_session and self.server.duel_session_id:
+            duel_session_id = self.server.duel_session_id
+            total_rounds = self.server.duel_total_rounds or requested_total_rounds
+            round_number = self.server.duel_current_round or 1
+        elif continue_session and self.server.duel_session_id:
             if not self.match_is_finished():
                 self.write_json(
                     HTTPStatus.CONFLICT,

@@ -159,7 +159,7 @@ benchmarks/results/session_*/round_01_run_*
 benchmarks/results/session_*/round_02_run_*
 ```
 
-`Start Duel` creates a new session. `Next Round` is only valid after the current round reaches `phase=finished`; it keeps the same session id, increments the round number, creates a new run id, and generates fresh prompts and controller tokens. Prompts are round-scoped, so agents must use the newly generated instructions after every `Next Round`.
+`Start Duel` creates a new session. `Next Round` is only valid after the current round reaches `phase=finished`; it keeps the same session id, increments the round number, creates a new run id, and reuses the same Player 1 and Player 2 prompts/tokens for that session. Agents can continue with the same prompts after `Next Round` unless the browser shows changed prompt text. Use newly displayed prompts after `Reset` or a new `Start Duel`.
 
 ## Ready Gate
 

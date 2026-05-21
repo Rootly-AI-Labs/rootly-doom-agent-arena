@@ -72,7 +72,7 @@ http://127.0.0.1:8001/
 
 Choose the run settings, then click `Start Duel`. The browser/server will reset the duel, write fresh controller tokens, generate both instruction files, and show copyable prompts in the Player 1 and Player 2 panels. The generated prompts identify the agents as `player_1` and `player_2`; model labels are metadata only.
 
-The next step is still manual in the current flow: copy each prompt from the browser into its matching external MCP chat agent. This boundary is intentional for now so the arena can work with different MCP-capable clients instead of one built-in agent runner.
+The next step is still manual in the current flow: copy one prompt from the browser into each external MCP chat agent. It does not matter which model or window gets Player 1 versus Player 2; the prompt you paste defines which player that agent controls. This boundary is intentional for now so the arena can work with different MCP-capable clients instead of one built-in agent runner.
 
 The browser exports WASM state into `src/arena_game_state.local.tsv`.
 
@@ -127,7 +127,7 @@ args = ["scripts/doom_arena_mcp.py"]
 env = { DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001" }
 ```
 
-If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper, but committed config should stay path-neutral.
+If your system exposes Python 3 as `python3` or `py -3`, use that command in your local MCP config instead. If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper.
 
 ## MCP Tool Check
 
@@ -183,9 +183,9 @@ docker compose down
 
 ## Multi-Round Sessions
 
-Set `Rounds` before clicking `Start Duel` if you want a multi-round session. After a round reaches `phase=finished`, click `Next Round`. This preserves the same `session_*` parent folder, creates the next `round_NN_run_*` child folder, writes fresh prompts/tokens, and returns directly to the duel prompt view.
+Set `Rounds` before clicking `Start Duel` if you want a multi-round session. After a round reaches `phase=finished`, click `Next Round`. This preserves the same `session_*` parent folder, creates the next `round_NN_run_*` child folder, reuses the same Player 1 and Player 2 prompts/tokens, and returns directly to the duel prompt view.
 
-Use the new prompts after every `Next Round`. Do not keep using prompts from the previous round because the controller tokens and run id are round-specific.
+Keep using the same Player 1 and Player 2 agents after `Next Round` unless the browser shows changed prompt text. Use newly displayed prompts after `Reset` or a new `Start Duel`.
 
 Click `Start Duel` again only when you want a new session.
 
@@ -214,7 +214,7 @@ Do this:
 1. Stop extra servers on `8001`.
 2. Hard refresh `http://127.0.0.1:8001/`.
 3. Click `Start Duel` for a new session, or `Next Round` if the existing session is finished and has remaining rounds.
-4. Use only the newly generated browser prompts.
+4. Use the current browser prompts for the active session. After `Reset` or a new `Start Duel`, do not reuse older prompts.
 
 Do not reuse older prompts after a reset.
 

@@ -114,9 +114,45 @@ class DoomArenaClient:
         self.server_url = server_url.rstrip("/")
         self.run_id = "run_unknown"
         self.scenario_id = DEFAULT_SCENARIO_ID
+        self.client_name = ""
+        self.client_version = ""
+        self.client_id = f"mcp_{os.getpid()}"
         # Keep MCP startup independent from the browser/arena HTTP state. Some
         # MCP clients expect initialize to be answered immediately and will mark
         # the server failed if startup performs slow network work.
+
+    def note_client_initialized(self, params: dict[str, Any]) -> None:
+        client_info = params.get("clientInfo") if isinstance(params, dict) else {}
+        if not isinstance(client_info, dict):
+            client_info = {}
+
+        self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
+        self.client_version = str(client_info.get("version", "") or "").strip()
+        self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
+        body = json.dumps(
+            {
+                "client_id": self.client_id,
+                "client_name": self.client_name,
+                "client_version": self.client_version,
+                "connected_at_ms": now_ms(),
+            }
+        ).encode("utf-8")
+        request = urllib.request.Request(
+            self.server_url + "/api/arena/mcp-presence",
+            data=body,
+            method="POST",
+            headers={"Content-Type": "application/json; charset=utf-8"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=0.5) as response:
+                response.read()
+        except (OSError, urllib.error.URLError) as exc:
+            log_mcp(f"mcp presence post failed: {exc}")
+
+    def agent_label(self) -> str:
+        if self.client_name and self.client_version:
+            return f"{self.client_name} {self.client_version}"
+        return self.client_name or "MCP agent"
 
     def get_arena_state(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
@@ -180,6 +216,7 @@ class DoomArenaClient:
             "participant_id": participant_id,
             "ready_at_ms": ready_at,
             "status": "ready",
+            "agent_label": self.agent_label(),
         }
         response_text = self._request(
             "POST",
@@ -191,6 +228,7 @@ class DoomArenaClient:
             {
                 "accepted": True,
                 "participant_id": participant_id,
+                "agent_label": self.agent_label(),
                 "ready": True,
                 "ready_at_ms": ready_at,
                 "server_response": parse_optional_json(response_text),
@@ -673,8 +711,8 @@ class DoomArenaClient:
 
     def reset_duel(
         self,
-        player_1_model: str = "codex",
-        player_2_model: str = "claude",
+        player_1_model: str = "",
+        player_2_model: str = "",
         round_number: int = 1,
         seed: int = 42,
         timeout_seconds: int = 120,
@@ -2031,8 +2069,8 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
         return client.get_duel_events(optional_string(arguments.get("run_id")), int(arguments.get("limit", 25)))
     if name == "reset_duel":
         return client.reset_duel(
-            str(arguments.get("player_1_model", "codex")),
-            str(arguments.get("player_2_model", "claude")),
+            str(arguments.get("player_1_model", "")),
+            str(arguments.get("player_2_model", "")),
             int(arguments.get("round", 1)),
             int(arguments.get("seed", 42)),
             int(arguments.get("timeout_seconds", 120)),
@@ -2213,6 +2251,7 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
     if method == "initialize":
         params = message.get("params") or {}
         log_mcp(f"initialize params={json.dumps(params, separators=(',', ':'))[:1000]}")
+        client.note_client_initialized(params)
         protocol_version = str(params.get("protocolVersion") or "2024-11-05")
         send_response(
             message_id,
