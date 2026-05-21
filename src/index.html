@@ -232,9 +232,40 @@
                 text-align: right;
             }
 
+            .arena-mcp-client-placeholder {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 4px;
+                text-align: left;
+            }
+
+            .arena-mcp-client-placeholder-label {
+                color: #f7f5d8;
+                font-weight: 700;
+            }
+
+            .arena-mcp-client-placeholder-value {
+                color: #ffce6b;
+                text-align: right;
+            }
+
             .arena-mcp-client-line {
                 display: block;
                 margin-top: 4px;
+                text-align: right;
+            }
+
+            .arena-mcp-client-line-warning {
+                color: #ff8a3d;
+            }
+
+            .arena-mcp-client-hint {
+                display: block;
+                margin-top: 6px;
+                font-size: 11px;
+                font-weight: 400;
+                color: rgba(247, 245, 216, 0.55);
                 text-align: right;
             }
 
@@ -242,6 +273,14 @@
                 color: #ffce6b;
                 font-weight: 700;
                 text-align: right;
+            }
+
+            .arena-launcher-footer {
+                margin-top: 12px;
+                color: #9a967a;
+                font: 11px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                text-align: center;
+                text-transform: uppercase;
             }
 
             .arena-mcp-status-value.reachable,
@@ -696,6 +735,12 @@
                 color: #ffce6b;
                 font-weight: 700;
                 text-transform: uppercase;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            details.duel-player-log[open] > .duel-log-title {
+                margin-bottom: 6px;
             }
 
             .duel-player-log-body {
@@ -789,6 +834,136 @@
                 text-transform: uppercase;
             }
 
+            /* Benchmark Results Modal styling */
+            .benchmark-modal-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(10, 10, 10, 0.85);
+                backdrop-filter: blur(8px);
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.3s ease;
+            }
+            .benchmark-modal-overlay[hidden] {
+                display: none !important;
+            }
+            .benchmark-modal-content {
+                width: min(850px, calc(100% - 32px));
+                max-height: 85vh;
+                background: #161614;
+                border: 2px solid #b8e986;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+                display: flex;
+                flex-direction: column;
+                color: #f7f5d8;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+                animation: slideDown 0.3s ease;
+            }
+            .benchmark-modal-header {
+                padding: 16px 24px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .benchmark-modal-header h2 {
+                margin: 0;
+                font: 700 24px/1 "Trebuchet MS", Verdana, sans-serif;
+                color: #b8e986;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .benchmark-modal-close {
+                background: none;
+                border: none;
+                color: #ffce6b;
+                font-size: 28px;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+            }
+            .benchmark-modal-close:hover {
+                color: #ff4d3d;
+            }
+            .benchmark-modal-body {
+                padding: 24px;
+                overflow-y: auto;
+                flex: 1;
+            }
+            .benchmark-summary-box {
+                background: #20201d;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 16px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .benchmark-summary-tally {
+                font-size: 20px;
+                font-weight: 700;
+                color: #ffce6b;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+            }
+            .benchmark-summary-models {
+                font-size: 13px;
+                color: #d3d0ad;
+            }
+            .benchmark-table-container {
+                overflow-x: auto;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .benchmark-results-table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+                font-size: 13px;
+            }
+            .benchmark-results-table th, .benchmark-results-table td {
+                padding: 12px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+            .benchmark-results-table th {
+                background: #1d1d1a;
+                color: #b8e986;
+                text-transform: uppercase;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+            }
+            .benchmark-results-table tr:hover {
+                background: rgba(255, 255, 255, 0.02);
+            }
+            .benchmark-modal-footer {
+                padding: 16px 24px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                justify-content: flex-end;
+            }
+            .benchmark-modal-btn {
+                cursor: pointer;
+                border: 1px solid #b8e986;
+                background: #2c3e1e;
+                color: #b8e986;
+                padding: 8px 16px;
+                font: 700 13px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                transition: all 0.2s ease;
+            }
+            .benchmark-modal-btn:hover {
+                background: #b8e986;
+                color: #10130d;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideDown {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+
         </style>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
     </head>
@@ -798,23 +973,6 @@
                 <div class="arena-launcher-card">
                     <h1 id="arena-launcher-title">Doom Arena Duel</h1>
                     <p id="arena-launcher-message">Set up both MCP agents, then start the benchmark.</p>
-                    <div class="duel-prompt-panel" id="arena-launcher-prompts">
-                        <div class="duel-prompt-instruction">
-                            Paste each prompt into a different connected MCP agent. The prompt determines whether that agent controls Player 1 or Player 2.
-                        </div>
-                        <div class="duel-prompt-grid">
-                            <div class="duel-prompt-card" id="duel-p1-prompt-card">
-                                <div class="duel-prompt-title">Prompt for MCP Client 1</div>
-                                <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
-                                <textarea id="duel-p1-prompt" readonly placeholder="Click Start Benchmark to generate the Player 1 prompt."></textarea>
-                            </div>
-                            <div class="duel-prompt-card" id="duel-p2-prompt-card">
-                                <div class="duel-prompt-title">Prompt for MCP Client 2</div>
-                                <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
-                                <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
-                            </div>
-                        </div>
-                    </div>
                     <details class="arena-advanced-settings">
                         <summary>Advanced</summary>
                         <div class="arena-config-grid">
@@ -830,6 +988,23 @@
                             </div>
                         </div>
                     </details>
+                    <div class="duel-prompt-panel" id="arena-launcher-prompts">
+                        <div class="duel-prompt-instruction">
+                            Paste each prompt into your favorite MCP client (Codex, Claude, OpenCode...).
+                        </div>
+                        <div class="duel-prompt-grid">
+                            <div class="duel-prompt-card" id="duel-p1-prompt-card">
+                                <div class="duel-prompt-title">Prompt for MCP Client 1</div>
+                                <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                                <textarea id="duel-p1-prompt" readonly placeholder="Click Start Benchmark to generate the Player 1 prompt."></textarea>
+                            </div>
+                            <div class="duel-prompt-card" id="duel-p2-prompt-card">
+                                <div class="duel-prompt-title">Prompt for MCP Client 2</div>
+                                <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                                <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
+                            </div>
+                        </div>
+                    </div>
                     <div id="arena-launcher-status"></div>
                     <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
                         <div class="arena-mcp-status-row stacked">
@@ -838,6 +1013,7 @@
                         </div>
                     </div>
                     <button id="arena-start-game" type="button">Start Benchmark</button>
+                    <div class="arena-launcher-footer">Built by Rootly AI Labs</div>
                 </div>
             </div>
             <div id="duel-header">
@@ -858,11 +1034,8 @@
                         </div>
                         <div class="duel-stat-grid">
                             <div>Health: <span id="duel-p1-health">150</span></div>
-                            <div>Move: <span id="duel-p1-action">-</span></div>
                             <div>Shots: <span id="duel-p1-shots">-</span></div>
                             <div>Damage: <span id="duel-p1-damage">-</span></div>
-                            <div>X,Y: <span id="duel-p1-xy">-</span></div>
-                            <div>POV Degrees: <span id="duel-p1-angle">-</span></div>
                         </div>
                         <div class="duel-health-bar" id="duel-p1-health-bar">
                             <div class="duel-health-bar-track">
@@ -880,10 +1053,10 @@
                         </div>
                         <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
                         <div id="player-1-pov-status">Waiting for Player 1 camera</div>
-                        <div class="duel-player-log">
-                            <div class="duel-log-title">Player 1 MCP Command Logs:</div>
+                        <details class="duel-player-log">
+                            <summary class="duel-log-title">Player 1 MCP Command Logs</summary>
                             <div class="duel-player-log-body" id="duel-p1-log"></div>
-                        </div>
+                        </details>
                     </div>
                 </div>
                 <div class="duel-player-runtime-panel">
@@ -894,11 +1067,8 @@
                         </div>
                         <div class="duel-stat-grid">
                             <div>Health: <span id="duel-p2-health">150</span></div>
-                            <div>Move: <span id="duel-p2-action">-</span></div>
                             <div>Shots: <span id="duel-p2-shots">-</span></div>
                             <div>Damage: <span id="duel-p2-damage">-</span></div>
-                            <div>X,Y: <span id="duel-p2-xy">-</span></div>
-                            <div>POV Degrees: <span id="duel-p2-angle">-</span></div>
                         </div>
                         <div class="duel-health-bar" id="duel-p2-health-bar">
                             <div class="duel-health-bar-track">
@@ -915,10 +1085,10 @@
                             </div>
                         </div>
                         <div id="player-2-pov-status">Waiting for Player 2 camera</div>
-                        <div class="duel-player-log">
-                            <div class="duel-log-title">Player 2 MCP Command Logs:</div>
+                        <details class="duel-player-log">
+                            <summary class="duel-log-title">Player 2 MCP Command Logs</summary>
                             <div class="duel-player-log-body" id="duel-p2-log"></div>
-                        </div>
+                        </details>
                     </div>
                 </div>
             </div>
@@ -961,6 +1131,44 @@
                 </div>
             </div>
         </div>
+
+        <!-- Benchmark Results Popup Modal -->
+        <div id="benchmark-results-modal" class="benchmark-modal-overlay" hidden>
+            <div class="benchmark-modal-content">
+                <div class="benchmark-modal-header">
+                    <h2>Benchmark Completed</h2>
+                    <button class="benchmark-modal-close" onclick="closeBenchmarkResultsModal()">&times;</button>
+                </div>
+                <div class="benchmark-modal-body">
+                    <div class="benchmark-summary-box">
+                        <div class="benchmark-summary-tally" id="benchmark-results-tally">Loading tally...</div>
+                        <div class="benchmark-summary-models" id="benchmark-results-models">Models info</div>
+                    </div>
+                    <div class="benchmark-table-container">
+                        <table class="benchmark-results-table">
+                            <thead>
+                                <tr>
+                                    <th>Round</th>
+                                    <th>Winner</th>
+                                    <th>Reason</th>
+                                    <th>Duration</th>
+                                    <th>Final Health</th>
+                                    <th>Damage Dealt</th>
+                                    <th>Shots Fired/Hit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="benchmark-results-table-body">
+                                <!-- filled dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="benchmark-modal-footer">
+                    <button type="button" class="benchmark-modal-btn" onclick="closeBenchmarkResultsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
         <script>
             var commonArgs = ["-iwad", "doom1.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
@@ -1040,9 +1248,11 @@
             var lastRunStatsFetchAt = 0;
             var duelLauncherHidePending = false;
             var duelAutoStartAfterReloadPending = false;
+            var benchmarkResultsShownForRunId = "";
             var duelAutoAdvanceTimer = 0;
             var duelAutoAdvanceInFlight = false;
             var duelLastAutoAdvancedRunId = "";
+            var duelFinishedElapsedByRun = {};
             var forceArenaMenuMode = false;
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
 
@@ -1810,6 +2020,7 @@
             function resetDuelUiForFreshRound() {
                 resetDuelAutoAdvanceState();
                 duelLastAutoAdvancedRunId = "";
+                duelFinishedElapsedByRun = {};
                 currentDuelSession = null;
                 currentArenaRunId = "";
                 currentArenaRound = 1;
@@ -2296,7 +2507,23 @@
                 node.innerHTML = "";
 
                 if (!clients || clients.length === 0) {
-                    node.textContent = "No MCP clients detected";
+                    [
+                        { label: "P1", value: "waiting for MCP client connection" },
+                        { label: "P2", value: "waiting for MCP client connection" }
+                    ].forEach(function (placeholder) {
+                        var line = document.createElement("div");
+                        var label = document.createElement("span");
+                        var value = document.createElement("span");
+
+                        line.className = "arena-mcp-client-placeholder";
+                        label.className = "arena-mcp-client-placeholder-label";
+                        value.className = "arena-mcp-client-placeholder-value";
+                        label.textContent = placeholder.label;
+                        value.textContent = placeholder.value;
+                        line.appendChild(label);
+                        line.appendChild(value);
+                        node.appendChild(line);
+                    });
                     return;
                 }
 
@@ -2306,11 +2533,23 @@
                     var name = client.client_name || "MCP client";
                     var version = client.client_version || "";
                     var label = version ? name + " " + version : name;
+                    var ageMs = Number(client.last_seen_at_ms);
+                    var ageSeconds = Number.isFinite(ageMs) && ageMs > 0
+                        ? Math.max(0, Math.round((Date.now() - ageMs) / 1000))
+                        : null;
 
                     line.className = "arena-mcp-client-line";
+                    if (ageSeconds !== null && ageSeconds >= 20) {
+                        line.classList.add("arena-mcp-client-line-warning");
+                    }
                     line.textContent = label + " · " + formatSeenAgo(client.last_seen_at_ms);
                     node.appendChild(line);
                 });
+
+                var hint = document.createElement("span");
+                hint.className = "arena-mcp-client-hint";
+                hint.textContent = "Client considered dead after 25s without contact.";
+                node.appendChild(hint);
             }
 
             function updateMcpSetupModels() {
@@ -2798,6 +3037,137 @@
                     duelAutoAdvanceInFlight = true;
                     startDuel({ continueSession: true, autoAdvance: true });
                 }, 1250);
+            }
+
+            function closeBenchmarkResultsModal() {
+                var modal = document.getElementById("benchmark-results-modal");
+                if (modal !== null) {
+                    modal.hidden = true;
+                }
+            }
+
+            function showBenchmarkResultsPopup() {
+                var modal = document.getElementById("benchmark-results-modal");
+                if (modal === null) {
+                    return;
+                }
+                modal.hidden = false;
+
+                var tallyNode = document.getElementById("benchmark-results-tally");
+                var modelsNode = document.getElementById("benchmark-results-models");
+                var tbodyNode = document.getElementById("benchmark-results-table-body");
+
+                if (tallyNode) tallyNode.textContent = "Loading tally...";
+                if (modelsNode) modelsNode.textContent = "";
+                if (tbodyNode) tbodyNode.innerHTML = "<tr><td colspan='7' style='text-align: center;'>Loading summary data...</td></tr>";
+
+                var sessionId = currentDuelSession ? currentDuelSession.duel_session_id : "";
+                var url = "/api/arena/duel-session-results?duel_session_id=" + encodeURIComponent(sessionId);
+
+                fetch(url, { cache: "no-store" })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error("HTTP error " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (!data.ok || !data.rounds || data.rounds.length === 0) {
+                            if (tbodyNode) tbodyNode.innerHTML = "<tr><td colspan='7' style='text-align: center;'>No round results found.</td></tr>";
+                            return;
+                        }
+
+                        var p1Wins = 0;
+                        var p2Wins = 0;
+                        var draws = 0;
+                        var rounds = data.rounds;
+
+                        var p1Model = data.player_1_model || "Player 1";
+                        var p2Model = data.player_2_model || "Player 2";
+
+                        var tbodyHtml = "";
+                        rounds.forEach(function (r) {
+                            var w = r.winner || "none";
+                            var displayWinner = "Draw";
+                            if (w === "player_1") {
+                                p1Wins++;
+                                displayWinner = "Player 1";
+                            } else if (w === "player_2") {
+                                p2Wins++;
+                                displayWinner = "Player 2";
+                            } else {
+                                draws++;
+                            }
+
+                            var terminalReason = r.terminal_reason || "finished";
+                            var elapsed = r.elapsed_time_seconds || "0";
+                            var h1 = r.player_1_health_end !== undefined ? r.player_1_health_end : "-";
+                            var h2 = r.player_2_health_end !== undefined ? r.player_2_health_end : "-";
+                            var dmg1 = r.player_1_damage_dealt !== undefined ? r.player_1_damage_dealt : "0";
+                            var dmg2 = r.player_2_damage_dealt !== undefined ? r.player_2_damage_dealt : "0";
+                            var shots1 = (r.player_1_shots_fired || 0) + "/" + (r.player_1_shots_hit || 0);
+                            var shots2 = (r.player_2_shots_fired || 0) + "/" + (r.player_2_shots_hit || 0);
+
+                            tbodyHtml += "<tr>" +
+                                "<td>Round " + (r.round || "-") + "</td>" +
+                                "<td style='font-weight: bold; color: " + (w === "player_1" ? "#b8e986" : (w === "player_2" ? "#ffce6b" : "#d3d0ad")) + ";'>" + displayWinner + "</td>" +
+                                "<td>" + terminalReason + "</td>" +
+                                "<td>" + elapsed + "s</td>" +
+                                "<td>P1: " + h1 + " / P2: " + h2 + "</td>" +
+                                "<td>P1: " + dmg1 + " / P2: " + dmg2 + "</td>" +
+                                "<td>P1: " + shots1 + " | P2: " + shots2 + "</td>" +
+                                "</tr>";
+                        });
+
+                        if (tbodyNode) tbodyNode.innerHTML = tbodyHtml;
+
+                        if (modelsNode) {
+                            modelsNode.textContent = "Player 1 Model: " + p1Model + " | Player 2 Model: " + p2Model;
+                        }
+
+                        if (tallyNode) {
+                            var tallyText = "TALLY: ";
+                            if (p1Wins > p2Wins) {
+                                tallyText += "PLAYER 1 WINS (" + p1Wins + " to " + p2Wins + ")";
+                            } else if (p2Wins > p1Wins) {
+                                tallyText += "PLAYER 2 WINS (" + p2Wins + " to " + p1Wins + ")";
+                            } else {
+                                tallyText += "TIE / DRAW (" + p1Wins + " to " + p2Wins + ")";
+                            }
+                            if (draws > 0) {
+                                tallyText += " [" + draws + " draws]";
+                            }
+                            tallyNode.textContent = tallyText;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error("Failed to load duel session results:", error);
+                        if (tbodyNode) tbodyNode.innerHTML = "<tr><td colspan='7' style='text-align: center; color: #ff4d3d;'>Failed to load results: " + error.message + "</td></tr>";
+                    });
+            }
+
+            function maybeShowBenchmarkResultsPopup(phase) {
+                var totalRounds = currentDuelSession && currentDuelSession.total_rounds
+                    ? parseInt(currentDuelSession.total_rounds, 10)
+                    : currentArenaTotalRounds;
+                var currentRound = currentDuelSession && currentDuelSession.current_round
+                    ? parseInt(currentDuelSession.current_round, 10)
+                    : currentArenaRound;
+                var hasNextRound = currentDuelSession && typeof currentDuelSession.has_next_round === "boolean"
+                    ? currentDuelSession.has_next_round
+                    : currentRound < totalRounds;
+
+                if (
+                    currentArenaMode === "duel" &&
+                    phase === "finished" &&
+                    totalRounds > 1 &&
+                    !hasNextRound &&
+                    currentArenaRunId &&
+                    benchmarkResultsShownForRunId !== currentArenaRunId
+                ) {
+                    benchmarkResultsShownForRunId = currentArenaRunId;
+                    showBenchmarkResultsPopup();
+                }
             }
 
             function updateNextRoundButton(phase) {
@@ -3442,6 +3812,7 @@
                 var match = rows.find(function (row) { return row.kind === "match"; }) || {};
                 var player1 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_1"; }) || {};
                 var player2 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_2"; }) || {};
+                var runId = match.run_id || player1.run_id || currentArenaRunId || "";
                 var phase = match.phase || player1.phase || "combat";
                 var winner = match.winner || player1.winner || "";
                 var terminalReason = match.terminal_reason || player1.terminal_reason || "";
@@ -3466,6 +3837,14 @@
                 }
                 if (!Number.isFinite(totalRounds) || totalRounds < 1) {
                     totalRounds = 1;
+                }
+                if (phase === "finished" && runId) {
+                    duelFinishedElapsedByRun[runId] = elapsed;
+                } else if (runId && duelFinishedElapsedByRun[runId] !== undefined) {
+                    delete duelFinishedElapsedByRun[runId];
+                }
+                if (phase === "finished" && runId && duelFinishedElapsedByRun[runId] !== undefined) {
+                    elapsed = duelFinishedElapsedByRun[runId];
                 }
                 roundLabel = String(roundNumber) + "/" + String(totalRounds);
                 setText("duel-title", "Match " + roundLabel + " | Elapsed " + elapsed + "s | Phase: " + phase + " | Winner: " + (phase === "finished" ? (winner || "none") : "TBD"));
@@ -3504,6 +3883,7 @@
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
                 updateNextRoundButton(phase);
                 maybeAutoAdvanceDuelRound(phase);
+                maybeShowBenchmarkResultsPopup(phase);
             }
 
             function refreshDuelState() {
