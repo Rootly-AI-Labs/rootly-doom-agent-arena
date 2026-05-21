@@ -63,8 +63,8 @@
                 inset: 0;
                 z-index: 4;
                 display: flex;
-                align-items: stretch;
-                justify-content: stretch;
+                align-items: center;
+                justify-content: center;
                 min-height: 100vh;
                 background: radial-gradient(circle at 50% 35%, #3b0f0f 0%, #080808 62%);
                 color: #f7f5d8;
@@ -77,7 +77,6 @@
 
             .arena-launcher-card {
                 width: min(520px, calc(100% - 32px));
-                min-height: 100vh;
                 padding: 32px;
                 border: 1px solid rgba(255, 255, 255, 0.28);
                 background: #0e0e0c;
@@ -125,38 +124,8 @@
                 text-align: left;
             }
 
-            .arena-launcher-tabs {
-                display: flex;
-                gap: 8px;
-                margin-top: 14px;
-            }
-
-            .arena-launcher-tab {
-                cursor: pointer;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                background: #11140d;
-                color: #d3d0ad;
-                padding: 8px 12px;
-                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
-                text-transform: uppercase;
-            }
-
-            .arena-launcher-tab.active {
-                background: #263019;
-                color: #f7f5d8;
-                border-color: rgba(255, 255, 255, 0.3);
-            }
-
-            .arena-launcher-tabpanel {
-                margin-top: 12px;
-            }
-
-            .arena-launcher-tabpanel[hidden] {
-                display: none;
-            }
-
             .arena-advanced-settings {
-                margin: 4px 0 0;
+                margin: 14px 0 0;
                 text-align: left;
                 border-top: 1px solid rgba(255, 255, 255, 0.14);
                 padding-top: 10px;
@@ -829,30 +798,25 @@
                 <div class="arena-launcher-card">
                     <h1 id="arena-launcher-title">Doom Arena Duel</h1>
                     <p id="arena-launcher-message">Set up both MCP agents, then start the benchmark.</p>
-                    <div class="arena-launcher-tabs" role="tablist" aria-label="Launcher sections">
-                        <button type="button" class="arena-launcher-tab active" id="arena-tab-prompts" data-launcher-tab="prompts" role="tab" aria-selected="true" aria-controls="arena-panel-prompts">Prompts</button>
-                        <button type="button" class="arena-launcher-tab" id="arena-tab-advanced" data-launcher-tab="advanced" role="tab" aria-selected="false" aria-controls="arena-panel-advanced">Advanced</button>
-                    </div>
-                    <div class="arena-launcher-tabpanel" id="arena-panel-prompts" role="tabpanel" aria-labelledby="arena-tab-prompts">
-                        <div class="duel-prompt-panel" id="arena-launcher-prompts">
-                            <div class="duel-prompt-instruction">
-                                Paste each prompt into a different connected MCP agent. The prompt determines whether that agent controls Player 1 or Player 2.
+                    <div class="duel-prompt-panel" id="arena-launcher-prompts">
+                        <div class="duel-prompt-instruction">
+                            Paste each prompt into a different connected MCP agent. The prompt determines whether that agent controls Player 1 or Player 2.
+                        </div>
+                        <div class="duel-prompt-grid">
+                            <div class="duel-prompt-card" id="duel-p1-prompt-card">
+                                <div class="duel-prompt-title">Prompt for MCP Client 1</div>
+                                <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                                <textarea id="duel-p1-prompt" readonly placeholder="Click Start Benchmark to generate the Player 1 prompt."></textarea>
                             </div>
-                            <div class="duel-prompt-grid">
-                                <div class="duel-prompt-card" id="duel-p1-prompt-card">
-                                    <div class="duel-prompt-title">Prompt for MCP Client 1</div>
-                                    <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
-                                    <textarea id="duel-p1-prompt" readonly placeholder="Click Start Benchmark to generate the Player 1 prompt."></textarea>
-                                </div>
-                                <div class="duel-prompt-card" id="duel-p2-prompt-card">
-                                    <div class="duel-prompt-title">Prompt for MCP Client 2</div>
-                                    <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
-                                    <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
-                                </div>
+                            <div class="duel-prompt-card" id="duel-p2-prompt-card">
+                                <div class="duel-prompt-title">Prompt for MCP Client 2</div>
+                                <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                                <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="arena-launcher-tabpanel" id="arena-panel-advanced" role="tabpanel" aria-labelledby="arena-tab-advanced" hidden>
+                    <details class="arena-advanced-settings">
+                        <summary>Advanced</summary>
                         <div class="arena-config-grid">
                             <div class="arena-model-field">
                                 <label for="arena-round">Matches</label>
@@ -861,11 +825,11 @@
                             <div class="arena-model-field">
                                 <label for="arena-hide-enemy-position">
                                     <input id="arena-hide-enemy-position" type="checkbox" />
-                                    Hide enemy position (fog of war)
+                                    Players do not know each other's position
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </details>
                     <div id="arena-launcher-status"></div>
                     <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
                         <div class="arena-mcp-status-row stacked">
@@ -2058,6 +2022,7 @@
                 var restartSession = !!(options && options.restartSession);
                 var autoAdvance = !!(options && options.autoAdvance);
                 var prepareOnly = !!(options && options.prepareOnly);
+                var reuseExistingSession = !!(options && options.reuseExistingSession);
 
                 updateLauncherStatus("");
                 if (!prepareOnly) {
@@ -2068,6 +2033,18 @@
                     resetDuelStatsState();
                     clearDuelBreakdown();
                     duelAutoStartAfterReloadPending = continueSession || restartSession;
+                }
+
+                if (reuseExistingSession && currentDuelSession && currentDuelSession.run_id) {
+                    if (
+                        doomScriptLoaded &&
+                        currentDuelSession.run_id !== loadedDoomRunId
+                    ) {
+                        reloadIntoDuelRun(false);
+                        return new Promise(function () {});
+                    }
+                    startDoom("mock", false);
+                    return Promise.resolve();
                 }
 
                 payload = buildDuelSessionPayload(continueSession, restartSession);
@@ -3828,7 +3805,11 @@
                 });
 
                 document.getElementById("arena-start-game").addEventListener("click", function () {
-                    startDuel({ continueSession: false });
+                    if (currentDuelSession && currentDuelSession.run_id) {
+                        startDuel({ reuseExistingSession: true });
+                    } else {
+                        startDuel({ continueSession: false });
+                    }
                 });
                 document.getElementById("duel-next-round").addEventListener("click", function () {
                     startDuel({ continueSession: true });
