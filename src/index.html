@@ -197,6 +197,50 @@
                 font: 12px/1.4 "Trebuchet MS", Verdana, sans-serif;
             }
 
+            .arena-mcp-status-panel {
+                margin-top: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #11140d;
+                padding: 10px;
+            }
+
+            .arena-mcp-status-title {
+                color: #b8e986;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-mcp-status-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 8px;
+                color: #f7f5d8;
+                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-mcp-status-value {
+                color: #ffce6b;
+                font-weight: 700;
+                text-align: right;
+            }
+
+            .arena-mcp-status-value.reachable,
+            .arena-mcp-status-value.ready {
+                color: #69dc78;
+            }
+
+            .arena-mcp-status-value.unreachable {
+                color: #ff5c5c;
+            }
+
+            .arena-mcp-status-note {
+                margin-top: 8px;
+                color: #8ea86f;
+                font: 11px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
             #arena-debug-panel {
                 display: none;
             }
@@ -294,6 +338,57 @@
             #duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-pov-frame {
                 outline-color: rgba(105, 220, 120, 0.78);
                 box-shadow: 0 0 0 2px rgba(105, 220, 120, 0.22);
+            }
+
+            .duel-readiness-panel {
+                margin: 0 0 12px;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #11140d;
+                padding: 12px;
+            }
+
+            .duel-readiness-panel[hidden] {
+                display: none;
+            }
+
+            .duel-readiness-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-top: 8px;
+            }
+
+            .duel-readiness-card {
+                border: 1px solid rgba(255, 255, 255, 0.16);
+                background: #171914;
+                padding: 10px;
+            }
+
+            .duel-readiness-label {
+                color: #f7f5d8;
+                font: 700 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-readiness-state {
+                margin-top: 6px;
+                color: #ffce6b;
+                font: 700 11px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+            }
+
+            .duel-readiness-card.ready .duel-readiness-state {
+                color: #69dc78;
+            }
+
+            .duel-readiness-card.waiting .duel-readiness-state {
+                color: #ffce6b;
+            }
+
+            .duel-readiness-note {
+                margin-top: 10px;
+                color: #b8e986;
+                font: 11px/1.4 "Trebuchet MS", Verdana, sans-serif;
             }
 
             #duel-pov-grid.duel-active canvas.frame {
@@ -647,7 +742,21 @@
                     <h1 id="arena-launcher-title">Doom Arena Duel</h1>
                     <p id="arena-launcher-message">Set up both MCP agents, then start the duel.</p>
                     <div class="arena-agent-setup">
-                        <strong>Agent MCP setup:</strong> connect both agents to the Doom Arena MCP server. After Start Duel, copy the generated Player 1 and Player 2 prompts into their agent chats.
+                        <strong>Agent MCP setup:</strong> connect both agents to the Doom Arena MCP server. After Starting Duel, copy the generated Player 1 and Player 2 prompts into their agent chats.
+                    </div>
+                    <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
+                        <div class="arena-mcp-status-title">MCP Setup Status</div>
+                        <div class="arena-mcp-status-row">
+                            <span>Doom Arena MCP target</span>
+                            <span class="arena-mcp-status-value" id="arena-mcp-reachability">Checking...</span>
+                        </div>
+                        <div class="arena-mcp-status-row">
+                            <span>Connected MCP clients</span>
+                            <span class="arena-mcp-status-value" id="arena-mcp-connected-clients">Checking...</span>
+                        </div>
+                        <div class="arena-mcp-status-note" id="arena-mcp-status-note">
+                            MCP clients appear here when their Doom Arena MCP server is connected. Player assignment happens after Starting Duel generates prompts and controller tokens.
+                        </div>
                     </div>
                     <details class="arena-advanced-settings">
                         <summary>Advanced Settings</summary>
@@ -768,6 +877,22 @@
                         </details>
                     </div>
                 </div>
+                <div class="duel-readiness-panel" id="duel-readiness-panel" hidden>
+                    <div class="duel-log-title">MCP Agent Readiness</div>
+                    <div class="duel-readiness-grid">
+                        <div class="duel-readiness-card waiting" id="duel-p1-readiness-card">
+                            <div class="duel-readiness-label">Player 1 MCP</div>
+                            <div class="duel-readiness-state" id="duel-p1-readiness-state">Waiting for ready signal</div>
+                        </div>
+                        <div class="duel-readiness-card waiting" id="duel-p2-readiness-card">
+                            <div class="duel-readiness-label">Player 2 MCP</div>
+                            <div class="duel-readiness-state" id="duel-p2-readiness-state">Waiting for ready signal</div>
+                        </div>
+                    </div>
+                    <div class="duel-readiness-note" id="duel-readiness-note">
+                        After Starting Duel, paste each generated prompt into its agent chat. This panel updates when each agent calls set_participant_ready.
+                    </div>
+                </div>
                 <div class="duel-breakdown" id="duel-breakdown" hidden>
                     <div class="duel-log-title">Match Breakdown</div>
                     <div class="duel-breakdown-summary" id="duel-breakdown-summary"></div>
@@ -825,6 +950,8 @@
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
+            var arenaHealthEndpoint = "/api/arena/health";
+            var arenaMcpPresenceEndpoint = "/api/arena/mcp-presence";
             var arenaRunMetadataPath = "arena_run_metadata.local.tsv";
             var arenaRunMetadataEndpoint = "/api/arena/run-metadata";
             var arenaResetEndpoint = "/api/arena/reset";
@@ -875,6 +1002,8 @@
             var lastPlayer2PovFrame = -1;
             var currentDuelSession = null;
             var participantReadyById = { player_1: false, player_2: false };
+            var participantReadyAgentById = { player_1: "", player_2: "" };
+            var connectedMcpClients = [];
             var latestRunStats = null;
             var runStatsFetchInFlight = false;
             var lastRunStatsFetchAt = 0;
@@ -886,7 +1015,10 @@
 
                 if (label !== null) {
                     if (currentArenaMode === "duel") {
-                        label.textContent = "Duel: " + currentPlayer1Model + " vs " + currentPlayer2Model;
+                        label.textContent = "Duel: " +
+                            (participantReadyAgentById.player_1 || currentPlayer1Model || "Player 1") +
+                            " vs " +
+                            (participantReadyAgentById.player_2 || currentPlayer2Model || "Player 2");
                     } else {
                         label.textContent = "Scenario: " + (selectedArenaDataMode === "local" ? "local" : "default");
                     }
@@ -1200,20 +1332,24 @@
                         return response.text();
                     })
                     .then(function (readyText) {
-                        if (!Module.FS) {
-                            return;
-                        }
-
                         if (!readyText) {
                             readyText = arenaParticipantReadyHeader;
                         }
 
-                        if (readyText === lastLoadedParticipantReady) {
+                        if (readyText !== lastLoadedParticipantReady) {
+                            lastLoadedParticipantReady = readyText;
+                            updateParticipantReadyState(readyText);
+                        }
+
+                        if (!Module.FS) {
                             return;
                         }
 
-                        lastLoadedParticipantReady = readyText;
-                        updateParticipantReadyState(readyText);
+                        if (readyText === syncArenaParticipantReady.lastWrittenReadyText) {
+                            return;
+                        }
+
+                        syncArenaParticipantReady.lastWrittenReadyText = readyText;
                         Module.FS.writeFile(arenaParticipantReadyPath, readyText);
                     })
                     .catch(function (error) {
@@ -1377,8 +1513,8 @@
                 var rounds = selectedNumberValue("arena-round", 1);
                 return {
                     arena_mode: "duel",
-                    player_1_model: "codex",
-                    player_2_model: "claude",
+                    player_1_model: "",
+                    player_2_model: "",
                     rounds: rounds,
                     round: 1,
                     seed: 42,
@@ -1527,6 +1663,7 @@
 
                 setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
                 setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+                updateReadinessPanel();
             }
 
             function fetchDuelInstructionPrompt(participantId) {
@@ -1892,6 +2029,88 @@
                 if (node !== null) {
                     node.textContent = value;
                 }
+            }
+
+            function setMcpStatusValue(id, value, statusClass) {
+                var node = document.getElementById(id);
+
+                if (node === null) {
+                    return;
+                }
+
+                node.textContent = value;
+                node.classList.remove("reachable", "unreachable", "ready");
+                if (statusClass) {
+                    node.classList.add(statusClass);
+                }
+            }
+
+            function updateMcpSetupModels() {
+                var player1Ready = !!participantReadyById.player_1;
+                var player2Ready = !!participantReadyById.player_2;
+                var player1Label = participantReadyAgentById.player_1 || "Player 1 MCP agent";
+                var player2Label = participantReadyAgentById.player_2 || "Player 2 MCP agent";
+                var clientNames = connectedMcpClients
+                    .map(function (client) {
+                        var name = client.client_name || "MCP client";
+                        var version = client.client_version || "";
+                        return version ? name + " " + version : name;
+                    })
+                    .filter(Boolean);
+
+                setMcpStatusValue(
+                    "arena-mcp-connected-clients",
+                    clientNames.length > 0 ? clientNames.join(", ") : "No MCP clients detected",
+                    clientNames.length > 0 ? "reachable" : ""
+                );
+
+                setMcpStatusValue(
+                    "arena-mcp-player-1-model",
+                    player1Ready ? player1Label + " connected" : "Assigned after Start Duel",
+                    player1Ready ? "ready" : ""
+                );
+                setMcpStatusValue(
+                    "arena-mcp-player-2-model",
+                    player2Ready ? player2Label + " connected" : "Assigned after Start Duel",
+                    player2Ready ? "ready" : ""
+                );
+            }
+
+            function updateMcpSetupStatus() {
+                Promise.all([
+                    fetch(arenaHealthEndpoint, { cache: "no-store" })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                throw new Error("HTTP " + response.status);
+                            }
+                            return response.json().catch(function () { return {}; });
+                        }),
+                    fetch(arenaMcpPresenceEndpoint, { cache: "no-store" })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                return { clients: [], ready_agents: {} };
+                            }
+                            return response.json().catch(function () { return { clients: [], ready_agents: {} }; });
+                        })
+                        .catch(function () {
+                            return { clients: [], ready_agents: {} };
+                        }),
+                ])
+                    .then(function (results) {
+                        var presence = results[1] || {};
+                        setMcpStatusValue("arena-mcp-reachability", "Reachable", "reachable");
+                        connectedMcpClients = Array.isArray(presence.clients) ? presence.clients : [];
+                        if (presence.ready_agents) {
+                            participantReadyAgentById.player_1 = presence.ready_agents.player_1 || participantReadyAgentById.player_1 || "";
+                            participantReadyAgentById.player_2 = presence.ready_agents.player_2 || participantReadyAgentById.player_2 || "";
+                        }
+                        updateMcpSetupModels();
+                    })
+                    .catch(function () {
+                        setMcpStatusValue("arena-mcp-reachability", "Not reachable", "unreachable");
+                        connectedMcpClients = [];
+                        updateMcpSetupModels();
+                    });
             }
 
             function updateDuelHealthBar(prefix, rawHealth) {
@@ -2497,7 +2716,7 @@
                 card.classList.toggle("llm-disconnected", !connected);
 
                 if (status !== null) {
-                    status.textContent = connected ? "Agent connected" : "Agent not connected";
+                    status.textContent = connected ? "Agent ready" : "Waiting for agent";
                 }
             }
 
@@ -2506,10 +2725,53 @@
                 updatePovConnectionBorder("player_2", participantReadyById.player_2);
             }
 
+            function setReadinessCard(participantId, ready) {
+                var prefix = participantId === "player_1" ? "duel-p1" : "duel-p2";
+                var card = document.getElementById(prefix + "-readiness-card");
+                var state = document.getElementById(prefix + "-readiness-state");
+
+                if (card !== null) {
+                    card.classList.toggle("ready", !!ready);
+                    card.classList.toggle("waiting", !ready);
+                }
+                if (state !== null) {
+                    state.textContent = ready ? "Ready" : "Waiting for ready signal";
+                }
+            }
+
+            function updateReadinessPanel() {
+                var panel = document.getElementById("duel-readiness-panel");
+                var note = document.getElementById("duel-readiness-note");
+                var hasDuelSession = !!(currentDuelSession && currentDuelSession.run_id);
+                var player1Ready = !!participantReadyById.player_1;
+                var player2Ready = !!participantReadyById.player_2;
+
+                if (panel !== null) {
+                    panel.hidden = !hasDuelSession;
+                }
+
+                setReadinessCard("player_1", player1Ready);
+                setReadinessCard("player_2", player2Ready);
+
+                if (note !== null) {
+                    if (!hasDuelSession) {
+                        note.textContent = "Start Duel to generate controller tokens and prompts.";
+                    } else if (player1Ready && player2Ready) {
+                        note.textContent = "Both agents have signaled ready. Combat starts after both opening intents are armed.";
+                    } else {
+                        note.textContent = "After Starting Duel, paste each generated prompt into its agent chat. This panel updates when each agent calls set_participant_ready.";
+                    }
+                }
+                updateMcpSetupModels();
+            }
+
             function resetParticipantReadyState() {
                 participantReadyById = { player_1: false, player_2: false };
+                participantReadyAgentById = { player_1: "", player_2: "" };
                 lastLoadedParticipantReady = "";
+                syncArenaParticipantReady.lastWrittenReadyText = "";
                 updatePovConnectionBorders();
+                updateReadinessPanel();
             }
 
             function updateParticipantReadyState(readyText) {
@@ -2522,6 +2784,7 @@
                     }
                 });
                 updatePovConnectionBorders();
+                updateReadinessPanel();
             }
 
             function setDuelPovActive(active) {
@@ -3334,11 +3597,13 @@
 
                 if (queryDuel) {
                     currentArenaMode = "duel";
-                    currentPlayer1Model = "codex";
-                    currentPlayer2Model = "claude";
+                    currentPlayer1Model = "";
+                    currentPlayer2Model = "";
                     restoreDuelSessionFromReload();
                     setLauncherCopy("Doom Arena Duel", "Set up both MCP agents, then start the duel.");
                     updateArenaBanner();
+                    updateMcpSetupStatus();
+                    window.setInterval(updateMcpSetupStatus, 1000);
                     return;
                 }
 
@@ -3363,6 +3628,8 @@
                     window.setInterval(syncArenaParticipantCommands, 250);
                     window.setInterval(syncArenaParticipantIntents, 100);
                     window.setInterval(syncArenaParticipantReady, 250);
+                    updateMcpSetupStatus();
+                    window.setInterval(updateMcpSetupStatus, 1000);
                     window.setInterval(refreshArenaScore, 1000);
                     window.setInterval(refreshDuelState, 1000);
                     startDuelPovRefreshLoop();
