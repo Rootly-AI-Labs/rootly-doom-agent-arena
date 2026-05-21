@@ -220,6 +220,17 @@
                 font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
             }
 
+            .arena-mcp-status-row.stacked {
+                display: block;
+            }
+
+            .arena-mcp-status-row.stacked .arena-mcp-status-value {
+                display: block;
+                margin-top: 6px;
+                text-align: left;
+                overflow-wrap: anywhere;
+            }
+
             .arena-mcp-status-value {
                 color: #ffce6b;
                 font-weight: 700;
@@ -750,7 +761,7 @@
                             <span>Doom Arena MCP target</span>
                             <span class="arena-mcp-status-value" id="arena-mcp-reachability">Checking...</span>
                         </div>
-                        <div class="arena-mcp-status-row">
+                        <div class="arena-mcp-status-row stacked">
                             <span>Connected MCP clients</span>
                             <span class="arena-mcp-status-value" id="arena-mcp-connected-clients">Checking...</span>
                         </div>
