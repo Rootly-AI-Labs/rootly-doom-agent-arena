@@ -42,6 +42,7 @@ ARENA_PARTICIPANT_INTENT_TSV = SRC_DIR / "arena_participant_intents.local.tsv"
 ARENA_PARTICIPANT_READY_TSV = SRC_DIR / "arena_participant_ready.local.tsv"
 ARENA_ENEMY_COMMAND_TSV = SRC_DIR / "arena_enemy_commands.local.tsv"
 ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
+MCP_PRESENCE_STALE_AFTER_MS = 45000
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
 DEFAULT_ARENA_MODE = "enemies"
@@ -495,10 +496,53 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             same_source.sort(key=lambda client: int(client.get("last_seen_at_ms", 0)), reverse=True)
             return copy.deepcopy(same_source[0])
 
-    def read_mcp_presence(self) -> None:
+    def touch_http_mcp_presence(self) -> None:
+        client_id = self.current_http_mcp_client_id()
+        now = now_ms()
         with self.server.stats_lock:
+            exact = self.server.mcp_presence.get(client_id)
+            if exact:
+                exact["last_seen_at_ms"] = now
+                return
+            same_source = [
+                client for client in self.server.mcp_presence.values()
+                if client.get("source_addr") == self.client_address[0]
+            ]
+            if not same_source:
+                return
+            same_source.sort(key=lambda client: int(client.get("last_seen_at_ms", 0)), reverse=True)
+            same_source[0]["last_seen_at_ms"] = now
+
+    def remove_http_mcp_presence(self) -> None:
+        client_id = self.current_http_mcp_client_id()
+        with self.server.stats_lock:
+            if client_id in self.server.mcp_presence:
+                self.server.mcp_presence.pop(client_id, None)
+                return
+            same_source = [
+                client_id
+                for client_id, client in self.server.mcp_presence.items()
+                if client.get("source_addr") == self.client_address[0]
+            ]
+            if same_source:
+                same_source.sort(
+                    key=lambda selected_id: int(
+                        self.server.mcp_presence.get(selected_id, {}).get("last_seen_at_ms", 0)
+                    ),
+                    reverse=True,
+                )
+                self.server.mcp_presence.pop(same_source[0], None)
+
+    def read_mcp_presence(self) -> None:
+        cutoff_ms = now_ms() - MCP_PRESENCE_STALE_AFTER_MS
+        with self.server.stats_lock:
+            self.server.mcp_presence = {
+                client_id: client
+                for client_id, client in self.server.mcp_presence.items()
+                if int(client.get("last_seen_at_ms", 0)) >= cutoff_ms
+            }
             clients = sorted(
-                    (copy.deepcopy(client) for client in self.server.mcp_presence.values()),
+                (copy.deepcopy(client) for client in self.server.mcp_presence.values()),
                 key=lambda client: (
                     str(client.get("client_name", "")).lower(),
                     int(client.get("connected_at_ms", 0)),
@@ -1111,23 +1155,29 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             }
 
         if method == "notifications/initialized":
+            self.touch_http_mcp_presence()
             return None
 
-        if method == "ping":
-            return {"jsonrpc": "2.0", "id": message_id, "result": {}}
-
         if method == "tools/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"tools": tool_definitions()}}
 
         if method == "resources/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"resources": []}}
 
         if method == "prompts/list":
+            self.touch_http_mcp_presence()
             return {"jsonrpc": "2.0", "id": message_id, "result": {"prompts": []}}
+
+        if method == "shutdown":
+            self.remove_http_mcp_presence()
+            return {"jsonrpc": "2.0", "id": message_id, "result": None}
 
         if method == "tools/call":
             tool_name = str(params.get("name"))
             arguments = params.get("arguments") or {}
+            self.touch_http_mcp_presence()
             call_record = self.start_mcp_tool_call(tool_name, arguments if isinstance(arguments, dict) else {}, message_id)
             try:
                 client = DoomArenaClient(f"http://{self.server.args.host}:{self.server.args.port}")
@@ -2117,6 +2167,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ARENA_ENEMY_COMMAND_TSV.write_text(ENEMY_COMMAND_HEADER, encoding="utf-8")
         write_run_metadata(self.server)
         self.reset_mcp_stats()
+        if bool(payload.get("clear_duel_session", False)):
+            self.server.duel_session_id = ""
+            self.server.duel_total_rounds = 1
+            self.server.duel_current_round = 0
+            self.server.duel_controller_tokens = {}
+            self.server.duel_player_1_prompt = ""
+            self.server.duel_player_2_prompt = ""
 
         return {
             "ok": True,
@@ -2140,6 +2197,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         intent_duration_ms = int(payload.get("intent_duration_ms", 25000))
         enforce_tokens = bool(payload.get("enforce_controller_tokens", True))
         continue_session = bool(payload.get("continue_session", False))
+        restart_session = bool(payload.get("restart_session", False))
         try:
             requested_total_rounds = clamp_int(
                 payload.get("rounds", payload.get("round", DUEL_DEFAULTS["round"])),
@@ -2149,7 +2207,11 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         except (TypeError, ValueError):
             requested_total_rounds = int(DUEL_DEFAULTS["round"])
 
-        if continue_session and self.server.duel_session_id:
+        if restart_session and self.server.duel_session_id:
+            duel_session_id = self.server.duel_session_id
+            total_rounds = self.server.duel_total_rounds or requested_total_rounds
+            round_number = self.server.duel_current_round or 1
+        elif continue_session and self.server.duel_session_id:
             if not self.match_is_finished():
                 self.write_json(
                     HTTPStatus.CONFLICT,

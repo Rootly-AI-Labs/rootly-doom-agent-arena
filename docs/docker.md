@@ -34,9 +34,9 @@ Both launchers:
 - open `http://127.0.0.1:8001/`
 - print the MCP backend environment variable
 
-After the browser opens, click `Start Duel`, then manually paste the generated Player 1 and Player 2 prompts into two separate MCP agents. Use fresh prompts after every `Next Round`.
+After the browser opens, click `Start Duel`, then manually paste one generated player prompt into each separate MCP agent. It does not matter which model or window gets Player 1 versus Player 2; the pasted prompt defines that agent's player. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens, so the same two agents can continue unless the browser shows changed prompt text.
 
-The prompt handoff is manual by design in the current architecture. Docker runs the arena backend and the browser generates round-specific prompts and controller tokens, but the two chat agents still live outside the arena so the setup stays provider-neutral.
+The prompt handoff is manual by design in the current architecture. Docker runs the arena backend and the browser generates session player prompts and controller tokens, but the two chat agents still live outside the arena so the setup stays provider-neutral.
 
 Use a different port when needed:
 
@@ -85,7 +85,7 @@ Example Claude-style command from the repo root:
 DOOM_ARENA_BASE_URL=http://127.0.0.1:8001 claude mcp add doom-arena -- python scripts/doom_arena_mcp.py
 ```
 
-If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper, but committed config should stay path-neutral. Keep the Docker backend running while the MCP client is connected.
+If your system exposes Python 3 as `python3` or `py -3`, use that command in your local MCP config instead. If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper. Keep the Docker backend running while the MCP client is connected.
 
 The repo `.mcp.json` is configured for this host-side stdio shape and defaults to:
 
