@@ -42,7 +42,7 @@ ARENA_PARTICIPANT_INTENT_TSV = SRC_DIR / "arena_participant_intents.local.tsv"
 ARENA_PARTICIPANT_READY_TSV = SRC_DIR / "arena_participant_ready.local.tsv"
 ARENA_ENEMY_COMMAND_TSV = SRC_DIR / "arena_enemy_commands.local.tsv"
 ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
-MCP_PRESENCE_STALE_AFTER_MS = 45000
+MCP_PRESENCE_STALE_AFTER_MS = 25000
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
 DEFAULT_ARENA_MODE = "enemies"
@@ -404,6 +404,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/run-results":
             self.read_run_results_page()
+            return
+
+        if path == "/api/arena/duel-session-results":
+            self.read_duel_session_results()
             return
 
         if path == "/api/arena/run-instructions":
@@ -1260,6 +1264,45 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def read_duel_session_results(self) -> None:
+        query = urlparse(self.path).query
+        params = parse_qs(query)
+        duel_session_id = params.get("duel_session_id", [None])[0]
+        if not duel_session_id:
+            duel_session_id = self.server.duel_session_id
+
+        if not duel_session_id:
+            self.write_json(
+                HTTPStatus.BAD_REQUEST,
+                {"ok": False, "error": "No active duel session."},
+            )
+            return
+
+        session_dir = RESULTS_ROOT / duel_session_id
+        rounds = []
+        if session_dir.exists():
+            for round_dir in sorted(session_dir.glob("round_*")):
+                if round_dir.is_dir():
+                    summary_file = round_dir / "summary.json"
+                    if summary_file.exists():
+                        try:
+                            summary_data = json.loads(summary_file.read_text(encoding="utf-8"))
+                            rounds.append(summary_data)
+                        except Exception:
+                            pass
+
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "duel_session_id": duel_session_id,
+                "total_rounds": self.server.duel_total_rounds,
+                "player_1_model": self.server.player_1_model,
+                "player_2_model": self.server.player_2_model,
+                "rounds": rounds,
+            },
+        )
 
     def read_run_results_page(self) -> None:
         run_dir = self.run_dir()

@@ -38,6 +38,12 @@
 #define ARENA_DUEL_UNSTICK_DISTANCE 128
 #define ARENA_DUEL_UNSTICK_PUSH_SPEED (0x24 * 2048)
 #define ARENA_DUEL_MAX_EVENTS 4096
+
+static boolean ArenaDuel_UseBlindSpawn(void)
+{
+    const char *scenario_id = Arena_ScenarioId();
+    return scenario_id != NULL && !strcmp(scenario_id, "duel_e1m8_blind_spawn");
+}
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
@@ -942,7 +948,6 @@ void ArenaDuel_SpawnPlayer2(void)
 {
     int x;
     int y;
-    int angle;
     mobj_t *mobj;
 
     if (!ArenaDuel_IsEnabled())
@@ -953,15 +958,22 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
 
-    // North-center open-floor spawn, diagonal from player_1's
-    // southwest spawn. ~2000 units apart in open space.
-    x = 424;
-    y = 4041;
-    angle = 267;
-    (void) angle;
+    if (ArenaDuel_UseBlindSpawn())
+    {
+        // East-side covered slot intended to break opening line of sight.
+        x = 1323;
+        y = 3312;
+    }
+    else
+    {
+        // North-center open-floor spawn, diagonal from player_1's
+        // southwest spawn. ~2000 units apart in open space.
+        x = 424;
+        y = 4041;
+    }
 
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
-    mobj->angle = ANG270;  // face south toward player_1
+    mobj->angle = ArenaDuel_UseBlindSpawn() ? ANG180 : ANG270;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;

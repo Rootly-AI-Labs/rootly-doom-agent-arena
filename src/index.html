@@ -977,6 +977,13 @@
                         <summary>Advanced</summary>
                         <div class="arena-config-grid">
                             <div class="arena-model-field">
+                                <label for="arena-duel-map">Map</label>
+                                <select id="arena-duel-map">
+                                    <option value="duel_e1m8">Open sight spawn</option>
+                                    <option value="duel_e1m8_blind_spawn">Blind spawn</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
                                 <label for="arena-round">Matches</label>
                                 <input id="arena-round" type="number" min="1" value="1" />
                             </div>
@@ -1790,10 +1797,19 @@
                 return !!node.checked;
             }
 
+            function selectedStringValue(id, fallback) {
+                var node = document.getElementById(id);
+                if (node === null || !node.value) {
+                    return fallback;
+                }
+                return String(node.value);
+            }
+
             function buildDuelSessionPayload(continueSession, restartSession) {
                 var rounds = selectedNumberValue("arena-round", 1);
                 return {
                     arena_mode: "duel",
+                    scenario_id: selectedStringValue("arena-duel-map", "duel_e1m8"),
                     player_1_model: "",
                     player_2_model: "",
                     rounds: rounds,
@@ -4226,8 +4242,12 @@
                     };
                 })();
                 var hideEnemyToggle = document.getElementById("arena-hide-enemy-position");
+                var mapSelect = document.getElementById("arena-duel-map");
                 if (hideEnemyToggle) {
                     hideEnemyToggle.addEventListener("change", schedulePromptPreview);
+                }
+                if (mapSelect) {
+                    mapSelect.addEventListener("change", schedulePromptPreview);
                 }
                 var roundsInput = document.getElementById("arena-round");
                 if (roundsInput) {

@@ -8,6 +8,7 @@ import json
 import math
 import os
 import sys
+import threading
 import time
 import traceback
 import urllib.error
@@ -110,6 +111,8 @@ class DoomArenaError(RuntimeError):
 
 
 class DoomArenaClient:
+    PRESENCE_HEARTBEAT_SECONDS = 20
+
     def __init__(self, server_url: str):
         self.server_url = server_url.rstrip("/")
         self.run_id = "run_unknown"
@@ -117,6 +120,7 @@ class DoomArenaClient:
         self.client_name = ""
         self.client_version = ""
         self.client_id = f"mcp_{os.getpid()}"
+        self._presence_thread_started = False
         # Keep MCP startup independent from the browser/arena HTTP state. Some
         # MCP clients expect initialize to be answered immediately and will mark
         # the server failed if startup performs slow network work.
@@ -129,6 +133,10 @@ class DoomArenaClient:
         self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
         self.client_version = str(client_info.get("version", "") or "").strip()
         self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
+        self._post_presence_ping()
+        self._start_presence_heartbeat()
+
+    def _post_presence_ping(self) -> None:
         body = json.dumps(
             {
                 "client_id": self.client_id,
@@ -148,6 +156,19 @@ class DoomArenaClient:
                 response.read()
         except (OSError, urllib.error.URLError) as exc:
             log_mcp(f"mcp presence post failed: {exc}")
+
+    def _start_presence_heartbeat(self) -> None:
+        if self._presence_thread_started:
+            return
+        self._presence_thread_started = True
+
+        def beat() -> None:
+            while True:
+                time.sleep(self.PRESENCE_HEARTBEAT_SECONDS)
+                self._post_presence_ping()
+
+        thread = threading.Thread(target=beat, name="mcp-presence-heartbeat", daemon=True)
+        thread.start()
 
     def agent_label(self) -> str:
         if self.client_name and self.client_version:

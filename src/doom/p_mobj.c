@@ -17,6 +17,7 @@
 //
 
 #include <stdio.h>
+#include <string.h>
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -38,6 +39,12 @@
 
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
+
+static boolean ArenaDuel_UseBlindSpawn(void)
+{
+    const char *scenario_id = Arena_ScenarioId();
+    return scenario_id != NULL && !strcmp(scenario_id, "duel_e1m8_blind_spawn");
+}
 
 
 //
@@ -714,13 +721,22 @@ void P_SpawnPlayer (mapthing_t* mthing)
         // Emscripten builds even though we booted with -warp 1 8, so
         // gating on it would skip the arena-designated spawn. We only
         // spawn the duel on E1M8, so gamemap == 8 is sufficient.
-        //
-        // Southwest open-floor slot in the boss arena, diagonal from
-        // player_2's north-center spawn (424, 4041).
         arena_start = *mthing;
-        arena_start.x = -206;
-        arena_start.y = 2142;
-        arena_start.angle = 45;  // northeast, toward player_2
+        if (ArenaDuel_UseBlindSpawn())
+        {
+            // West-side covered slot intended to break opening line of sight.
+            arena_start.x = -553;
+            arena_start.y = 3347;
+            arena_start.angle = 0;
+        }
+        else
+        {
+            // Southwest open-floor slot in the boss arena, diagonal from
+            // player_2's north-center spawn (424, 4041).
+            arena_start.x = -206;
+            arena_start.y = 2142;
+            arena_start.angle = 45;  // northeast, toward player_2
+        }
         mthing = &arena_start;
     }
 		
@@ -1109,4 +1125,3 @@ P_SpawnPlayerMissile
 
     P_CheckMissileSpawn (th);
 }
-

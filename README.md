@@ -55,7 +55,17 @@ cd C:\path\to\doom-wasm
 .\scripts\start-docker.ps1
 ```
 
-2. Add Doom Arena to your coding assistant's MCP config. Common config locations:
+2. Add Doom Arena to your coding assistant's MCP config.
+
+**Shortcut for Claude Code** (one-liner — run from the repo root):
+
+```bash
+claude mcp add doom-arena -- python "$(pwd)/scripts/doom_arena_mcp.py"
+```
+
+`$(pwd)` expands to the repo path at the time you run the command, so the stored config is an absolute path. After running this, restart your Claude Code session so the tools load.
+
+**Manual config locations** (use if the shortcut doesn't apply or you prefer to edit files):
 
 - Codex: `~/.codex/config.toml`
 - Claude Code: project `.mcp.json` or user `~/.claude.json`
