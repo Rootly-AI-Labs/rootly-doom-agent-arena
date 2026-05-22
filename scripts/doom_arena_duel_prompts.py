@@ -11,6 +11,60 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RESULTS_ROOT = REPO_ROOT / "benchmarks" / "results"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
+MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
+
+
+def load_map_blueprint(scenario_id: str) -> str:
+    txt_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.txt"
+    json_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.json"
+    parts: list[str] = []
+    if txt_path.exists():
+        parts.append(txt_path.read_text(encoding="utf-8").strip())
+    if json_path.exists():
+        parts.append(json_path.read_text(encoding="utf-8").strip())
+    return "\n\n".join(parts) if parts else ""
+
+
+def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
+    if not enabled or total_rounds <= 1:
+        return ""
+    return """
+Cross-round learning:
+- Your observation includes a `previous_rounds` array with a recap of prior rounds.
+- Each entry has: `round`, `winner`, `terminal_reason`, `elapsed_time_seconds`,
+  `your_final_health`, `your_damage_dealt`, `your_hit_rate`,
+  `opponent_prevailing_intent`, `spawn_variant`.
+- On round 1 `previous_rounds` is empty — this is expected.
+- Use recaps to adapt: if you lost last round, change your opening intent or spacing.
+  If opponent's `prevailing_intent` was `search`, expect passive play and push early.
+- Do not spend more than one decision reacting to recap data; keep the observe-intent loop fast.
+
+"""
+
+
+def _simplified_actions_section(enabled: bool) -> str:
+    if not enabled:
+        return ""
+    return """
+Simplified action set (active for this session):
+Instead of the 4 legacy intents, use these 10 named actions. Each action has a
+built-in tactical preset — you only need to supply `aggression`, `fire_policy`,
+and `duration_ms` (plus optional `rationale`).
+
+| Action | When to use |
+|---|---|
+| `push_opponent` | Opponent is far; close the gap directly |
+| `flank_left` / `flank_right` | Circle to the side; break angle |
+| `circle_strafe_left` / `circle_strafe_right` | In close combat; keep moving |
+| `kite` | Under pressure; back away while firing |
+| `hold_position` | Anchor a spot; wait for opponent to come to you |
+| `camp_los` | Hold a sightline; fire only when aligned |
+| `patrol_last_seen` | LOS lost; sweep toward last known position |
+| `retreat_and_regroup` | Low health or losing; disengage cautiously |
+
+fire_policy values: `hold_fire` | `only_when_aligned` | `suppressive`
+
+"""
 
 
 def build_controller_tokens(run_id: str, player_1_model: str, player_2_model: str, enforce: bool) -> dict[str, Any]:
@@ -34,6 +88,23 @@ def write_controller_tokens(run_dir: Path, tokens: dict[str, Any]) -> None:
     CONTROLLER_TOKENS_PATH.write_text(text, encoding="utf-8")
 
 
+def _map_blueprint_section(enabled: bool, scenario_id: str) -> str:
+    if not enabled:
+        return ""
+    blueprint = load_map_blueprint(scenario_id)
+    if not blueprint:
+        return ""
+    return f"""
+Map blueprint:
+Coordinates in your observations use the same frame as the blueprint below.
+North is +Y, East is +X. Movement is collision-pathed by the autopilot — use
+the blueprint for strategic reasoning, not for exact pathing.
+
+{blueprint}
+
+"""
+
+
 def instructions(
     participant_id: str,
     model: str,
@@ -44,6 +115,10 @@ def instructions(
     intent_duration_ms: int = 25000,
     current_round: int = 1,
     total_rounds: int = 1,
+    enable_cross_round_recap: bool = False,
+    enable_simplified_actions: bool = False,
+    enable_map_blueprint: bool = False,
+    scenario_id: str = "duel_e1m8",
 ) -> str:
     token_line = (
         f"Your controller_token is: `{controller_token}`\n\n"
@@ -277,6 +352,14 @@ Loop behavior:
 - If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
+Stop rules — read carefully:
+- When `get_match_result` returns `phase="finished"` AND `has_next_round=false`:
+  call `stop_participant_intent` once, then **stop all tool calls immediately**.
+  Do not call `get_participant_observation`, `set_participant_intent`, or any other tool after this.
+- When `get_match_result` returns `phase="finished"` AND `has_next_round=true`:
+  call only `get_match_result` (no other tools) until `run_id` changes, then
+  restart with `set_participant_ready` for the new round.
+
 Rules:
 - Control only `{participant_id}`.
 - Do not control `{opponent_id}`.
@@ -285,12 +368,13 @@ Rules:
 - Only send your own opening high-level intent while phase is `waiting_for_agents`; Doom will hold it until both opening intents are present.
 - Use `get_participant_observation` before each high-level intent decision.
 - Use `set_participant_intent` once per decision during normal play.
-- If phase is finished and `has_next_round=false`, stop sending intents and controls.
-- If phase is finished and `has_next_round=true`, wait for the next `run_id`, then restart the ready/opening flow.
 - Do not call or request tools that directly mutate health, position, ammo, or winner.
 - Both players receive the same full shared state for this MVP.
 - Keep choosing high-level intents until the benchmark session is finished.
 
+{_map_blueprint_section(enable_map_blueprint, scenario_id)}
+{_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
+{_simplified_actions_section(enable_simplified_actions)}
 Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.

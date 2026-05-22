@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 384" fill="none">
+  <rect width="512" height="384" rx="12" fill="#0f1413"/>
+  <rect x="32" y="32" width="448" height="320" fill="#141b19" stroke="#d7e0d8" stroke-width="4"/>
+  <rect x="244" y="112" width="24" height="160" fill="#7b8b84" stroke="#d7e0d8" stroke-width="4"/>
+  <line x1="256" y1="32" x2="256" y2="112" stroke="#b3c3bc" stroke-dasharray="8 8" stroke-opacity=".45"/>
+  <line x1="256" y1="272" x2="256" y2="352" stroke="#b3c3bc" stroke-dasharray="8 8" stroke-opacity=".45"/>
+  <text x="56" y="62" fill="#8ea79b" font-family="system-ui, sans-serif" font-size="18">Custom duel room</text>
+  <text x="226" y="206" fill="#e3ece4" font-family="system-ui, sans-serif" font-size="16">Wall</text>
+</svg>

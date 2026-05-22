@@ -39,11 +39,38 @@
 #define ARENA_DUEL_UNSTICK_PUSH_SPEED (0x24 * 2048)
 #define ARENA_DUEL_MAX_EVENTS 4096
 
-static boolean ArenaDuel_UseBlindSpawn(void)
+typedef enum
+{
+    ARENA_DUEL_SPAWN_OPEN = 0,
+    ARENA_DUEL_SPAWN_BLIND = 1,
+    ARENA_DUEL_SPAWN_CORNER = 2,
+    ARENA_DUEL_SPAWN_CENTER = 3,
+} arena_duel_spawn_variant_t;
+
+static arena_duel_spawn_variant_t ArenaDuel_SpawnVariant(void)
 {
     const char *scenario_id = Arena_ScenarioId();
-    return scenario_id != NULL && !strcmp(scenario_id, "duel_e1m8_blind_spawn");
+    if (scenario_id == NULL)
+    {
+        return ARENA_DUEL_SPAWN_OPEN;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_blind_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_BLIND;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_corner_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_CORNER;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_center_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_CENTER;
+    }
+    return ARENA_DUEL_SPAWN_OPEN;
 }
+
+static mobj_t *arena_duel_player2;
+static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
@@ -51,13 +78,11 @@ static boolean ArenaDuel_UseBlindSpawn(void)
 #define ARENA_DUEL_PLAYER1_START_Y 2135
 #define ARENA_DUEL_PLAYER2_BULLETS 200
 
-static mobj_t *arena_duel_player2;
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
 // P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
 // ArenaDuel_RenderPlayer1View. We cache the most recently spawned player_1
 // mobj here from P_SpawnPlayer and use it as a fallback. The cache is cleared
 // in ArenaDuel_InitLevel so dangling pointers don't survive a level reload.
-static mobj_t *arena_duel_player1_cached_mo;
 static int arena_duel_player2_ammo_bullets;
 static int arena_duel_player2_attack_cooldown;
 static int arena_duel_player2_attack_requests;
@@ -948,6 +973,7 @@ void ArenaDuel_SpawnPlayer2(void)
 {
     int x;
     int y;
+    angle_t angle;
     mobj_t *mobj;
 
     if (!ArenaDuel_IsEnabled())
@@ -958,22 +984,33 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
 
-    if (ArenaDuel_UseBlindSpawn())
+    switch (ArenaDuel_SpawnVariant())
     {
-        // East-side covered slot intended to break opening line of sight.
-        x = 1323;
-        y = 3312;
-    }
-    else
-    {
-        // North-center open-floor spawn, diagonal from player_1's
-        // southwest spawn. ~2000 units apart in open space.
-        x = 424;
-        y = 4041;
+    case ARENA_DUEL_SPAWN_BLIND:
+        x = 640;
+        y = 0;
+        angle = ANG180;
+        break;
+    case ARENA_DUEL_SPAWN_CORNER:
+        x = 768;
+        y = 512;
+        angle = ANG180 + ANG45;
+        break;
+    case ARENA_DUEL_SPAWN_CENTER:
+        x = 320;
+        y = -520;
+        angle = ANG180;
+        break;
+    case ARENA_DUEL_SPAWN_OPEN:
+    default:
+        x = 640;
+        y = 520;
+        angle = ANG180;
+        break;
     }
 
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
-    mobj->angle = ArenaDuel_UseBlindSpawn() ? ANG180 : ANG270;
+    mobj->angle = angle;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;

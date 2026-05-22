@@ -102,7 +102,7 @@ def test_update_participant_intent_row_drops_only_expired_other_rows(tmp_path, m
     monkeypatch.setattr(server, "now_ms", lambda: 10_000)
     intent_path.write_text(
         server.PARTICIPANT_INTENT_HEADER
-        + "run_test\tduel_e1m8\texpired_p2\t1000\t2000\tplayer_2\thold\tcautious\tplayer_1\t600\t0.5\t1000\tauto\tdirect\tonly_when_aligned\tmaintain\t\t1\t\t\t\t\t\t\t\t\tsweep\tdefault\t\tauto\topponent\tauto\n",
+        + "run_test\tduel_e1m8\texpired_p2\t1000\t2000\tplayer_2\thold\tcautious\tplayer_1\t600\t0.5\t1000\tauto\tdirect\tonly_when_aligned\tmaintain\t\t1\t\t\t\t\t\t\t\t\tsweep\tdefault\t\tauto\topponent\tauto\thold\n",
         encoding="utf-8",
     )
 

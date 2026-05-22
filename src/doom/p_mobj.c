@@ -40,12 +40,35 @@
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
 
-static boolean ArenaDuel_UseBlindSpawn(void)
+typedef enum
+{
+    ARENA_DUEL_SPAWN_OPEN = 0,
+    ARENA_DUEL_SPAWN_BLIND = 1,
+    ARENA_DUEL_SPAWN_CORNER = 2,
+    ARENA_DUEL_SPAWN_CENTER = 3,
+} arena_duel_spawn_variant_t;
+
+static arena_duel_spawn_variant_t ArenaDuel_SpawnVariant(void)
 {
     const char *scenario_id = Arena_ScenarioId();
-    return scenario_id != NULL && !strcmp(scenario_id, "duel_e1m8_blind_spawn");
+    if (scenario_id == NULL)
+    {
+        return ARENA_DUEL_SPAWN_OPEN;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_blind_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_BLIND;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_corner_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_CORNER;
+    }
+    if (!strcmp(scenario_id, "duel_e1m8_center_spawn"))
+    {
+        return ARENA_DUEL_SPAWN_CENTER;
+    }
+    return ARENA_DUEL_SPAWN_OPEN;
 }
-
 
 //
 // P_SetMobjState
@@ -721,21 +744,32 @@ void P_SpawnPlayer (mapthing_t* mthing)
         // Emscripten builds even though we booted with -warp 1 8, so
         // gating on it would skip the arena-designated spawn. We only
         // spawn the duel on E1M8, so gamemap == 8 is sufficient.
+        arena_duel_spawn_variant_t variant = ArenaDuel_SpawnVariant();
         arena_start = *mthing;
-        if (ArenaDuel_UseBlindSpawn())
+        switch (variant)
         {
-            // West-side covered slot intended to break opening line of sight.
-            arena_start.x = -553;
-            arena_start.y = 3347;
+        case ARENA_DUEL_SPAWN_BLIND:
+            // Left side of the room divider with no opening line of sight.
+            arena_start.x = -640;
+            arena_start.y = 0;
             arena_start.angle = 0;
-        }
-        else
-        {
-            // Southwest open-floor slot in the boss arena, diagonal from
-            // player_2's north-center spawn (424, 4041).
-            arena_start.x = -206;
-            arena_start.y = 2142;
-            arena_start.angle = 45;  // northeast, toward player_2
+            break;
+        case ARENA_DUEL_SPAWN_CORNER:
+            arena_start.x = -768;
+            arena_start.y = -512;
+            arena_start.angle = 45;
+            break;
+        case ARENA_DUEL_SPAWN_CENTER:
+            arena_start.x = -320;
+            arena_start.y = -520;
+            arena_start.angle = 0;
+            break;
+        case ARENA_DUEL_SPAWN_OPEN:
+        default:
+            arena_start.x = -640;
+            arena_start.y = 520;
+            arena_start.angle = 0;
+            break;
         }
         mthing = &arena_start;
     }

@@ -1,0 +1,21 @@
+{
+  "map_id": "duel_e1m8_corner_spawn",
+  "summary": "Custom benchmark room corner spawn. Long diagonal opening from lower-left to upper-right.",
+  "bounds": { "x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768 },
+  "compass": { "north": "+y", "east": "+x" },
+  "obstacles": [
+    { "name": "center_wall", "x": 0, "y": 0, "width": 128, "height": 768, "kind": "wall" }
+  ],
+  "named_zones": ["left_lane", "right_lane", "upper_open", "lower_open"],
+  "sightlines": [
+    { "label": "diagonal_reacquire", "blocked_by": "center_wall_if_midline" }
+  ],
+  "spawns": {
+    "player_1": { "x": -768, "y": -512, "angle_deg": 45 },
+    "player_2": { "x": 768, "y": 512, "angle_deg": 225 }
+  },
+  "notes": [
+    "Diagonal spacing emphasizes route choice more than immediate aim.",
+    "The center wall can still break the center cut if players collapse through mid."
+  ]
+}

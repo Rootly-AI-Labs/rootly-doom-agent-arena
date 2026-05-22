@@ -1,0 +1,19 @@
+Map: duel_e1m8_blind_spawn  |  Custom duel room blind spawn
+North=+Y  East=+X
+
++------------------------------------------------+
+|                                                |
+|                                                |
+|                    ########                    |
+|              P     ########     E              |
+|                    ########                    |
+|                    ########                    |
+|                                                |
+|                                                |
++------------------------------------------------+
+
+P = player_1 blind spawn (-640, 0)
+E = player_2 blind spawn (640, 0)
+# = center divider wall
+
+No opening LOS. Move through the upper or lower lane.
