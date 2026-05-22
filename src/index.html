@@ -4201,7 +4201,10 @@
                 });
 
                 document.getElementById("arena-start-game").addEventListener("click", function () {
-                    if (currentDuelSession && currentDuelSession.run_id) {
+                    var sessionMatchesSettings = currentDuelSession &&
+                        currentDuelSession.run_id &&
+                        currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8");
+                    if (sessionMatchesSettings) {
                         startDuel({ reuseExistingSession: true });
                     } else {
                         startDuel({ continueSession: false });
@@ -4318,12 +4321,14 @@
                     currentArenaMode = "duel";
                     currentPlayer1Model = "";
                     currentPlayer2Model = "";
-                    restoreDuelSessionFromReload();
+                    var restoredDuelSession = restoreDuelSessionFromReload();
                     setLauncherCopy("Doom Arena Duel", "Set up both MCP agents, then start the benchmark.");
                     updateArenaBanner();
                     updateMcpSetupStatus();
                     window.setInterval(updateMcpSetupStatus, arenaMcpStatusPollMs);
-                    startDuel({ prepareOnly: true });
+                    if (!restoredDuelSession || !restoredDuelSession.run_id) {
+                        startDuel({ prepareOnly: true });
+                    }
                     return;
                 }
 
