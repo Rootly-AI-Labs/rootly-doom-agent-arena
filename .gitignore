@@ -15,6 +15,7 @@ Makefile.in
 !src/index.html
 *.html.symbols
 config.h
+!src/config.h
 config.log
 config.status
 stamp-h1
