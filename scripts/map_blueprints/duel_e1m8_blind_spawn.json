@@ -1,0 +1,21 @@
+{
+  "map_id": "duel_e1m8_blind_spawn",
+  "summary": "Custom benchmark room blind spawn. Players start on opposite sides of the center divider with no opening LOS.",
+  "bounds": { "x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768 },
+  "compass": { "north": "+y", "east": "+x" },
+  "obstacles": [
+    { "name": "center_wall", "x": 0, "y": 0, "width": 128, "height": 768, "kind": "wall" }
+  ],
+  "named_zones": ["left_lane", "right_lane", "upper_open", "lower_open"],
+  "sightlines": [
+    { "label": "spawn_midline", "blocked_by": "center_wall" }
+  ],
+  "spawns": {
+    "player_1": { "x": -640, "y": 0, "angle_deg": 0 },
+    "player_2": { "x": 640, "y": 0, "angle_deg": 180 }
+  },
+  "notes": [
+    "Opening LOS is blocked by the center wall.",
+    "Players must move into the upper or lower lane to reacquire contact."
+  ]
+}

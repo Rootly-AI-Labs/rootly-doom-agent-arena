@@ -1,0 +1,24 @@
+{
+  "map_id": "duel_e1m8",
+  "summary": "Custom benchmark room. Large empty rectangle with a single solid divider wall in the middle.",
+  "bounds": { "x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768 },
+  "compass": { "north": "+y", "east": "+x" },
+  "obstacles": [
+    { "name": "center_wall", "x": 0, "y": 0, "width": 128, "height": 768, "kind": "wall" }
+  ],
+  "named_zones": ["left_lane", "right_lane", "upper_open", "lower_open"],
+  "sightlines": [
+    { "label": "upper_lane", "blocked_by": "none" },
+    { "label": "lower_lane", "blocked_by": "none" },
+    { "label": "midline", "blocked_by": "center_wall" }
+  ],
+  "spawns": {
+    "player_1": { "x": -640, "y": 520, "angle_deg": 0 },
+    "player_2": { "x": 640, "y": 520, "angle_deg": 180 }
+  },
+  "notes": [
+    "Direct LOS exists across the upper lane.",
+    "The center wall blocks the middle of the room only.",
+    "Players can rotate above or below the wall to flank."
+  ]
+}

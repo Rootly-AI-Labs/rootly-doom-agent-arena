@@ -4,6 +4,20 @@ The WASM build needs Emscripten. Three supported paths: macOS native (Homebrew),
 Linux native, or Windows via WSL. Do not use Windows `mingw32-make` for the
 WASM build.
 
+## When you need to rebuild
+
+The Python server and HTML/JS frontend are reloaded by the dev Docker container
+on every restart, so most changes show up without touching Emscripten. You only
+need to rebuild WASM when you change C sources under `src/doom/`. Examples:
+
+- Adding new duel spawn variants in `src/doom/p_mobj.c` and
+  `src/doom/arena_duel.c` (alongside the matching entry in
+  `DUEL_SCENARIOS` in `scripts/doom_arena_server.py`).
+- Changes to the participant intent TSV layout in `arena_participant_intents.c`.
+
+After rebuilding, bump the `?v=cache-bust-...` query string on `websockets-doom.js`
+inside `src/index.html` so browsers fetch the new WASM instead of a stale copy.
+
 ## macOS
 
 One-time setup:

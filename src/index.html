@@ -63,11 +63,13 @@
                 inset: 0;
                 z-index: 4;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: center;
                 min-height: 100vh;
-                background: radial-gradient(circle at 50% 35%, #3b0f0f 0%, #080808 62%);
-                color: #f7f5d8;
+                padding: 24px 0;
+                overflow-y: auto;
+                background: radial-gradient(circle at 50% 28%, #273020 0%, #141614 46%, #090909 100%);
+                color: #f3f0df;
                 text-align: center;
             }
 
@@ -77,9 +79,10 @@
 
             .arena-launcher-card {
                 width: min(520px, calc(100% - 32px));
+                margin: auto 0;
                 padding: 32px;
-                border: 1px solid rgba(255, 255, 255, 0.28);
-                background: #0e0e0c;
+                border: 1px solid rgba(211, 220, 189, 0.18);
+                background: #141714;
                 box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
             }
 
@@ -92,7 +95,7 @@
 
             .arena-launcher-card p {
                 margin: 0 0 18px;
-                color: #d3d0ad;
+                color: #c9c6b7;
                 font: 14px/1.45 "Trebuchet MS", Verdana, sans-serif;
             }
 
@@ -118,31 +121,78 @@
 
             .arena-config-grid {
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 10px;
-                margin: 10px 0 0;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin: 0;
                 text-align: left;
             }
 
             .arena-advanced-settings {
                 margin: 14px 0 0;
                 text-align: left;
-                border-top: 1px solid rgba(255, 255, 255, 0.14);
-                padding-top: 10px;
+                border: 1px solid rgba(173, 186, 145, 0.18);
+                background: linear-gradient(180deg, #1c211a 0%, #181c17 100%);
+                padding: 4px 16px 16px;
+                border-radius: 2px;
             }
 
             .arena-advanced-settings summary {
                 cursor: pointer;
-                color: #ffce6b;
+                color: #d8c07a;
                 font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
-                letter-spacing: 0.05em;
+                letter-spacing: 0.08em;
                 text-transform: uppercase;
+                padding: 10px 0;
+                list-style: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                user-select: none;
+            }
+
+            .arena-advanced-settings summary::-webkit-details-marker {
+                display: none;
+            }
+
+            .arena-advanced-settings summary::before {
+                content: "▸";
+                color: #b8e986;
+                font-size: 10px;
+                transition: transform 0.15s ease;
+                display: inline-block;
+            }
+
+            .arena-advanced-settings[open] summary::before {
+                transform: rotate(90deg);
+            }
+
+            .arena-advanced-settings[open] summary {
+                border-bottom: 1px solid rgba(173, 186, 145, 0.12);
+                margin-bottom: 14px;
+            }
+
+            .arena-config-section {
+                margin: 0 0 16px;
+            }
+
+            .arena-config-section:last-of-type {
+                margin-bottom: 0;
+            }
+
+            .arena-config-section-title {
+                color: #93a87a;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                margin: 0 0 10px;
+                padding-bottom: 6px;
+                border-bottom: 1px dashed rgba(173, 186, 145, 0.14);
             }
 
             .arena-model-field label {
                 display: block;
                 margin-bottom: 6px;
-                color: #b8e986;
+                color: #b7cf89;
                 font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
@@ -151,15 +201,83 @@
             .arena-model-field select,
             .arena-model-field input {
                 width: 100%;
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                background: #10130d;
-                color: #f7f5d8;
-                padding: 10px;
+                border: 1px solid rgba(204, 212, 183, 0.2);
+                background: #0f120e;
+                color: #f3f0df;
+                padding: 9px 10px;
                 font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                border-radius: 2px;
+                transition: border-color 0.15s ease;
+            }
+
+            .arena-model-field select:hover,
+            .arena-model-field input:hover,
+            .arena-model-field select:focus,
+            .arena-model-field input:focus {
+                border-color: rgba(184, 233, 134, 0.45);
+                outline: none;
+            }
+
+            .arena-model-field select option:disabled {
+                color: #6a6a5a;
+                font-style: italic;
             }
 
             .arena-config-grid .arena-model-field label {
                 font-size: 10px;
+            }
+
+            .arena-toggle-stack {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .arena-toggle-field {
+                display: flex;
+                gap: 10px;
+                padding: 10px 12px;
+                border: 1px solid rgba(204, 212, 183, 0.12);
+                background: #131611;
+                border-radius: 2px;
+                cursor: pointer;
+                transition: background 0.15s ease, border-color 0.15s ease;
+            }
+
+            .arena-toggle-field:hover {
+                background: #171b14;
+                border-color: rgba(184, 233, 134, 0.25);
+            }
+
+            .arena-toggle-field input[type="checkbox"] {
+                margin-top: 2px;
+                accent-color: #b8e986;
+                cursor: pointer;
+                flex-shrink: 0;
+            }
+
+            .arena-toggle-field .arena-toggle-text {
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+                flex: 1;
+            }
+
+            .arena-toggle-field .arena-toggle-title {
+                color: #f3f0df;
+                font: 600 12px/1.3 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-toggle-field .arena-toggle-hint {
+                color: #8a907c;
+                font: 400 11px/1.4 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-config-footer-note {
+                color: #6a6a5a;
+                font: 400 10px/1.4 "Trebuchet MS", Verdana, sans-serif;
+                margin: 10px 0 0;
+                font-style: italic;
             }
 
             .arena-launcher-actions button {
@@ -182,9 +300,9 @@
                 width: 100%;
                 margin-top: 12px;
                 cursor: pointer;
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                background: #263019;
-                color: #f7f5d8;
+                border: 1px solid rgba(188, 205, 151, 0.22);
+                background: #314124;
+                color: #f3f0df;
                 padding: 14px 12px;
                 font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
@@ -194,14 +312,14 @@
             #arena-launcher-status {
                 min-height: 18px;
                 margin-top: 16px;
-                color: #ffce6b;
+                color: #d8c07a;
                 font: 12px/1.4 "Trebuchet MS", Verdana, sans-serif;
             }
 
             .arena-mcp-status-panel {
                 margin-top: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                background: #11140d;
+                border: 1px solid rgba(173, 186, 145, 0.14);
+                background: #181c18;
                 padding: 10px;
             }
 
@@ -246,7 +364,7 @@
             }
 
             .arena-mcp-client-placeholder-value {
-                color: #ffce6b;
+                color: #d8c07a;
                 text-align: right;
             }
 
@@ -270,17 +388,31 @@
             }
 
             .arena-mcp-status-value {
-                color: #ffce6b;
+                color: #d8c07a;
                 font-weight: 700;
                 text-align: right;
             }
 
             .arena-launcher-footer {
-                margin-top: 12px;
-                color: #9a967a;
-                font: 11px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                margin-top: 14px;
+                padding-top: 10px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                color: rgba(247, 245, 216, 0.52);
+                font: 10px/1.4 "Trebuchet MS", Verdana, sans-serif;
                 text-align: center;
                 text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .arena-launcher-footer strong {
+                color: rgba(183, 207, 137, 0.82);
+                font-weight: 700;
+            }
+
+            .arena-launcher-footer-subline {
+                display: block;
+                margin-top: 4px;
+                color: rgba(247, 245, 216, 0.38);
             }
 
             .arena-mcp-status-value.reachable,
@@ -511,6 +643,28 @@
                 text-transform: uppercase;
             }
 
+            .duel-command-waiting-overlay {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 18px;
+                background: rgba(10, 18, 26, 0.28);
+                color: #7ddcff;
+                text-align: center;
+                font: 700 14px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                text-shadow: 0 1px 0 #000;
+                pointer-events: none;
+                z-index: 4;
+                animation: duel-log-waiting-pulse 1.1s ease-in-out infinite;
+            }
+
+            .duel-command-waiting-overlay[hidden] {
+                display: none;
+            }
+
             #player-1-pov-status,
             #player-2-pov-status {
                 display: none;
@@ -572,10 +726,161 @@
                 text-transform: uppercase;
             }
 
+            #duel-header-actions a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(184, 233, 134, 0.24);
+                background: #20261a;
+                color: #b8e986;
+                padding: 7px 9px;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                text-decoration: none;
+            }
+
+            #duel-header-actions a:hover {
+                background: #273020;
+                color: #f3f0df;
+            }
+
             #duel-header-actions {
                 display: flex;
                 align-items: center;
                 gap: 6px;
+            }
+
+            #duel-tactical-panel {
+                display: none;
+                width: min(1120px, 100%);
+                margin: 0 auto 8px;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: #171914;
+                padding: 10px;
+                color: #f7f5d8;
+            }
+
+            #duel-tactical-panel.duel-active {
+                display: block;
+            }
+
+            .duel-tactical-shell {
+                display: grid;
+                grid-template-columns: 220px minmax(0, 1fr);
+                gap: 14px;
+                align-items: start;
+            }
+
+            .duel-tactical-map-wrap {
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: #101310;
+                padding: 8px;
+            }
+
+            .duel-tactical-map-stage {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 10 / 13;
+                background: #0e110d;
+            }
+
+            #duel-tactical-map-image {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .duel-tactical-map-status {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8a907c;
+                font: 12px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                text-align: center;
+                padding: 16px;
+                pointer-events: none;
+            }
+
+            .duel-tactical-marker {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                margin-left: -6px;
+                margin-top: -6px;
+                border: 2px solid rgba(12, 12, 12, 0.9);
+                border-radius: 999px;
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
+                pointer-events: none;
+            }
+
+            .duel-tactical-marker[hidden] {
+                display: none;
+            }
+
+            .duel-tactical-marker.player-1 {
+                background: #7ddcff;
+            }
+
+            .duel-tactical-marker.player-2 {
+                background: #ff7a7a;
+            }
+
+            .duel-tactical-meta {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px 16px;
+                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-tactical-meta-label {
+                color: #8ea86f;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-bottom: 4px;
+            }
+
+            .duel-tactical-meta-value {
+                color: #f7f5d8;
+            }
+
+            .duel-tactical-legend {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 10px;
+                color: #d3d0ad;
+                font: 11px/1.3 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-tactical-legend-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .duel-tactical-swatch {
+                width: 10px;
+                height: 10px;
+                border-radius: 999px;
+                display: inline-block;
+            }
+
+            .duel-tactical-swatch.player-1 {
+                background: #7ddcff;
+            }
+
+            .duel-tactical-swatch.player-2 {
+                background: #ff7a7a;
+            }
+
+            .duel-tactical-swatch.obstacle {
+                background: #8a907c;
+                border-radius: 2px;
             }
 
             .duel-panels {
@@ -768,6 +1073,23 @@
                 font: 11px/1.3 Consolas, "Courier New", monospace;
             }
 
+            .duel-player-log-body .duel-log-line.waiting {
+                color: #7ddcff;
+                font-weight: 700;
+                animation: duel-log-waiting-pulse 1.1s ease-in-out infinite;
+            }
+
+            @keyframes duel-log-waiting-pulse {
+                0%,
+                100% {
+                    opacity: 0.55;
+                }
+
+                50% {
+                    opacity: 1;
+                }
+            }
+
             .duel-breakdown[hidden] {
                 display: none;
             }
@@ -938,7 +1260,27 @@
                 padding: 16px 24px;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+            }
+            .benchmark-modal-credit {
+                color: #8a907c;
+                font: 400 11px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.04em;
+            }
+            .benchmark-modal-credit strong {
+                color: #b8e986;
+                font-weight: 700;
+            }
+            .benchmark-modal-credit a {
+                color: inherit;
+                text-decoration: none;
+                border-bottom: 1px dashed rgba(184, 233, 134, 0.35);
+            }
+            .benchmark-modal-credit a:hover {
+                color: #b8e986;
+                border-bottom-color: #b8e986;
             }
             .benchmark-modal-btn {
                 cursor: pointer;
@@ -975,22 +1317,97 @@
                     <p id="arena-launcher-message">Set up both MCP agents, then start the benchmark.</p>
                     <details class="arena-advanced-settings">
                         <summary>Advanced</summary>
-                        <div class="arena-config-grid">
-                            <div class="arena-model-field">
-                                <label for="arena-duel-map">Map</label>
-                                <select id="arena-duel-map">
-                                    <option value="duel_e1m8">Open sight spawn</option>
-                                    <option value="duel_e1m8_blind_spawn">Blind spawn</option>
-                                </select>
+                        <div class="arena-config-section">
+                            <div class="arena-config-section-title">Match setup</div>
+                            <div class="arena-config-grid">
+                                <div class="arena-model-field">
+                                    <label for="arena-duel-map">Map / spawn variant</label>
+                                    <select id="arena-duel-map">
+                                        <option value="duel_e1m8">Open sight spawn</option>
+                                        <option value="duel_e1m8_corner_spawn">Corner spawn</option>
+                                        <option value="duel_e1m8_center_spawn">Lower lane spawn</option>
+                                        <option value="duel_e1m8_blind_spawn">Blind spawn</option>
+                                    </select>
+                                </div>
+                                <div class="arena-model-field">
+                                    <label for="arena-round">Matches in session</label>
+                                    <input id="arena-round" type="number" min="1" value="1" />
+                                </div>
                             </div>
-                            <div class="arena-model-field">
-                                <label for="arena-round">Matches</label>
-                                <input id="arena-round" type="number" min="1" value="1" />
+                        </div>
+                        <div class="arena-config-section">
+                            <div class="arena-config-section-title">Bias mitigation</div>
+                            <div class="arena-toggle-stack">
+                                <label class="arena-toggle-field" for="arena-randomize-spawns">
+                                    <input id="arena-randomize-spawns" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Randomize spawn variant each round</span>
+                                        <span class="arena-toggle-hint">Per-round random pick between open and blind spawn. Averages out spawn-position advantage across a multi-round session.</span>
+                                    </span>
+                                </label>
+                                <label class="arena-toggle-field" for="arena-rotate-all-maps">
+                                    <input id="arena-rotate-all-maps" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Rotate through all maps</span>
+                                        <span class="arena-toggle-hint">Cycle each round through every active spawn variant in order. Stacks with randomization.</span>
+                                    </span>
+                                </label>
                             </div>
-                            <div class="arena-model-field">
-                                <label for="arena-hide-enemy-position">
+                        </div>
+                        <div class="arena-config-section">
+                            <div class="arena-config-section-title">Information control</div>
+                            <div class="arena-toggle-stack">
+                                <label class="arena-toggle-field" for="arena-hide-enemy-position">
                                     <input id="arena-hide-enemy-position" type="checkbox" />
-                                    Players do not know each other's position
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Fog of war — hide opponent position</span>
+                                        <span class="arena-toggle-hint">Players only see opponent coordinates and angle when line-of-sight is active. Forces models to track lost contacts instead of cheating with shared state.</span>
+                                    </span>
+                                </label>
+                                <label class="arena-toggle-field" for="arena-enable-map-blueprint">
+                                    <input id="arena-enable-map-blueprint" type="checkbox" checked />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Map blueprint in prompt</span>
+                                        <span class="arena-toggle-hint">Inject a tactical map blueprint (bounds, obstacles, sightlines, ASCII overview) into the agent's system prompt so it can reason about positioning.</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="arena-config-section">
+                            <div class="arena-config-section-title">Agent behavior</div>
+                            <div class="arena-toggle-stack">
+                                <label class="arena-toggle-field" for="arena-enable-simplified-actions">
+                                    <input id="arena-enable-simplified-actions" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Simplified action schema</span>
+                                        <span class="arena-toggle-hint">Replace 4 actions × 25 params with 10 named actions × 6 params. Each action is a tactical preset — fewer tokens, faster decisions, more tactical diversity.</span>
+                                    </span>
+                                </label>
+                                <label class="arena-toggle-field" for="arena-enable-cross-round-recap">
+                                    <input id="arena-enable-cross-round-recap" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Cross-round learning recap</span>
+                                        <span class="arena-toggle-hint">Surface a structured recap of prior rounds in each observation (winner, damage, opponent tactics). Lets agents adapt strategy across rounds.</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="arena-config-section">
+                            <div class="arena-config-section-title">Match setup extras</div>
+                            <div class="arena-toggle-stack">
+                                <label class="arena-toggle-field" for="arena-mirror-pair">
+                                    <input id="arena-mirror-pair" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Mirrored pair session</span>
+                                        <span class="arena-toggle-hint">After N rounds, swap Player 1 and Player 2 roles and run N more. Ensures fair pair-level comparison when spawn/weapon placement is asymmetric.</span>
+                                    </span>
+                                </label>
+                                <label class="arena-toggle-field" for="arena-enable-weapon-pickups">
+                                    <input id="arena-enable-weapon-pickups" type="checkbox" />
+                                    <span class="arena-toggle-text">
+                                        <span class="arena-toggle-title">Weapon pickups</span>
+                                        <span class="arena-toggle-hint">Spawn shotgun + chaingun on the map. Tests tactical literacy — does the model rush the better weapon? Requires engine spike (Phase 4) before this is active.</span>
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -1020,7 +1437,10 @@
                         </div>
                     </div>
                     <button id="arena-start-game" type="button">Start Benchmark</button>
-                    <div class="arena-launcher-footer">Built by Rootly AI Labs</div>
+                    <div class="arena-launcher-footer">
+                        Built by <strong>Rootly AI Labs</strong>
+                        <span class="arena-launcher-footer-subline">Rootly</span>
+                    </div>
                 </div>
             </div>
             <div id="duel-header">
@@ -1028,8 +1448,47 @@
                     <div id="duel-title">Match 1/1 | Elapsed 0.0s | Phase: waiting | Winner: TBD</div>
                 </div>
                 <div id="duel-header-actions">
+                    <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
                     <button type="button" id="duel-next-round" hidden>Next Match</button>
                     <button type="button" id="duel-menu">Menu</button>
+                </div>
+            </div>
+            <div id="duel-tactical-panel">
+                <div class="duel-log-title">Tactical Map</div>
+                <div class="duel-tactical-shell">
+                    <div class="duel-tactical-map-wrap">
+                        <div class="duel-tactical-map-stage">
+                            <img id="duel-tactical-map-image" alt="Tactical map layout" src="assets/duel_room_layout.svg" />
+                            <div class="duel-tactical-map-status" id="duel-tactical-map-status">Loading map layout...</div>
+                            <div class="duel-tactical-marker player-1" id="duel-tactical-marker-p1" hidden></div>
+                            <div class="duel-tactical-marker player-2" id="duel-tactical-marker-p2" hidden></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="duel-tactical-meta">
+                            <div>
+                                <div class="duel-tactical-meta-label">Scenario</div>
+                                <div class="duel-tactical-meta-value" id="duel-tactical-scenario">-</div>
+                            </div>
+                            <div>
+                                <div class="duel-tactical-meta-label">Bounds</div>
+                                <div class="duel-tactical-meta-value" id="duel-tactical-bounds">-</div>
+                            </div>
+                            <div>
+                                <div class="duel-tactical-meta-label">Player 1</div>
+                                <div class="duel-tactical-meta-value" id="duel-tactical-p1">-</div>
+                            </div>
+                            <div>
+                                <div class="duel-tactical-meta-label">Player 2</div>
+                                <div class="duel-tactical-meta-value" id="duel-tactical-p2">-</div>
+                            </div>
+                        </div>
+                        <div class="duel-tactical-legend">
+                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-1"></span>Player 1</span>
+                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-2"></span>Player 2</span>
+                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch obstacle"></span>Obstacle</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="duel-pov-grid">
@@ -1052,6 +1511,9 @@
                         </div>
                         <div class="duel-pov-frame">
                             <canvas class="frame" id="player-1-canvas" width="320" height="200"></canvas>
+                            <div class="duel-command-waiting-overlay" id="player-1-command-waiting" hidden>
+                                Waiting for agent to send command...
+                            </div>
                             <div class="duel-death-overlay" id="player-1-death-overlay" hidden>
                                 <div class="duel-death-title">You Died</div>
                                 <div class="duel-death-subtitle" id="player-1-death-detail">Player 1 eliminated</div>
@@ -1060,7 +1522,7 @@
                         </div>
                         <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
                         <div id="player-1-pov-status">Waiting for Player 1 camera</div>
-                        <details class="duel-player-log">
+                        <details class="duel-player-log" open>
                             <summary class="duel-log-title">Player 1 MCP Command Logs</summary>
                             <div class="duel-player-log-body" id="duel-p1-log"></div>
                         </details>
@@ -1085,6 +1547,9 @@
                         </div>
                         <div class="duel-pov-frame">
                             <canvas class="frame" id="player-2-canvas" width="320" height="200"></canvas>
+                            <div class="duel-command-waiting-overlay" id="player-2-command-waiting" hidden>
+                                Waiting for agent to send command...
+                            </div>
                             <div class="duel-death-overlay" id="player-2-death-overlay" hidden>
                                 <div class="duel-death-title">You Died</div>
                                 <div class="duel-death-subtitle" id="player-2-death-detail">Player 2 eliminated</div>
@@ -1092,7 +1557,7 @@
                             </div>
                         </div>
                         <div id="player-2-pov-status">Waiting for Player 2 camera</div>
-                        <details class="duel-player-log">
+                        <details class="duel-player-log" open>
                             <summary class="duel-log-title">Player 2 MCP Command Logs</summary>
                             <div class="duel-player-log-body" id="duel-p2-log"></div>
                         </details>
@@ -1171,13 +1636,17 @@
                     </div>
                 </div>
                 <div class="benchmark-modal-footer">
+                    <div class="benchmark-modal-credit">
+                        Built by <strong>Rootly AI Labs</strong> ·
+                        <a href="https://rootly.com/ai-labs" target="_blank" rel="noopener">rootly.com/ai-labs</a>
+                    </div>
                     <button type="button" class="benchmark-modal-btn" onclick="closeBenchmarkResultsModal()">Close</button>
                 </div>
             </div>
         </div>
 
         <script>
-            var commonArgs = ["-iwad", "doom1.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+            var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
             var arenaDataMockPath = "arena_enemies.mock.tsv";
@@ -1262,6 +1731,145 @@
             var duelFinishedElapsedByRun = {};
             var forceArenaMenuMode = false;
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
+            var currentMapBlueprint = null;
+            var currentMapBlueprintScenarioId = "";
+            var blueprintRequestScenarioId = "";
+
+            function setDuelTacticalPanelVisible(visible) {
+                var panel = document.getElementById("duel-tactical-panel");
+                if (panel !== null) {
+                    panel.classList.toggle("duel-active", !!visible);
+                }
+            }
+
+            function tacticalCoordX(bounds, x, width, padding) {
+                if (!bounds || !Number.isFinite(x)) {
+                    return padding;
+                }
+                return padding + ((x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min)) * (width - padding * 2);
+            }
+
+            function tacticalCoordY(bounds, y, height, padding) {
+                if (!bounds || !Number.isFinite(y)) {
+                    return padding;
+                }
+                return height - padding - ((y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min)) * (height - padding * 2);
+            }
+
+            function loadCurrentScenarioBlueprint() {
+                var scenarioId = currentArenaScenarioId;
+                if (!scenarioId || scenarioId === "scenario_unknown") {
+                    currentMapBlueprint = null;
+                    currentMapBlueprintScenarioId = "";
+                    return Promise.resolve(null);
+                }
+                if (currentMapBlueprint && currentMapBlueprintScenarioId === scenarioId) {
+                    return Promise.resolve(currentMapBlueprint);
+                }
+                if (blueprintRequestScenarioId === scenarioId) {
+                    return Promise.resolve(null);
+                }
+                blueprintRequestScenarioId = scenarioId;
+                return fetch("/api/arena/map-blueprint?scenario_id=" + encodeURIComponent(scenarioId), {
+                    cache: "no-store",
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .then(function (payload) {
+                        blueprintRequestScenarioId = "";
+                        currentMapBlueprint = payload && payload.blueprint ? payload.blueprint : null;
+                        currentMapBlueprintScenarioId = currentMapBlueprint ? scenarioId : "";
+                        return currentMapBlueprint;
+                    })
+                    .catch(function () {
+                        blueprintRequestScenarioId = "";
+                        currentMapBlueprint = null;
+                        currentMapBlueprintScenarioId = "";
+                        return null;
+                    });
+            }
+
+            function renderTacticalMap(player1, player2) {
+                var mapStatus = document.getElementById("duel-tactical-map-status");
+                var p1Marker = document.getElementById("duel-tactical-marker-p1");
+                var p2Marker = document.getElementById("duel-tactical-marker-p2");
+                var bounds;
+                var p1x;
+                var p1y;
+                var p2x;
+                var p2y;
+                var leftPct;
+                var topPct;
+
+                setDuelTacticalPanelVisible(currentArenaMode === "duel");
+                setText("duel-tactical-scenario", currentArenaScenarioId || "-");
+
+                if (!currentMapBlueprint || !currentMapBlueprint.bounds) {
+                    if (mapStatus) {
+                        mapStatus.hidden = false;
+                        mapStatus.textContent = "Map overlay unavailable";
+                    }
+                    if (p1Marker) {
+                        p1Marker.hidden = true;
+                    }
+                    if (p2Marker) {
+                        p2Marker.hidden = true;
+                    }
+                    setText("duel-tactical-bounds", "-");
+                    setText("duel-tactical-p1", "-");
+                    setText("duel-tactical-p2", "-");
+                    return;
+                }
+
+                bounds = currentMapBlueprint.bounds;
+                setText("duel-tactical-bounds",
+                    String(bounds.x_min) + "…" + String(bounds.x_max) + " / " +
+                    String(bounds.y_min) + "…" + String(bounds.y_max));
+                if (mapStatus) {
+                    mapStatus.hidden = true;
+                }
+
+                p1x = Number(player1 && player1.x);
+                p1y = Number(player1 && player1.y);
+                p2x = Number(player2 && player2.x);
+                p2y = Number(player2 && player2.y);
+
+                if (Number.isFinite(p1x) && Number.isFinite(p1y)) {
+                    leftPct = ((p1x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min)) * 100;
+                    topPct = 100 - (((p1y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min)) * 100);
+                    if (p1Marker) {
+                        p1Marker.hidden = false;
+                        p1Marker.style.left = leftPct + "%";
+                        p1Marker.style.top = topPct + "%";
+                    }
+                    setText("duel-tactical-p1", String(player1.x) + ", " + String(player1.y));
+                } else {
+                    if (p1Marker) {
+                        p1Marker.hidden = true;
+                    }
+                    setText("duel-tactical-p1", "-");
+                }
+
+                if (Number.isFinite(p2x) && Number.isFinite(p2y)) {
+                    leftPct = ((p2x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min)) * 100;
+                    topPct = 100 - (((p2y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min)) * 100);
+                    if (p2Marker) {
+                        p2Marker.hidden = false;
+                        p2Marker.style.left = leftPct + "%";
+                        p2Marker.style.top = topPct + "%";
+                    }
+                    setText("duel-tactical-p2", String(player2.x) + ", " + String(player2.y));
+                } else {
+                    if (p2Marker) {
+                        p2Marker.hidden = true;
+                    }
+                    setText("duel-tactical-p2", "-");
+                }
+            }
 
             function updateArenaBanner() {
                 var label = document.getElementById("arena-data-label");
@@ -1391,7 +1999,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=cache-bust-1779235855";
+                script.src = "websockets-doom.js?v=cache-bust-1779473360";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -1819,6 +2427,14 @@
                     decision_cadence_ms: 750,
                     intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
                     hide_enemy_position: selectedCheckboxValue("arena-hide-enemy-position", false),
+                    randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
+                    rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
+                    enable_simplified_actions: selectedCheckboxValue("arena-enable-simplified-actions", false),
+                    enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
+                    recap_window: 0,
+                    enable_map_blueprint: selectedCheckboxValue("arena-enable-map-blueprint", false),
+                    enable_weapon_pickups: selectedCheckboxValue("arena-enable-weapon-pickups", false),
+                    mirror_pair: selectedCheckboxValue("arena-mirror-pair", false),
                     continue_session: !!continueSession,
                     restart_session: !!restartSession,
                 };
@@ -2041,6 +2657,8 @@
                 currentArenaRunId = "";
                 currentArenaRound = 1;
                 currentArenaTotalRounds = selectedNumberValue("arena-round", 1);
+                currentMapBlueprint = null;
+                currentMapBlueprintScenarioId = "";
                 duelAutoStartAfterReloadPending = false;
                 clearStoredDuelSessionForReload();
                 setPromptText("duel-p1-prompt", "");
@@ -2129,6 +2747,7 @@
                 currentArenaTotalRounds = resetPayload.total_rounds || payload.rounds || currentArenaTotalRounds;
                 currentArenaSeed = resetPayload.seed || payload.seed;
                 currentArenaTimeoutSeconds = resetPayload.timeout_seconds || payload.timeout_seconds;
+                loadCurrentScenarioBlueprint();
                 renderDuelSessionPrompts(resetPayload);
             }
 
@@ -2668,12 +3287,29 @@
                 lines.forEach(function (text) {
                     var line = document.createElement("div");
                     line.className = "duel-log-line";
+                    if (text === "> Waiting for agent to send command...") {
+                        line.classList.add("waiting");
+                    }
                     line.textContent = text;
                     node.appendChild(line);
                 });
 
                 node.dataset.renderKey = nextRenderKey;
                 node.scrollTop = contentChanged ? node.scrollHeight : previousScrollTop;
+            }
+
+            function playerWaitingForCommand(player) {
+                var intent = player && player.intent ? player.intent : "none";
+                var intentStatus = player && player.intent_status ? player.intent_status : "inactive";
+                return intent === "none" || intentStatus === "inactive";
+            }
+
+            function updateCommandWaitingOverlay(overlayId, player) {
+                var node = document.getElementById(overlayId);
+                if (node === null) {
+                    return;
+                }
+                node.hidden = !playerWaitingForCommand(player);
             }
 
             function appendBreakdownStat(parent, label, value) {
@@ -2759,8 +3395,8 @@
                     ? "[" + elapsed.toFixed(3) + "s]"
                     : "[time -]";
 
-                if (intent === "none" || intentStatus === "inactive") {
-                    return "> No high-level MCP command has been accepted yet.";
+                if (playerWaitingForCommand(player)) {
+                    return "> Waiting for agent to send command...";
                 }
 
                 return "> " + timestamp + " current -> " + intent +
@@ -3894,6 +4530,9 @@
                 setText("duel-p1-angle", player1Angle);
                 setText("duel-p2-xy", player2XY);
                 setText("duel-p2-angle", player2Angle);
+                updateCommandWaitingOverlay("player-1-command-waiting", player1);
+                updateCommandWaitingOverlay("player-2-command-waiting", player2);
+                renderTacticalMap(player1, player2);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
                 updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
@@ -4203,7 +4842,15 @@
                 document.getElementById("arena-start-game").addEventListener("click", function () {
                     var sessionMatchesSettings = currentDuelSession &&
                         currentDuelSession.run_id &&
-                        currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8");
+                        currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8") &&
+                        !!currentDuelSession.hide_enemy_position === selectedCheckboxValue("arena-hide-enemy-position", false) &&
+                        !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
+                        !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
+                        !!currentDuelSession.enable_simplified_actions === selectedCheckboxValue("arena-enable-simplified-actions", false) &&
+                        !!currentDuelSession.enable_cross_round_recap === selectedCheckboxValue("arena-enable-cross-round-recap", false) &&
+                        !!currentDuelSession.enable_map_blueprint === selectedCheckboxValue("arena-enable-map-blueprint", false) &&
+                        !!currentDuelSession.enable_weapon_pickups === selectedCheckboxValue("arena-enable-weapon-pickups", false) &&
+                        !!currentDuelSession.mirror_pair === selectedCheckboxValue("arena-mirror-pair", false);
                     if (sessionMatchesSettings) {
                         startDuel({ reuseExistingSession: true });
                     } else {
@@ -4246,11 +4893,22 @@
                 })();
                 var hideEnemyToggle = document.getElementById("arena-hide-enemy-position");
                 var mapSelect = document.getElementById("arena-duel-map");
-                if (hideEnemyToggle) {
-                    hideEnemyToggle.addEventListener("change", schedulePromptPreview);
-                }
-                if (mapSelect) {
-                    mapSelect.addEventListener("change", schedulePromptPreview);
+                var randomizeSpawnsToggle = document.getElementById("arena-randomize-spawns");
+                var rotateAllMapsToggle = document.getElementById("arena-rotate-all-maps");
+                var simplifiedActionsToggle = document.getElementById("arena-enable-simplified-actions");
+                var recapToggle = document.getElementById("arena-enable-cross-round-recap");
+                var mapBlueprintToggle = document.getElementById("arena-enable-map-blueprint");
+                var weaponPickupsToggle = document.getElementById("arena-enable-weapon-pickups");
+                var mirrorPairToggle = document.getElementById("arena-mirror-pair");
+                [hideEnemyToggle, mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
+                 simplifiedActionsToggle, mapBlueprintToggle, weaponPickupsToggle, mirrorPairToggle]
+                    .forEach(function (el) {
+                        if (el) { el.addEventListener("change", schedulePromptPreview); }
+                    });
+                if (recapToggle) {
+                    recapToggle.addEventListener("change", function () {
+                        schedulePromptPreview();
+                    });
                 }
                 var roundsInput = document.getElementById("arena-round");
                 if (roundsInput) {
@@ -4369,13 +5027,13 @@
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=cache-bust-1779235855";
+                        return path + "?v=cache-bust-1779473360";
                     }
 
                     return path;
                 },
                 preRun: () => {
-                    Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
+                    Module.FS.createPreloadedFile("", "doom1-arena.wad", "doom1-arena.wad", true, true);
                     Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
                     Module.FS.createPreloadedFile("", arenaDataMountPath, selectedArenaDataSourcePath, true, true);
                 },

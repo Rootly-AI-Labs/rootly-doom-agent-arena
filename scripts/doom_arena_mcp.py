@@ -37,7 +37,7 @@ PARTICIPANT_INTENT_HEADER = (
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
-    "turn_policy\tnavigation_target\tfire_mode\n"
+    "turn_policy\tnavigation_target\tfire_mode\tintent_raw\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -241,7 +241,36 @@ class DoomArenaClient:
             observation["state"]["current_round"] = observation["current_round"]
             observation["state"]["total_rounds"] = observation["total_rounds"]
             observation["state"]["has_next_round"] = observation["has_next_round"]
+        # Phase 1: cross-round recap
+        if duel_session.get("enable_cross_round_recap"):
+            observation["previous_rounds"] = self._fetch_previous_rounds_recap(
+                participant_id,
+                int(duel_session.get("current_round", 1)),
+                str(duel_session.get("duel_session_id", "")),
+                int(duel_session.get("recap_window", 0)),
+            )
         return json.dumps(observation, indent=2)
+
+    def _fetch_previous_rounds_recap(
+        self,
+        participant_id: str,
+        current_round: int,
+        duel_session_id: str,
+        window: int,
+    ) -> list[dict]:
+        try:
+            url = (
+                f"/api/arena/previous-rounds-recap"
+                f"?participant_id={participant_id}"
+                f"&duel_session_id={duel_session_id}"
+                f"&current_round={current_round}"
+                f"&window={window}"
+            )
+            text = self._request("GET", url)
+            data = json.loads(text) if text else {}
+            return data.get("rounds", [])
+        except Exception:
+            return []
 
     def set_participant_ready(self, participant_id: str, controller_token: str | None = None) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -460,6 +489,7 @@ class DoomArenaClient:
         turn_policy: str = "auto",
         navigation_target: str = "opponent",
         fire_mode: str = "auto",
+        rationale: str | None = None,
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -601,6 +631,9 @@ class DoomArenaClient:
             "navigation_target": navigation_target,
             "fire_mode": fire_mode,
         }
+        rationale_text = str(rationale).strip() if rationale else ""
+        if rationale_text:
+            payload["rationale"] = rationale_text[:1024]
         response_text = self._request(
             "POST",
             "/api/arena/participant-intents",
@@ -2105,6 +2138,11 @@ def participant_intent_schema() -> dict[str, Any]:
             },
             "sequence_number": {"type": "integer", "minimum": 0},
             "decision_cadence_ms": {"type": "integer", "minimum": 1},
+            "rationale": {
+                "type": "string",
+                "maxLength": 1024,
+                "description": "Optional short reasoning string for this intent. Logged for post-match analysis; not enforced.",
+            },
         },
         "required": ["participant_id", "intent"],
         "additionalProperties": False,
@@ -2216,6 +2254,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             turn_policy=str(arguments.get("turn_policy", "auto")),
             navigation_target=str(arguments.get("navigation_target", "opponent")),
             fire_mode=str(arguments.get("fire_mode", "auto")),
+            rationale=optional_string(arguments.get("rationale")),
         )
     if name == "stop_participant_intent":
         return client.stop_participant_intent(

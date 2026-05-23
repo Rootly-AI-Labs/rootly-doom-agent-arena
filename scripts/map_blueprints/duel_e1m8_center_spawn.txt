@@ -1,0 +1,16 @@
+Map: duel_e1m8_center_spawn  |  Custom duel room lower lane spawn
+North=+Y  East=+X
+
++------------------------------------------------+
+|                                                |
+|                                                |
+|                    ########                    |
+|                    ########                    |
+|                    ########                    |
+|                    ########                    |
+|       P                                E       |
+|                                                |
++------------------------------------------------+
+
+P = player_1 lower lane spawn (-320, -520)
+E = player_2 lower lane spawn (320, -520)
