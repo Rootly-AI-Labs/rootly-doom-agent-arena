@@ -78,7 +78,7 @@
             }
 
             .arena-launcher-card {
-                width: min(520px, calc(100% - 32px));
+                width: min(920px, calc(100% - 32px));
                 margin: auto 0;
                 padding: 32px;
                 border: 1px solid rgba(211, 220, 189, 0.18);
@@ -169,6 +169,23 @@
             .arena-advanced-settings[open] summary {
                 border-bottom: 1px solid rgba(173, 186, 145, 0.12);
                 margin-bottom: 14px;
+            }
+
+            .arena-advanced-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+            }
+
+            .arena-advanced-grid > .arena-config-section {
+                margin: 0;
+                min-width: 0;
+            }
+
+            @media (max-width: 760px) {
+                .arena-advanced-grid {
+                    grid-template-columns: 1fr;
+                }
             }
 
             .arena-config-section {
@@ -780,7 +797,7 @@
             .duel-tactical-map-stage {
                 position: relative;
                 width: 100%;
-                aspect-ratio: 10 / 13;
+                aspect-ratio: 4 / 3;
                 background: #0e110d;
             }
 
@@ -807,14 +824,16 @@
 
             .duel-tactical-marker {
                 position: absolute;
-                width: 12px;
-                height: 12px;
-                margin-left: -6px;
-                margin-top: -6px;
-                border: 2px solid rgba(12, 12, 12, 0.9);
-                border-radius: 999px;
-                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
+                width: 0;
+                height: 0;
+                margin-left: -7px;
+                margin-top: -8px;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 16px solid #f7f5d8;
+                filter: drop-shadow(0 0 2px rgba(12, 12, 12, 0.95)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
                 pointer-events: none;
+                transform-origin: 50% 62%;
             }
 
             .duel-tactical-marker[hidden] {
@@ -822,11 +841,11 @@
             }
 
             .duel-tactical-marker.player-1 {
-                background: #7ddcff;
+                border-bottom-color: #7ddcff;
             }
 
             .duel-tactical-marker.player-2 {
-                background: #ff7a7a;
+                border-bottom-color: #ff7a7a;
             }
 
             .duel-tactical-meta {
@@ -1044,15 +1063,25 @@
                 user-select: none;
             }
 
+            .duel-log-total {
+                margin-left: 8px;
+                color: #d3d0ad;
+                font-weight: 600;
+                text-transform: none;
+            }
+
             details.duel-player-log[open] > .duel-log-title {
                 margin-bottom: 6px;
             }
 
             .duel-player-log-body {
                 flex: 1 1 auto;
+                height: 240px;
                 min-height: 0;
-                overflow-y: auto;
+                overflow-y: scroll;
                 overflow-x: hidden;
+                overscroll-behavior: contain;
+                scrollbar-gutter: stable;
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 background: #10130d;
                 padding: 2px 6px;
@@ -1065,12 +1094,27 @@
             }
 
             .duel-player-log-body .duel-log-line {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 190px;
+                column-gap: 12px;
+                align-items: start;
                 white-space: normal;
                 overflow: visible;
                 text-overflow: clip;
                 padding: 6px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 font: 11px/1.3 Consolas, "Courier New", monospace;
+            }
+
+            .duel-log-main {
+                min-width: 0;
+            }
+
+            .duel-log-decision-latency {
+                color: #7ddcff;
+                font-weight: 700;
+                text-align: right;
+                white-space: normal;
             }
 
             .duel-player-log-body .duel-log-line.waiting {
@@ -1315,26 +1359,27 @@
                 <div class="arena-launcher-card">
                     <h1 id="arena-launcher-title">Doom Arena Duel</h1>
                     <p id="arena-launcher-message">Set up both MCP agents, then start the benchmark.</p>
-                    <details class="arena-advanced-settings">
-                        <summary>Advanced</summary>
-                        <div class="arena-config-section">
-                            <div class="arena-config-section-title">Match setup</div>
-                            <div class="arena-config-grid">
-                                <div class="arena-model-field">
-                                    <label for="arena-duel-map">Map / spawn variant</label>
-                                    <select id="arena-duel-map">
-                                        <option value="duel_e1m8">Open sight spawn</option>
-                                        <option value="duel_e1m8_corner_spawn">Corner spawn</option>
-                                        <option value="duel_e1m8_center_spawn">Lower lane spawn</option>
-                                        <option value="duel_e1m8_blind_spawn">Blind spawn</option>
-                                    </select>
-                                </div>
-                                <div class="arena-model-field">
-                                    <label for="arena-round">Matches in session</label>
-                                    <input id="arena-round" type="number" min="1" value="1" />
-                                </div>
+                    <div class="arena-config-section">
+                        <div class="arena-config-section-title">Match setup</div>
+                        <div class="arena-config-grid">
+                            <div class="arena-model-field">
+                                <label for="arena-duel-map">Map / spawn variant</label>
+                                <select id="arena-duel-map">
+                                    <option value="duel_e1m8">Open sight spawn</option>
+                                    <option value="duel_e1m8_corner_spawn">Corner spawn</option>
+                                    <option value="duel_e1m8_center_spawn">Lower lane spawn</option>
+                                    <option value="duel_e1m8_blind_spawn">Blind spawn</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-round">Matches in session</label>
+                                <input id="arena-round" type="number" min="1" value="1" />
                             </div>
                         </div>
+                    </div>
+                    <details class="arena-advanced-settings">
+                        <summary>Advanced</summary>
+                        <div class="arena-advanced-grid">
                         <div class="arena-config-section">
                             <div class="arena-config-section-title">Bias mitigation</div>
                             <div class="arena-toggle-stack">
@@ -1411,6 +1456,7 @@
                                 </label>
                             </div>
                         </div>
+                        </div>
                     </details>
                     <div class="duel-prompt-panel" id="arena-launcher-prompts">
                         <div class="duel-prompt-instruction">
@@ -1458,8 +1504,8 @@
                 <div class="duel-tactical-shell">
                     <div class="duel-tactical-map-wrap">
                         <div class="duel-tactical-map-stage">
-                            <img id="duel-tactical-map-image" alt="Tactical map layout" src="assets/duel_room_layout.svg" />
-                            <div class="duel-tactical-map-status" id="duel-tactical-map-status">Loading map layout...</div>
+                            <img id="duel-tactical-map-image" alt="Tactical map layout" src="assets/duel_room_layout.svg?v=cache-bust-20260523-1250" />
+                            <div class="duel-tactical-map-status" id="duel-tactical-map-status" hidden>Loading map layout...</div>
                             <div class="duel-tactical-marker player-1" id="duel-tactical-marker-p1" hidden></div>
                             <div class="duel-tactical-marker player-2" id="duel-tactical-marker-p2" hidden></div>
                         </div>
@@ -1523,7 +1569,7 @@
                         <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
                         <div id="player-1-pov-status">Waiting for Player 1 camera</div>
                         <details class="duel-player-log" open>
-                            <summary class="duel-log-title">Player 1 MCP Command Logs</summary>
+                            <summary class="duel-log-title">Player 1 MCP Command Logs <span class="duel-log-total" id="duel-p1-log-total">Total MCP commands: 0</span></summary>
                             <div class="duel-player-log-body" id="duel-p1-log"></div>
                         </details>
                     </div>
@@ -1558,7 +1604,7 @@
                         </div>
                         <div id="player-2-pov-status">Waiting for Player 2 camera</div>
                         <details class="duel-player-log" open>
-                            <summary class="duel-log-title">Player 2 MCP Command Logs</summary>
+                            <summary class="duel-log-title">Player 2 MCP Command Logs <span class="duel-log-total" id="duel-p2-log-total">Total MCP commands: 0</span></summary>
                             <div class="duel-player-log-body" id="duel-p2-log"></div>
                         </details>
                     </div>
@@ -1646,6 +1692,7 @@
         </div>
 
         <script>
+            var doomAssetCacheBust = "cache-bust-20260523-1250";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
@@ -1793,6 +1840,54 @@
                     });
             }
 
+            function doomAngleToCssRotation(angleValue) {
+                var angle = Number(angleValue);
+
+                if (!Number.isFinite(angle)) {
+                    return 0;
+                }
+
+                return 90 - angle;
+            }
+
+            function tacticalMapMarkerPosition(bounds, x, y) {
+                var roomRect = {
+                    x: 40,
+                    y: 30,
+                    width: 432,
+                    height: 324,
+                    viewWidth: 512,
+                    viewHeight: 384,
+                };
+                var xRatio = (x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min);
+                var yRatio = (y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min);
+
+                return {
+                    leftPct: ((roomRect.x + xRatio * roomRect.width) / roomRect.viewWidth) * 100,
+                    topPct: ((roomRect.y + (1 - yRatio) * roomRect.height) / roomRect.viewHeight) * 100,
+                };
+            }
+
+            function installTacticalMapImageStatus() {
+                var image = document.getElementById("duel-tactical-map-image");
+                var status = document.getElementById("duel-tactical-map-status");
+
+                if (!image || !status) {
+                    return;
+                }
+
+                image.addEventListener("load", function () {
+                    status.hidden = true;
+                });
+                image.addEventListener("error", function () {
+                    status.hidden = false;
+                    status.textContent = "Map layout unavailable";
+                });
+                if (image.complete && image.naturalWidth > 0) {
+                    status.hidden = true;
+                }
+            }
+
             function renderTacticalMap(player1, player2) {
                 var mapStatus = document.getElementById("duel-tactical-map-status");
                 var p1Marker = document.getElementById("duel-tactical-marker-p1");
@@ -1802,8 +1897,7 @@
                 var p1y;
                 var p2x;
                 var p2y;
-                var leftPct;
-                var topPct;
+                var markerPosition;
 
                 setDuelTacticalPanelVisible(currentArenaMode === "duel");
                 setText("duel-tactical-scenario", currentArenaScenarioId || "-");
@@ -1839,12 +1933,12 @@
                 p2y = Number(player2 && player2.y);
 
                 if (Number.isFinite(p1x) && Number.isFinite(p1y)) {
-                    leftPct = ((p1x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min)) * 100;
-                    topPct = 100 - (((p1y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min)) * 100);
+                    markerPosition = tacticalMapMarkerPosition(bounds, p1x, p1y);
                     if (p1Marker) {
                         p1Marker.hidden = false;
-                        p1Marker.style.left = leftPct + "%";
-                        p1Marker.style.top = topPct + "%";
+                        p1Marker.style.left = markerPosition.leftPct + "%";
+                        p1Marker.style.top = markerPosition.topPct + "%";
+                        p1Marker.style.transform = "rotate(" + doomAngleToCssRotation(player1.angle) + "deg)";
                     }
                     setText("duel-tactical-p1", String(player1.x) + ", " + String(player1.y));
                 } else {
@@ -1855,12 +1949,12 @@
                 }
 
                 if (Number.isFinite(p2x) && Number.isFinite(p2y)) {
-                    leftPct = ((p2x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min)) * 100;
-                    topPct = 100 - (((p2y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min)) * 100);
+                    markerPosition = tacticalMapMarkerPosition(bounds, p2x, p2y);
                     if (p2Marker) {
                         p2Marker.hidden = false;
-                        p2Marker.style.left = leftPct + "%";
-                        p2Marker.style.top = topPct + "%";
+                        p2Marker.style.left = markerPosition.leftPct + "%";
+                        p2Marker.style.top = markerPosition.topPct + "%";
+                        p2Marker.style.transform = "rotate(" + doomAngleToCssRotation(player2.angle) + "deg)";
                     }
                     setText("duel-tactical-p2", String(player2.x) + ", " + String(player2.y));
                 } else {
@@ -3279,23 +3373,65 @@
                     return;
                 }
 
-                var nextRenderKey = lines.join("\n");
+                var normalizedLines = lines.map(function (line) {
+                    if (line && typeof line === "object") {
+                        return {
+                            text: line.text || "",
+                            decisionLatency: line.decisionLatency || "-",
+                            mcpLatency: line.mcpLatency || "-",
+                            showDecisionLatency: line.showDecisionLatency !== false,
+                            showMcpLatency: line.showMcpLatency === true
+                        };
+                    }
+                    return {
+                        text: String(line || ""),
+                        decisionLatency: "-",
+                        mcpLatency: "-",
+                        showDecisionLatency: false,
+                        showMcpLatency: false
+                    };
+                });
+                var nextRenderKey = normalizedLines.map(function (line) {
+                    return line.text +
+                        "\t" + line.decisionLatency +
+                        "\t" + line.mcpLatency +
+                        "\t" + (line.showDecisionLatency ? "1" : "0") +
+                        "\t" + (line.showMcpLatency ? "1" : "0");
+                }).join("\n");
                 var contentChanged = node.dataset.renderKey !== nextRenderKey;
+                var firstRender = !node.dataset.renderKey;
                 var previousScrollTop = node.scrollTop;
+                var wasNearBottom = node.scrollHeight - node.clientHeight - node.scrollTop < 32;
 
                 node.innerHTML = "";
-                lines.forEach(function (text) {
+                normalizedLines.forEach(function (entry) {
                     var line = document.createElement("div");
+                    var main = document.createElement("div");
+                    var latency = document.createElement("div");
+                    var latencyParts = [];
                     line.className = "duel-log-line";
-                    if (text === "> Waiting for agent to send command...") {
+                    if (entry.text === "> Waiting for agent to send command...") {
                         line.classList.add("waiting");
                     }
-                    line.textContent = text;
+                    main.className = "duel-log-main";
+                    latency.className = "duel-log-decision-latency";
+                    main.textContent = entry.text;
+                    if (entry.showDecisionLatency) {
+                        latencyParts.push("Decision: " + entry.decisionLatency);
+                    }
+                    if (entry.showMcpLatency) {
+                        latencyParts.push("MCP: " + entry.mcpLatency);
+                    }
+                    latency.textContent = latencyParts.join(" | ");
+                    line.appendChild(main);
+                    line.appendChild(latency);
                     node.appendChild(line);
                 });
 
                 node.dataset.renderKey = nextRenderKey;
-                node.scrollTop = contentChanged ? node.scrollHeight : previousScrollTop;
+                node.scrollTop = contentChanged && (firstRender || wasNearBottom)
+                    ? node.scrollHeight
+                    : previousScrollTop;
             }
 
             function playerWaitingForCommand(player) {
@@ -3570,6 +3706,76 @@
                 };
             }
 
+            function decisionLatencyForIntent(stats, row) {
+                var turns;
+                var match;
+
+                if (!stats || !Array.isArray(stats.inferred_decision_turns) || !row) {
+                    return "-";
+                }
+
+                turns = stats.inferred_decision_turns;
+                match = turns.find(function (turn) {
+                    return row.call_id && turn.intent_call_id === row.call_id;
+                });
+                if (!match) {
+                    match = turns.find(function (turn) {
+                        return turn.participant_id === row.participant_id &&
+                            String(turn.sequence_number || "") === String(row.sequence_number || "") &&
+                            turn.intent === row.intent;
+                    });
+                }
+
+                return match ? formatMillis(match.inferred_decision_latency_ms) : "-";
+            }
+
+            function intentLifecycleByCallId(stats, participantId) {
+                var lookup = {};
+
+                if (!stats || !Array.isArray(stats.intent_lifecycles)) {
+                    return lookup;
+                }
+
+                stats.intent_lifecycles.forEach(function (row) {
+                    if (row.participant_id === participantId && row.call_id) {
+                        lookup[row.call_id] = row;
+                    }
+                });
+                return lookup;
+            }
+
+            function mcpCallLogLine(call, stats, intentByCallId) {
+                var timestamp = formatRunTimestamp(call.started_at_ms || call.completed_at_ms, stats);
+                var participant = call.participant_id || "-";
+                var status = call.status || (call.is_error ? "error" : "completed");
+                var text = "> " + timestamp + " " + (call.tool_name || "unknown_tool") +
+                    " | participant=" + participant +
+                    " | status=" + status;
+                var intentRow = intentByCallId[call.call_id];
+
+                if (call.tool_name === "set_participant_intent" && intentRow) {
+                    return highLevelMcpCommandLine(intentRow, stats);
+                }
+
+                if (call.is_error) {
+                    text += " | error";
+                }
+                if (call.accepted === true) {
+                    text += " | accepted";
+                }
+                if (call.ready === true) {
+                    text += " | ready";
+                }
+
+                return {
+                    text: text,
+                    decisionLatency: "-",
+                    mcpLatency: formatMillis(call.latency_ms),
+                    showDecisionLatency: false,
+                    showMcpLatency: true
+                };
+            }
+
             function highLevelMcpCommandLine(row, stats) {
                 var sequence = row.sequence_number !== null && row.sequence_number !== undefined && row.sequence_number !== ""
                     ? row.sequence_number
@@ -3582,45 +3788,66 @@
                             ? "current"
                             : "active/final";
 
-                return "> " + formatRunTimestamp(row.issued_at_ms, stats) +
-                    " set_participant_intent" +
-                    " | seq " + sequence +
-                    " | MCP requested: intent=" + (row.intent || "unknown") +
-                    " | style=" + formatCompactValue(row.style) +
-                    " | target=" + formatCompactValue(row.target_id) +
-                    " | aggression=" + formatCompactValue(row.aggression) +
-                    " | preferred_distance=" + formatCompactValue(row.preferred_distance) +
-                    " | duration=" + formatMillis(row.duration_ms) +
-                    " | movement_bias=" + formatCompactValue(row.movement_bias) +
-                    " | strafe_direction=" + formatCompactValue(row.strafe_direction) +
-                    " | fire_policy=" + formatCompactValue(row.fire_policy) +
-                    " | distance_policy=" + formatCompactValue(row.distance_policy) +
-                    " | aim_tolerance=" + formatCompactValue(row.aim_tolerance) +
-                    " | fire_burst_ms=" + formatCompactValue(row.fire_burst_ms) +
-                    " | min_fire_alignment=" + formatCompactValue(row.min_fire_alignment) +
-                    " | min_distance=" + formatCompactValue(row.min_distance) +
-                    " | max_distance=" + formatCompactValue(row.max_distance) +
-                    " | retreat_if_closer_than=" + formatCompactValue(row.retreat_if_closer_than) +
-                    " | push_if_farther_than=" + formatCompactValue(row.push_if_farther_than) +
-                    " | los_lost_action=" + formatCompactValue(row.los_lost_action) +
-                    " | stuck_recovery_strategy=" + formatCompactValue(row.stuck_recovery_strategy) +
-                    " | movement_primitive=" + formatCompactValue(row.movement_primitive) +
-                    " | turn_policy=" + formatCompactValue(row.turn_policy) +
-                    " | navigation_target=" + formatCompactValue(row.navigation_target) +
-                    " | fire_mode=" + formatCompactValue(row.fire_mode) +
-                    " | replan_if=" + formatReplanIf(row.replan_if) +
-                    " | Doom executed: move=" + formatCompactValue(row.executed_movement_action) +
-                    " | fire=" + formatCompactValue(row.executed_fire_action) +
-                    " | strafe=" + formatCompactValue(row.executed_strafe_direction) +
-                    " | reason=" + formatCompactValue(row.policy_compliance_reason) +
-                    " | latency=" + formatMillis(row.mcp_call_latency_ms) +
-                    " | " + lifecycle;
+                return {
+                    text: "> " + formatRunTimestamp(row.issued_at_ms, stats) +
+                        " set_participant_intent" +
+                        " | seq " + sequence +
+                        " | MCP requested: intent=" + (row.intent || "unknown") +
+                        " | style=" + formatCompactValue(row.style) +
+                        " | target=" + formatCompactValue(row.target_id) +
+                        " | aggression=" + formatCompactValue(row.aggression) +
+                        " | preferred_distance=" + formatCompactValue(row.preferred_distance) +
+                        " | duration=" + formatMillis(row.duration_ms) +
+                        " | movement_bias=" + formatCompactValue(row.movement_bias) +
+                        " | strafe_direction=" + formatCompactValue(row.strafe_direction) +
+                        " | fire_policy=" + formatCompactValue(row.fire_policy) +
+                        " | distance_policy=" + formatCompactValue(row.distance_policy) +
+                        " | aim_tolerance=" + formatCompactValue(row.aim_tolerance) +
+                        " | fire_burst_ms=" + formatCompactValue(row.fire_burst_ms) +
+                        " | min_fire_alignment=" + formatCompactValue(row.min_fire_alignment) +
+                        " | min_distance=" + formatCompactValue(row.min_distance) +
+                        " | max_distance=" + formatCompactValue(row.max_distance) +
+                        " | retreat_if_closer_than=" + formatCompactValue(row.retreat_if_closer_than) +
+                        " | push_if_farther_than=" + formatCompactValue(row.push_if_farther_than) +
+                        " | los_lost_action=" + formatCompactValue(row.los_lost_action) +
+                        " | stuck_recovery_strategy=" + formatCompactValue(row.stuck_recovery_strategy) +
+                        " | movement_primitive=" + formatCompactValue(row.movement_primitive) +
+                        " | turn_policy=" + formatCompactValue(row.turn_policy) +
+                        " | navigation_target=" + formatCompactValue(row.navigation_target) +
+                        " | fire_mode=" + formatCompactValue(row.fire_mode) +
+                        " | replan_if=" + formatReplanIf(row.replan_if) +
+                        " | Doom executed: move=" + formatCompactValue(row.executed_movement_action) +
+                        " | fire=" + formatCompactValue(row.executed_fire_action) +
+                        " | strafe=" + formatCompactValue(row.executed_strafe_direction) +
+                        " | reason=" + formatCompactValue(row.policy_compliance_reason) +
+                        " | " + lifecycle,
+                    decisionLatency: decisionLatencyForIntent(stats, row),
+                    mcpLatency: formatMillis(row.mcp_call_latency_ms),
+                    showDecisionLatency: true,
+                    showMcpLatency: true
+                };
             }
 
             function highLevelMcpCommandLines(stats, participantId, fallbackPlayer) {
                 var rows = [];
+                var intentByCallId;
                 var fallbackRows;
                 var fallbackRow;
+
+                if (stats && Array.isArray(stats.calls)) {
+                    intentByCallId = intentLifecycleByCallId(stats, participantId);
+                    rows = stats.calls.filter(function (call) {
+                        return call.participant_id === participantId;
+                    }).sort(function (left, right) {
+                        return (numericValue(left.started_at_ms) || 0) - (numericValue(right.started_at_ms) || 0);
+                    }).map(function (call) {
+                        return mcpCallLogLine(call, stats, intentByCallId);
+                    });
+
+                    if (rows.length > 0) {
+                        return rows;
+                    }
+                }
 
                 if (stats && Array.isArray(stats.intent_lifecycles)) {
                     rows = stats.intent_lifecycles.filter(function (row) {
@@ -3919,9 +4146,32 @@
                 renderMatchBreakdown(match, player1, player2, stats || null);
             }
 
+            function updateMcpCommandTotal(participantId, stats, fallbackLines) {
+                var id = participantId === "player_1" ? "duel-p1-log-total" : "duel-p2-log-total";
+                var node = document.getElementById(id);
+                var count = 0;
+
+                if (stats && stats.by_participant && stats.by_participant[participantId]) {
+                    count = numericValue(stats.by_participant[participantId].count) || 0;
+                } else if (Array.isArray(fallbackLines)) {
+                    count = fallbackLines.filter(function (line) {
+                        return line && typeof line === "object" && line.text !== "> Waiting for agent to send command...";
+                    }).length;
+                }
+
+                if (node !== null) {
+                    node.textContent = "Total MCP commands: " + count;
+                }
+            }
+
             function renderLiveMcpCommandLogs(stats, player1, player2) {
-                renderLogLines("duel-p1-log", highLevelMcpCommandLines(stats, "player_1", player1));
-                renderLogLines("duel-p2-log", highLevelMcpCommandLines(stats, "player_2", player2));
+                var p1Lines = highLevelMcpCommandLines(stats, "player_1", player1);
+                var p2Lines = highLevelMcpCommandLines(stats, "player_2", player2);
+
+                updateMcpCommandTotal("player_1", stats, p1Lines);
+                updateMcpCommandTotal("player_2", stats, p2Lines);
+                renderLogLines("duel-p1-log", p1Lines);
+                renderLogLines("duel-p2-log", p2Lines);
             }
 
             function refreshRunStatsForDashboard(match, player1, player2, phase) {
@@ -4951,6 +5201,7 @@
                 updateArenaBanner();
                 setLauncherMode("choose");
                 installPointerCaptureGuards();
+                installTacticalMapImageStatus();
                 disableDoomPointerCapture();
 
                 if (queryMenu) {
@@ -5027,13 +5278,13 @@
                 noInitialRun: true,
                 locateFile: function (path) {
                     if (path === "websockets-doom.wasm") {
-                        return path + "?v=cache-bust-1779473360";
+                        return path + "?v=" + doomAssetCacheBust;
                     }
 
                     return path;
                 },
                 preRun: () => {
-                    Module.FS.createPreloadedFile("", "doom1-arena.wad", "doom1-arena.wad", true, true);
+                    Module.FS.createPreloadedFile("", "doom1-arena.wad", "doom1-arena.wad?v=" + doomAssetCacheBust, true, true);
                     Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
                     Module.FS.createPreloadedFile("", arenaDataMountPath, selectedArenaDataSourcePath, true, true);
                 },

@@ -74,8 +74,6 @@ static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_EVENTS_PATH "arena_duel_events.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
-#define ARENA_DUEL_PLAYER1_START_X (-190)
-#define ARENA_DUEL_PLAYER1_START_Y 2135
 #define ARENA_DUEL_PLAYER2_BULLETS 200
 
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
@@ -311,17 +309,8 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
     }
 
     mobj = player->mo;
-    P_UnsetThingPosition(mobj);
-    mobj->x = (fixed_t) ARENA_DUEL_PLAYER1_START_X * FRACUNIT;
-    mobj->y = (fixed_t) ARENA_DUEL_PLAYER1_START_Y * FRACUNIT;
     mobj->momx = 0;
     mobj->momy = 0;
-    P_SetThingPosition(mobj);
-    if (mobj->subsector != NULL && mobj->subsector->sector != NULL)
-    {
-        mobj->floorz = mobj->subsector->sector->floorheight;
-        mobj->ceilingz = mobj->subsector->sector->ceilingheight;
-    }
     mobj->z = mobj->floorz;
 
     player->health = ARENA_DUEL_PARTICIPANT_HEALTH;
