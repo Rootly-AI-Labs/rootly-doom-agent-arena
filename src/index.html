@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-us">
     <head>
         <title>Doom Arena</title>
@@ -155,7 +155,7 @@
             }
 
             .arena-advanced-settings summary::before {
-                content: "▸";
+                content: ">";
                 color: #b8e986;
                 font-size: 10px;
                 transition: transform 0.15s ease;
@@ -266,11 +266,26 @@
                 border-color: rgba(184, 233, 134, 0.25);
             }
 
+            .arena-toggle-field.is-disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+                filter: grayscale(0.9);
+            }
+
+            .arena-toggle-field.is-disabled:hover {
+                background: #131611;
+                border-color: rgba(204, 212, 183, 0.12);
+            }
+
             .arena-toggle-field input[type="checkbox"] {
                 margin-top: 2px;
                 accent-color: #b8e986;
                 cursor: pointer;
                 flex-shrink: 0;
+            }
+
+            .arena-toggle-field input[type="checkbox"]:disabled {
+                cursor: not-allowed;
             }
 
             .arena-toggle-field .arena-toggle-text {
@@ -1015,20 +1030,32 @@
                 border-top: 1px solid rgba(255, 255, 255, 0.14);
             }
 
+            .duel-prompt-card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin: 0 0 8px;
+                padding-bottom: 6px;
+                border-bottom: 1px dashed rgba(173, 186, 145, 0.14);
+            }
+
             .duel-prompt-title {
-                color: #ffce6b;
-                font-weight: 700;
+                color: #93a87a;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.12em;
                 text-transform: uppercase;
             }
 
             .duel-prompt-card button {
                 cursor: pointer;
-                border: 1px solid rgba(255, 255, 255, 0.24);
-                background: #263019;
+                border: 1px solid rgba(173, 186, 145, 0.26);
+                background: rgba(38, 48, 25, 0.92);
                 color: #f7f5d8;
                 padding: 6px 8px;
-                margin: 6px 0;
+                margin: 0;
                 font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.06em;
                 text-transform: uppercase;
             }
 
@@ -1405,15 +1432,15 @@
                                 <label class="arena-toggle-field" for="arena-hide-enemy-position">
                                     <input id="arena-hide-enemy-position" type="checkbox" />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Fog of war — hide opponent position</span>
+                                        <span class="arena-toggle-title">Fog of war - hide opponent position</span>
                                         <span class="arena-toggle-hint">Players only see opponent coordinates and angle when line-of-sight is active. Forces models to track lost contacts instead of cheating with shared state.</span>
                                     </span>
                                 </label>
-                                <label class="arena-toggle-field" for="arena-enable-map-blueprint">
-                                    <input id="arena-enable-map-blueprint" type="checkbox" checked />
+                                <label class="arena-toggle-field is-disabled" for="arena-enable-map-blueprint" aria-disabled="true">
+                                    <input id="arena-enable-map-blueprint" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Map blueprint in prompt</span>
-                                        <span class="arena-toggle-hint">Inject a tactical map blueprint (bounds, obstacles, sightlines, ASCII overview) into the agent's system prompt so it can reason about positioning.</span>
+                                        <span class="arena-toggle-title">Map blueprint in prompt - disabled</span>
+                                        <span class="arena-toggle-hint">Temporarily disabled. Hierarchical prompts now use a compact map summary instead of the full blueprint.</span>
                                     </span>
                                 </label>
                             </div>
@@ -1421,18 +1448,18 @@
                         <div class="arena-config-section">
                             <div class="arena-config-section-title">Agent behavior</div>
                             <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field" for="arena-enable-simplified-actions">
-                                    <input id="arena-enable-simplified-actions" type="checkbox" />
+                                <label class="arena-toggle-field is-disabled" for="arena-enable-simplified-actions" aria-disabled="true">
+                                    <input id="arena-enable-simplified-actions" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Simplified action schema</span>
-                                        <span class="arena-toggle-hint">Replace 4 actions × 25 params with 10 named actions × 6 params. Each action is a tactical preset — fewer tokens, faster decisions, more tactical diversity.</span>
+                                        <span class="arena-toggle-title">Simplified action schema - disabled</span>
+                                        <span class="arena-toggle-hint">Temporarily disabled. The backend currently accepts the regular four duel intents only.</span>
                                     </span>
                                 </label>
-                                <label class="arena-toggle-field" for="arena-enable-cross-round-recap">
-                                    <input id="arena-enable-cross-round-recap" type="checkbox" />
+                                <label class="arena-toggle-field is-disabled" for="arena-enable-cross-round-recap" aria-disabled="true">
+                                    <input id="arena-enable-cross-round-recap" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Cross-round learning recap</span>
-                                        <span class="arena-toggle-hint">Surface a structured recap of prior rounds in each observation (winner, damage, opponent tactics). Lets agents adapt strategy across rounds.</span>
+                                        <span class="arena-toggle-title">Cross-round learning recap - disabled</span>
+                                        <span class="arena-toggle-hint">Temporarily disabled. Cross-round recap is not active in the current hierarchical strategy flow.</span>
                                     </span>
                                 </label>
                             </div>
@@ -1451,7 +1478,7 @@
                                     <input id="arena-enable-weapon-pickups" type="checkbox" />
                                     <span class="arena-toggle-text">
                                         <span class="arena-toggle-title">Weapon pickups</span>
-                                        <span class="arena-toggle-hint">Spawn shotgun + chaingun on the map. Tests tactical literacy — does the model rush the better weapon? Requires engine spike (Phase 4) before this is active.</span>
+                                        <span class="arena-toggle-hint">Spawn shotgun + chaingun on the map. Tests tactical literacy - does the model rush the better weapon? Requires engine spike (Phase 4) before this is active.</span>
                                     </span>
                                 </label>
                             </div>
@@ -1464,13 +1491,17 @@
                         </div>
                         <div class="duel-prompt-grid">
                             <div class="duel-prompt-card" id="duel-p1-prompt-card">
-                                <div class="duel-prompt-title">Prompt for MCP Client 1</div>
-                                <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                                <div class="duel-prompt-card-header">
+                                    <div class="duel-prompt-title">Prompt for MCP Client 1</div>
+                                    <button type="button" id="duel-p1-copy-prompt">Copy Player 1 Prompt</button>
+                                </div>
                                 <textarea id="duel-p1-prompt" readonly placeholder="Click Start Benchmark to generate the Player 1 prompt."></textarea>
                             </div>
                             <div class="duel-prompt-card" id="duel-p2-prompt-card">
-                                <div class="duel-prompt-title">Prompt for MCP Client 2</div>
-                                <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                                <div class="duel-prompt-card-header">
+                                    <div class="duel-prompt-title">Prompt for MCP Client 2</div>
+                                    <button type="button" id="duel-p2-copy-prompt">Copy Player 2 Prompt</button>
+                                </div>
                                 <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
                             </div>
                         </div>
@@ -1683,7 +1714,7 @@
                 </div>
                 <div class="benchmark-modal-footer">
                     <div class="benchmark-modal-credit">
-                        Built by <strong>Rootly AI Labs</strong> ·
+                        Built by <strong>Rootly AI Labs</strong> Â·
                         <a href="https://rootly.com/ai-labs" target="_blank" rel="noopener">rootly.com/ai-labs</a>
                     </div>
                     <button type="button" class="benchmark-modal-btn" onclick="closeBenchmarkResultsModal()">Close</button>
@@ -1707,7 +1738,7 @@
             var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
             var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
             var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
-            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\n";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\n";
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
@@ -1921,8 +1952,8 @@
 
                 bounds = currentMapBlueprint.bounds;
                 setText("duel-tactical-bounds",
-                    String(bounds.x_min) + "…" + String(bounds.x_max) + " / " +
-                    String(bounds.y_min) + "…" + String(bounds.y_max));
+                    String(bounds.x_min) + "â€¦" + String(bounds.x_max) + " / " +
+                    String(bounds.y_min) + "â€¦" + String(bounds.y_max));
                 if (mapStatus) {
                     mapStatus.hidden = true;
                 }
@@ -2511,6 +2542,7 @@
                 var rounds = selectedNumberValue("arena-round", 1);
                 return {
                     arena_mode: "duel",
+                    control_mode: "hierarchical",
                     scenario_id: selectedStringValue("arena-duel-map", "duel_e1m8"),
                     player_1_model: "",
                     player_2_model: "",
@@ -2523,7 +2555,6 @@
                     hide_enemy_position: selectedCheckboxValue("arena-hide-enemy-position", false),
                     randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
                     rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
-                    enable_simplified_actions: selectedCheckboxValue("arena-enable-simplified-actions", false),
                     enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
                     recap_window: 0,
                     enable_map_blueprint: selectedCheckboxValue("arena-enable-map-blueprint", false),
@@ -2615,11 +2646,41 @@
                 }
             }
 
+            function duelPromptHasStaleMapWording(prompt) {
+                var staleTerms = [
+                    "Map blueprint:",
+                    "Use the upper or lower lane",
+                    "upper_open",
+                    "lower_open",
+                    "patrol_upper",
+                    "patrol_lower",
+                    "flank_upper",
+                    "flank_lower"
+                ];
+                var text = String(prompt || "");
+
+                return staleTerms.some(function (term) {
+                    return text.indexOf(term) >= 0;
+                });
+            }
+
+            function duelSessionHasStalePromptText(session) {
+                return !!session && (
+                    duelPromptHasStaleMapWording(session.player_1_prompt) ||
+                    duelPromptHasStaleMapWording(session.player_2_prompt)
+                );
+            }
+
             function mergeStoredDuelSessionPayload(session) {
                 var stored = storedDuelSessionPayload();
                 var merged = Object.assign({}, session || {});
 
                 if (!stored) {
+                    return merged;
+                }
+                if (duelSessionHasStalePromptText(stored)) {
+                    clearStoredDuelSessionForReload();
+                    stored = null;
                     return merged;
                 }
                 if (merged.run_id && stored.run_id && merged.run_id !== stored.run_id) {
@@ -2660,6 +2721,10 @@
                 if (!stored) {
                     return null;
                 }
+                if (duelSessionHasStalePromptText(stored)) {
+                    clearStoredDuelSessionForReload();
+                    return null;
+                }
 
                 renderDuelSessionPrompts(stored);
                 currentArenaRunId = stored.run_id || currentArenaRunId;
@@ -2679,11 +2744,16 @@
                 if (!currentDuelSession) {
                     return;
                 }
+                if (duelSessionHasStalePromptText(currentDuelSession)) {
+                    currentDuelSession.player_1_prompt = "";
+                    currentDuelSession.player_2_prompt = "";
+                    clearStoredDuelSessionForReload();
+                }
                 if (!currentDuelSession.player_1_prompt && previousSession.player_1_prompt) {
-                    currentDuelSession.player_1_prompt = previousSession.player_1_prompt;
+                    currentDuelSession.player_1_prompt = duelPromptHasStaleMapWording(previousSession.player_1_prompt) ? "" : previousSession.player_1_prompt;
                 }
                 if (!currentDuelSession.player_2_prompt && previousSession.player_2_prompt) {
-                    currentDuelSession.player_2_prompt = previousSession.player_2_prompt;
+                    currentDuelSession.player_2_prompt = duelPromptHasStaleMapWording(previousSession.player_2_prompt) ? "" : previousSession.player_2_prompt;
                 }
 
                 setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
@@ -2806,19 +2876,19 @@
 
             function returnToArenaMenu() {
                 var url = new URL(window.location.href);
-                forceArenaMenuMode = true;
-                currentArenaMode = "";
+                forceArenaMenuMode = false;
+                currentArenaMode = "duel";
                 currentArenaRunId = "";
                 currentDuelSession = null;
                 clearStoredDuelSessionForReload();
                 try {
                     if (window.sessionStorage) {
-                        window.sessionStorage.setItem(forceArenaMenuStorageKey, "1");
+                        window.sessionStorage.removeItem(forceArenaMenuStorageKey);
                     }
                 } catch (error) {
                     console.warn("Doom Agent Arena: failed to store menu reload flag", error);
                 }
-                url.searchParams.delete("duel");
+                url.searchParams.set("duel", "1");
                 url.searchParams.delete("arenaMode");
                 url.searchParams.delete("autoStart");
                 url.searchParams.delete("arenaData");
@@ -2983,7 +3053,7 @@
                         reloadIntoDuelRun(false);
                         return new Promise(function () {});
                     }
-                    startDoom("mock", false);
+                    startDoom("duel", false);
                     return Promise.resolve();
                 }
 
@@ -3022,7 +3092,7 @@
                         if (prepareOnly) {
                             return;
                         }
-                        startDoom("mock", false);
+                        startDoom("duel", false);
                     })
                     .catch(function (error) {
                         duelAutoAdvanceInFlight = false;
@@ -3085,7 +3155,7 @@
                         return Promise.resolve();
                     })
                     .then(function () {
-                        startDoom("mock", false);
+                        startDoom("duel", false);
                     })
                     .catch(function (error) {
                         updateLauncherStatus(error.message);
@@ -3271,7 +3341,7 @@
                     if (ageSeconds !== null && ageSeconds >= 20) {
                         line.classList.add("arena-mcp-client-line-warning");
                     }
-                    line.textContent = label + " · " + formatSeenAgo(client.last_seen_at_ms);
+                    line.textContent = label + " Â· " + formatSeenAgo(client.last_seen_at_ms);
                     node.appendChild(line);
                 });
 
@@ -3753,7 +3823,7 @@
                     " | status=" + status;
                 var intentRow = intentByCallId[call.call_id];
 
-                if (call.tool_name === "set_participant_intent" && intentRow) {
+                if ((call.tool_name === "set_participant_intent" || call.tool_name === "set_participant_strategy") && intentRow) {
                     return highLevelMcpCommandLine(intentRow, stats);
                 }
 
@@ -3780,6 +3850,7 @@
                 var sequence = row.sequence_number !== null && row.sequence_number !== undefined && row.sequence_number !== ""
                     ? row.sequence_number
                     : "-";
+                var isHierarchical = row.strategy_source === "hierarchical";
                 var lifecycle = row.superseded_before_expiry
                     ? "superseded"
                     : row.expired_before_next_intent
@@ -3787,39 +3858,23 @@
                         : row.source === "state_current" || row.source === "participant_intents_tsv"
                             ? "current"
                             : "active/final";
-
-                return {
-                    text: "> " + formatRunTimestamp(row.issued_at_ms, stats) +
-                        " set_participant_intent" +
-                        " | seq " + sequence +
-                        " | MCP requested: intent=" + (row.intent || "unknown") +
+                var requestedText = isHierarchical
+                    ? " | Strategy: category=" + formatCompactValue(row.strategy_category) +
+                        " | action=" + formatCompactValue(row.strategy_action) +
+                        " | intensity=" + formatCompactValue(row.strategy_intensity) +
+                        " | commit=" + formatMillis(row.strategy_commit_ms)
+                    : " | Intent: intent=" + (row.intent || "unknown") +
                         " | style=" + formatCompactValue(row.style) +
                         " | target=" + formatCompactValue(row.target_id) +
                         " | aggression=" + formatCompactValue(row.aggression) +
                         " | preferred_distance=" + formatCompactValue(row.preferred_distance) +
-                        " | duration=" + formatMillis(row.duration_ms) +
-                        " | movement_bias=" + formatCompactValue(row.movement_bias) +
-                        " | strafe_direction=" + formatCompactValue(row.strafe_direction) +
-                        " | fire_policy=" + formatCompactValue(row.fire_policy) +
-                        " | distance_policy=" + formatCompactValue(row.distance_policy) +
-                        " | aim_tolerance=" + formatCompactValue(row.aim_tolerance) +
-                        " | fire_burst_ms=" + formatCompactValue(row.fire_burst_ms) +
-                        " | min_fire_alignment=" + formatCompactValue(row.min_fire_alignment) +
-                        " | min_distance=" + formatCompactValue(row.min_distance) +
-                        " | max_distance=" + formatCompactValue(row.max_distance) +
-                        " | retreat_if_closer_than=" + formatCompactValue(row.retreat_if_closer_than) +
-                        " | push_if_farther_than=" + formatCompactValue(row.push_if_farther_than) +
-                        " | los_lost_action=" + formatCompactValue(row.los_lost_action) +
-                        " | stuck_recovery_strategy=" + formatCompactValue(row.stuck_recovery_strategy) +
-                        " | movement_primitive=" + formatCompactValue(row.movement_primitive) +
-                        " | turn_policy=" + formatCompactValue(row.turn_policy) +
-                        " | navigation_target=" + formatCompactValue(row.navigation_target) +
-                        " | fire_mode=" + formatCompactValue(row.fire_mode) +
-                        " | replan_if=" + formatReplanIf(row.replan_if) +
-                        " | Doom executed: move=" + formatCompactValue(row.executed_movement_action) +
-                        " | fire=" + formatCompactValue(row.executed_fire_action) +
-                        " | strafe=" + formatCompactValue(row.executed_strafe_direction) +
-                        " | reason=" + formatCompactValue(row.policy_compliance_reason) +
+                        " | duration=" + formatMillis(row.duration_ms);
+
+                return {
+                    text: "> " + formatRunTimestamp(row.issued_at_ms, stats) +
+                        " " + (isHierarchical ? "set_participant_strategy" : "set_participant_intent") +
+                        " | seq " + sequence +
+                        requestedText +
                         " | " + lifecycle,
                     decisionLatency: decisionLatencyForIntent(stats, row),
                     mcpLatency: formatMillis(row.mcp_call_latency_ms),
@@ -3827,7 +3882,6 @@
                     showMcpLatency: true
                 };
             }
-
             function highLevelMcpCommandLines(stats, participantId, fallbackPlayer) {
                 var rows = [];
                 var intentByCallId;
@@ -5012,16 +5066,21 @@
             async function startDoom(mode, fetchBeforeStart) {
                 var launcher = document.getElementById("arena-launcher");
                 var resetPromise = Promise.resolve();
+                var dataMode = mode;
 
                 updateLauncherStatus("");
                 setArenaLauncherButtonsDisabled(true);
+                if (mode === "duel") {
+                    currentArenaMode = "duel";
+                    dataMode = "mock";
+                }
                 if (currentArenaMode !== "duel") {
                     resetPromise = postArenaReset({ arena_mode: "enemies" });
                 }
 
                 try {
                     await resetPromise;
-                    if (!selectArenaDataSource(mode)) {
+                    if (!selectArenaDataSource(dataMode)) {
                         setArenaLauncherButtonsDisabled(false);
                         return;
                     }
@@ -5096,13 +5155,28 @@
                         !!currentDuelSession.hide_enemy_position === selectedCheckboxValue("arena-hide-enemy-position", false) &&
                         !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
                         !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
-                        !!currentDuelSession.enable_simplified_actions === selectedCheckboxValue("arena-enable-simplified-actions", false) &&
+                        (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&
                         !!currentDuelSession.enable_cross_round_recap === selectedCheckboxValue("arena-enable-cross-round-recap", false) &&
                         !!currentDuelSession.enable_map_blueprint === selectedCheckboxValue("arena-enable-map-blueprint", false) &&
                         !!currentDuelSession.enable_weapon_pickups === selectedCheckboxValue("arena-enable-weapon-pickups", false) &&
                         !!currentDuelSession.mirror_pair === selectedCheckboxValue("arena-mirror-pair", false);
                     if (sessionMatchesSettings) {
-                        startDuel({ reuseExistingSession: true });
+                        loadDuelSessionStateForLauncher()
+                            .then(function (serverSession) {
+                                if (
+                                    serverSession &&
+                                    serverSession.arena_mode === "duel" &&
+                                    serverSession.run_id === currentDuelSession.run_id &&
+                                    serverSession.duel_session_id
+                                ) {
+                                    startDuel({ reuseExistingSession: true });
+                                    return;
+                                }
+                                startDuel({ continueSession: false });
+                            })
+                            .catch(function () {
+                                startDuel({ continueSession: false });
+                            });
                     } else {
                         startDuel({ continueSession: false });
                     }
@@ -5206,17 +5280,20 @@
 
                 if (queryMenu) {
                     var cleanMenuUrl = new URL(window.location.href);
-                    forceArenaMenuMode = true;
-                    currentArenaMode = "";
+                    forceArenaMenuMode = false;
+                    currentArenaMode = "duel";
                     currentArenaRunId = "";
                     currentDuelSession = null;
                     clearStoredDuelSessionForReload();
                     cleanMenuUrl.searchParams.delete("menu");
                     cleanMenuUrl.searchParams.delete("menuAt");
+                    cleanMenuUrl.searchParams.set("duel", "1");
                     window.history.replaceState(null, "", cleanMenuUrl.toString());
+                    setLauncherCopy("Doom Arena Duel", "Set up both MCP agents, then start the benchmark.");
                     updateArenaBanner();
                     updateMcpSetupStatus();
                     window.setInterval(updateMcpSetupStatus, arenaMcpStatusPollMs);
+                    startDuel({ prepareOnly: true });
                     return;
                 }
 
@@ -5337,3 +5414,8 @@
         </script>
     </body>
 </html>
+
+
+
+
+

@@ -1,4 +1,4 @@
-"""Shared prompt and token helpers for browser-created Doom Arena duels."""
+﻿"""Shared prompt and token helpers for browser-created Doom Arena duels."""
 
 from __future__ import annotations
 
@@ -34,35 +34,10 @@ Cross-round learning:
 - Each entry has: `round`, `winner`, `terminal_reason`, `elapsed_time_seconds`,
   `your_final_health`, `your_damage_dealt`, `your_hit_rate`,
   `opponent_prevailing_intent`, `spawn_variant`.
-- On round 1 `previous_rounds` is empty — this is expected.
+- On round 1 `previous_rounds` is empty â€” this is expected.
 - Use recaps to adapt: if you lost last round, change your opening intent or spacing.
   If opponent's `prevailing_intent` was `search`, expect passive play and push early.
 - Do not spend more than one decision reacting to recap data; keep the observe-intent loop fast.
-
-"""
-
-
-def _simplified_actions_section(enabled: bool) -> str:
-    if not enabled:
-        return ""
-    return """
-Simplified action set (active for this session):
-Instead of the 4 legacy intents, use these 10 named actions. Each action has a
-built-in tactical preset — you only need to supply `aggression`, `fire_policy`,
-and `duration_ms` (plus optional `rationale`).
-
-| Action | When to use |
-|---|---|
-| `push_opponent` | Opponent is far; close the gap directly |
-| `flank_left` / `flank_right` | Circle to the side; break angle |
-| `circle_strafe_left` / `circle_strafe_right` | In close combat; keep moving |
-| `kite` | Under pressure; back away while firing |
-| `hold_position` | Anchor a spot; wait for opponent to come to you |
-| `camp_los` | Hold a sightline; fire only when aligned |
-| `patrol_last_seen` | LOS lost; sweep toward last known position |
-| `retreat_and_regroup` | Low health or losing; disengage cautiously |
-
-fire_policy values: `hold_fire` | `only_when_aligned` | `suppressive`
 
 """
 
@@ -97,7 +72,7 @@ def _map_blueprint_section(enabled: bool, scenario_id: str) -> str:
     return f"""
 Map blueprint:
 Coordinates in your observations use the same frame as the blueprint below.
-North is +Y, East is +X. Movement is collision-pathed by the autopilot — use
+North is +Y, East is +X. Movement is collision-pathed by the autopilot â€” use
 the blueprint for strategic reasoning, not for exact pathing.
 
 {blueprint}
@@ -116,9 +91,9 @@ def instructions(
     current_round: int = 1,
     total_rounds: int = 1,
     enable_cross_round_recap: bool = False,
-    enable_simplified_actions: bool = False,
     enable_map_blueprint: bool = False,
     scenario_id: str = "duel_e1m8",
+    control_mode: str = "full",
 ) -> str:
     token_line = (
         f"Your controller_token is: `{controller_token}`\n\n"
@@ -134,6 +109,102 @@ def instructions(
         if total_rounds > 1
         else "This benchmark session has a single match.\n"
     )
+    if str(control_mode).strip().lower() == "hierarchical":
+        strategy_token_line = (
+            f"Your controller_token is: `{controller_token}`\n\n"
+            "Always include `controller_token` when calling `set_participant_ready`, "
+            "`wait_for_match_start`, `get_participant_observation`, `set_participant_strategy`, "
+            "`stop_participant_intent`, and `get_match_result`.\n"
+            if enforce_tokens
+            else "Controller token enforcement is disabled for this local trusted smoke run.\n"
+        )
+        return f"""# Doom Arena MCP Instructions: {participant_id}
+
+You are one of two separate MCP agents in Doom Arena Duel.
+You control only `{participant_id}`. Do not control `{opponent_id}`.
+
+{strategy_token_line}
+{session_line}
+Core rules:
+- Use hierarchical strategy control only.
+- Use `set_participant_strategy` for normal play.
+- Do not use `set_participant_intent` in hierarchical mode.
+- Do not send detailed tactical parameters such as `movement_bias`, `fire_policy`, `distance_policy`, `navigation_target`, or `turn_policy`.
+- Do not call low-level movement/input tools.
+- Read compact observations using `match`, `self`, `opponent`, `tactical`, `map`, `allowed_actions`, and `recommended`.
+- Choose category and action together in one tool call. Do not call one tool for category and another for action.
+
+Loop:
+1. Call `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
+2. Call `get_participant_observation`.
+3. Send one opening `set_participant_strategy` with `sequence_number=1`.
+4. Call `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
+5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity`/`commit_ms` -> call `set_participant_strategy`.
+6. Increment `sequence_number` after every strategy call.
+7. After each `set_participant_strategy`, immediately observe again if the match is still active.
+8. Use `commit_ms` between 3000 and 8000 for every strategy call. Do not wait for `commit_ms` to finish; it is a policy lease, not a sleep timer.
+9. Do not use `Start-Sleep`, timers, or manual waiting loops. Keep updates moving as fast as the chat environment allows.
+
+Allowed MCP tools:
+- `set_participant_ready`
+- `get_participant_observation`
+- `set_participant_strategy`
+- `wait_for_match_start`
+- `get_match_result`
+- `stop_participant_intent`
+- `get_duel_events` if useful
+
+Strategy schema:
+
+```json
+{{
+  "participant_id": "{participant_id}",
+  "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
+  "category": "engage",
+  "action": "strafe_fight",
+  "intensity": "medium",
+  "commit_ms": 3000,
+  "sequence_number": 1
+}}
+```
+
+Allowed `commit_ms`: 3000-8000 ms. The server clamps values outside this range.\n\nAllowed categories and actions:
+- `explore`: `scan_last_seen`, `patrol_left`, `patrol_right`, `rotate_route`, `probe_center`
+- `engage`: `push`, `strafe_fight`, `suppress`, `close_gap`, `finish_low_health`
+- `evade`: `kite`, `break_los`, `retreat_reset`, `dodge_strafe`, `hold_fire_reposition`
+- `position`: `flank_left`, `flank_right`, `camp_los`, `hold_angle`, `take_left_lane`, `take_right_lane`
+- `recover`: `unstuck`, `anti_spin`, `switch_lane`, `reset_to_center`, `reverse_route`
+
+Allowed intensity:
+- `low`
+- `medium`
+- `high`
+
+Map summary:
+- `duel_e1m8` is a rectangular duel room with a solid center divider wall.
+- The divider blocks direct movement and line of sight through the middle.
+- Supported navigation choices are `left_lane`, `right_lane`, `center`, `opponent`, `last_seen_enemy`, and `keep_distance`.
+- Use `flank_left` / `flank_right`, `patrol_left` / `patrol_right`, or `take_left_lane` / `take_right_lane` to reposition.
+- Use the map for broad strategy, not exact path planning.
+- Do not invent unsupported navigation targets.
+
+Decision guide:
+- Opponent visible and far: use `engage/push`, `engage/close_gap`, or `position/flank_left` / `position/flank_right`.
+- Opponent visible at good range: use `engage/strafe_fight`, `engage/suppress`, or `position/camp_los`.
+- Opponent visible and close while losing: use `evade/kite`, `evade/retreat_reset`, or `evade/dodge_strafe`.
+- Opponent hidden but recently seen: use `explore/scan_last_seen`, `position/flank_left`, or `position/flank_right`.
+- Opponent hidden and not recently seen: use `explore/patrol_left`, `explore/patrol_right`, or `explore/rotate_route`.
+- `spin_detected=true`: use `recover/anti_spin` or `recover/switch_lane`.
+- `stuck_detected=true`: use `recover/unstuck` or `evade/retreat_reset`.
+- Winning: keep pressure with `engage/strafe_fight`, `engage/push`, or `position/camp_los`.
+- Losing: use `evade/kite`, `evade/retreat_reset`, or a reposition/flank action.
+
+Stop rules:
+- If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.
+- If `phase="finished"` and `has_next_round=true`, poll only `get_match_result` until `run_id` changes, then start the next match with `set_participant_ready` and reset `sequence_number=1`.
+
+{_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
+"""
     return f"""# Doom Arena MCP Instructions: {participant_id}
 
 You are one of two separate MCP agents in Doom Arena Duel.
@@ -352,7 +423,7 @@ Loop behavior:
 - If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
-Stop rules — read carefully:
+Stop rules â€” read carefully:
 - When `get_match_result` returns `phase="finished"` AND `has_next_round=false`:
   call `stop_participant_intent` once, then **stop all tool calls immediately**.
   Do not call `get_participant_observation`, `set_participant_intent`, or any other tool after this.
@@ -374,8 +445,9 @@ Rules:
 
 {_map_blueprint_section(enable_map_blueprint, scenario_id)}
 {_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
-{_simplified_actions_section(enable_simplified_actions)}
 Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
+
+

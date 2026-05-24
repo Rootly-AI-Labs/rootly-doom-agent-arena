@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """MCP wrapper for Doom Agent Arena local endpoints."""
 
 from __future__ import annotations
@@ -15,6 +15,18 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
+
+from doom_arena_strategy import (
+    ALL_STRATEGY_ACTIONS,
+    CONTROL_MODE_HIERARCHICAL,
+    STRATEGY_ACTIONS,
+    STRATEGY_INTENSITIES,
+    STRATEGY_METADATA_FIELDS,
+    expand_strategy,
+    make_strategy_observation,
+    normalize_control_mode,
+    record_strategy,
+)
 
 
 VALID_ENEMY_COMMANDS = {"normal", "hold", "chase_player", "guard_position"}
@@ -37,7 +49,8 @@ PARTICIPANT_INTENT_HEADER = (
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
-    "turn_policy\tnavigation_target\tfire_mode\tintent_raw\n"
+    "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
+    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -241,6 +254,9 @@ class DoomArenaClient:
             observation["state"]["current_round"] = observation["current_round"]
             observation["state"]["total_rounds"] = observation["total_rounds"]
             observation["state"]["has_next_round"] = observation["has_next_round"]
+            observation["state"]["control_mode"] = normalize_control_mode(
+                duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)
+            )
         # Phase 1: cross-round recap
         if duel_session.get("enable_cross_round_recap"):
             observation["previous_rounds"] = self._fetch_previous_rounds_recap(
@@ -249,6 +265,11 @@ class DoomArenaClient:
                 str(duel_session.get("duel_session_id", "")),
                 int(duel_session.get("recap_window", 0)),
             )
+        if normalize_control_mode(duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)) == CONTROL_MODE_HIERARCHICAL:
+            compact = make_strategy_observation(observation, CONTROL_MODE_HIERARCHICAL)
+            if "previous_rounds" in observation:
+                compact["previous_rounds"] = observation["previous_rounds"]
+            return json.dumps(compact, indent=2)
         return json.dumps(observation, indent=2)
 
     def _fetch_previous_rounds_recap(
@@ -356,6 +377,9 @@ class DoomArenaClient:
                 and str(participant_state.get("intent_status", "inactive")) == "inactive"
                 and participant_id not in intent_participants
             ):
+                opening_tool = "set_participant_strategy" if normalize_control_mode(
+                    self._read_duel_session_status().get("control_mode", CONTROL_MODE_HIERARCHICAL)
+                ) == CONTROL_MODE_HIERARCHICAL else "set_participant_intent"
                 return json.dumps(
                     {
                         "started": False,
@@ -363,7 +387,7 @@ class DoomArenaClient:
                         "participant_id": participant_id,
                         "needs_opening_intent": True,
                         "instruction": (
-                            "Call set_participant_intent once with an opening high-level intent "
+                            f"Call {opening_tool} once with an opening high-level policy "
                             "before waiting again. Doom will hold it until the other participant "
                             "also has an opening intent."
                         ),
@@ -490,6 +514,11 @@ class DoomArenaClient:
         navigation_target: str = "opponent",
         fire_mode: str = "auto",
         rationale: str | None = None,
+        strategy_source: str = "",
+        strategy_category: str = "",
+        strategy_action: str = "",
+        strategy_intensity: str = "",
+        strategy_commit_ms: Any = None,
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -631,6 +660,12 @@ class DoomArenaClient:
             "navigation_target": navigation_target,
             "fire_mode": fire_mode,
         }
+        if strategy_source:
+            payload["strategy_source"] = strategy_source
+            payload["strategy_category"] = strategy_category
+            payload["strategy_action"] = strategy_action
+            payload["strategy_intensity"] = strategy_intensity
+            payload["strategy_commit_ms"] = strategy_commit_ms if strategy_commit_ms is not None else duration_ms
         rationale_text = str(rationale).strip() if rationale else ""
         if rationale_text:
             payload["rationale"] = rationale_text[:1024]
@@ -677,11 +712,110 @@ class DoomArenaClient:
                     "turn_policy": turn_policy,
                     "navigation_target": navigation_target,
                     "fire_mode": fire_mode,
+                    "strategy_source": strategy_source or None,
+                    "strategy_category": strategy_category or None,
+                    "strategy_action": strategy_action or None,
+                    "strategy_intensity": strategy_intensity or None,
+                    "strategy_commit_ms": int(strategy_commit_ms) if strategy_commit_ms not in {None, ""} else None,
                 },
                 "server_response": parse_optional_json(response_text),
             },
             indent=2,
         )
+
+    def set_participant_strategy(
+        self,
+        participant_id: str,
+        category: str,
+        action: str,
+        intensity: str = "medium",
+        commit_ms: int = 3000,
+        controller_token: str | None = None,
+        sequence_number: Any = None,
+        target_zone: str = "",
+    ) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        rows = parse_state(self._request("GET", "/api/arena/state"))
+        full_observation = make_participant_observation(rows, participant_id)
+        duel_session = self._read_duel_session_status()
+        control_mode = normalize_control_mode(duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL))
+        context = make_strategy_observation(full_observation, control_mode)
+        expanded = expand_strategy(
+            participant_id=participant_id,
+            category=category,
+            action=action,
+            intensity=intensity,
+            commit_ms=commit_ms,
+            sequence_number=sequence_number,
+            target_zone=target_zone,
+            context=context,
+        )
+        record_strategy(
+            str(full_observation.get("state", {}).get("run_id", self.run_id)),
+            participant_id,
+            str(expanded["strategy_category"]),
+            str(expanded["strategy_action"]),
+        )
+        result = json.loads(
+            self.set_participant_intent(
+                participant_id,
+                str(expanded["intent"]),
+                str(expanded["style"]),
+                str(expanded.get("target_id", "")),
+                int(expanded["preferred_distance"]),
+                float(expanded["aggression"]),
+                int(expanded["duration_ms"]),
+                controller_token,
+                strafe_direction=str(expanded["strafe_direction"]),
+                movement_bias=str(expanded["movement_bias"]),
+                fire_policy=str(expanded["fire_policy"]),
+                distance_policy=str(expanded["distance_policy"]),
+                replan_if=expanded["replan_if"],
+                sequence_number=expanded.get("sequence_number"),
+                decision_cadence_ms=expanded["decision_cadence_ms"],
+                aim_tolerance=expanded["aim_tolerance"],
+                fire_burst_ms=expanded["fire_burst_ms"],
+                min_fire_alignment=expanded["min_fire_alignment"],
+                min_distance=expanded["min_distance"],
+                max_distance=expanded["max_distance"],
+                retreat_if_closer_than=expanded["retreat_if_closer_than"],
+                push_if_farther_than=expanded["push_if_farther_than"],
+                los_lost_action=str(expanded["los_lost_action"]),
+                stuck_recovery_strategy=str(expanded["stuck_recovery_strategy"]),
+                movement_primitive=str(expanded.get("movement_primitive", "")),
+                turn_policy=str(expanded["turn_policy"]),
+                navigation_target=str(expanded["navigation_target"]),
+                fire_mode=str(expanded["fire_mode"]),
+                strategy_source=str(expanded["strategy_source"]),
+                strategy_category=str(expanded["strategy_category"]),
+                strategy_action=str(expanded["strategy_action"]),
+                strategy_intensity=str(expanded["strategy_intensity"]),
+                strategy_commit_ms=expanded["strategy_commit_ms"],
+            )
+        )
+        result["strategy"] = {
+            "category": expanded["strategy_category"],
+            "action": expanded["strategy_action"],
+            "intensity": expanded["strategy_intensity"],
+            "commit_ms": expanded["strategy_commit_ms"],
+            "sequence_number": expanded.get("sequence_number"),
+        }
+        result["expanded_intent"] = {
+            key: expanded.get(key)
+            for key in (
+                "intent",
+                "style",
+                "movement_bias",
+                "distance_policy",
+                "fire_policy",
+                "navigation_target",
+                "turn_policy",
+                "los_lost_action",
+                "stuck_recovery_strategy",
+            )
+        }
+        return json.dumps(result, indent=2)
 
     def stop_participant_intent(self, participant_id: str, controller_token: str | None = None) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -1104,7 +1238,10 @@ PARTICIPANT_INTENT_KEYS = [
     "turn_policy",
     "navigation_target",
     "fire_mode",
+    "intent_raw",
+    *STRATEGY_METADATA_FIELDS,
 ]
+PARTICIPANT_INTENT_STRATEGY_FIELDS = STRATEGY_METADATA_FIELDS
 PARTICIPANT_INTENT_LEGACY_KEYS = PARTICIPANT_INTENT_KEYS[:12]
 
 
@@ -1310,6 +1447,9 @@ def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
         row.setdefault("turn_policy", "auto")
         row.setdefault("navigation_target", "opponent")
         row.setdefault("fire_mode", "auto")
+        row.setdefault("intent_raw", row.get("intent", ""))
+        for field in PARTICIPANT_INTENT_STRATEGY_FIELDS:
+            row.setdefault(field, "")
         if (
             row["participant_id"] in PARTICIPANTS
             and row["target_id"] in PARTICIPANTS
@@ -1991,6 +2131,11 @@ def tool_definitions() -> list[dict[str, Any]]:
             "inputSchema": participant_intent_schema(),
         },
         {
+            "name": "set_participant_strategy",
+            "description": "Set compact hierarchical strategy for player_1 or player_2. The server expands it into a full participant intent.",
+            "inputSchema": participant_strategy_schema(),
+        },
+        {
             "name": "stop_participant_intent",
             "description": "Clear the active high-level autopilot intent for one participant.",
             "inputSchema": {
@@ -2149,6 +2294,24 @@ def participant_intent_schema() -> dict[str, Any]:
     }
 
 
+def participant_strategy_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
+            "controller_token": {"type": "string"},
+            "category": {"type": "string", "enum": sorted(STRATEGY_ACTIONS)},
+            "action": {"type": "string", "enum": ALL_STRATEGY_ACTIONS},
+            "intensity": {"type": "string", "enum": sorted(STRATEGY_INTENSITIES)},
+            "commit_ms": {"type": "integer", "minimum": 3000, "maximum": 8000},
+            "sequence_number": {"type": "integer", "minimum": 0},
+            "target_zone": {"type": "string"},
+        },
+        "required": ["participant_id", "category", "action"],
+        "additionalProperties": False,
+    }
+
+
 def helper_schema(name: str) -> dict[str, Any]:
     return {
         "name": name,
@@ -2197,6 +2360,17 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             optional_string(arguments.get("controller_token")),
             int(arguments.get("timeout_ms", 60000)),
             int(arguments.get("poll_ms", 250)),
+        )
+    if name == "set_participant_strategy":
+        return client.set_participant_strategy(
+            str(arguments["participant_id"]),
+            str(arguments["category"]),
+            str(arguments["action"]),
+            str(arguments.get("intensity", "medium")),
+            int(arguments.get("commit_ms", 3000)),
+            optional_string(arguments.get("controller_token")),
+            arguments.get("sequence_number"),
+            str(arguments.get("target_zone", "")),
         )
     if name == "set_participant_input":
         if not EXPOSE_LOW_LEVEL_PARTICIPANT_MCP:
@@ -2470,3 +2644,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
