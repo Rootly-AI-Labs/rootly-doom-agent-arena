@@ -385,7 +385,7 @@ strategy_commit_ms
 intent_raw=category/action
 ```
 
-Generated hierarchical prompts now use a compact map summary instead of the old full JSON/ASCII map blueprint. The live prompt does not expose unsupported map-route labels such as `upper_open` or `lower_open`. Hierarchical strategy names use the engine-supported lateral targets directly:
+Generated hierarchical prompts now include the static ASCII map once in the starting prompt. Repeated `get_participant_observation` calls intentionally do not include the full ASCII map; they include dynamic state plus a lightweight `map` block that points back to `initial_prompt_ascii`. The current live tactical map and Doom wall collision are generated from `scripts/map_blueprints/duel_e1m8_ascii.txt`; spawn variants are resolved from `scripts/map_blueprints/duel_e1m8_variants.json`. The live prompt does not expose unsupported map-route labels such as `upper_open` or `lower_open`. Hierarchical strategy names use the engine-supported lateral targets directly:
 
 ```text
 left_lane
@@ -447,6 +447,48 @@ Input:
 
 This is optional during normal play.
 
+## Static map prompt vs dynamic observations
+
+Map information is split across the first prompt and repeated observations.
+
+The generated starting prompt includes the static map because it does not change during a match:
+
+```text
+Static map context
+cell size
+map bounds
+coordinate frame
+legend
+selected spawn coordinates and angles
+ASCII map from scripts/map_blueprints/duel_e1m8_ascii.txt, with `1` and `2` overlaid from the selected spawn variant coordinates
+```
+
+Legend:
+
+```text
+. = walkable space
+# = wall, collision, and line-of-sight blocker
+1 = Player 1 spawn marker
+2 = Player 2 spawn marker
+```
+
+Each ASCII cell is currently `64 x 64` Doom units. The coordinate frame is `+x` east/right, `-x` west/left, `+y` north/up, and `-y` south/down.
+
+`get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent data, tactical recommendations, and a small map reference:
+
+```json
+{
+  "map": {
+    "static_map_source": "initial_prompt_ascii",
+    "full_ascii_in_observation": false,
+    "cell_size": 64,
+    "current_zone": "left_side",
+    "available_routes": ["left_lane", "right_lane", "center", "opponent", "last_seen_enemy", "keep_distance"]
+  }
+}
+```
+
+This is intentional: the benchmark can test whether the model remembers and reasons over the static map from chat context without flooding every observation with repeated map text.
 ## What game state the agent receives
 
 `get_participant_observation` returns different shapes depending on `control_mode`.
@@ -1364,5 +1406,8 @@ Doom line-of-sight check failed, so los_lost_action took over.
 ```
 
 That distinction matters: the MCP agent chooses tactical intent, but Doom remains responsible for whether movement and firing are physically valid in the current frame.
+
+
+
 
 

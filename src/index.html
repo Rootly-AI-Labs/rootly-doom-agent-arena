@@ -798,7 +798,7 @@
 
             .duel-tactical-shell {
                 display: grid;
-                grid-template-columns: 220px minmax(0, 1fr);
+                grid-template-columns: minmax(280px, 1fr) minmax(260px, 0.9fr);
                 gap: 14px;
                 align-items: start;
             }
@@ -816,11 +816,25 @@
                 background: #0e110d;
             }
 
-            #duel-tactical-map-image {
+            #duel-tactical-map-image,
+            #duel-player1-automap-canvas {
                 display: block;
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
+            }
+
+            #duel-player1-automap-canvas {
+                background: #0b0f0d;
+                image-rendering: pixelated;
+            }
+
+            .duel-tactical-map-caption {
+                color: #93a87a;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin: 0 0 8px;
             }
 
             .duel-tactical-map-status {
@@ -837,6 +851,23 @@
                 pointer-events: none;
             }
 
+            .duel-tactical-coordinate-tooltip {
+                position: absolute;
+                z-index: 4;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                max-width: 180px;
+                border: 1px solid rgba(247, 245, 216, 0.26);
+                background: rgba(12, 15, 12, 0.92);
+                color: #f7f5d8;
+                box-shadow: 0 8px 22px rgba(0, 0, 0, 0.36);
+                padding: 6px 8px;
+                pointer-events: none;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.03em;
+                white-space: nowrap;
+            }
             .duel-tactical-marker {
                 position: absolute;
                 width: 0;
@@ -1531,14 +1562,13 @@
                 </div>
             </div>
             <div id="duel-tactical-panel">
-                <div class="duel-log-title">Tactical Map</div>
                 <div class="duel-tactical-shell">
                     <div class="duel-tactical-map-wrap">
-                        <div class="duel-tactical-map-stage">
-                            <img id="duel-tactical-map-image" alt="Tactical map layout" src="assets/duel_room_layout.svg?v=cache-bust-20260523-1250" />
-                            <div class="duel-tactical-map-status" id="duel-tactical-map-status" hidden>Loading map layout...</div>
-                            <div class="duel-tactical-marker player-1" id="duel-tactical-marker-p1" hidden></div>
-                            <div class="duel-tactical-marker player-2" id="duel-tactical-marker-p2" hidden></div>
+                        <div class="duel-tactical-map-caption">Tactical overlay</div>
+                        <div class="duel-tactical-map-stage" id="duel-tactical-map-stage">
+                            <canvas id="duel-player1-automap-canvas"></canvas>
+                            <div class="duel-tactical-map-status" id="duel-player1-automap-status">Waiting for automap...</div>
+                            <div class="duel-tactical-coordinate-tooltip" id="duel-tactical-coordinate-tooltip" hidden>x: - | y: -</div>
                         </div>
                     </div>
                     <div>
@@ -1563,7 +1593,7 @@
                         <div class="duel-tactical-legend">
                             <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-1"></span>Player 1</span>
                             <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-2"></span>Player 2</span>
-                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch obstacle"></span>Obstacle</span>
+                            
                         </div>
                     </div>
                 </div>
@@ -1714,7 +1744,7 @@
                 </div>
                 <div class="benchmark-modal-footer">
                     <div class="benchmark-modal-credit">
-                        Built by <strong>Rootly AI Labs</strong> Â·
+                        Built by <strong>Rootly AI Labs</strong> -
                         <a href="https://rootly.com/ai-labs" target="_blank" rel="noopener">rootly.com/ai-labs</a>
                     </div>
                     <button type="button" class="benchmark-modal-btn" onclick="closeBenchmarkResultsModal()">Close</button>
@@ -1723,7 +1753,7 @@
         </div>
 
         <script>
-            var doomAssetCacheBust = "cache-bust-20260523-1250";
+            var doomAssetCacheBust = "cache-bust-20260524-automap";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
@@ -1784,6 +1814,7 @@
             var loadedDoomArenaMode = "";
             var pendingArenaDataMode = null;
             var player1PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
+            var player1AutomapState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
             var player2PovState = { context: null, imageData: null, width: 0, height: 0, lastFrame: -1, lastDiagnosticFrame: -1 };
             var fastDuelPovRendering = true;
             var duelPovAnimationFrame = 0;
@@ -1810,6 +1841,7 @@
             var forceArenaMenuMode = false;
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
             var currentMapBlueprint = null;
+            var tacticalOverlayDefaultBounds = { x_min: -1024, x_max: 1024, y_min: -768, y_max: 768 };
             var currentMapBlueprintScenarioId = "";
             var blueprintRequestScenarioId = "";
 
@@ -1881,44 +1913,183 @@
                 return 90 - angle;
             }
 
-            function tacticalMapMarkerPosition(bounds, x, y) {
-                var roomRect = {
-                    x: 40,
-                    y: 30,
-                    width: 432,
-                    height: 324,
-                    viewWidth: 512,
-                    viewHeight: 384,
-                };
-                var xRatio = (x - bounds.x_min) / Math.max(1, bounds.x_max - bounds.x_min);
-                var yRatio = (y - bounds.y_min) / Math.max(1, bounds.y_max - bounds.y_min);
-
+            function automapCanvasSize(canvas) {
+                var rect = canvas ? canvas.getBoundingClientRect() : { width: 0, height: 0 };
                 return {
-                    leftPct: ((roomRect.x + xRatio * roomRect.width) / roomRect.viewWidth) * 100,
-                    topPct: ((roomRect.y + (1 - yRatio) * roomRect.height) / roomRect.viewHeight) * 100,
+                    width: canvas && canvas.width ? canvas.width : Math.max(1, rect.width || 320),
+                    height: canvas && canvas.height ? canvas.height : Math.max(1, rect.height || 200),
+                    rectWidth: Math.max(1, rect.width || 320),
+                    rectHeight: Math.max(1, rect.height || 200),
                 };
             }
 
-            function installTacticalMapImageStatus() {
-                var image = document.getElementById("duel-tactical-map-image");
-                var status = document.getElementById("duel-tactical-map-status");
+            function automapProjection(bounds, width, height) {
+                var padding = 0;
+                var mapWidth = Math.max(1, bounds.x_max - bounds.x_min);
+                var mapHeight = Math.max(1, bounds.y_max - bounds.y_min);
+                var scaleX = Math.max(1, width - 1 - padding * 2) / mapWidth;
+                var scaleY = Math.max(1, height - 1 - padding * 2) / mapHeight;
+                return {
+                    padding: padding,
+                    scale: Math.min(scaleX, scaleY),
+                    width: width,
+                    height: height,
+                };
+            }
 
-                if (!image || !status) {
+            function automapWorldToScreen(bounds, x, y, width, height) {
+                var projection = automapProjection(bounds, width, height);
+                return {
+                    x: projection.padding + (x - bounds.x_min) * projection.scale,
+                    y: height - 1 - projection.padding - (y - bounds.y_min) * projection.scale,
+                };
+            }
+
+            function automapScreenToWorld(bounds, screenX, screenY, width, height) {
+                var projection = automapProjection(bounds, width, height);
+                var mapX = bounds.x_min + (screenX - projection.padding) / projection.scale;
+                var mapY = bounds.y_min + (height - 1 - projection.padding - screenY) / projection.scale;
+                return {
+                    x: Math.min(bounds.x_max, Math.max(bounds.x_min, mapX)),
+                    y: Math.min(bounds.y_max, Math.max(bounds.y_min, mapY)),
+                };
+            }
+
+            function tacticalMapMarkerPosition(bounds, x, y) {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var size = automapCanvasSize(canvas);
+                var screen = automapWorldToScreen(bounds, x, y, size.width, size.height);
+                return {
+                    leftPct: (screen.x / size.width) * 100,
+                    topPct: (screen.y / size.height) * 100,
+                };
+            }
+
+            function updateTacticalOverlayAspectRatio(bounds) {
+                var stage = document.getElementById("duel-tactical-map-stage");
+                var mapWidth;
+                var mapHeight;
+
+                if (!stage || !bounds) {
                     return;
                 }
 
-                image.addEventListener("load", function () {
-                    status.hidden = true;
-                });
-                image.addEventListener("error", function () {
-                    status.hidden = false;
-                    status.textContent = "Map layout unavailable";
-                });
-                if (image.complete && image.naturalWidth > 0) {
-                    status.hidden = true;
+                mapWidth = Math.max(1, bounds.x_max - bounds.x_min);
+                mapHeight = Math.max(1, bounds.y_max - bounds.y_min);
+                stage.style.aspectRatio = String(mapWidth) + " / " + String(mapHeight);
+            }
+            function tacticalOverlayBounds() {
+                return currentMapBlueprint && currentMapBlueprint.bounds ? currentMapBlueprint.bounds : tacticalOverlayDefaultBounds;
+            }
+            function hideTacticalOverlayCoordinateTooltip() {
+                var tooltip = document.getElementById("duel-tactical-coordinate-tooltip");
+                if (tooltip) {
+                    tooltip.hidden = true;
                 }
             }
 
+            function installTacticalOverlayCoordinateTooltip() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var tooltip = document.getElementById("duel-tactical-coordinate-tooltip");
+
+                if (!canvas || !tooltip) {
+                    return;
+                }
+
+                canvas.addEventListener("mousemove", function (event) {
+                    var bounds = tacticalOverlayBounds();
+                    var rect = canvas.getBoundingClientRect();
+                    var stage = canvas.parentElement;
+                    var stageRect;
+                    var localX;
+                    var localY;
+                    var ratioX;
+                    var ratioY;
+                    var mapX;
+                    var mapY;
+                    var tooltipWidth;
+                    var tooltipHeight;
+                    var left;
+                    var top;
+
+                    if (!bounds || !Number.isFinite(bounds.x_min) || !Number.isFinite(bounds.x_max) || !Number.isFinite(bounds.y_min) || !Number.isFinite(bounds.y_max) || rect.width <= 0 || rect.height <= 0 || !stage) {
+                        hideTacticalOverlayCoordinateTooltip();
+                        return;
+                    }
+
+                    localX = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+                    localY = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
+                    var canvasSize = automapCanvasSize(canvas);
+                    var worldPosition = automapScreenToWorld(
+                        bounds,
+                        (localX / canvasSize.rectWidth) * canvasSize.width,
+                        (localY / canvasSize.rectHeight) * canvasSize.height,
+                        canvasSize.width,
+                        canvasSize.height
+                    );
+                    mapX = worldPosition.x;
+                    mapY = worldPosition.y;
+
+                    tooltip.textContent = "x: " + String(Math.round(mapX)) + " | y: " + String(Math.round(mapY));
+                    tooltip.hidden = false;
+
+                    stageRect = stage.getBoundingClientRect();
+                    tooltipWidth = tooltip.offsetWidth || 120;
+                    tooltipHeight = tooltip.offsetHeight || 24;
+                    left = event.clientX - stageRect.left + 12;
+                    top = event.clientY - stageRect.top - tooltipHeight - 10;
+
+                    if (left + tooltipWidth > stageRect.width - 6) {
+                        left = event.clientX - stageRect.left - tooltipWidth - 12;
+                    }
+                    if (top < 6) {
+                        top = event.clientY - stageRect.top + 12;
+                    }
+
+                    tooltip.style.left = Math.max(6, Math.min(left, stageRect.width - tooltipWidth - 6)) + "px";
+                    tooltip.style.top = Math.max(6, Math.min(top, stageRect.height - tooltipHeight - 6)) + "px";
+                });
+                canvas.addEventListener("mouseleave", hideTacticalOverlayCoordinateTooltip);
+            }
+            function participantSpawnFallback(participantId) {
+                var spawns = currentMapBlueprint && currentMapBlueprint.spawns ? currentMapBlueprint.spawns : null;
+                var spawn = spawns ? spawns[participantId] : null;
+
+                if (!spawn) {
+                    if (participantId === "player_1") {
+                        spawn = { x: -900, y: 0, z: 0, angle_deg: 0 };
+                    } else if (participantId === "player_2") {
+                        spawn = { x: 900, y: 0, z: 0, angle_deg: 180 };
+                    }
+                }
+
+                if (!spawn) {
+                    return {};
+                }
+
+                return {
+                    entity_id: participantId,
+                    x: spawn.x !== undefined ? spawn.x : "-",
+                    y: spawn.y !== undefined ? spawn.y : "-",
+                    z: spawn.z !== undefined ? spawn.z : 0,
+                    angle: spawn.angle_deg !== undefined ? spawn.angle_deg : "-",
+                };
+            }
+
+            function participantWithSpawnFallback(player, participantId) {
+                if (player && (player.x !== undefined || player.y !== undefined || player.z !== undefined)) {
+                    return player;
+                }
+                return participantSpawnFallback(participantId);
+            }
+            function playerCoordinateLabel(player) {
+                var x = player && player.x !== undefined && player.x !== "" ? player.x : "-";
+                var y = player && player.y !== undefined && player.y !== "" ? player.y : "-";
+                if (x === "-" && y === "-") {
+                    return "-";
+                }
+                return "x: " + x + ", y: " + y;
+            }
             function renderTacticalMap(player1, player2) {
                 var mapStatus = document.getElementById("duel-tactical-map-status");
                 var p1Marker = document.getElementById("duel-tactical-marker-p1");
@@ -1933,27 +2104,22 @@
                 setDuelTacticalPanelVisible(currentArenaMode === "duel");
                 setText("duel-tactical-scenario", currentArenaScenarioId || "-");
 
-                if (!currentMapBlueprint || !currentMapBlueprint.bounds) {
+                player1 = participantWithSpawnFallback(player1, "player_1");
+                player2 = participantWithSpawnFallback(player2, "player_2");
+                bounds = tacticalOverlayBounds();
+                if (!bounds) {
                     if (mapStatus) {
                         mapStatus.hidden = false;
                         mapStatus.textContent = "Map overlay unavailable";
                     }
-                    if (p1Marker) {
-                        p1Marker.hidden = true;
-                    }
-                    if (p2Marker) {
-                        p2Marker.hidden = true;
-                    }
                     setText("duel-tactical-bounds", "-");
-                    setText("duel-tactical-p1", "-");
-                    setText("duel-tactical-p2", "-");
+                    setText("duel-tactical-p1", playerCoordinateLabel(player1));
+                    setText("duel-tactical-p2", playerCoordinateLabel(player2));
                     return;
                 }
-
-                bounds = currentMapBlueprint.bounds;
                 setText("duel-tactical-bounds",
-                    String(bounds.x_min) + "â€¦" + String(bounds.x_max) + " / " +
-                    String(bounds.y_min) + "â€¦" + String(bounds.y_max));
+                    String(bounds.x_min) + "..." + String(bounds.x_max) + " / " +
+                    String(bounds.y_min) + "..." + String(bounds.y_max));
                 if (mapStatus) {
                     mapStatus.hidden = true;
                 }
@@ -1971,7 +2137,7 @@
                         p1Marker.style.top = markerPosition.topPct + "%";
                         p1Marker.style.transform = "rotate(" + doomAngleToCssRotation(player1.angle) + "deg)";
                     }
-                    setText("duel-tactical-p1", String(player1.x) + ", " + String(player1.y));
+                    setText("duel-tactical-p1", playerCoordinateLabel(player1));
                 } else {
                     if (p1Marker) {
                         p1Marker.hidden = true;
@@ -1987,7 +2153,7 @@
                         p2Marker.style.top = markerPosition.topPct + "%";
                         p2Marker.style.transform = "rotate(" + doomAngleToCssRotation(player2.angle) + "deg)";
                     }
-                    setText("duel-tactical-p2", String(player2.x) + ", " + String(player2.y));
+                    setText("duel-tactical-p2", playerCoordinateLabel(player2));
                 } else {
                     if (p2Marker) {
                         p2Marker.hidden = true;
@@ -2124,7 +2290,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=cache-bust-1779473360";
+                script.src = "websockets-doom.js?v=cache-bust-20260524-automap";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -3341,7 +3507,7 @@
                     if (ageSeconds !== null && ageSeconds >= 20) {
                         line.classList.add("arena-mcp-client-line-warning");
                     }
-                    line.textContent = label + " Â· " + formatSeenAgo(client.last_seen_at_ms);
+                    line.textContent = label + " - " + formatSeenAgo(client.last_seen_at_ms);
                     node.appendChild(line);
                 });
 
@@ -4446,6 +4612,8 @@
             function resetDuelPovFrameState() {
                 player1PovState.lastFrame = -1;
                 player1PovState.lastDiagnosticFrame = -1;
+                player1AutomapState.lastFrame = -1;
+                player1AutomapState.lastDiagnosticFrame = -1;
                 player2PovState.lastFrame = -1;
                 player2PovState.lastDiagnosticFrame = -1;
             }
@@ -4730,6 +4898,26 @@
                 );
             }
 
+            function refreshPlayer1Automap() {
+                var canvas, status;
+
+                if (currentArenaMode !== "duel" || typeof Module === "undefined" || typeof Module.ccall !== "function") { return; }
+                canvas = document.getElementById("duel-player1-automap-canvas");
+                status = document.getElementById("duel-player1-automap-status");
+                if (canvas === null) { return; }
+
+                renderPovToCanvas(
+                    "P1 automap", canvas, status,
+                    "ArenaDuel_Player1AutomapFrame",
+                    "ArenaDuel_Player1AutomapRGBA",
+                    "ArenaDuel_Player1AutomapPaletted",
+                    "ArenaDuel_Player1AutomapWidth",
+                    "ArenaDuel_Player1AutomapHeight",
+                    "ArenaDuel_Player1AutomapNonzeroPixels",
+                    player1AutomapState
+                );
+            }
+
             function refreshPlayer2Pov() {
                 var canvas, status;
 
@@ -4752,6 +4940,7 @@
 
             function refreshDuelPovsOnAnimationFrame() {
                 refreshPlayer1Pov();
+                refreshPlayer1Automap();
                 refreshPlayer2Pov();
                 duelPovAnimationFrame = window.requestAnimationFrame(refreshDuelPovsOnAnimationFrame);
             }
@@ -4766,8 +4955,8 @@
             function updateDuelDashboard(rows) {
                 var dashboard = document.getElementById("arena-duel-dashboard");
                 var match = rows.find(function (row) { return row.kind === "match"; }) || {};
-                var player1 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_1"; }) || {};
-                var player2 = rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_2"; }) || {};
+                var player1 = participantWithSpawnFallback(rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_1"; }) || {}, "player_1");
+                var player2 = participantWithSpawnFallback(rows.find(function (row) { return row.kind === "participant" && row.entity_id === "player_2"; }) || {}, "player_2");
                 var runId = match.run_id || player1.run_id || currentArenaRunId || "";
                 var phase = match.phase || player1.phase || "combat";
                 var winner = match.winner || player1.winner || "";
@@ -4816,17 +5005,11 @@
                 setText("duel-p2-shots", (player2.shots_fired || "0") + " fired / " + (player2.shots_hit || "0") + " hit");
                 setText("duel-p1-damage", player1.damage_dealt || "0");
                 setText("duel-p2-damage", player2.damage_dealt || "0");
-                if ((player1.x !== undefined && player1.x !== "") || (player1.y !== undefined && player1.y !== "")) {
-                    player1XY = (player1.x !== undefined && player1.x !== "" ? player1.x : "-") + ", " +
-                        (player1.y !== undefined && player1.y !== "" ? player1.y : "-");
-                }
+                player1XY = playerCoordinateLabel(player1);
                 if (player1.angle !== undefined && player1.angle !== "") {
                     player1Angle = player1.angle;
                 }
-                if ((player2.x !== undefined && player2.x !== "") || (player2.y !== undefined && player2.y !== "")) {
-                    player2XY = (player2.x !== undefined && player2.x !== "" ? player2.x : "-") + ", " +
-                        (player2.y !== undefined && player2.y !== "" ? player2.y : "-");
-                }
+                player2XY = playerCoordinateLabel(player2);
                 if (player2.angle !== undefined && player2.angle !== "") {
                     player2Angle = player2.angle;
                 }
@@ -5275,7 +5458,7 @@
                 updateArenaBanner();
                 setLauncherMode("choose");
                 installPointerCaptureGuards();
-                installTacticalMapImageStatus();
+                installTacticalOverlayCoordinateTooltip();
                 disableDoomPointerCapture();
 
                 if (queryMenu) {
@@ -5414,6 +5597,15 @@
         </script>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 

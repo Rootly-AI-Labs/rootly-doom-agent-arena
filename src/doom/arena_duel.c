@@ -1,10 +1,11 @@
-//
+﻿//
 // Doom Agent Arena duel mode.
 //
 
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 
 #include "doomdef.h"
@@ -75,6 +76,8 @@ static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_PARTICIPANT_READY_PATH "arena_participant_ready.local.tsv"
 #define ARENA_DUEL_PARTICIPANT_HEALTH 150
 #define ARENA_DUEL_PLAYER2_BULLETS 200
+#define ARENA_DUEL_AUTOMAP_WIDTH 512
+#define ARENA_DUEL_AUTOMAP_HEIGHT 384
 
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
 // P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
@@ -110,6 +113,9 @@ static pixel_t *arena_duel_player1_view_buffer;
 static byte *arena_duel_player1_view_rgba;
 static int arena_duel_player1_view_frame;
 static int arena_duel_player1_view_nonzero_pixels;
+static byte *arena_duel_player1_automap_rgba;
+static int arena_duel_player1_automap_frame;
+static int arena_duel_player1_automap_nonzero_pixels;
 static pixel_t *arena_duel_player2_view_buffer;
 static byte *arena_duel_player2_view_rgba;
 static int arena_duel_player2_view_frame;
@@ -190,7 +196,7 @@ static boolean ArenaDuel_EnsurePlayer1ViewBuffers(void)
     size_t rgba_size;
 
     paletted_size = SCREENWIDTH * SCREENHEIGHT * sizeof(pixel_t);
-    rgba_size = SCREENWIDTH * SCREENHEIGHT * 4;
+    rgba_size = ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT * 4;
 
     if (arena_duel_player1_view_buffer == NULL)
     {
@@ -212,7 +218,7 @@ static boolean ArenaDuel_EnsurePlayer2ViewBuffers(void)
     size_t rgba_size;
 
     paletted_size = SCREENWIDTH * SCREENHEIGHT * sizeof(pixel_t);
-    rgba_size = SCREENWIDTH * SCREENHEIGHT * 4;
+    rgba_size = ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT * 4;
 
     if (arena_duel_player2_view_buffer == NULL)
     {
@@ -228,6 +234,424 @@ static boolean ArenaDuel_EnsurePlayer2ViewBuffers(void)
         && arena_duel_player2_view_rgba != NULL;
 }
 
+static boolean ArenaDuel_EnsurePlayer1AutomapBuffer(void)
+{
+    size_t rgba_size;
+
+    rgba_size = ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT * 4;
+    if (arena_duel_player1_automap_rgba == NULL)
+    {
+        arena_duel_player1_automap_rgba = malloc(rgba_size);
+    }
+
+    return arena_duel_player1_automap_rgba != NULL;
+}
+
+static void ArenaDuel_AutomapPutPixel(byte *buffer,
+                                      int x,
+                                      int y,
+                                      byte r,
+                                      byte g,
+                                      byte b)
+{
+    int index;
+
+    if (x < 0 || x >= ARENA_DUEL_AUTOMAP_WIDTH || y < 0 || y >= ARENA_DUEL_AUTOMAP_HEIGHT)
+    {
+        return;
+    }
+
+    index = (y * ARENA_DUEL_AUTOMAP_WIDTH + x) * 4;
+    buffer[index + 0] = r;
+    buffer[index + 1] = g;
+    buffer[index + 2] = b;
+    buffer[index + 3] = 255;
+}
+
+static void ArenaDuel_AutomapDrawLine(byte *buffer,
+                                      int x0,
+                                      int y0,
+                                      int x1,
+                                      int y1,
+                                      byte r,
+                                      byte g,
+                                      byte b)
+{
+    int dx;
+    int sx;
+    int dy;
+    int sy;
+    int err;
+    int e2;
+
+    dx = abs(x1 - x0);
+    sx = x0 < x1 ? 1 : -1;
+    dy = -abs(y1 - y0);
+    sy = y0 < y1 ? 1 : -1;
+    err = dx + dy;
+
+    for (;;)
+    {
+        ArenaDuel_AutomapPutPixel(buffer, x0, y0, r, g, b);
+        if (x0 == x1 && y0 == y1)
+        {
+            break;
+        }
+        e2 = 2 * err;
+        if (e2 >= dy)
+        {
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+static void ArenaDuel_AutomapFillRect(byte *buffer,
+                                      int x0,
+                                      int y0,
+                                      int x1,
+                                      int y1,
+                                      byte r,
+                                      byte g,
+                                      byte b)
+{
+    int x;
+    int y;
+    int min_x;
+    int max_x;
+    int min_y;
+    int max_y;
+
+    min_x = x0 < x1 ? x0 : x1;
+    max_x = x0 > x1 ? x0 : x1;
+    min_y = y0 < y1 ? y0 : y1;
+    max_y = y0 > y1 ? y0 : y1;
+
+    for (y = min_y; y <= max_y; y++)
+    {
+        for (x = min_x; x <= max_x; x++)
+        {
+            ArenaDuel_AutomapPutPixel(buffer, x, y, r, g, b);
+        }
+    }
+}
+static void ArenaDuel_AutomapDrawBox(byte *buffer,
+                                     int x,
+                                     int y,
+                                     int radius,
+                                     byte r,
+                                     byte g,
+                                     byte b)
+{
+    int dx;
+    int dy;
+
+    for (dy = -radius; dy <= radius; dy++)
+    {
+        for (dx = -radius; dx <= radius; dx++)
+        {
+            ArenaDuel_AutomapPutPixel(buffer, x + dx, y + dy, r, g, b);
+        }
+    }
+}
+
+static void ArenaDuel_AutomapBounds(int *min_x, int *max_x, int *min_y, int *max_y)
+{
+    int i;
+    int x;
+    int y;
+
+    *min_x = INT_MAX;
+    *max_x = INT_MIN;
+    *min_y = INT_MAX;
+    *max_y = INT_MIN;
+
+    for (i = 0; i < numvertexes; i++)
+    {
+        x = vertexes[i].x >> FRACBITS;
+        y = vertexes[i].y >> FRACBITS;
+        if (x < *min_x)
+        {
+            *min_x = x;
+        }
+        if (x > *max_x)
+        {
+            *max_x = x;
+        }
+        if (y < *min_y)
+        {
+            *min_y = y;
+        }
+        if (y > *max_y)
+        {
+            *max_y = y;
+        }
+    }
+
+    if (*min_x == INT_MAX || *max_x <= *min_x || *max_y <= *min_y)
+    {
+        *min_x = -1024;
+        *max_x = 1024;
+        *min_y = -768;
+        *max_y = 768;
+    }
+}
+
+static int ArenaDuel_AutomapScreenX(fixed_t world_x,
+                                    int min_x,
+                                    double scale,
+                                    int padding)
+{
+    return padding + (int) (((world_x >> FRACBITS) - min_x) * scale + 0.5);
+}
+
+static int ArenaDuel_AutomapScreenY(fixed_t world_y,
+                                    int min_y,
+                                    double scale,
+                                    int padding)
+{
+    return ARENA_DUEL_AUTOMAP_HEIGHT - 1 - padding - (int) (((world_y >> FRACBITS) - min_y) * scale + 0.5);
+}
+
+static void ArenaDuel_AutomapDrawPlayer(byte *buffer,
+                                        mobj_t *mobj,
+                                        int min_x,
+                                        int min_y,
+                                        double scale,
+                                        int padding,
+                                        byte r,
+                                        byte g,
+                                        byte b)
+{
+    int x;
+    int y;
+    int angle_index;
+    int dx;
+    int dy;
+
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    x = ArenaDuel_AutomapScreenX(mobj->x, min_x, scale, padding);
+    y = ArenaDuel_AutomapScreenY(mobj->y, min_y, scale, padding);
+    ArenaDuel_AutomapDrawBox(buffer, x, y, 2, r, g, b);
+
+    angle_index = mobj->angle >> ANGLETOFINESHIFT;
+    dx = (int) (((int64_t) finecosine[angle_index] * 14) >> FRACBITS);
+    dy = (int) (((int64_t) finesine[angle_index] * 14) >> FRACBITS);
+    ArenaDuel_AutomapDrawLine(buffer, x, y, x + dx, y - dy, r, g, b);
+}
+
+void ArenaDuel_RenderPlayer1Automap(void)
+{
+    mobj_t *player1_mo;
+    int min_x;
+    int max_x;
+    int min_y;
+    int max_y;
+    int padding;
+    int map_width;
+    int map_height;
+    double scale_x;
+    double scale_y;
+    double scale;
+    int i;
+    int j;
+    int k;
+    int target;
+    int wall_count;
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+    int line_x0;
+    int line_y0;
+    int line_x1;
+    int line_y1;
+    int line_min_x;
+    int line_max_x;
+    int line_min_y;
+    int line_max_y;
+    int wall_min_x[16];
+    int wall_max_x[16];
+    int wall_min_y[16];
+    int wall_max_y[16];
+    boolean line_on_map_border;
+    boolean line_inside_wall_fill;
+    boolean overlaps;
+    line_t *line;
+
+    if (!ArenaDuel_IsEnabled() || !ArenaDuel_EnsurePlayer1AutomapBuffer())
+    {
+        return;
+    }
+
+    for (i = 0; i < ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT; i++)
+    {
+        arena_duel_player1_automap_rgba[i * 4 + 0] = 11;
+        arena_duel_player1_automap_rgba[i * 4 + 1] = 15;
+        arena_duel_player1_automap_rgba[i * 4 + 2] = 13;
+        arena_duel_player1_automap_rgba[i * 4 + 3] = 255;
+    }
+
+    ArenaDuel_AutomapBounds(&min_x, &max_x, &min_y, &max_y);
+    padding = 0;
+    map_width = max_x - min_x;
+    map_height = max_y - min_y;
+    scale_x = (double) (ARENA_DUEL_AUTOMAP_WIDTH - 1 - padding * 2) / (double) (map_width > 0 ? map_width : 1);
+    scale_y = (double) (ARENA_DUEL_AUTOMAP_HEIGHT - 1 - padding * 2) / (double) (map_height > 0 ? map_height : 1);
+    scale = scale_x < scale_y ? scale_x : scale_y;
+
+    wall_count = 0;
+
+    for (i = 0; i < numlines; i++)
+    {
+        line = &lines[i];
+        if (line->backsector)
+        {
+            continue;
+        }
+
+        line_x0 = line->v1->x >> FRACBITS;
+        line_y0 = line->v1->y >> FRACBITS;
+        line_x1 = line->v2->x >> FRACBITS;
+        line_y1 = line->v2->y >> FRACBITS;
+        line_on_map_border = ((line_x0 == min_x && line_x1 == min_x)
+                              || (line_x0 == max_x && line_x1 == max_x)
+                              || (line_y0 == min_y && line_y1 == min_y)
+                              || (line_y0 == max_y && line_y1 == max_y));
+        if (line_on_map_border)
+        {
+            continue;
+        }
+
+        line_min_x = line_x0 < line_x1 ? line_x0 : line_x1;
+        line_max_x = line_x0 > line_x1 ? line_x0 : line_x1;
+        line_min_y = line_y0 < line_y1 ? line_y0 : line_y1;
+        line_max_y = line_y0 > line_y1 ? line_y0 : line_y1;
+        target = -1;
+
+        for (j = 0; j < wall_count; j++)
+        {
+            overlaps = line_max_x >= wall_min_x[j]
+                && line_min_x <= wall_max_x[j]
+                && line_max_y >= wall_min_y[j]
+                && line_min_y <= wall_max_y[j];
+            if (!overlaps)
+            {
+                continue;
+            }
+
+            if (target < 0)
+            {
+                target = j;
+            }
+            else
+            {
+                if (wall_min_x[j] < wall_min_x[target]) wall_min_x[target] = wall_min_x[j];
+                if (wall_max_x[j] > wall_max_x[target]) wall_max_x[target] = wall_max_x[j];
+                if (wall_min_y[j] < wall_min_y[target]) wall_min_y[target] = wall_min_y[j];
+                if (wall_max_y[j] > wall_max_y[target]) wall_max_y[target] = wall_max_y[j];
+                for (k = j; k < wall_count - 1; k++)
+                {
+                    wall_min_x[k] = wall_min_x[k + 1];
+                    wall_max_x[k] = wall_max_x[k + 1];
+                    wall_min_y[k] = wall_min_y[k + 1];
+                    wall_max_y[k] = wall_max_y[k + 1];
+                }
+                wall_count--;
+                j--;
+            }
+        }
+
+        if (target < 0)
+        {
+            if (wall_count >= 16)
+            {
+                continue;
+            }
+            target = wall_count;
+            wall_min_x[target] = line_min_x;
+            wall_max_x[target] = line_max_x;
+            wall_min_y[target] = line_min_y;
+            wall_max_y[target] = line_max_y;
+            wall_count++;
+        }
+
+        if (line_min_x < wall_min_x[target]) wall_min_x[target] = line_min_x;
+        if (line_max_x > wall_max_x[target]) wall_max_x[target] = line_max_x;
+        if (line_min_y < wall_min_y[target]) wall_min_y[target] = line_min_y;
+        if (line_max_y > wall_max_y[target]) wall_max_y[target] = line_max_y;
+    }
+
+    for (i = 0; i < wall_count; i++)
+    {
+        if (wall_max_x[i] <= wall_min_x[i] || wall_max_y[i] <= wall_min_y[i])
+        {
+            continue;
+        }
+        x0 = ArenaDuel_AutomapScreenX(wall_min_x[i] << FRACBITS, min_x, scale, padding);
+        y0 = ArenaDuel_AutomapScreenY(wall_max_y[i] << FRACBITS, min_y, scale, padding);
+        x1 = ArenaDuel_AutomapScreenX(wall_max_x[i] << FRACBITS, min_x, scale, padding);
+        y1 = ArenaDuel_AutomapScreenY(wall_min_y[i] << FRACBITS, min_y, scale, padding);
+        ArenaDuel_AutomapFillRect(arena_duel_player1_automap_rgba, x0, y0, x1, y1, 123, 139, 132);
+    }
+
+    for (i = 0; i < numlines; i++)
+    {
+        line = &lines[i];
+        x0 = ArenaDuel_AutomapScreenX(line->v1->x, min_x, scale, padding);
+        y0 = ArenaDuel_AutomapScreenY(line->v1->y, min_y, scale, padding);
+        x1 = ArenaDuel_AutomapScreenX(line->v2->x, min_x, scale, padding);
+        y1 = ArenaDuel_AutomapScreenY(line->v2->y, min_y, scale, padding);
+
+        if (line->backsector)
+        {
+            continue;
+        }
+
+        line_x0 = line->v1->x >> FRACBITS;
+        line_y0 = line->v1->y >> FRACBITS;
+        line_x1 = line->v2->x >> FRACBITS;
+        line_y1 = line->v2->y >> FRACBITS;
+        line_inside_wall_fill = false;
+        for (j = 0; j < wall_count; j++)
+        {
+            if (line_x0 >= wall_min_x[j] && line_x0 <= wall_max_x[j]
+                && line_x1 >= wall_min_x[j] && line_x1 <= wall_max_x[j]
+                && line_y0 >= wall_min_y[j] && line_y0 <= wall_max_y[j]
+                && line_y1 >= wall_min_y[j] && line_y1 <= wall_max_y[j])
+            {
+                line_inside_wall_fill = true;
+                break;
+            }
+        }
+        if (line_inside_wall_fill)
+        {
+            continue;
+        }
+
+        ArenaDuel_AutomapDrawLine(arena_duel_player1_automap_rgba, x0, y0, x1, y1, 210, 224, 216);
+    }
+
+    player1_mo = players[consoleplayer].mo;
+    if (player1_mo == NULL)
+    {
+        player1_mo = arena_duel_player1_cached_mo;
+    }
+    ArenaDuel_AutomapDrawPlayer(arena_duel_player1_automap_rgba, player1_mo, min_x, min_y, scale, padding, 125, 220, 255);
+    ArenaDuel_AutomapDrawPlayer(arena_duel_player1_automap_rgba, arena_duel_player2, min_x, min_y, scale, padding, 255, 122, 122);
+
+    arena_duel_player1_automap_nonzero_pixels = ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT;
+    arena_duel_player1_automap_frame++;
+}
 static void ArenaDuel_AddEvent(const char *message)
 {
     char row[192];
@@ -903,7 +1327,7 @@ void ArenaDuel_RestorePlayer1Mobj(void)
     // Called from P_Ticker BEFORE P_PlayerThink so that the autopilot
     // path (Arena_PlayerApplyAutopilotCommand) sees a valid
     // players[consoleplayer].mo. Doing this only inside ArenaDuel_Ticker
-    // happens too late — by then the autopilot has already dropped the
+    // happens too late â€” by then the autopilot has already dropped the
     // intent with reason "missing_participant_state".
     if (arena_duel_player1_cached_mo == NULL)
     {
@@ -976,7 +1400,7 @@ void ArenaDuel_SpawnPlayer2(void)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        x = 640;
+        x = 900;
         y = 0;
         angle = ANG180;
         break;
@@ -992,8 +1416,8 @@ void ArenaDuel_SpawnPlayer2(void)
         break;
     case ARENA_DUEL_SPAWN_OPEN:
     default:
-        x = 640;
-        y = 520;
+        x = 672;
+        y = 544;
         angle = ANG180;
         break;
     }
@@ -1349,7 +1773,7 @@ void ArenaDuel_RenderPlayer2View(void)
     R_RenderMobjView(arena_duel_player2, &players[displayplayer]);
 
     nonzero_pixels = 0;
-    for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+    for (i = 0; i < ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT; i++)
     {
         if (arena_duel_player2_view_buffer[i] != 0)
         {
@@ -1432,7 +1856,7 @@ void ArenaDuel_RenderPlayer1View(void)
     R_RenderMobjView(player1_mo, &players[displayplayer]);
 
     nonzero_pixels = 0;
-    for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+    for (i = 0; i < ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT; i++)
     {
         if (arena_duel_player1_view_buffer[i] != 0)
         {
@@ -1445,6 +1869,7 @@ void ArenaDuel_RenderPlayer1View(void)
                                   arena_duel_player1_view_rgba,
                                   SCREENWIDTH * SCREENHEIGHT);
     arena_duel_player1_view_frame++;
+    ArenaDuel_RenderPlayer1Automap();
 
     I_VideoBuffer = saved_video_buffer;
     V_RestoreBuffer();
@@ -1481,7 +1906,41 @@ ARENA_DUEL_EXPORT uintptr_t ArenaDuel_Player1ViewRGBA(void)
     return (uintptr_t) arena_duel_player1_view_rgba;
 }
 
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AutomapWidth(void)
+{
+    return ARENA_DUEL_AUTOMAP_WIDTH;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AutomapHeight(void)
+{
+    return ARENA_DUEL_AUTOMAP_HEIGHT;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AutomapFrame(void)
+{
+    return arena_duel_player1_automap_frame;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AutomapNonzeroPixels(void)
+{
+    return arena_duel_player1_automap_nonzero_pixels;
+}
+
+ARENA_DUEL_EXPORT uintptr_t ArenaDuel_Player1AutomapPaletted(void)
+{
+    return 0;
+}
+
+ARENA_DUEL_EXPORT uintptr_t ArenaDuel_Player1AutomapRGBA(void)
+{
+    return (uintptr_t) arena_duel_player1_automap_rgba;
+}
 ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)
 {
     return I_GetPaletteData();
 }
+
+
+
+
+

@@ -454,12 +454,12 @@ void Agentic_ExportState(void)
     }
 
     fprintf(file,
-            "run_id\tscenario_id\ttick\tkind\tentity_id\tteam\ttype\tlabel\tx\ty\tangle\thealth\talive\tdistance_to_player\trelative_angle_to_player\tline_of_sight\tcurrent_command\tready_weapon\tammo_bullets\tammo_shells\tammo_cells\tammo_rockets\tlast_x\tlast_y\tposition_delta\tstuck_ticks\tcommand_status\tlast_action\tmode\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\tmodel\tdamage_dealt\tshots_fired\tshots_hit\tinvalid_actions\tround\tseed\tintent\tintent_status\tintent_id\tintent_style\tautopilot_action\tautopilot_reason\taim_error\tpreferred_distance\tstuck_recovery\tcontroller_mode\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\tissued_at_ms\texpires_at_ms\treplan_recommended\treplan_reasons\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\texecuted_los_lost_action\texecuted_stuck_recovery_strategy\texecuted_movement_primitive\texecuted_turn_policy\texecuted_navigation_target\texecuted_fire_mode\n");
+            "run_id\tscenario_id\ttick\tkind\tentity_id\tteam\ttype\tlabel\tx\ty\tz\tangle\thealth\talive\tdistance_to_player\trelative_angle_to_player\tline_of_sight\tcurrent_command\tready_weapon\tammo_bullets\tammo_shells\tammo_cells\tammo_rockets\tlast_x\tlast_y\tposition_delta\tstuck_ticks\tcommand_status\tlast_action\tmode\tphase\twinner\tterminal_reason\telapsed_time_seconds\ttimeout_seconds\tmodel\tdamage_dealt\tshots_fired\tshots_hit\tinvalid_actions\tround\tseed\tintent\tintent_status\tintent_id\tintent_style\tautopilot_action\tautopilot_reason\taim_error\tpreferred_distance\tstuck_recovery\tcontroller_mode\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\tissued_at_ms\texpires_at_ms\treplan_recommended\treplan_reasons\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\texecuted_los_lost_action\texecuted_stuck_recovery_strategy\texecuted_movement_primitive\texecuted_turn_policy\texecuted_navigation_target\texecuted_fire_mode\n");
 
     if (ArenaDuel_IsEnabled())
     {
         fprintf(file,
-                "%s\t%s\t%d\tmatch\tduel\tarena\tduel\tduel\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tduel\t%s\t%s\t%s\t%d.%d\t%d\t\t\t\t\t\t%d\t%d\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n",
+                "%s\t%s\t%d\tmatch\tduel\tarena\tduel\tduel\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tduel\t%s\t%s\t%s\t%d.%d\t%d\t\t\t\t\t\t%d\t%d\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n",
                 Arena_RunId(),
                 Arena_ScenarioId(),
                 leveltime,
@@ -524,7 +524,7 @@ void Agentic_ExportState(void)
             : ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_COUNT);
 
         fprintf(file,
-                "%s\t%s\t%d\t%s\t%s\tplayer\tdoomguy\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                "%s\t%s\t%d\t%s\t%s\tplayer\tdoomguy\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                 Arena_RunId(),
                 Arena_ScenarioId(),
                 leveltime,
@@ -533,6 +533,7 @@ void Agentic_ExportState(void)
                 ArenaDuel_IsEnabled() ? "player_1" : "player_0",
                 player->mo->x >> FRACBITS,
                 player->mo->y >> FRACBITS,
+                player->mo->z >> FRACBITS,
                 Agentic_AngleDegrees(player->mo->angle),
                 player->mo->health,
                 alive ? 1 : 0,
@@ -652,12 +653,13 @@ void Agentic_ExportState(void)
             debug = ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_PLAYER_2);
 
             fprintf(file,
-                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t1\t%d\t0\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t1\t%d\t0\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                     Arena_RunId(),
                     Arena_ScenarioId(),
                     leveltime,
                     mobj->x >> FRACBITS,
                     mobj->y >> FRACBITS,
+                    mobj->z >> FRACBITS,
                     Agentic_AngleDegrees(mobj->angle),
                     mobj->health,
                     alive ? 1 : 0,
@@ -755,9 +757,10 @@ void Agentic_ExportState(void)
         }
 
         fprintf(file,
-                "\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n",
+                "\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n",
                 mobj->x >> FRACBITS,
                 mobj->y >> FRACBITS,
+                mobj->z >> FRACBITS,
                 Agentic_AngleDegrees(mobj->angle),
                 mobj->health,
                 alive ? 1 : 0,

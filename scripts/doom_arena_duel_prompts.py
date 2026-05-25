@@ -7,6 +7,8 @@ import secrets
 from pathlib import Path
 from typing import Any
 
+from doom_arena_map_blueprints import format_map_blueprint_prompt, load_geometry_blueprint
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RESULTS_ROOT = REPO_ROOT / "benchmarks" / "results"
@@ -15,14 +17,7 @@ MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
 
 
 def load_map_blueprint(scenario_id: str) -> str:
-    txt_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.txt"
-    json_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.json"
-    parts: list[str] = []
-    if txt_path.exists():
-        parts.append(txt_path.read_text(encoding="utf-8").strip())
-    if json_path.exists():
-        parts.append(json_path.read_text(encoding="utf-8").strip())
-    return "\n\n".join(parts) if parts else ""
+    return format_map_blueprint_prompt(scenario_id)
 
 
 def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
@@ -72,10 +67,97 @@ def _map_blueprint_section(enabled: bool, scenario_id: str) -> str:
     return f"""
 Map blueprint:
 Coordinates in your observations use the same frame as the blueprint below.
-North is +Y, East is +X. Movement is collision-pathed by the autopilot â€” use
+North is +Y, East is +X. Movement is collision-pathed by the autopilot - use
 the blueprint for strategic reasoning, not for exact pathing.
 
 {blueprint}
+
+"""
+
+
+def _nearest_spawn_marker_cell(rows: list[list[str]], row: int, col: int) -> tuple[int, int]:
+    row_count = len(rows)
+    col_count = len(rows[0]) if rows else 0
+    if row_count <= 0 or col_count <= 0:
+        return row, col
+    row = max(0, min(row_count - 1, row))
+    col = max(0, min(col_count - 1, col))
+    if rows[row][col] != "#":
+        return row, col
+    limit = max(row_count, col_count)
+    for radius in range(1, limit + 1):
+        for candidate_row in range(row - radius, row + radius + 1):
+            for candidate_col in range(col - radius, col + radius + 1):
+                if abs(candidate_row - row) != radius and abs(candidate_col - col) != radius:
+                    continue
+                if not (0 <= candidate_row < row_count and 0 <= candidate_col < col_count):
+                    continue
+                if rows[candidate_row][candidate_col] != "#":
+                    return candidate_row, candidate_col
+    return row, col
+
+
+def _variant_ascii_map(blueprint: dict[str, Any]) -> str:
+    raw_ascii = str(blueprint.get("ascii_map", "")).strip()
+    if not raw_ascii:
+        return ""
+    rows = [list(row) for row in raw_ascii.splitlines() if row]
+    if not rows:
+        return ""
+    for row_index, row in enumerate(rows):
+        for col_index, char in enumerate(row):
+            if char in {"1", "2"}:
+                rows[row_index][col_index] = "."
+    bounds = blueprint.get("bounds", {})
+    cell_size = int(blueprint.get("cell_size", 64) or 64)
+    x_min = int(bounds.get("x_min", -(len(rows[0]) * cell_size) // 2))
+    y_max = int(bounds.get("y_max", (len(rows) * cell_size) // 2))
+    spawns = blueprint.get("spawns", {})
+    for marker, player_key in (("1", "player_1"), ("2", "player_2")):
+        spawn = spawns.get(player_key, {}) if isinstance(spawns, dict) else {}
+        try:
+            x = float(spawn.get("x"))
+            y = float(spawn.get("y"))
+        except (TypeError, ValueError):
+            continue
+        col = int((x - x_min) // cell_size)
+        row = int((y_max - y) // cell_size)
+        row, col = _nearest_spawn_marker_cell(rows, row, col)
+        rows[row][col] = marker
+    return "\n".join("".join(row) for row in rows)
+
+
+def _static_map_context_section(scenario_id: str) -> str:
+    try:
+        blueprint = load_geometry_blueprint(scenario_id)
+    except Exception:
+        return ""
+    bounds = blueprint.get("bounds", {})
+    spawns = blueprint.get("spawns", {})
+    player_1 = spawns.get("player_1", {})
+    player_2 = spawns.get("player_2", {})
+    ascii_map = _variant_ascii_map(blueprint)
+    if not ascii_map:
+        return ""
+    wall_count = ascii_map.count("#")
+    return f"""
+Static map context:
+- The static map is provided here once so repeated observations stay compact.
+- Use this map from chat memory while observations provide live positions and visibility.
+- Map: `{blueprint.get('map_id', 'duel_e1m8')}` / variant `{blueprint.get('scenario_id', scenario_id)}`.
+- Cell size: each ASCII cell is `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
+- Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
+- Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
+- Legend: `.` walkable, `#` wall/collision/sight blocker, `1` Player 1 selected spawn, `2` Player 2 selected spawn.
+- Wall cells: `{wall_count}`. Every `#` is generated into Doom wall collision and line-of-sight blocking geometry.
+- Selected spawns: player_1 x={player_1.get('x')} y={player_1.get('y')} angle={player_1.get('angle_deg')}; player_2 x={player_2.get('x')} y={player_2.get('y')} angle={player_2.get('angle_deg')}.
+- The `1` and `2` markers below are overlaid from the selected spawn variant, so they can differ from the raw map `.txt` markers.
+- Use the map for broad strategy and memory, not exact path planning. The Doom autopilot handles collision pathing.
+
+ASCII map:
+```text
+{ascii_map}
+```
 
 """
 
@@ -180,15 +262,7 @@ Allowed intensity:
 - `medium`
 - `high`
 
-Map summary:
-- `duel_e1m8` is a rectangular duel room with a solid center divider wall.
-- The divider blocks direct movement and line of sight through the middle.
-- Supported navigation choices are `left_lane`, `right_lane`, `center`, `opponent`, `last_seen_enemy`, and `keep_distance`.
-- Use `flank_left` / `flank_right`, `patrol_left` / `patrol_right`, or `take_left_lane` / `take_right_lane` to reposition.
-- Use the map for broad strategy, not exact path planning.
-- Do not invent unsupported navigation targets.
-
-Decision guide:
+{_static_map_context_section(scenario_id)}Decision guide:
 - Opponent visible and far: use `engage/push`, `engage/close_gap`, or `position/flank_left` / `position/flank_right`.
 - Opponent visible at good range: use `engage/strafe_fight`, `engage/suppress`, or `position/camp_los`.
 - Opponent visible and close while losing: use `evade/kite`, `evade/retreat_reset`, or `evade/dodge_strafe`.
@@ -449,5 +523,9 @@ Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
+
+
+
+
 
 

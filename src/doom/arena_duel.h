@@ -1,4 +1,4 @@
-//
+﻿//
 // Doom Agent Arena duel mode.
 //
 
@@ -47,6 +47,13 @@ int ArenaDuel_Player1ViewFrame(void);
 int ArenaDuel_Player1ViewNonzeroPixels(void);
 uintptr_t ArenaDuel_Player1ViewPaletted(void);
 uintptr_t ArenaDuel_Player1ViewRGBA(void);
+void ArenaDuel_RenderPlayer1Automap(void);
+int ArenaDuel_Player1AutomapWidth(void);
+int ArenaDuel_Player1AutomapHeight(void);
+int ArenaDuel_Player1AutomapFrame(void);
+int ArenaDuel_Player1AutomapNonzeroPixels(void);
+uintptr_t ArenaDuel_Player1AutomapPaletted(void);
+uintptr_t ArenaDuel_Player1AutomapRGBA(void);
 void ArenaDuel_RenderPlayer2View(void);
 int ArenaDuel_Player2ViewWidth(void);
 int ArenaDuel_Player2ViewHeight(void);
@@ -57,3 +64,5 @@ uintptr_t ArenaDuel_Player2ViewRGBA(void);
 uintptr_t ArenaDuel_PalettePointer(void);
 
 #endif
+
+
