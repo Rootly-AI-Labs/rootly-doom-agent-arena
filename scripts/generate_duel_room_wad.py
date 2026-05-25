@@ -44,6 +44,57 @@ def wall_obstacles(blueprint: dict) -> list[dict]:
     return [obstacle for obstacle in blueprint.get("obstacles", []) if obstacle.get("kind") == "wall"]
 
 
+def ascii_wall_component_obstacles(rows: list[str], cell_size: int) -> list[dict]:
+    if not rows:
+        return []
+    row_count = len(rows)
+    col_count = len(rows[0])
+    wall_cells = {
+        (row_index, col_index)
+        for row_index, row in enumerate(rows)
+        for col_index, char in enumerate(row)
+        if char == "#"
+    }
+    visited: set[tuple[int, int]] = set()
+    obstacles: list[dict] = []
+    for cell in sorted(wall_cells):
+        if cell in visited:
+            continue
+        stack = [cell]
+        visited.add(cell)
+        component = []
+        while stack:
+            current = stack.pop()
+            component.append(current)
+            row_index, col_index = current
+            for neighbor in (
+                (row_index - 1, col_index),
+                (row_index + 1, col_index),
+                (row_index, col_index - 1),
+                (row_index, col_index + 1),
+            ):
+                if neighbor in wall_cells and neighbor not in visited:
+                    visited.add(neighbor)
+                    stack.append(neighbor)
+
+        rows_only = [item[0] for item in component]
+        cols_only = [item[1] for item in component]
+        min_row = min(rows_only)
+        max_row = max(rows_only)
+        min_col = min(cols_only)
+        max_col = max(cols_only)
+        left, _bottom_unused, _right_unused, top = ascii_cell_rect(min_row, min_col, row_count, col_count, cell_size)
+        _left_unused, bottom, right, _top_unused = ascii_cell_rect(max_row, max_col, row_count, col_count, cell_size)
+        obstacles.append(
+            {
+                "kind": "wall",
+                "label": f"ascii_wall_{len(obstacles) + 1}",
+                "bounds": {"x_min": left, "x_max": right, "y_min": bottom, "y_max": top},
+            }
+        )
+    return obstacles
+
+
 def svg_x(bounds: dict, value: int) -> float:
     span = max(1, bounds["x_max"] - bounds["x_min"])
     return SVG_ROOM_X + ((value - bounds["x_min"]) / span) * SVG_ROOM_WIDTH
@@ -183,30 +234,10 @@ def build_wad(blueprint: dict) -> None:
     bounds = blueprint_bounds(blueprint)
     rows = [row for row in blueprint.get("ascii_map", "").splitlines() if row]
     if rows:
-        row_count = len(rows)
-        col_count = len(rows[0])
         cell_size = int(blueprint.get("cell_size", 64))
-        editor = MapEditor()
-        wall_sidedef = Sidedef(tx_mid="STARTAN3", tx_up="-", tx_low="-")
-        for row_index, row in enumerate(rows):
-            for col_index, char in enumerate(row):
-                if char == "#":
-                    continue
-                left, bottom, right, top = ascii_cell_rect(row_index, col_index, row_count, col_count, cell_size)
-                editor.draw_sector(
-                    [
-                        (left, bottom),
-                        (right, bottom),
-                        (right, top),
-                        (left, top),
-                    ],
-                    sidedef=wall_sidedef,
-                )
-        add_common_things(editor, Thing, blueprint.get("spawns", {}))
-        finish_editor(editor, bounds, WAD, Lump, Seg, SubSector)
-        return
-
-    obstacles = sorted(wall_obstacles(blueprint), key=lambda item: obstacle_rect(item)[0])
+        obstacles = sorted(ascii_wall_component_obstacles(rows, cell_size), key=lambda item: obstacle_rect(item)[0])
+    else:
+        obstacles = sorted(wall_obstacles(blueprint), key=lambda item: obstacle_rect(item)[0])
     if len(obstacles) > 2:
         print("Warning: current WAD generator uses only the first two connected wall components.")
         obstacles = obstacles[:2]
@@ -537,3 +568,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

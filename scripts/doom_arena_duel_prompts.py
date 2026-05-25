@@ -7,7 +7,7 @@ import secrets
 from pathlib import Path
 from typing import Any
 
-from doom_arena_map_blueprints import format_map_blueprint_prompt, load_geometry_blueprint
+from doom_arena_map_blueprints import format_map_blueprint_prompt, load_geometry_blueprint, load_variants_config
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +17,11 @@ MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
 
 
 def load_map_blueprint(scenario_id: str) -> str:
-    return format_map_blueprint_prompt(scenario_id)
+    config = load_variants_config()
+    scenario_text = str(scenario_id or "").strip()
+    if scenario_text not in config.get("variants", {}):
+        return ""
+    return format_map_blueprint_prompt(scenario_text)
 
 
 def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
@@ -522,6 +526,7 @@ Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
+
 
 
 
