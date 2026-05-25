@@ -729,7 +729,7 @@ class DoomArenaClient:
         category: str,
         action: str,
         intensity: str = "medium",
-        commit_ms: int = 3000,
+        commit_ms: int = 8000,
         controller_token: str | None = None,
         sequence_number: Any = None,
         target_zone: str = "",
@@ -2303,7 +2303,6 @@ def participant_strategy_schema() -> dict[str, Any]:
             "category": {"type": "string", "enum": sorted(STRATEGY_ACTIONS)},
             "action": {"type": "string", "enum": ALL_STRATEGY_ACTIONS},
             "intensity": {"type": "string", "enum": sorted(STRATEGY_INTENSITIES)},
-            "commit_ms": {"type": "integer", "minimum": 3000, "maximum": 8000},
             "sequence_number": {"type": "integer", "minimum": 0},
             "target_zone": {"type": "string"},
         },
@@ -2367,7 +2366,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments["category"]),
             str(arguments["action"]),
             str(arguments.get("intensity", "medium")),
-            int(arguments.get("commit_ms", 3000)),
+            int(arguments.get("commit_ms", 8000)),
             optional_string(arguments.get("controller_token")),
             arguments.get("sequence_number"),
             str(arguments.get("target_zone", "")),
@@ -2644,4 +2643,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
 

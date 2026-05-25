@@ -221,10 +221,10 @@ Loop:
 2. Call `get_participant_observation`.
 3. Send one opening `set_participant_strategy` with `sequence_number=1`.
 4. Call `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
-5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity`/`commit_ms` -> call `set_participant_strategy`.
+5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity` -> call `set_participant_strategy`.
 6. Increment `sequence_number` after every strategy call.
 7. After each `set_participant_strategy`, immediately observe again if the match is still active.
-8. Use `commit_ms` between 3000 and 8000 for every strategy call. Do not wait for `commit_ms` to finish; it is a policy lease, not a sleep timer.
+8. Do not choose timing fields. The server uses an 8000 ms policy lease by default; it is not a sleep timer and newer higher-sequence strategies override immediately.
 9. Do not use `Start-Sleep`, timers, or manual waiting loops. Keep updates moving as fast as the chat environment allows.
 
 Allowed MCP tools:
@@ -245,12 +245,11 @@ Strategy schema:
   "category": "engage",
   "action": "strafe_fight",
   "intensity": "medium",
-  "commit_ms": 3000,
   "sequence_number": 1
 }}
 ```
 
-Allowed `commit_ms`: 3000-8000 ms. The server clamps values outside this range.\n\nAllowed categories and actions:
+The server applies an internal 8000 ms policy lease to every strategy call. Do not include timing fields in normal play.\n\nAllowed categories and actions:
 - `explore`: `scan_last_seen`, `patrol_left`, `patrol_right`, `rotate_route`, `probe_center`
 - `engage`: `push`, `strafe_fight`, `suppress`, `close_gap`, `finish_low_health`
 - `evade`: `kite`, `break_los`, `retreat_reset`, `dodge_strafe`, `hold_fire_reposition`
@@ -523,6 +522,8 @@ Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
+
+
 
 
 

@@ -16,7 +16,7 @@ CONTROL_MODES = {CONTROL_MODE_FULL, CONTROL_MODE_HIERARCHICAL}
 STRATEGY_INTENSITIES = {"low", "medium", "high"}
 COMMIT_MS_MIN = 3000
 COMMIT_MS_MAX = 8000
-COMMIT_MS_DEFAULT = 3000
+COMMIT_MS_DEFAULT = 8000
 
 STRATEGY_ACTIONS: dict[str, list[str]] = {
     "explore": ["scan_last_seen", "patrol_left", "patrol_right", "rotate_route", "probe_center"],
@@ -609,7 +609,6 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "coordinate_frame": {"+x": "east/right", "-x": "west/left", "+y": "north/up", "-y": "south/down"},
             "current_zone": current_zone,
             "available_routes": ["left_lane", "right_lane", "center", "opponent", "last_seen_enemy", "keep_distance"],
-            "recommended_search_targets": ["right_lane", "center"] if current_zone == "left_side" else ["left_lane", "center"],
         },
         "allowed_actions": deepcopy(STRATEGY_ACTIONS),
         "recommended": recommended,
@@ -712,6 +711,8 @@ def record_strategy(run_id: str, participant_id: str, category: str, action: str
         bucket["repeated_action_count"] = 1
     bucket["last_strategy"] = {"category": category, "action": action, "time_ms": now_ms()}
     return int(bucket["repeated_action_count"])
+
+
 
 
 

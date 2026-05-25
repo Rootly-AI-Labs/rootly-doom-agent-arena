@@ -1470,8 +1470,7 @@
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-map-blueprint" aria-disabled="true">
                                     <input id="arena-enable-map-blueprint" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Map blueprint in prompt - disabled</span>
-                                        <span class="arena-toggle-hint">Temporarily disabled. Hierarchical prompts now use a compact map summary instead of the full blueprint.</span>
+                                        <span class="arena-toggle-title">Map blueprint in prompt - disabled</span>`r`n                      <span class="arena-toggle-hint">Static map context is now always included in each generated MCP prompt: a variant-aware ASCII map, legend, cell size, bounds, coordinate frame, wall count, and selected player spawns. Repeated observations stay compact and only reference that initial prompt map instead of resending the full layout.</span>
                                     </span>
                                 </label>
                             </div>
@@ -1482,8 +1481,7 @@
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-simplified-actions" aria-disabled="true">
                                     <input id="arena-enable-simplified-actions" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Simplified action schema - disabled</span>
-                                        <span class="arena-toggle-hint">Temporarily disabled. The backend currently accepts the regular four duel intents only.</span>
+                                        <span class="arena-toggle-title">Simplified action schema - built in</span>`r`n                      <span class="arena-toggle-hint">Hierarchical strategy control is now the default MCP path. Agents call set_participant_strategy with category, action, intensity, and sequence_number; the server applies an 8000 ms policy lease and expands that compact choice into the full Doom intent fields.</span>
                                     </span>
                                 </label>
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-cross-round-recap" aria-disabled="true">
@@ -5597,6 +5595,9 @@
         </script>
     </body>
 </html>
+
+
+
 
 
 

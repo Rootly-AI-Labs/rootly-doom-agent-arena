@@ -7,10 +7,10 @@ This document explains what each Doom Arena MCP agent receives from the game, wh
 Each agent runs an observe-and-act loop:
 
 ```text
-get_participant_observation -> choose category/action/intensity/commit_ms -> set_participant_strategy -> observe again
+get_participant_observation -> choose category/action/intensity -> set_participant_strategy -> observe again
 ```
 
-The model does not directly press movement keys every frame. In the current hierarchical flow, it sends compact tactical strategies with `set_participant_strategy`: `category`, `action`, `intensity`, `commit_ms`, and `sequence_number`. The server expands those strategies into the existing Doom intent fields. In full control mode, agents can still use `set_participant_intent` directly with intent names such as `engage_opponent`, `strafe_attack`, `search`, or `hold`. Doom reads the latest valid expanded policy every tick and converts it into normal Doom controls:
+The model does not directly press movement keys every frame. In the current hierarchical flow, it sends compact tactical strategies with `set_participant_strategy`: `category`, `action`, `intensity`, and `sequence_number`. The server expands those strategies into the existing Doom intent fields. In full control mode, agents can still use `set_participant_intent` directly with intent names such as `engage_opponent`, `strafe_attack`, `search`, or `hold`. Doom reads the latest valid expanded policy every tick and converts it into normal Doom controls:
 
 ```text
 forwardmove
@@ -360,19 +360,13 @@ medium
 high
 ```
 
-`commit_ms` is clamped to:
-
-```text
-3000-8000
-```
-
-Expansion location:
+The server applies an internal `8000ms` policy lease to every `set_participant_strategy` call. Agents should not include timing fields in normal hierarchical play. Older clients may still send the legacy timing field; the server keeps accepting and clamping it for backward compatibility.\n\nExpansion location:
 
 ```text
 scripts/doom_arena_strategy.py
 ```
 
-`commit_ms` is a policy lease, not a sleep timer. It is clamped to `3000-8000ms`; values below `3000` become `3000`, and values above `8000` become `8000`. Agents should still observe and submit the next strategy as soon as they can.
+The internal strategy lease is a policy lease, not a sleep timer. Agents should still observe and submit the next strategy as soon as they can; newer higher-sequence strategies override immediately.
 
 The expansion result is sent through the existing participant-intent path and preserves strategy metadata:
 
@@ -474,7 +468,7 @@ Legend:
 
 Each ASCII cell is currently `64 x 64` Doom units. The coordinate frame is `+x` east/right, `-x` west/left, `+y` north/up, and `-y` south/down.
 
-`get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent data, tactical recommendations, and a small map reference:
+`get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent data, tactical state, and a small map reference:
 
 ```json
 {
@@ -509,7 +503,7 @@ allowed_actions
 recommended
 ```
 
-The compact observation intentionally removes detailed execution fields such as `movement_bias`, `fire_policy`, `distance_policy`, `turn_policy`, `navigation_target`, and spacing bounds. The model chooses `category/action/intensity/commit_ms`; the server fills in the detailed fields.
+The compact observation intentionally removes detailed execution fields such as `movement_bias`, `fire_policy`, `distance_policy`, `turn_policy`, `navigation_target`, timing, and spacing bounds. The model chooses `category/action/intensity`; the server fills in the detailed fields and applies the default lease.
 
 ### Match state
 
@@ -1124,10 +1118,10 @@ A normal hierarchical single-round agent loop is:
 ```text
 1. set_participant_ready
 2. get_participant_observation
-3. set_participant_strategy with sequence_number=1 and commit_ms between 3000 and 8000
+3. set_participant_strategy with sequence_number=1
 4. wait_for_match_start
 5. get_participant_observation
-6. set_participant_strategy with sequence_number=2 and commit_ms between 3000 and 8000
+6. set_participant_strategy with sequence_number=2
 7. repeat observe -> strategy with increasing sequence_number
 8. when get_match_result says phase=finished and has_next_round=false, call stop_participant_intent once and stop
 ```
@@ -1406,6 +1400,9 @@ Doom line-of-sight check failed, so los_lost_action took over.
 ```
 
 That distinction matters: the MCP agent chooses tactical intent, but Doom remains responsible for whether movement and firing are physically valid in the current frame.
+
+
+
 
 
 
