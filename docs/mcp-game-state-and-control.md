@@ -468,16 +468,12 @@ Legend:
 
 Each ASCII cell is currently `64 x 64` Doom units. The coordinate frame is `+x` east/right, `-x` west/left, `+y` north/up, and `-y` south/down.
 
-`get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent data, tactical state, and a small map reference:
+`get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent zone, tactical state, and a tiny map reference:
 
 ```json
 {
   "map": {
-    "static_map_source": "initial_prompt_ascii",
-    "full_ascii_in_observation": false,
-    "cell_size": 64,
-    "current_zone": "left_side",
-    "available_routes": ["left_lane", "right_lane", "center", "opponent", "last_seen_enemy", "keep_distance"]
+    "current_zone": "left_side"
   }
 }
 ```
@@ -1400,6 +1396,7 @@ Doom line-of-sight check failed, so los_lost_action took over.
 ```
 
 That distinction matters: the MCP agent chooses tactical intent, but Doom remains responsible for whether movement and firing are physically valid in the current frame.
+
 
 
 

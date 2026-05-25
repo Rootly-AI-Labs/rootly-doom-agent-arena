@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """MCP wrapper for Doom Agent Arena local endpoints."""
 
 from __future__ import annotations
@@ -76,6 +76,8 @@ VALID_MOVEMENT_PRIMITIVES = {
 VALID_TURN_POLICIES = {"auto", "turn_to_enemy", "sweep_left", "sweep_right", "hold_angle", "face_last_seen"}
 VALID_NAVIGATION_TARGETS = {"none", "opponent", "last_seen_enemy", "center", "left_lane", "right_lane", "keep_distance"}
 VALID_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "burst", "suppressive"}
+PARTICIPANT_VIEW_HALF_ANGLE_DEGREES = 45
+PARTICIPANT_HIT_REVEAL_MS = 4000
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MCP_LOG_PATH = os.environ.get("DOOM_ARENA_MCP_LOG", str(REPO_ROOT / "src" / "arena_mcp_stdio.log"))
@@ -190,7 +192,7 @@ class DoomArenaClient:
 
     def get_arena_state(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows)
+        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         if run_id and state.get("run_id") not in {"", run_id}:
             raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
         return json.dumps(state, indent=2)
@@ -205,7 +207,7 @@ class DoomArenaClient:
 
     def get_match_result(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows)
+        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         duel_session = self._read_duel_session_status()
         if run_id and state.get("run_id") not in {"", run_id}:
             raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
@@ -1702,6 +1704,38 @@ def enrich_participant_state(
     return observation
 
 
+def participant_geometry_los(row: dict[str, str]) -> bool:
+    return row.get("line_of_sight", "0") == "1"
+
+
+def hit_reveal_active(participant: dict[str, Any]) -> bool:
+    last_taken_ms = participant.get("last_damage_taken_ms")
+    if last_taken_ms is None:
+        return False
+    try:
+        age_ms = now_ms() - int(last_taken_ms)
+    except (TypeError, ValueError):
+        return False
+    return 0 <= age_ms <= PARTICIPANT_HIT_REVEAL_MS
+
+
+def participant_directional_visibility(participant: dict[str, Any]) -> bool:
+    if not bool(participant.get("geometric_line_of_sight")):
+        return False
+    relative_angle = int(participant.get("opponent_relative_angle") or 0)
+    in_view = abs(relative_angle) <= PARTICIPANT_VIEW_HALF_ANGLE_DEGREES
+    return in_view or hit_reveal_active(participant)
+
+
+def apply_directional_visibility(participant: dict[str, Any]) -> None:
+    in_view = abs(int(participant.get("opponent_relative_angle") or 0)) <= PARTICIPANT_VIEW_HALF_ANGLE_DEGREES
+    revealed_by_hit = hit_reveal_active(participant)
+    visible = participant_directional_visibility(participant)
+    participant["opponent_in_view_cone"] = in_view
+    participant["opponent_revealed_by_hit"] = revealed_by_hit
+    participant["opponent_visible"] = visible
+    participant["los_status"] = "visible" if visible else "lost_los"
+
 def participant_state(row: dict[str, str]) -> dict[str, Any]:
     observation = {
         "participant_id": row.get("entity_id", ""),
@@ -1757,12 +1791,13 @@ def participant_state(row: dict[str, str]) -> dict[str, Any]:
         "invalid_actions": as_int(row, "invalid_actions"),
         "opponent_distance": as_int(row, "distance_to_player"),
         "opponent_relative_angle": as_int(row, "relative_angle_to_player"),
-        "opponent_visible": row.get("line_of_sight", "0") == "1",
+        "geometric_line_of_sight": participant_geometry_los(row),
+        "opponent_visible": participant_geometry_los(row),
     }
     return observation
 
 
-def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
+def make_shared_arena_state(rows: list[dict[str, str]], directional_visibility: bool = False) -> dict[str, Any]:
     match = next((row for row in rows if row.get("kind") == "match"), {})
     player_1_row = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == "player_1"),
@@ -1780,6 +1815,9 @@ def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
     if player_1_row or player_2_row:
         enrich_participant_state(player_1, player_2, run_id)
         enrich_participant_state(player_2, player_1, run_id)
+        if directional_visibility:
+            apply_directional_visibility(player_1)
+            apply_directional_visibility(player_2)
     state = {
         "mode": mode,
         "run_id": run_id,
@@ -1871,7 +1909,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     match = next((row for row in rows if row.get("kind") == "match"), {})
     config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
     hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
-    state = make_shared_arena_state(rows)
+    state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
     participant = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == participant_id),
         {},
@@ -1883,7 +1921,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     )
     self_state = state.get(participant_id, {})
     opponent_state = state.get(opponent_id, {})
-    opponent_visible = participant.get("line_of_sight", "0") == "1"
+    opponent_visible = bool(self_state.get("opponent_visible", participant.get("line_of_sight", "0") == "1"))
 
     if hide_enemy_position:
         opponent_block: dict[str, Any] = {
@@ -1896,8 +1934,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
                 {
                     "distance": as_int(participant, "distance_to_player"),
                     "relative_angle": as_int(participant, "relative_angle_to_player"),
-                    "distance_bucket": opponent_state.get("distance_bucket"),
-                    "los_status": opponent_state.get("los_status"),
+                    "distance_bucket": self_state.get("distance_bucket"),
+                    "los_status": self_state.get("los_status"),
                 }
             )
     else:
@@ -1913,8 +1951,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "distance": as_int(participant, "distance_to_player"),
             "relative_angle": as_int(participant, "relative_angle_to_player"),
             "pressure_state": opponent_state.get("pressure_state"),
-            "distance_bucket": opponent_state.get("distance_bucket"),
-            "los_status": opponent_state.get("los_status"),
+            "distance_bucket": self_state.get("distance_bucket"),
+            "los_status": self_state.get("los_status"),
             "requested_fire_policy": opponent_state.get("requested_fire_policy"),
             "executed_fire_action": opponent_state.get("executed_fire_action"),
             "requested_distance_policy": opponent_state.get("requested_distance_policy"),
@@ -2086,7 +2124,7 @@ def tool_definitions() -> list[dict[str, Any]]:
         {"name": "get_enemy_observation", "description": "Return enemy-commander observation JSON.", "inputSchema": empty_schema()},
         {
             "name": "get_participant_observation",
-            "description": "Return symmetric duel observation JSON for one participant.",
+            "description": "Return directional duel observation JSON for one participant.",
             "inputSchema": {
                 "type": "object",
                 "properties": {

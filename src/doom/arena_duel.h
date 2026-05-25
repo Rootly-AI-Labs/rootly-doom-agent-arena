@@ -1,4 +1,4 @@
-﻿//
+//
 // Doom Agent Arena duel mode.
 //
 
@@ -20,6 +20,8 @@ boolean ArenaDuel_IsEnabled(void);
 boolean ArenaDuel_IsFinished(void);
 boolean ArenaDuel_IsStarted(void);
 boolean ArenaDuel_IsPlayer2(const mobj_t *mobj);
+boolean ArenaDuel_Player1CanSeePlayer2(int relative_angle, int geometric_line_of_sight);
+boolean ArenaDuel_Player2CanSeePlayer1(int relative_angle, int geometric_line_of_sight);
 mobj_t *ArenaDuel_Player2Mobj(void);
 int ArenaDuel_Player2AmmoBullets(void);
 int ArenaDuel_ElapsedMs(void);

@@ -82,11 +82,6 @@ DUEL_SCENARIOS = [
         "label": "Custom room corner spawn",
         "requires_wasm_rebuild": False,
     },
-    {
-        "scenario_id": "duel_e1m8_center_spawn",
-        "label": "Custom room lower lane spawn",
-        "requires_wasm_rebuild": False,
-    },
 ]
 DUEL_SCENARIO_IDS = {entry["scenario_id"] for entry in DUEL_SCENARIOS}
 DUEL_ACTIVE_SCENARIO_IDS = {

@@ -507,9 +507,6 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         opponent_x = opponent_raw.get("x", self_state.get("opponent_x"))
         opponent_y = opponent_raw.get("y", self_state.get("opponent_y"))
         bucket["last_seen_zone"] = classify_zone(opponent_x, opponent_y, scenario_id)
-        bucket["last_seen_x"] = opponent_x
-        bucket["last_seen_y"] = opponent_y
-        bucket["last_seen_angle"] = opponent_raw.get("angle")
 
     snapshot = {
         "time_ms": current_ms,
@@ -527,45 +524,23 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     stuck = bool(self_state.get("stuck_recovery")) or "stuck" in (tactical_raw.get("replan_reasons") or [])
     result = last_action_result(bucket.get("last_observation"), snapshot, spin, stuck)
     bucket["last_observation"] = dict(snapshot)
-    last_strategy = bucket.get("last_strategy") or {}
     last_seen_ms = bucket.get("last_seen_ms")
     last_seen_age = current_ms - int(last_seen_ms) if last_seen_ms else None
     pressure = pressure_bucket(self_raw.get("health"), opponent_raw.get("health"), "health" in opponent_raw)
-    tactical = {
-        "pressure": pressure,
-        "los": self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los"),
-        "health_advantage": self_raw.get("health_delta"),
-        "damage_trend": damage_trend(self_raw.get("last_damage_dealt_ms"), self_raw.get("last_damage_taken_ms"), current_ms),
-        "last_category": last_strategy.get("category"),
-        "last_action": last_strategy.get("action"),
-        "last_action_age_ms": current_ms - int(last_strategy.get("time_ms", current_ms)) if last_strategy else None,
-        "last_action_result": result,
-        "replan_recommended": bool(tactical_raw.get("replan_recommended")),
-        "replan_reasons": tactical_raw.get("replan_reasons") or [],
-        "stuck_detected": stuck,
-        "spin_detected": spin,
-        "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
-        "time_since_damage_dealt_ms": elapsed_since(self_raw.get("last_damage_dealt_ms"), current_ms),
-        "time_since_damage_taken_ms": elapsed_since(self_raw.get("last_damage_taken_ms"), current_ms),
-        "opponent_recently_seen": last_seen_age is not None and last_seen_age <= 8000,
-        "distance_bucket": self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown",
-        "relative_angle_bucket": relative_angle_bucket(opponent_raw.get("relative_angle") if opponent_visible else None),
-    }
-    recommended = recommend_actions({**tactical, "distance_bucket": self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket")})
-    tactical["recommendations"] = recommended
+    distance_bucket = self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown"
+    los = self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los")
+
     return {
         "control_mode": normalize_control_mode(control_mode),
         "participant_id": participant_id,
         "opponent_id": opponent_id,
         "match": {
             "phase": match_raw.get("phase"),
-            "elapsed_seconds": float(match_raw.get("elapsed_time_seconds") or 0),
             "time_left_seconds": max(0.0, float(match_raw.get("timeout_seconds") or 0) - float(match_raw.get("elapsed_time_seconds") or 0)),
             "round": full_observation.get("current_round", state.get("current_round", 1)),
             "total_rounds": full_observation.get("total_rounds", state.get("total_rounds", 1)),
             "has_next_round": bool(full_observation.get("has_next_round", state.get("has_next_round", False))),
             "winner": match_raw.get("winner") or None,
-            "terminal_reason": match_raw.get("terminal_reason") or None,
         },
         "self": {
             "health": self_raw.get("health"),
@@ -575,46 +550,31 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "y": self_raw.get("y"),
             "angle": self_raw.get("angle"),
             "zone": current_zone,
-            "damage_dealt": self_raw.get("damage_dealt"),
-            "shots_fired": self_raw.get("shots_fired"),
-            "shots_hit": self_raw.get("shots_hit"),
-            "accuracy_bucket": accuracy_bucket(self_raw.get("shots_fired"), self_raw.get("shots_hit")),
         },
         "opponent": {
             "alive": bool(opponent_raw.get("alive")),
             "visible": opponent_visible,
             "health": opponent_raw.get("health") if opponent_visible and "health" in opponent_raw else None,
-            "x": opponent_raw.get("x") if opponent_visible else None,
-            "y": opponent_raw.get("y") if opponent_visible else None,
-            "angle": opponent_raw.get("angle") if opponent_visible else None,
-            "distance": opponent_raw.get("distance") if opponent_visible else None,
-            "distance_bucket": opponent_raw.get("distance_bucket") or self_raw.get("distance_bucket") or "unknown",
+            "distance_bucket": distance_bucket,
             "relative_angle_bucket": relative_angle_bucket(opponent_raw.get("relative_angle") if opponent_visible else None),
-            "last_seen_ms": last_seen_age,
-            "last_seen_zone": bucket.get("last_seen_zone", "unknown"),
             "last_seen": {
                 "age_ms": last_seen_age,
                 "zone": bucket.get("last_seen_zone", "unknown"),
-                "x": bucket.get("last_seen_x"),
-                "y": bucket.get("last_seen_y"),
-                "angle": bucket.get("last_seen_angle"),
             },
         },
-        "tactical": tactical,
-        "map": {
-            "map_id": scenario_id,
-            "static_map_source": "initial_prompt_ascii",
-            "full_ascii_in_observation": False,
-            "cell_size": 64,
-            "coordinate_frame": {"+x": "east/right", "-x": "west/left", "+y": "north/up", "-y": "south/down"},
-            "current_zone": current_zone,
-            "available_routes": ["left_lane", "right_lane", "center", "opponent", "last_seen_enemy", "keep_distance"],
+        "tactical": {
+            "pressure": pressure,
+            "los": los,
+            "damage_trend": damage_trend(self_raw.get("last_damage_dealt_ms"), self_raw.get("last_damage_taken_ms"), current_ms),
+            "last_action_result": result,
+            "stuck_detected": stuck,
+            "spin_detected": spin,
+            "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
         },
-        "allowed_actions": deepcopy(STRATEGY_ACTIONS),
-        "recommended": recommended,
+        "map": {
+            "current_zone": current_zone,
+        },
     }
-
-
 def validate_strategy(category: Any, action: Any, intensity: Any, commit_ms: Any) -> tuple[str, str, str, int]:
     category_text = str(category or "").strip().lower()
     action_text = str(action or "").strip().lower()
@@ -711,6 +671,7 @@ def record_strategy(run_id: str, participant_id: str, category: str, action: str
         bucket["repeated_action_count"] = 1
     bucket["last_strategy"] = {"category": category, "action": action, "time_ms": now_ms()}
     return int(bucket["repeated_action_count"])
+
 
 
 

@@ -1,4 +1,4 @@
-﻿{
+{
     "cell_size":  64,
     "default_map":  "duel_e1m8",
     "default_variant":  "duel_e1m8",
@@ -54,22 +54,6 @@
                                                                                     "x":  768,
                                                                                     "y":  512,
                                                                                     "angle_deg":  225
-                                                                                }
-                                                               }
-                                                },
-                     "duel_e1m8_center_spawn":  {
-                                                    "map_id":  "duel_e1m8",
-                                                    "label":  "Lower lane spawn",
-                                                    "spawns":  {
-                                                                   "player_1":  {
-                                                                                    "x":  -320,
-                                                                                    "y":  -520,
-                                                                                    "angle_deg":  0
-                                                                                },
-                                                                   "player_2":  {
-                                                                                    "x":  320,
-                                                                                    "y":  -520,
-                                                                                    "angle_deg":  180
                                                                                 }
                                                                }
                                                 }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Doom Agent Arena duel mode.
 //
 
@@ -78,6 +78,8 @@ static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_PLAYER2_BULLETS 200
 #define ARENA_DUEL_AUTOMAP_WIDTH 512
 #define ARENA_DUEL_AUTOMAP_HEIGHT 384
+#define ARENA_DUEL_VIEW_HALF_ANGLE_DEGREES 45
+#define ARENA_DUEL_HIT_REVEAL_TICKS 140
 
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
 // P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
@@ -95,6 +97,8 @@ static int arena_duel_player1_damage_dealt;
 static int arena_duel_player2_damage_dealt;
 static int arena_duel_player1_invalid_actions;
 static int arena_duel_player2_invalid_actions;
+static int arena_duel_player1_reveal_until_tick;
+static int arena_duel_player2_reveal_until_tick;
 static int arena_duel_start_tick;
 static int arena_duel_timeout_seconds;
 static boolean arena_duel_started;
@@ -165,6 +169,33 @@ static int ArenaDuel_NormalizedAngleDegrees(angle_t angle)
     }
 
     return degrees;
+}
+
+static int ArenaDuel_AbsInt(int value)
+{
+    return value < 0 ? -value : value;
+}
+
+boolean ArenaDuel_Player1CanSeePlayer2(int relative_angle, int geometric_line_of_sight)
+{
+    if (!geometric_line_of_sight)
+    {
+        return false;
+    }
+
+    return ArenaDuel_AbsInt(relative_angle) <= ARENA_DUEL_VIEW_HALF_ANGLE_DEGREES
+        || leveltime <= arena_duel_player1_reveal_until_tick;
+}
+
+boolean ArenaDuel_Player2CanSeePlayer1(int relative_angle, int geometric_line_of_sight)
+{
+    if (!geometric_line_of_sight)
+    {
+        return false;
+    }
+
+    return ArenaDuel_AbsInt(relative_angle) <= ARENA_DUEL_VIEW_HALF_ANGLE_DEGREES
+        || leveltime <= arena_duel_player2_reveal_until_tick;
 }
 
 static int ArenaDuel_Player1Health(void)
@@ -1327,7 +1358,7 @@ void ArenaDuel_RestorePlayer1Mobj(void)
     // Called from P_Ticker BEFORE P_PlayerThink so that the autopilot
     // path (Arena_PlayerApplyAutopilotCommand) sees a valid
     // players[consoleplayer].mo. Doing this only inside ArenaDuel_Ticker
-    // happens too late â€” by then the autopilot has already dropped the
+    // happens too late — by then the autopilot has already dropped the
     // intent with reason "missing_participant_state".
     if (arena_duel_player1_cached_mo == NULL)
     {
@@ -1363,6 +1394,8 @@ void ArenaDuel_InitLevel(void)
     arena_duel_terminal_reason[0] = '\0';
     arena_duel_last_player1_health = ARENA_DUEL_PARTICIPANT_HEALTH;
     arena_duel_last_player2_health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    arena_duel_player1_reveal_until_tick = 0;
+    arena_duel_player2_reveal_until_tick = 0;
     arena_duel_event_count = 0;
     arena_duel_player2_view_frame = 0;
     arena_duel_player2_view_nonzero_pixels = 0;
@@ -1504,6 +1537,7 @@ void ArenaDuel_Ticker(void)
         delta = arena_duel_last_player1_health - player1_health;
         arena_duel_player2_damage_dealt += delta;
         arena_duel_player2_shots_hit++;
+        arena_duel_player1_reveal_until_tick = leveltime + ARENA_DUEL_HIT_REVEAL_TICKS;
         ArenaDuel_AddEvent("participant_hit: player_2 hit player_1");
     }
     if (player2_health < arena_duel_last_player2_health)
@@ -1511,6 +1545,7 @@ void ArenaDuel_Ticker(void)
         delta = arena_duel_last_player2_health - player2_health;
         arena_duel_player1_damage_dealt += delta;
         arena_duel_player1_shots_hit++;
+        arena_duel_player2_reveal_until_tick = leveltime + ARENA_DUEL_HIT_REVEAL_TICKS;
         ArenaDuel_AddEvent("participant_hit: player_1 hit player_2");
     }
 
