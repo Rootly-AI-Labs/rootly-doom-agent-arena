@@ -1970,6 +1970,43 @@ ARENA_DUEL_EXPORT uintptr_t ArenaDuel_Player1AutomapRGBA(void)
 {
     return (uintptr_t) arena_duel_player1_automap_rgba;
 }
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1PositionValid(void)
+{
+    return ArenaDuel_Player1Mobj() != NULL;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1WorldX(void)
+{
+    mobj_t *mobj;
+
+    mobj = ArenaDuel_Player1Mobj();
+    return mobj != NULL ? mobj->x >> FRACBITS : 0;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player1WorldY(void)
+{
+    mobj_t *mobj;
+
+    mobj = ArenaDuel_Player1Mobj();
+    return mobj != NULL ? mobj->y >> FRACBITS : 0;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player2PositionValid(void)
+{
+    return arena_duel_player2 != NULL;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldX(void)
+{
+    return arena_duel_player2 != NULL ? arena_duel_player2->x >> FRACBITS : 0;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldY(void)
+{
+    return arena_duel_player2 != NULL ? arena_duel_player2->y >> FRACBITS : 0;
+}
+
 ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)
 {
     return I_GetPaletteData();

@@ -1424,7 +1424,7 @@
                                 <label for="arena-duel-map">Map / spawn variant</label>
                                 <select id="arena-duel-map">
                                     <option value="duel_e1m8">Open sight spawn</option>
-                                    <option value="duel_e1m8_corner_spawn">Corner spawn</option>                                    <option value="duel_e1m8_blind_spawn">Blind spawn</option>
+                                    <option value="duel_e1m8_corner_spawn">Corner spawn</option>                                    <option value="duel_e1m8_blind_spawn" selected>Blind spawn</option>
                                 </select>
                             </div>
                             <div class="arena-model-field">
@@ -1459,7 +1459,7 @@
                             <div class="arena-config-section-title">Information control</div>
                             <div class="arena-toggle-stack">
                                 <label class="arena-toggle-field" for="arena-hide-enemy-position">
-                                    <input id="arena-hide-enemy-position" type="checkbox" />
+                                    <input id="arena-hide-enemy-position" type="checkbox" checked />
                                     <span class="arena-toggle-text">
                                         <span class="arena-toggle-title">Fog of war - hide opponent position</span>
                                         <span class="arena-toggle-hint">Players only see opponent coordinates and angle when line-of-sight is active. Forces models to track lost contacts instead of cheating with shared state.</span>
@@ -1479,7 +1479,8 @@
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-simplified-actions" aria-disabled="true">
                                     <input id="arena-enable-simplified-actions" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Simplified action schema - built in</span>`r`n                      <span class="arena-toggle-hint">Hierarchical strategy control is now the default MCP path. Agents call set_participant_strategy with category, action, intensity, and sequence_number; the server applies an 8000 ms policy lease and expands that compact choice into the full Doom intent fields.</span>
+                                        <span class="arena-toggle-title">Simplified action schema - built in</span>
+                      <span class="arena-toggle-hint">Hierarchical strategy control is now the default MCP path. Agents call set_participant_strategy with category, action, intensity, optional objective, target zone, short reasoning, and sequence_number; the server applies an 8000 ms policy lease and expands that compact choice into the full Doom intent fields.</span>
                                     </span>
                                 </label>
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-cross-round-recap" aria-disabled="true">
@@ -1764,7 +1765,7 @@
             var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
             var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
             var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
-            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\n";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\n";
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
@@ -1838,6 +1839,14 @@
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
             var currentMapBlueprint = null;
             var tacticalOverlayDefaultBounds = { x_min: -1024, x_max: 1024, y_min: -768, y_max: 768 };
+            var tacticalPathTrailByParticipant = { player_1: [], player_2: [] };
+            var tacticalPathTrailRunId = "";
+            var tacticalPathTrailMaxPoints = 180;
+            var tacticalPathTrailMinDistance = 3;
+            var tacticalPathTrailInterpolationStep = 10;
+            var tacticalPathTrailMaxJumpDistance = 240;
+            var tacticalPathTrailConfirmJumpDistance = 96;
+            var tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
             var currentMapBlueprintScenarioId = "";
             var blueprintRequestScenarioId = "";
 
@@ -1977,6 +1986,257 @@
             function tacticalOverlayBounds() {
                 return currentMapBlueprint && currentMapBlueprint.bounds ? currentMapBlueprint.bounds : tacticalOverlayDefaultBounds;
             }
+
+            function resetTacticalPathTrails() {
+                tacticalPathTrailByParticipant = { player_1: [], player_2: [] };
+                tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
+                tacticalPathTrailRunId = currentArenaRunId || "";
+            }
+
+            function tacticalPathTrailColor(participantId) {
+                return participantId === "player_2" ? "rgba(255, 122, 122, 0.86)" : "rgba(125, 220, 255, 0.86)";
+            }
+
+            function appendTacticalPathTrailPoint(participantId, player) {
+                var x = Number(player && player.x);
+                var y = Number(player && player.y);
+                var trail;
+                var last;
+                var dx;
+                var dy;
+                var distance;
+                var pendingJump;
+                var pendingDx;
+                var pendingDy;
+                var interpolationSteps;
+                var interpolationIndex;
+
+                if (!Number.isFinite(x) || !Number.isFinite(y)) {
+                    return;
+                }
+                if (currentArenaRunId && tacticalPathTrailRunId && currentArenaRunId !== tacticalPathTrailRunId) {
+                    resetTacticalPathTrails();
+                }
+                if (!tacticalPathTrailRunId) {
+                    tacticalPathTrailRunId = currentArenaRunId || "";
+                }
+                trail = tacticalPathTrailByParticipant[participantId];
+                if (!trail) {
+                    trail = [];
+                    tacticalPathTrailByParticipant[participantId] = trail;
+                }
+                last = trail.length ? trail[trail.length - 1] : null;
+                if (last) {
+                    dx = x - last.x;
+                    dy = y - last.y;
+                    distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < tacticalPathTrailMinDistance) {
+                        tacticalPathTrailPendingJumpByParticipant[participantId] = null;
+                        return;
+                    }
+                    if (distance > tacticalPathTrailMaxJumpDistance) {
+                        pendingJump = tacticalPathTrailPendingJumpByParticipant[participantId];
+                        if (pendingJump) {
+                            pendingDx = x - pendingJump.x;
+                            pendingDy = y - pendingJump.y;
+                            if (Math.sqrt(pendingDx * pendingDx + pendingDy * pendingDy) <= tacticalPathTrailConfirmJumpDistance) {
+                                tacticalPathTrailPendingJumpByParticipant[participantId] = null;
+                                trail.push({ x: x, y: y, breakBefore: true });
+                                while (trail.length > tacticalPathTrailMaxPoints) {
+                                    trail.shift();
+                                }
+                                return;
+                            }
+                        }
+                        tacticalPathTrailPendingJumpByParticipant[participantId] = { x: x, y: y };
+                        return;
+                    }
+                    tacticalPathTrailPendingJumpByParticipant[participantId] = null;
+                } else {
+                    tacticalPathTrailPendingJumpByParticipant[participantId] = null;
+                }
+                if (last && distance > tacticalPathTrailInterpolationStep) {
+                    interpolationSteps = Math.min(24, Math.floor(distance / tacticalPathTrailInterpolationStep));
+                    for (interpolationIndex = 1; interpolationIndex < interpolationSteps; interpolationIndex++) {
+                        trail.push({
+                            x: last.x + (dx * interpolationIndex) / interpolationSteps,
+                            y: last.y + (dy * interpolationIndex) / interpolationSteps
+                        });
+                    }
+                }
+                trail.push({ x: x, y: y });
+                while (trail.length > tacticalPathTrailMaxPoints) {
+                    trail.shift();
+                }
+            }
+
+            function drawTacticalPathTrail(ctx, bounds, participantId, width, height) {
+                var trail = tacticalPathTrailByParticipant[participantId] || [];
+                var firstPoint = true;
+                var screen;
+
+                if (!ctx || !bounds || trail.length < 2) {
+                    return;
+                }
+
+                ctx.save();
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.beginPath();
+                trail.forEach(function (point) {
+                    screen = automapWorldToScreen(bounds, point.x, point.y, width, height);
+                    if (firstPoint || point.breakBefore) {
+                        ctx.moveTo(screen.x, screen.y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(screen.x, screen.y);
+                    }
+                });
+                ctx.strokeStyle = "rgba(0, 0, 0, 0.55)";
+                ctx.lineWidth = 5;
+                ctx.stroke();
+
+                ctx.beginPath();
+                firstPoint = true;
+                trail.forEach(function (point) {
+                    screen = automapWorldToScreen(bounds, point.x, point.y, width, height);
+                    if (firstPoint || point.breakBefore) {
+                        ctx.moveTo(screen.x, screen.y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(screen.x, screen.y);
+                    }
+                });
+                ctx.strokeStyle = tacticalPathTrailColor(participantId);
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function drawTacticalPathTrailsOnAutomap() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+                drawTacticalPathTrail(ctx, bounds, "player_1", canvas.width, canvas.height);
+                drawTacticalPathTrail(ctx, bounds, "player_2", canvas.width, canvas.height);
+            }
+
+            function wasmDuelPlayerPosition(participantId) {
+                var prefix = participantId === "player_2" ? "ArenaDuel_Player2" : "ArenaDuel_Player1";
+                var valid;
+
+                if (typeof Module === "undefined" || typeof Module.ccall !== "function") {
+                    return null;
+                }
+
+                try {
+                    valid = Module.ccall(prefix + "PositionValid", "number", [], []);
+                    if (!valid) {
+                        return null;
+                    }
+                    return {
+                        x: Module.ccall(prefix + "WorldX", "number", [], []),
+                        y: Module.ccall(prefix + "WorldY", "number", [], [])
+                    };
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function appendTacticalPathTrailPointsFromWasm() {
+                var player1 = wasmDuelPlayerPosition("player_1");
+                var player2 = wasmDuelPlayerPosition("player_2");
+
+                if (player1) {
+                    appendTacticalPathTrailPoint("player_1", player1);
+                }
+                if (player2) {
+                    appendTacticalPathTrailPoint("player_2", player2);
+                }
+            }
+
+            function automapMarkerMatches(participantId, red, green, blue) {
+                if (participantId === "player_2") {
+                    return red > 210 && green > 70 && green < 175 && blue > 55 && blue < 170;
+                }
+                return red > 80 && red < 180 && green > 175 && blue > 220;
+            }
+
+            function findAutomapMarkerWorldPosition(canvas, participantId) {
+                var ctx;
+                var image;
+                var data;
+                var width;
+                var height;
+                var pixelIndex;
+                var x;
+                var y;
+                var count = 0;
+                var sumX = 0;
+                var sumY = 0;
+                var bounds = tacticalOverlayBounds();
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return null;
+                }
+
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return null;
+                }
+
+                width = canvas.width;
+                height = canvas.height;
+
+                try {
+                    image = ctx.getImageData(0, 0, width, height);
+                } catch (error) {
+                    return null;
+                }
+
+                data = image.data;
+                for (pixelIndex = 0; pixelIndex < data.length; pixelIndex += 4) {
+                    if (!automapMarkerMatches(participantId, data[pixelIndex], data[pixelIndex + 1], data[pixelIndex + 2])) {
+                        continue;
+                    }
+                    x = (pixelIndex / 4) % width;
+                    y = Math.floor((pixelIndex / 4) / width);
+                    sumX += x;
+                    sumY += y;
+                    count++;
+                }
+
+                if (count < 3) {
+                    return null;
+                }
+
+                return automapScreenToWorld(bounds, sumX / count, sumY / count, width, height);
+            }
+
+            function appendTacticalPathTrailPointsFromAutomap(canvas) {
+                var appended = 0;
+                var player1 = findAutomapMarkerWorldPosition(canvas, "player_1");
+                var player2 = findAutomapMarkerWorldPosition(canvas, "player_2");
+
+                if (player1) {
+                    appendTacticalPathTrailPoint("player_1", player1);
+                    appended++;
+                }
+                if (player2) {
+                    appendTacticalPathTrailPoint("player_2", player2);
+                    appended++;
+                }
+                return appended;
+            }
+
             function hideTacticalOverlayCoordinateTooltip() {
                 var tooltip = document.getElementById("duel-tactical-coordinate-tooltip");
                 if (tooltip) {
@@ -2126,6 +2386,7 @@
                 p2y = Number(player2 && player2.y);
 
                 if (Number.isFinite(p1x) && Number.isFinite(p1y)) {
+                    appendTacticalPathTrailPoint("player_1", player1);
                     markerPosition = tacticalMapMarkerPosition(bounds, p1x, p1y);
                     if (p1Marker) {
                         p1Marker.hidden = false;
@@ -2142,6 +2403,7 @@
                 }
 
                 if (Number.isFinite(p2x) && Number.isFinite(p2y)) {
+                    appendTacticalPathTrailPoint("player_2", player2);
                     markerPosition = tacticalMapMarkerPosition(bounds, p2x, p2y);
                     if (p2Marker) {
                         p2Marker.hidden = false;
@@ -2705,7 +2967,7 @@
                 return {
                     arena_mode: "duel",
                     control_mode: "hierarchical",
-                    scenario_id: selectedStringValue("arena-duel-map", "duel_e1m8"),
+                    scenario_id: selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn"),
                     player_1_model: "",
                     player_2_model: "",
                     rounds: rounds,
@@ -2714,7 +2976,7 @@
                     timeout_seconds: selectedNumberValue("arena-timeout-seconds", 120),
                     decision_cadence_ms: 750,
                     intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
-                    hide_enemy_position: selectedCheckboxValue("arena-hide-enemy-position", false),
+                    hide_enemy_position: selectedCheckboxValue("arena-hide-enemy-position", true),
                     randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
                     rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
                     enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
@@ -4020,11 +4282,14 @@
                         : row.source === "state_current" || row.source === "participant_intents_tsv"
                             ? "current"
                             : "active/final";
+                var strategyDetails = " | Strategy: category=" + formatCompactValue(row.strategy_category) +
+                    " | action=" + formatCompactValue(row.strategy_action) +
+                    " | intensity=" + formatCompactValue(row.strategy_intensity) +
+                    (row.strategy_objective ? " | objective=" + formatCompactValue(row.strategy_objective) : "") +
+                    (row.strategy_target_zone ? " | target_zone=" + formatCompactValue(row.strategy_target_zone) : "") +
+                    (row.strategy_reasoning ? " | reasoning=" + formatCompactValue(row.strategy_reasoning) : "");
                 var requestedText = isHierarchical
-                    ? " | Strategy: category=" + formatCompactValue(row.strategy_category) +
-                        " | action=" + formatCompactValue(row.strategy_action) +
-                        " | intensity=" + formatCompactValue(row.strategy_intensity) +
-                        " | commit=" + formatMillis(row.strategy_commit_ms)
+                    ? strategyDetails
                     : " | Intent: intent=" + (row.intent || "unknown") +
                         " | style=" + formatCompactValue(row.style) +
                         " | target=" + formatCompactValue(row.target_id) +
@@ -4895,13 +5160,14 @@
             }
 
             function refreshPlayer1Automap() {
-                var canvas, status;
+                var canvas, status, previousFrame;
 
                 if (currentArenaMode !== "duel" || typeof Module === "undefined" || typeof Module.ccall !== "function") { return; }
                 canvas = document.getElementById("duel-player1-automap-canvas");
                 status = document.getElementById("duel-player1-automap-status");
                 if (canvas === null) { return; }
 
+                previousFrame = player1AutomapState.lastFrame;
                 renderPovToCanvas(
                     "P1 automap", canvas, status,
                     "ArenaDuel_Player1AutomapFrame",
@@ -4912,6 +5178,10 @@
                     "ArenaDuel_Player1AutomapNonzeroPixels",
                     player1AutomapState
                 );
+                if (player1AutomapState.lastFrame !== previousFrame && !appendTacticalPathTrailPointsFromAutomap(canvas)) {
+                    appendTacticalPathTrailPointsFromWasm();
+                }
+                drawTacticalPathTrailsOnAutomap();
             }
 
             function refreshPlayer2Pov() {
@@ -5330,8 +5600,8 @@
                 document.getElementById("arena-start-game").addEventListener("click", function () {
                     var sessionMatchesSettings = currentDuelSession &&
                         currentDuelSession.run_id &&
-                        currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8") &&
-                        !!currentDuelSession.hide_enemy_position === selectedCheckboxValue("arena-hide-enemy-position", false) &&
+                        currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn") &&
+                        !!currentDuelSession.hide_enemy_position === selectedCheckboxValue("arena-hide-enemy-position", true) &&
                         !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
                         !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
                         (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&

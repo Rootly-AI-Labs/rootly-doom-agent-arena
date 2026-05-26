@@ -21,6 +21,9 @@ from doom_arena_strategy import (
     CONTROL_MODE_HIERARCHICAL,
     STRATEGY_ACTIONS,
     STRATEGY_INTENSITIES,
+    STRATEGY_OBJECTIVES,
+    STRATEGY_TARGET_ZONES,
+    STRATEGY_REASONING_MAX_CHARS,
     STRATEGY_METADATA_FIELDS,
     expand_strategy,
     make_strategy_observation,
@@ -50,7 +53,7 @@ PARTICIPANT_INTENT_HEADER = (
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
-    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\n"
+    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -521,6 +524,9 @@ class DoomArenaClient:
         strategy_action: str = "",
         strategy_intensity: str = "",
         strategy_commit_ms: Any = None,
+        strategy_objective: str = "",
+        strategy_target_zone: str = "",
+        strategy_reasoning: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -668,6 +674,9 @@ class DoomArenaClient:
             payload["strategy_action"] = strategy_action
             payload["strategy_intensity"] = strategy_intensity
             payload["strategy_commit_ms"] = strategy_commit_ms if strategy_commit_ms is not None else duration_ms
+        payload["strategy_objective"] = strategy_objective
+        payload["strategy_target_zone"] = strategy_target_zone
+        payload["strategy_reasoning"] = strategy_reasoning
         rationale_text = str(rationale).strip() if rationale else ""
         if rationale_text:
             payload["rationale"] = rationale_text[:1024]
@@ -719,6 +728,9 @@ class DoomArenaClient:
                     "strategy_action": strategy_action or None,
                     "strategy_intensity": strategy_intensity or None,
                     "strategy_commit_ms": int(strategy_commit_ms) if strategy_commit_ms not in {None, ""} else None,
+                    "strategy_objective": strategy_objective or None,
+                    "strategy_target_zone": strategy_target_zone or None,
+                    "strategy_reasoning": strategy_reasoning or None,
                 },
                 "server_response": parse_optional_json(response_text),
             },
@@ -734,7 +746,9 @@ class DoomArenaClient:
         commit_ms: int = 8000,
         controller_token: str | None = None,
         sequence_number: Any = None,
+        objective: str = "",
         target_zone: str = "",
+        reasoning: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -751,6 +765,8 @@ class DoomArenaClient:
             commit_ms=commit_ms,
             sequence_number=sequence_number,
             target_zone=target_zone,
+            objective=objective,
+            reasoning=reasoning,
             context=context,
         )
         record_strategy(
@@ -794,6 +810,9 @@ class DoomArenaClient:
                 strategy_action=str(expanded["strategy_action"]),
                 strategy_intensity=str(expanded["strategy_intensity"]),
                 strategy_commit_ms=expanded["strategy_commit_ms"],
+                strategy_objective=str(expanded.get("strategy_objective", "")),
+                strategy_target_zone=str(expanded.get("strategy_target_zone", "")),
+                strategy_reasoning=str(expanded.get("strategy_reasoning", "")),
             )
         )
         result["strategy"] = {
@@ -801,6 +820,9 @@ class DoomArenaClient:
             "action": expanded["strategy_action"],
             "intensity": expanded["strategy_intensity"],
             "commit_ms": expanded["strategy_commit_ms"],
+            "objective": expanded.get("strategy_objective", ""),
+            "target_zone": expanded.get("strategy_target_zone", ""),
+            "reasoning": expanded.get("strategy_reasoning", ""),
             "sequence_number": expanded.get("sequence_number"),
         }
         result["expanded_intent"] = {
@@ -2342,7 +2364,9 @@ def participant_strategy_schema() -> dict[str, Any]:
             "action": {"type": "string", "enum": ALL_STRATEGY_ACTIONS},
             "intensity": {"type": "string", "enum": sorted(STRATEGY_INTENSITIES)},
             "sequence_number": {"type": "integer", "minimum": 0},
-            "target_zone": {"type": "string"},
+            "objective": {"type": "string", "enum": [""] + sorted(STRATEGY_OBJECTIVES)},
+            "target_zone": {"type": "string", "enum": [""] + sorted(STRATEGY_TARGET_ZONES)},
+            "reasoning": {"type": "string", "maxLength": STRATEGY_REASONING_MAX_CHARS},
         },
         "required": ["participant_id", "category", "action"],
         "additionalProperties": False,
@@ -2407,7 +2431,9 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             int(arguments.get("commit_ms", 8000)),
             optional_string(arguments.get("controller_token")),
             arguments.get("sequence_number"),
+            str(arguments.get("objective", "")),
             str(arguments.get("target_zone", "")),
+            str(arguments.get("reasoning", "")),
         )
     if name == "set_participant_input":
         if not EXPOSE_LOW_LEVEL_PARTICIPANT_MCP:

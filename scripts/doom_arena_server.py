@@ -120,7 +120,7 @@ PARTICIPANT_INTENT_HEADER = (
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
-    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\n"
+    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 ENEMY_COMMAND_HEADER = (
@@ -1233,6 +1233,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         distance_policy_switches_by_participant: dict[str, int] = {}
         strategy_category_distribution: dict[str, int] = {}
         strategy_action_distribution: dict[str, int] = {}
+        strategy_objective_distribution: dict[str, int] = {}
+        strategy_target_zone_distribution: dict[str, int] = {}
         for pid in ("player_1", "player_2"):
             pid_intents = [i for i in intents if i.get("participant_id") == pid]
             raw_labels = [
@@ -1267,11 +1269,17 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             for intent in pid_intents:
                 category = str(intent.get("strategy_category") or "")
                 action = str(intent.get("strategy_action") or "")
+                objective = str(intent.get("strategy_objective") or "")
+                target_zone = str(intent.get("strategy_target_zone") or "")
                 if category:
                     strategy_category_distribution[category] = strategy_category_distribution.get(category, 0) + 1
                 if action:
                     strategy_action_distribution[action] = strategy_action_distribution.get(action, 0) + 1
 
+                    if objective:
+                        strategy_objective_distribution[objective] = strategy_objective_distribution.get(objective, 0) + 1
+                    if target_zone:
+                        strategy_target_zone_distribution[target_zone] = strategy_target_zone_distribution.get(target_zone, 0) + 1
         return {
             "run_id": self.server.run_id,
             "scenario_id": self.server.scenario_id,
@@ -1305,6 +1313,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "distance_policy_switches_by_participant": distance_policy_switches_by_participant,
                 "strategy_category_distribution": strategy_category_distribution,
                 "strategy_action_distribution": strategy_action_distribution,
+                "strategy_objective_distribution": strategy_objective_distribution,
+                "strategy_target_zone_distribution": strategy_target_zone_distribution,
             },
             "by_tool": by_tool,
             "by_participant": by_participant,
@@ -2323,6 +2333,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "strategy_action": str(payload.get("strategy_action", "")),
             "strategy_intensity": str(payload.get("strategy_intensity", "")),
             "strategy_commit_ms": str(payload.get("strategy_commit_ms", "")),
+            "strategy_objective": str(payload.get("strategy_objective", "")),
+            "strategy_target_zone": str(payload.get("strategy_target_zone", "")),
+            "strategy_reasoning": " ".join(str(payload.get("strategy_reasoning", "")).replace("\t", " ").split())[:120],
         }
 
     def read_participant_intent_rows(self) -> list[dict[str, str]]:
@@ -2337,6 +2350,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return []
         expected_header = PARTICIPANT_INTENT_HEADER.strip().split("\t")
         strategy_previous_header = expected_header[:expected_header.index("strategy_source")]
+        strategy_metadata_previous_header = expected_header[:expected_header.index("strategy_objective")]
         extended_previous_header = PARTICIPANT_INTENT_EXTENDED_PREVIOUS_HEADER.strip().split("\t")
         previous_header = PARTICIPANT_INTENT_PREVIOUS_HEADER.strip().split("\t")
         legacy_header = PARTICIPANT_INTENT_LEGACY_HEADER.strip().split("\t")
@@ -2351,6 +2365,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             parse_header = expected_header
         elif header == strategy_previous_header:
             parse_header = strategy_previous_header
+        elif header == strategy_metadata_previous_header:
+            parse_header = strategy_metadata_previous_header
         else:
             raise ValueError("participant intent TSV header does not match expected schema")
         rows = []
@@ -2387,7 +2403,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         "intent_raw": row.get("intent", ""),
                     }
                 )
-            if parse_header in (legacy_header, previous_header, extended_previous_header, strategy_previous_header):
+            if parse_header in (legacy_header, previous_header, extended_previous_header, strategy_previous_header, strategy_metadata_previous_header):
                 for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
                     if key not in row:
                         row[key] = ""

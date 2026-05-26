@@ -1,4 +1,4 @@
-﻿"""Shared prompt and token helpers for browser-created Doom Arena duels."""
+"""Shared prompt and token helpers for browser-created Doom Arena duels."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ Cross-round learning:
 - Each entry has: `round`, `winner`, `terminal_reason`, `elapsed_time_seconds`,
   `your_final_health`, `your_damage_dealt`, `your_hit_rate`,
   `opponent_prevailing_intent`, `spawn_variant`.
-- On round 1 `previous_rounds` is empty â€” this is expected.
+- On round 1 `previous_rounds` is empty — this is expected.
 - Use recaps to adapt: if you lost last round, change your opening intent or spacing.
   If opponent's `prevailing_intent` was `search`, expect passive play and push early.
 - Do not spend more than one decision reacting to recap data; keep the observe-intent loop fast.
@@ -105,41 +105,30 @@ def _variant_ascii_map(blueprint: dict[str, Any]) -> str:
     raw_ascii = str(blueprint.get("ascii_map", "")).strip()
     if not raw_ascii:
         return ""
-    rows = [list(row) for row in raw_ascii.splitlines() if row]
-    if not rows:
-        return ""
-    for row_index, row in enumerate(rows):
-        for col_index, char in enumerate(row):
-            if char in {"1", "2"}:
-                rows[row_index][col_index] = "."
-    bounds = blueprint.get("bounds", {})
-    cell_size = int(blueprint.get("cell_size", 64) or 64)
-    x_min = int(bounds.get("x_min", -(len(rows[0]) * cell_size) // 2))
-    y_max = int(bounds.get("y_max", (len(rows) * cell_size) // 2))
-    spawns = blueprint.get("spawns", {})
-    for marker, player_key in (("1", "player_1"), ("2", "player_2")):
-        spawn = spawns.get(player_key, {}) if isinstance(spawns, dict) else {}
-        try:
-            x = float(spawn.get("x"))
-            y = float(spawn.get("y"))
-        except (TypeError, ValueError):
+    rows = []
+    for raw_row in raw_ascii.splitlines():
+        if not raw_row:
             continue
-        col = int((x - x_min) // cell_size)
-        row = int((y_max - y) // cell_size)
-        row, col = _nearest_spawn_marker_cell(rows, row, col)
-        rows[row][col] = marker
-    return "\n".join("".join(row) for row in rows)
+        # Static prompt maps show geometry only. Strip player/spawn markers so
+        # the initial prompt does not reveal participant locations.
+        rows.append("".join("#" if char == "#" else "." for char in raw_row))
+    return "\n".join(rows)
 
 
-def _static_map_context_section(scenario_id: str) -> str:
+def _static_map_context_section(scenario_id: str, participant_id: str = "") -> str:
     try:
         blueprint = load_geometry_blueprint(scenario_id)
     except Exception:
         return ""
     bounds = blueprint.get("bounds", {})
     spawns = blueprint.get("spawns", {})
-    player_1 = spawns.get("player_1", {})
-    player_2 = spawns.get("player_2", {})
+    own_spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
+    own_spawn_line = ""
+    if own_spawn:
+        own_spawn_line = (
+            f"- Your selected spawn: x={own_spawn.get('x')} y={own_spawn.get('y')} "
+            f"angle={own_spawn.get('angle_deg')}. Opponent spawn is intentionally omitted.\n"
+        )
     ascii_map = _variant_ascii_map(blueprint)
     if not ascii_map:
         return ""
@@ -152,10 +141,9 @@ Static map context:
 - Cell size: each ASCII cell is `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
 - Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
-- Legend: `.` walkable, `#` wall/collision/sight blocker, `1` Player 1 selected spawn, `2` Player 2 selected spawn.
+{own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Wall cells: `{wall_count}`. Every `#` is generated into Doom wall collision and line-of-sight blocking geometry.
-- Selected spawns: player_1 x={player_1.get('x')} y={player_1.get('y')} angle={player_1.get('angle_deg')}; player_2 x={player_2.get('x')} y={player_2.get('y')} angle={player_2.get('angle_deg')}.
-- The `1` and `2` markers below are overlaid from the selected spawn variant, so they can differ from the raw map `.txt` markers.
+- Opponent spawn and player markers are intentionally omitted from the static map prompt.
 - Use the map for broad strategy and memory, not exact path planning. The Doom autopilot handles collision pathing.
 
 ASCII map:
@@ -218,14 +206,15 @@ Core rules:
 - Do not send detailed tactical parameters such as `movement_bias`, `fire_policy`, `distance_policy`, `navigation_target`, or `turn_policy`.
 - Do not call low-level movement/input tools.
 - Read compact observations using `match`, `self`, `opponent`, `tactical`, `map`, `allowed_actions`, and `recommended`.
-- Choose category and action together in one tool call. Do not call one tool for category and another for action.
+- Choose category, action, optional objective, optional target_zone, and short reasoning together in one tool call. Do not call one tool for category and another for action.
+- Keep `reasoning` short: one sentence about why this strategy was chosen.
 
 Loop:
 1. Call `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
 2. Call `get_participant_observation`.
 3. Send one opening `set_participant_strategy` with `sequence_number=1`.
 4. Call `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
-5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity` -> call `set_participant_strategy`.
+5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity`, optional `objective`/`target_zone`, and short `reasoning` -> call `set_participant_strategy`.
 6. Increment `sequence_number` after every strategy call.
 7. After each `set_participant_strategy`, immediately observe again if the match is still active.
 8. Do not choose timing fields. The server uses an 8000 ms policy lease by default; it is not a sleep timer and newer higher-sequence strategies override immediately.
@@ -249,11 +238,17 @@ Strategy schema:
   "category": "engage",
   "action": "strafe_fight",
   "intensity": "medium",
+  "objective": "clear_side",
+  "target_zone": "right_side",
+  "reasoning": "enemy hidden, checking unvisited side",
   "sequence_number": 1
 }}
 ```
 
-The server applies an internal 8000 ms policy lease to every strategy call. Do not include timing fields in normal play.\n\nAllowed categories and actions:
+The server applies an internal 8000 ms policy lease to every strategy call. Do not include timing fields in normal play.
+`objective`, `target_zone`, and `reasoning` are lightweight planning/logging fields, not detailed Doom movement controls.
+
+Allowed categories and actions:
 - `explore`: `scan_last_seen`, `patrol_left`, `patrol_right`, `rotate_route`, `probe_center`
 - `engage`: `push`, `strafe_fight`, `suppress`, `close_gap`, `finish_low_health`
 - `evade`: `kite`, `break_los`, `retreat_reset`, `dodge_strafe`, `hold_fire_reposition`
@@ -265,16 +260,26 @@ Allowed intensity:
 - `medium`
 - `high`
 
-{_static_map_context_section(scenario_id)}Decision guide:
-- Opponent visible and far: use `engage/push`, `engage/close_gap`, or `position/flank_left` / `position/flank_right`.
-- Opponent visible at good range: use `engage/strafe_fight`, `engage/suppress`, or `position/camp_los`.
-- Opponent visible and close while losing: use `evade/kite`, `evade/retreat_reset`, or `evade/dodge_strafe`.
-- Opponent hidden but recently seen: use `explore/scan_last_seen`, `position/flank_left`, or `position/flank_right`.
-- Opponent hidden and not recently seen: use `explore/patrol_left`, `explore/patrol_right`, or `explore/rotate_route`.
-- `spin_detected=true`: use `recover/anti_spin` or `recover/switch_lane`.
-- `stuck_detected=true`: use `recover/unstuck` or `evade/retreat_reset`.
-- Winning: keep pressure with `engage/strafe_fight`, `engage/push`, or `position/camp_los`.
-- Losing: use `evade/kite`, `evade/retreat_reset`, or a reposition/flank action.
+Allowed objective:
+- `find_enemy`
+- `hold_advantage`
+- `force_fight`
+- `break_contact`
+- `clear_side`
+- `control_center`
+- `finish_enemy`
+
+Allowed target_zone:
+- `left_side`
+- `right_side`
+- `top_lane`
+- `bottom_lane`
+- `center`
+- `last_seen`
+- `enemy_side`
+
+{_static_map_context_section(scenario_id, participant_id)}Decision rule:
+Use the observation, your own spawn, the static map, and the allowed action list to choose one strategy. Do not rely on fixed scripts. Adapt based on visibility, health, position, recent damage, stuck/spin signals, and map memory.
 
 Stop rules:
 - If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.
@@ -500,7 +505,7 @@ Loop behavior:
 - If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
-Stop rules â€” read carefully:
+Stop rules — read carefully:
 - When `get_match_result` returns `phase="finished"` AND `has_next_round=false`:
   call `stop_participant_intent` once, then **stop all tool calls immediately**.
   Do not call `get_participant_observation`, `set_participant_intent`, or any other tool after this.

@@ -1,4 +1,4 @@
-﻿# MCP game state and character control
+# MCP game state and character control
 
 This document explains what each Doom Arena MCP agent receives from the game, what commands it sends back, and where the boundary sits between the model and the Doom-side autopilot.
 
@@ -7,10 +7,10 @@ This document explains what each Doom Arena MCP agent receives from the game, wh
 Each agent runs an observe-and-act loop:
 
 ```text
-get_participant_observation -> choose category/action/intensity -> set_participant_strategy -> observe again
+get_participant_observation -> choose category/action/intensity/objective/target_zone/reasoning -> set_participant_strategy -> observe again
 ```
 
-The model does not directly press movement keys every frame. In the current hierarchical flow, it sends compact tactical strategies with `set_participant_strategy`: `category`, `action`, `intensity`, and `sequence_number`. The server expands those strategies into the existing Doom intent fields. In full control mode, agents can still use `set_participant_intent` directly with intent names such as `engage_opponent`, `strafe_attack`, `search`, or `hold`. Doom reads the latest valid expanded policy every tick and converts it into normal Doom controls:
+The model does not directly press movement keys every frame. In the current hierarchical flow, it sends compact tactical strategies with `set_participant_strategy`: `category`, `action`, `intensity`, optional `objective`, optional `target_zone`, short `reasoning`, and `sequence_number`. The server expands those strategies into the existing Doom intent fields. In full control mode, agents can still use `set_participant_intent` directly with intent names such as `engage_opponent`, `strafe_attack`, `search`, or `hold`. Doom reads the latest valid expanded policy every tick and converts it into normal Doom controls:
 
 ```text
 forwardmove
@@ -158,20 +158,23 @@ Hierarchical mode adds one preferred tool above the full intent schema:
 set_participant_strategy
 ```
 
-In hierarchical mode the model sends only:
+In hierarchical mode the model sends only the compact model-facing decision:
 
 ```json
 {
   "participant_id": "player_1",
-  "category": "engage",
-  "action": "strafe_fight",
+  "controller_token": "...",
+  "category": "position",
+  "action": "flank_left",
   "intensity": "medium",
-  "commit_ms": 3000,
+  "objective": "clear_side",
+  "target_zone": "right_side",
+  "reasoning": "enemy hidden, checking unvisited side",
   "sequence_number": 7
 }
 ```
 
-The MCP wrapper expands that compact strategy into the existing `set_participant_intent` fields. Doom still consumes the same participant intent TSV and autopilot path.
+`objective`, `target_zone`, and `reasoning` are lightweight planning and evaluation metadata. They help logs show what the model was trying to do, but they are not low-level Doom movement controls. The MCP wrapper expands the compact strategy into the existing `set_participant_intent` fields. Doom still consumes the same participant intent TSV and autopilot path.
 
 ## MCP tools used in duel mode
 
@@ -334,10 +337,12 @@ Input:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "category": "engage",
-  "action": "strafe_fight",
+  "category": "position",
+  "action": "flank_left",
   "intensity": "medium",
-  "commit_ms": 3000,
+  "objective": "clear_side",
+  "target_zone": "right_side",
+  "reasoning": "enemy hidden, checking unvisited side",
   "sequence_number": 4
 }
 ```
@@ -360,7 +365,35 @@ medium
 high
 ```
 
-The server applies an internal `8000ms` policy lease to every `set_participant_strategy` call. Agents should not include timing fields in normal hierarchical play. Older clients may still send the legacy timing field; the server keeps accepting and clamping it for backward compatibility.\n\nExpansion location:
+Allowed objective:
+
+```text
+find_enemy
+hold_advantage
+force_fight
+break_contact
+clear_side
+control_center
+finish_enemy
+```
+
+Allowed target zone:
+
+```text
+left_side
+right_side
+top_lane
+bottom_lane
+center
+last_seen
+enemy_side
+```
+
+`reasoning` is optional, one line, and capped at 120 characters.
+
+The server applies an internal `8000ms` policy lease to every `set_participant_strategy` call. Agents should not include timing fields in normal hierarchical play. Older clients may still send the legacy `commit_ms` field; the server keeps accepting and clamping it for backward compatibility.
+
+Expansion location:
 
 ```text
 scripts/doom_arena_strategy.py
@@ -376,6 +409,9 @@ strategy_category
 strategy_action
 strategy_intensity
 strategy_commit_ms
+strategy_objective
+strategy_target_zone
+strategy_reasoning
 intent_raw=category/action
 ```
 
@@ -453,8 +489,7 @@ cell size
 map bounds
 coordinate frame
 legend
-selected spawn coordinates and angles
-ASCII map from scripts/map_blueprints/duel_e1m8_ascii.txt, with `1` and `2` overlaid from the selected spawn variant coordinates
+ASCII map from scripts/map_blueprints/duel_e1m8_ascii.txt with player/spawn markers stripped out
 ```
 
 Legend:
@@ -462,11 +497,9 @@ Legend:
 ```text
 . = walkable space
 # = wall, collision, and line-of-sight blocker
-1 = Player 1 spawn marker
-2 = Player 2 spawn marker
 ```
 
-Each ASCII cell is currently `64 x 64` Doom units. The coordinate frame is `+x` east/right, `-x` west/left, `+y` north/up, and `-y` south/down.
+Each ASCII cell is currently `64 x 64` Doom units. The coordinate frame is `+x` east/right, `-x` west/left, `+y` north/up, and `-y` south/down. The static prompt map intentionally omits player markers and the opponent spawn. Each copied player prompt includes only that player's own selected spawn coordinate and angle from the selected spawn variant; live movement/visibility still belongs in observations.
 
 `get_participant_observation` stays compact. It does not repeat the full ASCII map. It returns live state such as player coordinates, angle, health, ammo, visibility, distance buckets, last-seen opponent zone, tactical state, and a tiny map reference:
 
@@ -499,7 +532,7 @@ allowed_actions
 recommended
 ```
 
-The compact observation intentionally removes detailed execution fields such as `movement_bias`, `fire_policy`, `distance_policy`, `turn_policy`, `navigation_target`, timing, and spacing bounds. The model chooses `category/action/intensity`; the server fills in the detailed fields and applies the default lease.
+The compact observation intentionally removes detailed execution fields such as `movement_bias`, `fire_policy`, `distance_policy`, `turn_policy`, `navigation_target`, timing, and spacing bounds. The model chooses `category/action/intensity`, optional `objective`, optional `target_zone`, and short `reasoning`; the server fills in the detailed fields and applies the default lease.
 
 ### Match state
 
@@ -1117,7 +1150,7 @@ A normal hierarchical single-round agent loop is:
 3. set_participant_strategy with sequence_number=1
 4. wait_for_match_start
 5. get_participant_observation
-6. set_participant_strategy with sequence_number=2
+6. set_participant_strategy with category/action/intensity/objective/target_zone/reasoning and sequence_number=2
 7. repeat observe -> strategy with increasing sequence_number
 8. when get_match_result says phase=finished and has_next_round=false, call stop_participant_intent once and stop
 ```
@@ -1185,8 +1218,10 @@ Total MCP commands: 5
 set_participant_ready
 get_participant_observation
 set_participant_strategy    Decision latency: 12300ms
+  category=position action=flank_left intensity=medium objective=clear_side target_zone=right_side reasoning="enemy hidden, checking unvisited side"
 get_participant_observation
 set_participant_strategy    Decision latency: 8900ms
+  category=engage action=strafe_fight intensity=high objective=force_fight target_zone=enemy_side reasoning="enemy visible, pressuring now"
 ```
 
 The old mismatch was that the total counted every MCP call, but the visible list only showed intent lifecycle rows. That made the count look wrong. The correct behavior is to show every MCP command row and add decision latency only where it applies.
@@ -1237,7 +1272,7 @@ Example:
 
 That means Player 1 took about `5600ms` between receiving the observation and sending the next intent.
 
-Decision latency is shown beside tactical decision rows: `set_participant_strategy` in hierarchical mode and `set_participant_intent` in full mode. Calls like `set_participant_ready`, `wait_for_match_start`, and `get_match_result` are protocol/setup/read calls, not tactical choices. The UI command log intentionally shows only the model-facing MCP call; it does not show the expanded Doom intent fields in the visible row.
+Decision latency is shown beside tactical decision rows: `set_participant_strategy` in hierarchical mode and `set_participant_intent` in full mode. Calls like `set_participant_ready`, `wait_for_match_start`, and `get_match_result` are protocol/setup/read calls, not tactical choices. The UI command log intentionally shows only the model-facing MCP call: category, action, intensity, optional objective, optional target zone, and short reasoning. It does not show the expanded Doom intent fields in the visible row.
 
 If an intent has no preceding observation, decision latency may be blank. That can happen during startup, recovery, malformed sequences, or if an agent sends an intent without first observing.
 
@@ -1255,7 +1290,14 @@ These rows describe what happened to a tactical policy after it was submitted:
   "intent": "strafe_attack",
   "style": "aggressive",
   "sequence_number": 4,
-  "duration_ms": 25000,
+  "duration_ms": 8000,
+  "strategy_source": "hierarchical",
+  "strategy_category": "position",
+  "strategy_action": "flank_left",
+  "strategy_intensity": "medium",
+  "strategy_objective": "clear_side",
+  "strategy_target_zone": "right_side",
+  "strategy_reasoning": "enemy hidden, checking unvisited side",
   "issued_at_ms": 15600,
   "expires_at_ms": 40600,
   "mcp_call_latency_ms": 80,
@@ -1298,6 +1340,8 @@ These fields show whether the model kept updating policies quickly, let old poli
   }
 }
 ```
+
+`stats.strategy_category_distribution`, `stats.strategy_action_distribution`, `stats.strategy_objective_distribution`, and `stats.strategy_target_zone_distribution` summarize which hierarchical decisions the models chose across the run.
 
 `stats.by_participant` summarizes MCP calls by participant:
 

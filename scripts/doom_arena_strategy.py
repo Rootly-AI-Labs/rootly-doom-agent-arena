@@ -1,4 +1,4 @@
-﻿"""Hierarchical strategy helpers for Doom Arena duel control."""
+"""Hierarchical strategy helpers for Doom Arena duel control."""
 
 from __future__ import annotations
 
@@ -14,6 +14,25 @@ CONTROL_MODE_HIERARCHICAL = "hierarchical"
 CONTROL_MODES = {CONTROL_MODE_FULL, CONTROL_MODE_HIERARCHICAL}
 
 STRATEGY_INTENSITIES = {"low", "medium", "high"}
+STRATEGY_OBJECTIVES = {
+    "find_enemy",
+    "hold_advantage",
+    "force_fight",
+    "break_contact",
+    "clear_side",
+    "control_center",
+    "finish_enemy",
+}
+STRATEGY_TARGET_ZONES = {
+    "left_side",
+    "right_side",
+    "top_lane",
+    "bottom_lane",
+    "center",
+    "last_seen",
+    "enemy_side",
+}
+STRATEGY_REASONING_MAX_CHARS = 120
 COMMIT_MS_MIN = 3000
 COMMIT_MS_MAX = 8000
 COMMIT_MS_DEFAULT = 8000
@@ -34,6 +53,9 @@ STRATEGY_METADATA_FIELDS = (
     "strategy_action",
     "strategy_intensity",
     "strategy_commit_ms",
+    "strategy_objective",
+    "strategy_target_zone",
+    "strategy_reasoning",
 )
 
 BASE_DEFAULTS: dict[str, Any] = {
@@ -575,6 +597,21 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "current_zone": current_zone,
         },
     }
+
+def validate_strategy_context(objective: Any = "", target_zone: Any = "", reasoning: Any = "") -> tuple[str, str, str]:
+    objective_text = str(objective or "").strip().lower()
+    target_zone_text = str(target_zone or "").strip().lower()
+    reasoning_text = " ".join(str(reasoning or "").replace("\t", " ").split())
+
+    if objective_text and objective_text not in STRATEGY_OBJECTIVES:
+        raise ValueError(f"unsupported strategy objective: {objective_text}")
+    if target_zone_text and target_zone_text not in STRATEGY_TARGET_ZONES:
+        raise ValueError(f"unsupported strategy target_zone: {target_zone_text}")
+    if len(reasoning_text) > STRATEGY_REASONING_MAX_CHARS:
+        reasoning_text = reasoning_text[:STRATEGY_REASONING_MAX_CHARS].rstrip()
+    return objective_text, target_zone_text, reasoning_text
+
+
 def validate_strategy(category: Any, action: Any, intensity: Any, commit_ms: Any) -> tuple[str, str, str, int]:
     category_text = str(category or "").strip().lower()
     action_text = str(action or "").strip().lower()
@@ -638,9 +675,12 @@ def expand_strategy(
     commit_ms: Any = COMMIT_MS_DEFAULT,
     sequence_number: Any = None,
     target_zone: Any = "",
+    objective: Any = "",
+    reasoning: Any = "",
     context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     category_text, action_text, intensity_text, commit_value = validate_strategy(category, action, intensity, commit_ms)
+    objective_text, target_zone_text, reasoning_text = validate_strategy_context(objective, target_zone, reasoning)
     category_text, action_text = rewrite_for_anti_spin(category_text, action_text, context)
     preset = PRESETS[(category_text, action_text)]
     expanded = {**BASE_DEFAULTS, **preset}
@@ -654,8 +694,11 @@ def expand_strategy(
     expanded["strategy_category"] = category_text
     expanded["strategy_action"] = action_text
     expanded["strategy_intensity"] = intensity_text
-    if target_zone:
-        expanded["target_zone"] = str(target_zone)
+    expanded["strategy_objective"] = objective_text
+    expanded["strategy_target_zone"] = target_zone_text
+    expanded["strategy_reasoning"] = reasoning_text
+    if target_zone_text:
+        expanded["target_zone"] = target_zone_text
     apply_intensity(expanded, category_text, intensity_text)
     if (context or {}).get("tactical", {}).get("stuck_detected"):
         expanded["stuck_recovery_strategy"] = "strafe_out"
