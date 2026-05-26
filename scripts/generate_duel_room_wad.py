@@ -196,6 +196,24 @@ def player_start(Thing, x: int, y: int, angle: int, player_num: int):
     return thing
 
 
+def medikit(Thing, x: int, y: int):
+    thing = Thing(x=x, y=y, angle=0, type=2012)
+    thing.easy = 1
+    thing.medium = 1
+    thing.hard = 1
+    thing.multiplayer = 0
+    return thing
+
+
+def shotgun(Thing, x: int, y: int):
+    thing = Thing(x=x, y=y, angle=0, type=2001)
+    thing.easy = 1
+    thing.medium = 1
+    thing.hard = 1
+    thing.multiplayer = 0
+    return thing
+
+
 def add_common_things(editor, Thing, spawns: dict) -> None:
     player_1_spawn = spawns.get("player_1", {"x": -608, "y": 544, "angle_deg": 0})
     player_2_spawn = spawns.get("player_2", {"x": 672, "y": 544, "angle_deg": 180})
@@ -208,6 +226,9 @@ def add_common_things(editor, Thing, spawns: dict) -> None:
         deathmatch_start(Thing, 768, -512, 135),
         deathmatch_start(Thing, 768, 512, 225),
         deathmatch_start(Thing, -768, 512, 315),
+        medikit(Thing, 0, 672),
+        medikit(Thing, 0, -672),
+        shotgun(Thing, 0, 0),
     ])
 
 

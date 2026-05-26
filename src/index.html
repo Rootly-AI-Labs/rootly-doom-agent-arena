@@ -809,6 +809,14 @@
                 padding: 8px;
             }
 
+            .duel-tactical-map-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin: 0 0 8px;
+            }
+
             .duel-tactical-map-stage {
                 position: relative;
                 width: 100%;
@@ -834,7 +842,7 @@
                 font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
-                margin: 0 0 8px;
+                margin: 0;
             }
 
             .duel-tactical-map-status {
@@ -917,9 +925,9 @@
                 display: flex;
                 flex-wrap: wrap;
                 gap: 10px;
-                margin-top: 10px;
                 color: #d3d0ad;
                 font: 11px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                justify-content: flex-end;
             }
 
             .duel-tactical-legend-item {
@@ -1456,33 +1464,8 @@
                             </div>
                         </div>
                         <div class="arena-config-section">
-                            <div class="arena-config-section-title">Information control</div>
-                            <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field" for="arena-hide-enemy-position">
-                                    <input id="arena-hide-enemy-position" type="checkbox" checked />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Fog of war - hide opponent position</span>
-                                        <span class="arena-toggle-hint">Players only see opponent coordinates and angle when line-of-sight is active. Forces models to track lost contacts instead of cheating with shared state.</span>
-                                    </span>
-                                </label>
-                                <label class="arena-toggle-field is-disabled" for="arena-enable-map-blueprint" aria-disabled="true">
-                                    <input id="arena-enable-map-blueprint" type="checkbox" disabled />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Map blueprint in prompt - disabled</span>`r`n                      <span class="arena-toggle-hint">Static map context is now always included in each generated MCP prompt: a variant-aware ASCII map, legend, cell size, bounds, coordinate frame, wall count, and selected player spawns. Repeated observations stay compact and only reference that initial prompt map instead of resending the full layout.</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="arena-config-section">
                             <div class="arena-config-section-title">Agent behavior</div>
                             <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field is-disabled" for="arena-enable-simplified-actions" aria-disabled="true">
-                                    <input id="arena-enable-simplified-actions" type="checkbox" disabled />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Simplified action schema - built in</span>
-                      <span class="arena-toggle-hint">Hierarchical strategy control is now the default MCP path. Agents call set_participant_strategy with category, action, intensity, optional objective, target zone, short reasoning, and sequence_number; the server applies an 8000 ms policy lease and expands that compact choice into the full Doom intent fields.</span>
-                                    </span>
-                                </label>
                                 <label class="arena-toggle-field is-disabled" for="arena-enable-cross-round-recap" aria-disabled="true">
                                     <input id="arena-enable-cross-round-recap" type="checkbox" disabled />
                                     <span class="arena-toggle-text">
@@ -1561,7 +1544,13 @@
             <div id="duel-tactical-panel">
                 <div class="duel-tactical-shell">
                     <div class="duel-tactical-map-wrap">
-                        <div class="duel-tactical-map-caption">Tactical overlay</div>
+                        <div class="duel-tactical-map-header">
+                            <div class="duel-tactical-map-caption">Tactical overlay</div>
+                            <div class="duel-tactical-legend">
+                                <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-1"></span>Player 1</span>
+                                <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-2"></span>Player 2</span>
+                            </div>
+                        </div>
                         <div class="duel-tactical-map-stage" id="duel-tactical-map-stage">
                             <canvas id="duel-player1-automap-canvas"></canvas>
                             <div class="duel-tactical-map-status" id="duel-player1-automap-status">Waiting for automap...</div>
@@ -1586,11 +1575,6 @@
                                 <div class="duel-tactical-meta-label">Player 2</div>
                                 <div class="duel-tactical-meta-value" id="duel-tactical-p2">-</div>
                             </div>
-                        </div>
-                        <div class="duel-tactical-legend">
-                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-1"></span>Player 1</span>
-                            <span class="duel-tactical-legend-item"><span class="duel-tactical-swatch player-2"></span>Player 2</span>
-                            
                         </div>
                     </div>
                 </div>
@@ -1847,6 +1831,13 @@
             var tacticalPathTrailMaxJumpDistance = 240;
             var tacticalPathTrailConfirmJumpDistance = 96;
             var tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
+            var tacticalHealthPackMarkers = [
+                { x: 0, y: 672, label: "H" },
+                { x: 0, y: -672, label: "H" }
+            ];
+            var tacticalWeaponMarkers = [
+                { x: 0, y: 0, label: "S" }
+            ];
             var currentMapBlueprintScenarioId = "";
             var blueprintRequestScenarioId = "";
 
@@ -2129,6 +2120,78 @@
                 drawTacticalPathTrail(ctx, bounds, "player_2", canvas.width, canvas.height);
             }
 
+            function drawTacticalHealthPacksOnAutomap() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+                var screen;
+                var size = 9;
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+
+                ctx.save();
+                tacticalHealthPackMarkers.forEach(function (marker) {
+                    screen = automapWorldToScreen(bounds, marker.x, marker.y, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.arc(screen.x, screen.y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(72, 255, 137, 0.92)";
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(4, 18, 8, 0.9)";
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(screen.x - 5, screen.y);
+                    ctx.lineTo(screen.x + 5, screen.y);
+                    ctx.moveTo(screen.x, screen.y - 5);
+                    ctx.lineTo(screen.x, screen.y + 5);
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+
+            function drawTacticalWeaponsOnAutomap() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+                var screen;
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+
+                ctx.save();
+                tacticalWeaponMarkers.forEach(function (marker) {
+                    screen = automapWorldToScreen(bounds, marker.x, marker.y, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.rect(screen.x - 10, screen.y - 7, 20, 14);
+                    ctx.fillStyle = "rgba(255, 205, 88, 0.94)";
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(30, 18, 3, 0.92)";
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    ctx.fillStyle = "rgba(20, 12, 2, 0.96)";
+                    ctx.font = "bold 11px Trebuchet MS, Verdana, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(marker.label, screen.x, screen.y + 0.5);
+                });
+                ctx.restore();
+            }
+
             function wasmDuelPlayerPosition(participantId) {
                 var prefix = participantId === "player_2" ? "ArenaDuel_Player2" : "ArenaDuel_Player1";
                 var valid;
@@ -2341,10 +2404,33 @@
             function playerCoordinateLabel(player) {
                 var x = player && player.x !== undefined && player.x !== "" ? player.x : "-";
                 var y = player && player.y !== undefined && player.y !== "" ? player.y : "-";
+                var angle = Number(player && player.angle);
                 if (x === "-" && y === "-") {
                     return "-";
                 }
-                return "x: " + x + ", y: " + y;
+                return "x: " + x + ", y: " + y + (Number.isFinite(angle) ? ", POV: " + Math.round(angle) + "deg" : "");
+            }
+
+            function scenarioDisplayName(scenarioId) {
+                var labels = {
+                    duel_e1m8: "Open sight spawn",
+                    duel_e1m8_corner_spawn: "Corner spawn",
+                    duel_e1m8_blind_spawn: "Blind spawn"
+                };
+                var value = String(scenarioId || "");
+                if (!value) {
+                    return "-";
+                }
+                if (labels[value]) {
+                    return labels[value];
+                }
+                return value
+                    .replace(/^duel_e1m8_?/, "")
+                    .replace(/^duel_?/, "")
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, function (letter) {
+                        return letter.toUpperCase();
+                    });
             }
             function renderTacticalMap(player1, player2) {
                 var mapStatus = document.getElementById("duel-tactical-map-status");
@@ -2358,7 +2444,7 @@
                 var markerPosition;
 
                 setDuelTacticalPanelVisible(currentArenaMode === "duel");
-                setText("duel-tactical-scenario", currentArenaScenarioId || "-");
+                setText("duel-tactical-scenario", scenarioDisplayName(currentArenaScenarioId));
 
                 player1 = participantWithSpawnFallback(player1, "player_1");
                 player2 = participantWithSpawnFallback(player2, "player_2");
@@ -2976,7 +3062,7 @@
                     timeout_seconds: selectedNumberValue("arena-timeout-seconds", 120),
                     decision_cadence_ms: 750,
                     intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
-                    hide_enemy_position: selectedCheckboxValue("arena-hide-enemy-position", true),
+                    hide_enemy_position: true,
                     randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
                     rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
                     enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
@@ -4246,9 +4332,23 @@
                     " | participant=" + participant +
                     " | status=" + status;
                 var intentRow = intentByCallId[call.call_id];
+                var syntheticIntentRow;
 
                 if ((call.tool_name === "set_participant_intent" || call.tool_name === "set_participant_strategy") && intentRow) {
                     return highLevelMcpCommandLine(intentRow, stats);
+                }
+                if (call.tool_name === "set_participant_strategy" && (call.strategy_category || call.strategy_action)) {
+                    syntheticIntentRow = Object.assign({}, call);
+                    syntheticIntentRow.strategy_source = syntheticIntentRow.strategy_source || "hierarchical";
+                    syntheticIntentRow.issued_at_ms = syntheticIntentRow.issued_at_ms || call.started_at_ms;
+                    syntheticIntentRow.mcp_call_latency_ms = syntheticIntentRow.mcp_call_latency_ms || call.latency_ms;
+                    return highLevelMcpCommandLine(syntheticIntentRow, stats);
+                }
+                if (call.tool_name === "set_participant_intent" && (call.intent || call.intent_raw)) {
+                    syntheticIntentRow = Object.assign({}, call);
+                    syntheticIntentRow.issued_at_ms = syntheticIntentRow.issued_at_ms || call.started_at_ms;
+                    syntheticIntentRow.mcp_call_latency_ms = syntheticIntentRow.mcp_call_latency_ms || call.latency_ms;
+                    return highLevelMcpCommandLine(syntheticIntentRow, stats);
                 }
 
                 if (call.is_error) {
@@ -5182,6 +5282,8 @@
                     appendTacticalPathTrailPointsFromWasm();
                 }
                 drawTacticalPathTrailsOnAutomap();
+                drawTacticalHealthPacksOnAutomap();
+                drawTacticalWeaponsOnAutomap();
             }
 
             function refreshPlayer2Pov() {
@@ -5601,7 +5703,7 @@
                     var sessionMatchesSettings = currentDuelSession &&
                         currentDuelSession.run_id &&
                         currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn") &&
-                        !!currentDuelSession.hide_enemy_position === selectedCheckboxValue("arena-hide-enemy-position", true) &&
+                        !!currentDuelSession.hide_enemy_position === true &&
                         !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
                         !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
                         (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&
@@ -5664,7 +5766,6 @@
                         }, 200);
                     };
                 })();
-                var hideEnemyToggle = document.getElementById("arena-hide-enemy-position");
                 var mapSelect = document.getElementById("arena-duel-map");
                 var randomizeSpawnsToggle = document.getElementById("arena-randomize-spawns");
                 var rotateAllMapsToggle = document.getElementById("arena-rotate-all-maps");
@@ -5673,7 +5774,7 @@
                 var mapBlueprintToggle = document.getElementById("arena-enable-map-blueprint");
                 var weaponPickupsToggle = document.getElementById("arena-enable-weapon-pickups");
                 var mirrorPairToggle = document.getElementById("arena-mirror-pair");
-                [hideEnemyToggle, mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
+                [mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
                  simplifiedActionsToggle, mapBlueprintToggle, weaponPickupsToggle, mirrorPairToggle]
                     .forEach(function (el) {
                         if (el) { el.addEventListener("change", schedulePromptPreview); }

@@ -37,6 +37,36 @@ COMMIT_MS_MIN = 3000
 COMMIT_MS_MAX = 8000
 COMMIT_MS_DEFAULT = 8000
 
+STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
+    {
+        "id": "health_top",
+        "type": "health",
+        "name": "medikit",
+        "x": 0,
+        "y": 672,
+        "zone": "top_lane",
+        "purpose": "restore_health",
+    },
+    {
+        "id": "health_bottom",
+        "type": "health",
+        "name": "medikit",
+        "x": 0,
+        "y": -672,
+        "zone": "bottom_lane",
+        "purpose": "restore_health",
+    },
+    {
+        "id": "weapon_center",
+        "type": "weapon",
+        "name": "shotgun",
+        "x": 0,
+        "y": 0,
+        "zone": "center",
+        "purpose": "upgrade_weapon",
+    },
+)
+
 STRATEGY_ACTIONS: dict[str, list[str]] = {
     "explore": ["scan_last_seen", "patrol_left", "patrol_right", "rotate_route", "probe_center"],
     "engage": ["push", "strafe_fight", "suppress", "close_gap", "finish_low_health"],
@@ -428,6 +458,22 @@ def damage_trend(last_dealt_ms: Any, last_taken_ms: Any, current_ms: int) -> str
     return "quiet"
 
 
+def pickup_distance(pickup: dict[str, Any], x: Any, y: Any) -> int | None:
+    try:
+        return int(round(math.dist((float(x), float(y)), (float(pickup["x"]), float(pickup["y"])))))
+    except (TypeError, ValueError, KeyError):
+        return None
+
+
+def strategy_pickups_for_observation(x: Any, y: Any) -> list[dict[str, Any]]:
+    pickups = []
+    for pickup in STATIC_PICKUPS:
+        item = dict(pickup)
+        item["distance"] = pickup_distance(pickup, x, y)
+        pickups.append(item)
+    return pickups
+
+
 def angle_delta(current: float, previous: float) -> float:
     return abs((current - previous + 180) % 360 - 180)
 
@@ -595,6 +641,7 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         },
         "map": {
             "current_zone": current_zone,
+            "pickups": strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y")),
         },
     }
 

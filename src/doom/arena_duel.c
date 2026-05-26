@@ -131,6 +131,9 @@ static boolean arena_duel_player2_have_autopilot_position;
 static boolean arena_duel_waiting_event_logged;
 static boolean arena_duel_waiting_first_intents_event_logged;
 static boolean arena_duel_player1_health_initialized;
+static player_t arena_duel_player2_view_player;
+static boolean arena_duel_player2_view_player_initialized;
+static int arena_duel_player2_view_player_last_tick;
 
 static void ArenaDuel_CopyField(char *dest, size_t dest_size, const char *value)
 {
@@ -169,6 +172,58 @@ static int ArenaDuel_NormalizedAngleDegrees(angle_t angle)
     }
 
     return degrees;
+}
+
+static player_t *ArenaDuel_Player2ViewPlayer(void)
+{
+    int i;
+
+    if (arena_duel_player2 == NULL)
+    {
+        return &players[displayplayer];
+    }
+
+    if (!arena_duel_player2_view_player_initialized)
+    {
+        memset(&arena_duel_player2_view_player, 0, sizeof(arena_duel_player2_view_player));
+        arena_duel_player2_view_player = players[displayplayer];
+        arena_duel_player2_view_player.mo = arena_duel_player2;
+        arena_duel_player2_view_player.health = arena_duel_player2->health;
+        arena_duel_player2_view_player.readyweapon = wp_pistol;
+        arena_duel_player2_view_player.pendingweapon = wp_pistol;
+        for (i = 0; i < NUMWEAPONS; i++)
+        {
+            arena_duel_player2_view_player.weaponowned[i] = false;
+        }
+        for (i = 0; i < NUMAMMO; i++)
+        {
+            arena_duel_player2_view_player.ammo[i] = 0;
+            arena_duel_player2_view_player.maxammo[i] = 0;
+        }
+        arena_duel_player2_view_player.weaponowned[wp_fist] = true;
+        arena_duel_player2_view_player.weaponowned[wp_pistol] = true;
+        arena_duel_player2_view_player.ammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+        arena_duel_player2_view_player.maxammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+        P_SetupPsprites(&arena_duel_player2_view_player);
+        arena_duel_player2_view_player_initialized = true;
+        arena_duel_player2_view_player_last_tick = -1;
+    }
+
+    arena_duel_player2_view_player.mo = arena_duel_player2;
+    arena_duel_player2_view_player.health = arena_duel_player2->health;
+    arena_duel_player2_view_player.readyweapon = wp_pistol;
+    arena_duel_player2_view_player.weaponowned[wp_fist] = true;
+    arena_duel_player2_view_player.weaponowned[wp_pistol] = true;
+    arena_duel_player2_view_player.ammo[am_clip] = arena_duel_player2_ammo_bullets;
+    arena_duel_player2_view_player.maxammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+
+    if (arena_duel_player2_view_player_last_tick != leveltime)
+    {
+        P_MovePsprites(&arena_duel_player2_view_player);
+        arena_duel_player2_view_player_last_tick = leveltime;
+    }
+
+    return &arena_duel_player2_view_player;
 }
 
 static int ArenaDuel_AbsInt(int value)
@@ -1399,6 +1454,8 @@ void ArenaDuel_InitLevel(void)
     arena_duel_event_count = 0;
     arena_duel_player2_view_frame = 0;
     arena_duel_player2_view_nonzero_pixels = 0;
+    arena_duel_player2_view_player_initialized = false;
+    arena_duel_player2_view_player_last_tick = -1;
     arena_duel_player2_have_autopilot_position = false;
     arena_duel_player2_autopilot_stuck_ticks = 0;
     arena_duel_player1_health_initialized = false;
@@ -1805,7 +1862,7 @@ void ArenaDuel_RenderPlayer2View(void)
     I_VideoBuffer = arena_duel_player2_view_buffer;
     V_RestoreBuffer();
     R_InitBuffer(scaledviewwidth, viewheight);
-    R_RenderMobjView(arena_duel_player2, &players[displayplayer]);
+    R_RenderMobjView(arena_duel_player2, ArenaDuel_Player2ViewPlayer());
 
     nonzero_pixels = 0;
     for (i = 0; i < ARENA_DUEL_AUTOMAP_WIDTH * ARENA_DUEL_AUTOMAP_HEIGHT; i++)

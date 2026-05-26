@@ -29,6 +29,7 @@ from doom_arena_strategy import (
     make_strategy_observation,
     normalize_control_mode,
     record_strategy,
+    strategy_pickups_for_observation,
 )
 
 
@@ -2058,6 +2059,9 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "executed_navigation_target": self_state.get("executed_navigation_target"),
             "executed_fire_mode": self_state.get("executed_fire_mode"),
             "policy_compliance_reason": self_state.get("policy_compliance_reason"),
+        },
+        "map": {
+            "pickups": strategy_pickups_for_observation(participant.get("x"), participant.get("y")),
         },
         "match": {
             "phase": match.get("phase", participant.get("phase", "")),

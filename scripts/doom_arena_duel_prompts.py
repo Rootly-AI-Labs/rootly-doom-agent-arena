@@ -144,6 +144,7 @@ Static map context:
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Wall cells: `{wall_count}`. Every `#` is generated into Doom wall collision and line-of-sight blocking geometry.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
+- Observations include `map.pickups` with exact health pack and shotgun coordinates plus distance from you; use them when deciding whether to heal, upgrade weapon, deny resources, or control center.
 - Use the map for broad strategy and memory, not exact path planning. The Doom autopilot handles collision pathing.
 
 ASCII map:
