@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 
 import argparse
 import struct
@@ -227,6 +227,160 @@ def finish_editor(editor, bounds: dict, WAD, Lump, Seg, SubSector) -> None:
     print(f"Wrote {OUTPUT_IWAD}")
 
 
+
+def rects_overlap(a: tuple[int, int, int, int], b: tuple[int, int, int, int]) -> bool:
+    return max(a[0], b[0]) < min(a[2], b[2]) and max(a[1], b[1]) < min(a[3], b[3])
+
+
+def walkable_grid_rects(bounds: dict, walls: list[tuple[int, int, int, int]]) -> list[tuple[int, int, int, int]]:
+    x_edges = {bounds["x_min"], bounds["x_max"]}
+    y_edges = {bounds["y_min"], bounds["y_max"]}
+    for left, bottom, right, top in walls:
+        x_edges.add(max(bounds["x_min"], left))
+        x_edges.add(min(bounds["x_max"], right))
+        y_edges.add(max(bounds["y_min"], bottom))
+        y_edges.add(min(bounds["y_max"], top))
+
+    xs = sorted(x_edges)
+    ys = sorted(y_edges)
+    rects: list[tuple[int, int, int, int]] = []
+    for y_index in range(len(ys) - 1):
+        bottom = ys[y_index]
+        top = ys[y_index + 1]
+        if top <= bottom:
+            continue
+        for x_index in range(len(xs) - 1):
+            left = xs[x_index]
+            right = xs[x_index + 1]
+            if right <= left:
+                continue
+            cell = (left, bottom, right, top)
+            if any(rects_overlap(cell, wall) for wall in walls):
+                continue
+            rects.append(cell)
+    return rects
+
+
+def draw_rect_sector(editor, rect: tuple[int, int, int, int], sidedef) -> None:
+    left, bottom, right, top = rect
+    editor.draw_sector(
+        [(left, bottom), (right, bottom), (right, top), (left, top)],
+        sidedef=sidedef,
+    )
+
+
+def group_bbox(rects: list[tuple[int, int, int, int]], indices: list[int]) -> tuple[int, int, int, int]:
+    return (
+        min(rects[index][0] for index in indices),
+        min(rects[index][1] for index in indices),
+        max(rects[index][2] for index in indices),
+        max(rects[index][3] for index in indices),
+    )
+
+
+def bbox_kwargs(prefix: str, bbox: tuple[int, int, int, int]) -> dict:
+    left, bottom, right, top = bbox
+    return {
+        f"{prefix}_bbox_top": top,
+        f"{prefix}_bbox_bottom": bottom,
+        f"{prefix}_bbox_left": left,
+        f"{prefix}_bbox_right": right,
+    }
+
+
+def build_grid_bsp_nodes(Node, rects: list[tuple[int, int, int, int]]):
+    nodes = []
+
+    def choose_split(indices: list[int]) -> tuple[str, int, list[int], list[int]]:
+        candidates: list[tuple[int, str, int, list[int], list[int]]] = []
+        x_values = sorted({value for index in indices for value in (rects[index][0], rects[index][2])})
+        y_values = sorted({value for index in indices for value in (rects[index][1], rects[index][3])})
+        for split in x_values[1:-1]:
+            left_indices = [index for index in indices if rects[index][2] <= split]
+            right_indices = [index for index in indices if rects[index][0] >= split]
+            if left_indices and right_indices and len(left_indices) + len(right_indices) == len(indices):
+                candidates.append((abs(len(left_indices) - len(right_indices)), "vertical", split, left_indices, right_indices))
+        for split in y_values[1:-1]:
+            lower_indices = [index for index in indices if rects[index][3] <= split]
+            upper_indices = [index for index in indices if rects[index][1] >= split]
+            if lower_indices and upper_indices and len(lower_indices) + len(upper_indices) == len(indices):
+                candidates.append((abs(len(lower_indices) - len(upper_indices)), "horizontal", split, lower_indices, upper_indices))
+        if not candidates:
+            raise ValueError("could not build BSP split for walkable map rectangles")
+        _score, orientation, split, group_a, group_b = min(candidates, key=lambda item: item[0])
+        return orientation, split, group_a, group_b
+
+    def build(indices: list[int]) -> int:
+        if len(indices) == 1:
+            return 0x8000 | indices[0]
+        orientation, split, group_a, group_b = choose_split(indices)
+        if orientation == "vertical":
+            left_indices = group_a
+            right_indices = group_b
+            left_ref = build(left_indices)
+            right_ref = build(right_indices)
+            node = Node(
+                x_start=split,
+                y_start=min(rect[1] for rect in rects),
+                x_vector=0,
+                y_vector=max(rect[3] for rect in rects) - min(rect[1] for rect in rects),
+                right_index=right_ref,
+                left_index=left_ref,
+                **bbox_kwargs("right", group_bbox(rects, right_indices)),
+                **bbox_kwargs("left", group_bbox(rects, left_indices)),
+            )
+        else:
+            lower_indices = group_a
+            upper_indices = group_b
+            lower_ref = build(lower_indices)
+            upper_ref = build(upper_indices)
+            node = Node(
+                x_start=min(rect[0] for rect in rects),
+                y_start=split,
+                x_vector=max(rect[2] for rect in rects) - min(rect[0] for rect in rects),
+                y_vector=0,
+                right_index=lower_ref,
+                left_index=upper_ref,
+                **bbox_kwargs("right", group_bbox(rects, lower_indices)),
+                **bbox_kwargs("left", group_bbox(rects, upper_indices)),
+            )
+        nodes.append(node)
+        return len(nodes) - 1
+
+    if rects:
+        build(list(range(len(rects))))
+    return nodes
+
+
+def build_grid_partitioned_wad(editor, bounds: dict, WAD, Lump, Node, Seg, SubSector, Linedef, sector_bboxes: list[tuple[int, int, int, int]]) -> None:
+    sector_segs = [[] for _ in editor.sectors]
+    for line_index, linedef in enumerate(editor.linedefs):
+        if linedef.front != Linedef.NONE:
+            sector_index = editor.sidedefs[linedef.front].sector
+            v1 = editor.vertexes[linedef.vx_a]
+            v2 = editor.vertexes[linedef.vx_b]
+            sector_segs[sector_index].append(Seg(vx_a=linedef.vx_a, vx_b=linedef.vx_b, angle=seg_angle(v1, v2), line=line_index, side=0, offset=0))
+        if linedef.back != Linedef.NONE:
+            sector_index = editor.sidedefs[linedef.back].sector
+            v1 = editor.vertexes[linedef.vx_b]
+            v2 = editor.vertexes[linedef.vx_a]
+            sector_segs[sector_index].append(Seg(vx_a=linedef.vx_b, vx_b=linedef.vx_a, angle=seg_angle(v1, v2), line=line_index, side=1, offset=0))
+
+    editor.segs = []
+    editor.ssectors = []
+    for segs in sector_segs:
+        seg_start = len(editor.segs)
+        editor.segs.extend(segs)
+        editor.ssectors.append(SubSector(numsegs=len(segs), seg_a=seg_start))
+
+    editor.nodes = build_grid_bsp_nodes(Node, sector_bboxes)
+    reject_size = max(1, (len(editor.sectors) * len(editor.sectors) + 7) // 8)
+    editor.reject = Lump(bytes(reject_size))
+    editor.blockmap = Lump(build_blockmap(bounds, len(editor.linedefs)))
+    wad = WAD(str(SOURCE_IWAD))
+    wad.maps["E1M8"] = editor.to_lumps()
+    wad.to_file(str(OUTPUT_IWAD))
+    print(f"Wrote {OUTPUT_IWAD}")
 def build_wad(blueprint: dict) -> None:
     from omg import Lump, MapEditor, Node, Seg, Sidedef, SubSector, WAD
     from omg.mapedit import Linedef, Thing
@@ -239,8 +393,15 @@ def build_wad(blueprint: dict) -> None:
     else:
         obstacles = sorted(wall_obstacles(blueprint), key=lambda item: obstacle_rect(item)[0])
     if len(obstacles) > 2:
-        print("Warning: current WAD generator uses only the first two connected wall components.")
-        obstacles = obstacles[:2]
+        editor = MapEditor()
+        wall_sidedef = Sidedef(tx_mid="STARTAN3", tx_up="-", tx_low="-")
+        wall_rects = [obstacle_rect(obstacle) for obstacle in obstacles]
+        sector_bboxes = walkable_grid_rects(bounds, wall_rects)
+        for rect in sector_bboxes:
+            draw_rect_sector(editor, rect, wall_sidedef)
+        add_common_things(editor, Thing, blueprint.get("spawns", {}))
+        build_grid_partitioned_wad(editor, bounds, WAD, Lump, Node, Seg, SubSector, Linedef, sector_bboxes)
+        return
 
     editor = MapEditor()
     wall_sidedef = Sidedef(tx_mid="STARTAN3", tx_up="-", tx_low="-")
