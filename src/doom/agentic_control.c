@@ -653,7 +653,7 @@ void Agentic_ExportState(void)
             debug = ArenaParticipantAutopilot_Debug(ARENA_PARTICIPANT_PLAYER_2);
 
             fprintf(file,
-                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t1\t%d\t0\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+                    "%s\t%s\t%d\tparticipant\tplayer_2\tplayer\tdoomguy_actor\tplayer_2\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\tnone\t%d\t%d\t%d\t0\t0\t\t\t\t\t%s\t%s\tduel\t%s\t%s\t%s\t%d.%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%.0f\t%.0f\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
                     Arena_RunId(),
                     Arena_ScenarioId(),
                     leveltime,
@@ -666,7 +666,9 @@ void Agentic_ExportState(void)
                     distance_to_player,
                     relative_angle_to_player,
                     line_of_sight,
+                    ArenaDuel_Player2ReadyWeapon(),
                     ArenaDuel_Player2AmmoBullets(),
+                    ArenaDuel_Player2AmmoShells(),
                     ArenaParticipantCommands_Status(ARENA_PARTICIPANT_PLAYER_2),
                     ArenaParticipantCommands_LastAction(ARENA_PARTICIPANT_PLAYER_2),
                     ArenaDuel_Phase(),

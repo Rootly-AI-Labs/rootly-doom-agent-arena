@@ -24,6 +24,8 @@ boolean ArenaDuel_Player1CanSeePlayer2(int relative_angle, int geometric_line_of
 boolean ArenaDuel_Player2CanSeePlayer1(int relative_angle, int geometric_line_of_sight);
 mobj_t *ArenaDuel_Player2Mobj(void);
 int ArenaDuel_Player2AmmoBullets(void);
+int ArenaDuel_Player2AmmoShells(void);
+int ArenaDuel_Player2ReadyWeapon(void);
 int ArenaDuel_ElapsedMs(void);
 int ArenaDuel_ElapsedSecondsTenths(void);
 int ArenaDuel_TimeoutSeconds(void);

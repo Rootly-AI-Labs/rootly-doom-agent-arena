@@ -165,6 +165,13 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
 
     now_ms = I_GetTimeMS();
 
+    if (ArenaDuel_IsEnabled())
+    {
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 "duel_custom_participant_path");
+        return false;
+    }
+
     if (!ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1))
     {
         if (arena_player_last_autopilot_command.active

@@ -330,13 +330,31 @@
             #arena-start-game {
                 display: block;
                 width: 100%;
-                margin-top: 12px;
+                margin-top: 0;
                 cursor: pointer;
                 border: 1px solid rgba(188, 205, 151, 0.22);
                 background: #314124;
                 color: #f3f0df;
                 padding: 14px 12px;
                 font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-start-actions {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 150px;
+                gap: 10px;
+                margin-top: 12px;
+            }
+
+            #arena-refresh-arena {
+                cursor: pointer;
+                border: 1px solid rgba(216, 192, 122, 0.28);
+                background: #24261f;
+                color: #e4d6a1;
+                padding: 14px 12px;
+                font: 700 12px/1.2 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
             }
@@ -1517,7 +1535,10 @@
                             <span class="arena-mcp-status-value arena-mcp-client-list" id="arena-mcp-connected-clients">No MCP clients detected</span>
                         </div>
                     </div>
-                    <button id="arena-start-game" type="button">Start Benchmark</button>
+                    <div class="arena-start-actions">
+                        <button id="arena-start-game" type="button">Start Benchmark</button>
+                        <button id="arena-refresh-arena" type="button">Refresh Arena</button>
+                    </div>
                     <div class="arena-launcher-footer">
                         Built by <strong>Rootly AI Labs</strong>
                         <span class="arena-launcher-footer-subline">Rootly</span>
@@ -2694,9 +2715,14 @@
 
             function setLauncherMode(mode) {
                 var startButton = document.getElementById("arena-start-game");
+                var refreshButton = document.getElementById("arena-refresh-arena");
 
                 if (startButton !== null) {
                     startButton.style.display = mode === "choose" || mode === "ready" ? "block" : "none";
+                }
+
+                if (refreshButton !== null) {
+                    refreshButton.style.display = mode === "choose" || mode === "ready" ? "block" : "none";
                 }
             }
 
@@ -3262,6 +3288,12 @@
                     }
 
                     return response.json();
+                }).catch(function (error) {
+                    var message = error && error.message ? error.message : String(error || "unknown error");
+                    if (message.indexOf("Duel session failed") === 0) {
+                        throw error;
+                    }
+                    throw new Error("Duel setup failed. Refresh Arena and retry. " + message);
                 });
             }
 
@@ -3519,6 +3551,12 @@
                 url.searchParams.delete("arenaData");
                 url.searchParams.set("resetAt", String(Date.now()));
                 window.location.replace(url.toString());
+            }
+
+            function refreshArenaPage() {
+                updateLauncherStatus("Refreshing arena...");
+                clearStoredDuelSessionForReload();
+                reloadCleanDuelPage();
             }
 
             function resetDuelAndReload() {
@@ -5899,6 +5937,9 @@
                     } else {
                         startDuel({ continueSession: false });
                     }
+                });
+                document.getElementById("arena-refresh-arena").addEventListener("click", function () {
+                    refreshArenaPage();
                 });
                 document.getElementById("duel-next-round").addEventListener("click", function () {
                     startDuel({ continueSession: true });

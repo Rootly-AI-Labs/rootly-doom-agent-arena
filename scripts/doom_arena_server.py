@@ -442,7 +442,17 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         if path == "/api/arena/duel-session":
-            self.create_duel_session()
+            try:
+                self.create_duel_session()
+            except Exception as exc:
+                self.log_error("duel session creation failed: %s: %s", exc.__class__.__name__, exc)
+                self.write_json(
+                    HTTPStatus.INTERNAL_SERVER_ERROR,
+                    {
+                        "ok": False,
+                        "error": f"failed to create duel session: {exc.__class__.__name__}: {exc}",
+                    },
+                )
             return
 
         if path == "/api/arena/run-metadata":
