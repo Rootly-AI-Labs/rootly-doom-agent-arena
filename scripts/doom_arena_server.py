@@ -32,6 +32,8 @@ from doom_arena_duel_prompts import (
 from doom_arena_mcp import DoomArenaClient, DoomArenaError, call_tool, tool_definitions
 from doom_arena_strategy import (
     CONTROL_MODE_HIERARCHICAL,
+    PLAN_METADATA_FIELDS,
+    PLAN_ROUTE_MAX_WAYPOINTS,
     STRATEGY_METADATA_FIELDS,
     normalize_control_mode,
 )
@@ -120,7 +122,8 @@ PARTICIPANT_INTENT_HEADER = (
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
-    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\n"
+    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\t"
+    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 ENEMY_COMMAND_HEADER = (
@@ -153,6 +156,7 @@ ALLOWED_MOVEMENT_PRIMITIVES = {
 ALLOWED_TURN_POLICIES = {"auto", "turn_to_enemy", "sweep_left", "sweep_right", "hold_angle", "face_last_seen"}
 ALLOWED_NAVIGATION_TARGETS = {"none", "opponent", "last_seen_enemy", "center", "left_lane", "right_lane", "keep_distance"}
 ALLOWED_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "burst", "suppressive"}
+ALLOWED_PLAN_ENGAGEMENT_POLICIES = {"", "engage_if_visible", "avoid_until_target", "hold_fire", "force_fight"}
 PARTICIPANT_INTENT_EXTRA_FIELDS = (
     "aim_tolerance",
     "fire_burst_ms",
@@ -169,6 +173,67 @@ PARTICIPANT_INTENT_EXTRA_FIELDS = (
     "fire_mode",
 )
 PARTICIPANT_INTENT_STRATEGY_FIELDS = STRATEGY_METADATA_FIELDS
+PARTICIPANT_INTENT_PLAN_FIELDS = PLAN_METADATA_FIELDS
+
+
+def normalize_plan_route_field(value: Any) -> str:
+    text = str(value or "").replace("\t", " ").strip()
+    if not text:
+        return ""
+    points = []
+    for part in text.split(";"):
+        item = part.strip()
+        if not item:
+            continue
+        pieces = [piece.strip() for piece in item.split(",")]
+        if len(pieces) != 2:
+            raise ValueError("plan_route must use x,y;x,y format")
+        x = int(pieces[0])
+        y = int(pieces[1])
+        if x < -1024 or x > 1024 or y < -768 or y > 768:
+            raise ValueError("plan_route waypoint is outside map bounds")
+        points.append(f"{x},{y}")
+    if len(points) > PLAN_ROUTE_MAX_WAYPOINTS:
+        raise ValueError(f"plan_route can include at most {PLAN_ROUTE_MAX_WAYPOINTS} waypoints")
+    return ";".join(points)
+
+
+def normalize_plan_engagement_policy(value: Any) -> str:
+    text = str(value or "").replace("\t", " ").strip().lower()
+    if text not in ALLOWED_PLAN_ENGAGEMENT_POLICIES:
+        raise ValueError(
+            "plan_engagement_policy must be one of "
+            + ", ".join(sorted(policy for policy in ALLOWED_PLAN_ENGAGEMENT_POLICIES if policy))
+        )
+    return text
+
+
+def route_cells_text_for_stats(route: Any) -> str:
+    try:
+        if isinstance(route, str):
+            return ";".join(part.strip().upper() for part in route.replace(",", ";").split(";") if part.strip())[:80]
+        if isinstance(route, list):
+            cells = []
+            for item in route:
+                if isinstance(item, (list, tuple)) and len(item) == 2:
+                    cells.append(f"{str(item[0]).strip().upper()}{int(item[1]):02d}")
+                else:
+                    cells.append(str(item).strip().upper())
+            return ";".join(cell for cell in cells if cell)[:80]
+    except (TypeError, ValueError):
+        pass
+    return str(route or "").replace("\t", " ").strip()[:80]
+
+
+def mcp_plan_argument_fields(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    if tool_name != "set_participant_plan":
+        return {}
+    return {
+        "plan_objective": str(arguments.get("objective", "")).replace("\t", " ").strip()[:64],
+        "plan_route_cells": route_cells_text_for_stats(arguments.get("route", "")),
+        "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
+        "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+    }
 
 
 def now_ms() -> int:
@@ -301,7 +366,7 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.enable_cross_round_recap = False
         self.recap_window = 2
         self.enable_map_blueprint = False
-        self.enable_weapon_pickups = False
+        self.enable_weapon_pickups = True
         self.mirror_pair = False
         self.control_mode = CONTROL_MODE_HIERARCHICAL
 
@@ -695,6 +760,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "request_chars": request_chars,
                 "response_chars": 0,
             }
+            record.update(mcp_plan_argument_fields(tool_name, arguments))
             if participant_id:
                 self.record_token_chars_locked(participant_id, request_chars, 0)
             for active in self.server.active_mcp_calls.values():
@@ -728,7 +794,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 self.record_token_chars_locked(participant_id, 0, response_chars)
             self.server.active_mcp_calls.pop(str(record["call_id"]), None)
             self.server.mcp_calls.append(record)
-            if not is_error and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy"}:
+            if not is_error and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy", "set_participant_plan"}:
                 self.record_intent_lifecycle_locked(record, text)
             self.write_mcp_stats_locked()
 
@@ -783,6 +849,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "distance_policy",
                 *PARTICIPANT_INTENT_EXTRA_FIELDS,
                 *PARTICIPANT_INTENT_STRATEGY_FIELDS,
+                *PARTICIPANT_INTENT_PLAN_FIELDS,
             ):
                 if key in normalized:
                     record[key] = normalized[key]
@@ -797,7 +864,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         if participant_id and participant_id not in PARTICIPANTS:
             participant_id = ""
 
-        return {
+        record = {
             "call_id": str(payload.get("call_id") or f"external_mcp_call_{request_index:06d}"),
             "request_index": request_index,
             "run_id": str(payload.get("run_id") or self.server.run_id),
@@ -816,6 +883,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "source": "external_mcp_telemetry",
             **({"error": str(payload.get("error", ""))[:500]} if is_error else {}),
         }
+        for key in PARTICIPANT_INTENT_PLAN_FIELDS:
+            if key in payload:
+                record[key] = payload[key]
+        return record
 
     def record_intent_lifecycle_locked(self, call_record: dict[str, Any], text: str) -> None:
         try:
@@ -854,6 +925,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
             normalized[key] = row.get(key, "")
         for key in PARTICIPANT_INTENT_STRATEGY_FIELDS:
+            normalized[key] = row.get(key, "")
+        for key in PARTICIPANT_INTENT_PLAN_FIELDS:
             normalized[key] = row.get(key, "")
         payload = {
             "accepted": True,
@@ -1089,6 +1162,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             intent_record[key] = normalized.get(key)
         for key in PARTICIPANT_INTENT_STRATEGY_FIELDS:
             intent_record[key] = normalized.get(key, "")
+        for key in PARTICIPANT_INTENT_PLAN_FIELDS:
+            intent_record[key] = normalized.get(key, "")
 
         previous = self.server.latest_intent_by_participant.get(participant_id)
         if previous:
@@ -1201,7 +1276,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 continue
             if tool_name == "get_participant_observation" and call.get("completed_at_ms") is not None:
                 last_observation_by_participant[participant_id] = call
-            elif tool_name in {"set_participant_intent", "set_participant_strategy"} and call.get("started_at_ms") is not None:
+            elif tool_name in {"set_participant_intent", "set_participant_strategy", "set_participant_plan"} and call.get("started_at_ms") is not None:
                 previous_observation = last_observation_by_participant.get(participant_id)
                 if previous_observation is None:
                     continue
@@ -1455,7 +1530,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     },
                     "instructions": (
                         "Use set_participant_ready, wait_for_match_start, get_participant_observation, "
-                        "set_participant_strategy or set_participant_intent, stop_participant_intent, "
+                        "set_participant_plan, set_participant_strategy, or set_participant_intent, stop_participant_intent, "
                         "get_match_result, and get_duel_events to control assigned Doom Arena duel participants."
                     ),
                 },
@@ -1930,7 +2005,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 elif isinstance(payload.get("result_text"), str):
                     result_text = str(payload.get("result_text", ""))
                     self.attach_mcp_result_summary_locked(record, result_text)
-                if not record.get("is_error") and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy"} and result_text:
+                if not record.get("is_error") and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy", "set_participant_plan"} and result_text:
                     self.record_intent_lifecycle_locked(record, result_text)
                 self.write_mcp_stats_locked()
         except (TypeError, ValueError, json.JSONDecodeError) as exc:
@@ -2293,6 +2368,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             ALLOWED_FIRE_MODES,
             "fire_mode",
         )
+        plan_route = normalize_plan_route_field(payload.get("plan_route", ""))
+        plan_engagement_policy = normalize_plan_engagement_policy(payload.get("plan_engagement_policy", ""))
 
         return {
             "run_id": str(payload.get("run_id", self.server.run_id)),
@@ -2336,6 +2413,11 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "strategy_objective": str(payload.get("strategy_objective", "")),
             "strategy_target_zone": str(payload.get("strategy_target_zone", "")),
             "strategy_reasoning": " ".join(str(payload.get("strategy_reasoning", "")).replace("\t", " ").split())[:120],
+            "plan_objective": " ".join(str(payload.get("plan_objective", "")).replace("\t", " ").split())[:64],
+            "plan_route": plan_route,
+            "plan_engagement_policy": plan_engagement_policy,
+            "plan_reasoning": " ".join(str(payload.get("plan_reasoning", "")).replace("\t", " ").split())[:160],
+            "plan_route_cells": " ".join(str(payload.get("plan_route_cells", "")).replace("\t", " ").split())[:80],
         }
 
     def read_participant_intent_rows(self) -> list[dict[str, str]]:
@@ -2349,6 +2431,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         if not lines:
             return []
         expected_header = PARTICIPANT_INTENT_HEADER.strip().split("\t")
+        plan_previous_header = expected_header[:expected_header.index("plan_objective")]
         strategy_previous_header = expected_header[:expected_header.index("strategy_source")]
         strategy_metadata_previous_header = expected_header[:expected_header.index("strategy_objective")]
         extended_previous_header = PARTICIPANT_INTENT_EXTENDED_PREVIOUS_HEADER.strip().split("\t")
@@ -2363,6 +2446,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             parse_header = extended_previous_header
         elif header == expected_header:
             parse_header = expected_header
+        elif header == plan_previous_header:
+            parse_header = plan_previous_header
         elif header == strategy_previous_header:
             parse_header = strategy_previous_header
         elif header == strategy_metadata_previous_header:
@@ -2403,7 +2488,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         "intent_raw": row.get("intent", ""),
                     }
                 )
-            if parse_header in (legacy_header, previous_header, extended_previous_header, strategy_previous_header, strategy_metadata_previous_header):
+            if parse_header in (legacy_header, previous_header, extended_previous_header, plan_previous_header, strategy_previous_header, strategy_metadata_previous_header):
                 for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
                     if key not in row:
                         row[key] = ""
@@ -2420,6 +2505,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 if not row.get("intent_raw"):
                     row["intent_raw"] = row.get("intent", "")
             for key in PARTICIPANT_INTENT_STRATEGY_FIELDS:
+                if key not in row:
+                    row[key] = ""
+            for key in PARTICIPANT_INTENT_PLAN_FIELDS:
                 if key not in row:
                     row[key] = ""
             self.validate_participant_intent_row(row, reject_expired=reject_expired)
@@ -2501,6 +2589,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             raise ValueError("invalid navigation_target")
         if row.get("fire_mode", "auto") not in ALLOWED_FIRE_MODES:
             raise ValueError("invalid fire_mode")
+        if row.get("plan_route", ""):
+            normalize_plan_route_field(row["plan_route"])
+        normalize_plan_engagement_policy(row.get("plan_engagement_policy", ""))
 
     def participant_intent_rows_to_tsv(self, rows: list[dict[str, str]]) -> str:
         keys = PARTICIPANT_INTENT_HEADER.strip().split("\t")
@@ -2944,7 +3035,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.server.enable_cross_round_recap = bool(payload.get("enable_cross_round_recap", False))
         self.server.recap_window = 0
         self.server.enable_map_blueprint = bool(payload.get("enable_map_blueprint", False))
-        self.server.enable_weapon_pickups = bool(payload.get("enable_weapon_pickups", False))
+        self.server.enable_weapon_pickups = bool(payload.get("enable_weapon_pickups", True))
         self.server.mirror_pair = bool(payload.get("mirror_pair", False))
         self.server.control_mode = normalize_control_mode(payload.get("control_mode", CONTROL_MODE_HIERARCHICAL))
 

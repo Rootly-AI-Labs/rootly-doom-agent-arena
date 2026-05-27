@@ -14,6 +14,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 RESULTS_ROOT = REPO_ROOT / "benchmarks" / "results"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
+MAP_BOUNDS = {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768}
+MAP_CELL_SIZE = 64
+MAP_ROWS = 24
+MAP_COLS = 32
+
+
+def _xy_to_grid_cell(x: Any, y: Any) -> str:
+    try:
+        xf = float(x)
+        yf = float(y)
+    except (TypeError, ValueError):
+        return ""
+    col = int((xf - MAP_BOUNDS["x_min"]) // MAP_CELL_SIZE) + 1
+    row = int((MAP_BOUNDS["y_max"] - yf) // MAP_CELL_SIZE) + 1
+    col = max(1, min(MAP_COLS, col))
+    row = max(1, min(MAP_ROWS, row))
+    return f"{chr(ord('A') + row - 1)}{col:02d}"
 
 
 def load_map_blueprint(scenario_id: str) -> str:
@@ -115,6 +132,15 @@ def _variant_ascii_map(blueprint: dict[str, Any]) -> str:
     return "\n".join(rows)
 
 
+def _blocked_cell_list(ascii_map: str) -> str:
+    cells = []
+    for row_index, row_text in enumerate(ascii_map.splitlines()):
+        for col_index, char in enumerate(row_text):
+            if char == "#":
+                cells.append(f"{chr(ord('A') + row_index)}{col_index + 1:02d}")
+    return ", ".join(cells)
+
+
 def _static_map_context_section(scenario_id: str, participant_id: str = "") -> str:
     try:
         blueprint = load_geometry_blueprint(scenario_id)
@@ -125,14 +151,16 @@ def _static_map_context_section(scenario_id: str, participant_id: str = "") -> s
     own_spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
     own_spawn_line = ""
     if own_spawn:
+        own_spawn_cell = _xy_to_grid_cell(own_spawn.get("x"), own_spawn.get("y"))
         own_spawn_line = (
             f"- Your selected spawn: x={own_spawn.get('x')} y={own_spawn.get('y')} "
-            f"angle={own_spawn.get('angle_deg')}. Opponent spawn is intentionally omitted.\n"
+            f"cell={own_spawn_cell} angle={own_spawn.get('angle_deg')}. Opponent spawn is intentionally omitted.\n"
         )
     ascii_map = _variant_ascii_map(blueprint)
     if not ascii_map:
         return ""
     wall_count = ascii_map.count("#")
+    blocked_cells = _blocked_cell_list(ascii_map)
     return f"""
 Static map context:
 - The static map is provided here once so repeated observations stay compact.
@@ -141,10 +169,12 @@ Static map context:
 - Cell size: each ASCII cell is `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
 - Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
+- Grid frame: rows `A-X` are north/top to south/bottom; columns `01-32` are west/left to east/right.
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Wall cells: `{wall_count}`. Every `#` is generated into Doom wall collision and line-of-sight blocking geometry.
+- Blocked route cells: {blocked_cells}.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
-- Observations include `map.pickups` with exact health pack and shotgun coordinates plus distance from you; use them when deciding whether to heal, upgrade weapon, deny resources, or control center.
+- Observations include `map.pickups` with health pack and shotgun grid cells, coordinates, and distance from you; use them when deciding whether to heal, upgrade weapon, deny resources, or control center.
 - Use the map for broad strategy and memory, not exact path planning. The Doom autopilot handles collision pathing.
 
 ASCII map:
@@ -188,10 +218,15 @@ def instructions(
         strategy_token_line = (
             f"Your controller_token is: `{controller_token}`\n\n"
             "Always include `controller_token` when calling `set_participant_ready`, "
-            "`wait_for_match_start`, `get_participant_observation`, `set_participant_strategy`, "
+            "`wait_for_match_start`, `get_participant_observation`, `set_participant_plan`, "
             "`stop_participant_intent`, and `get_match_result`.\n"
             if enforce_tokens
             else "Controller token enforcement is disabled for this local trusted smoke run.\n"
+        )
+        route_example = (
+            '["M05", "G05", "G12", "M17"]'
+            if participant_id == "player_1"
+            else '["M28", "G28", "G21", "M17"]'
         )
         return f"""# Doom Arena MCP Instructions: {participant_id}
 
@@ -201,86 +236,72 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {strategy_token_line}
 {session_line}
 Core rules:
-- Use hierarchical strategy control only.
-- Use `set_participant_strategy` for normal play.
-- Do not use `set_participant_intent` in hierarchical mode.
+- Use coordinate route planning for normal play.
+- Use `set_participant_plan` for movement and objective decisions.
+- Do not use `set_participant_strategy` or `set_participant_intent` for normal navigation in this mode.
 - Do not send detailed tactical parameters such as `movement_bias`, `fire_policy`, `distance_policy`, `navigation_target`, or `turn_policy`.
 - Do not call low-level movement/input tools.
-- Read compact observations using `match`, `self`, `opponent`, `tactical`, `map`, `allowed_actions`, and `recommended`.
-- Choose category, action, optional objective, optional target_zone, and short reasoning together in one tool call. Do not call one tool for category and another for action.
-- Keep `reasoning` short: one sentence about why this strategy was chosen.
+- Read compact observations using `match`, `self`, `opponent`, `tactical`, and `map`.
+- Choose objective, route, engagement_policy, and short reasoning together in one tool call.
+- Keep `reasoning` short: one sentence about why this route was chosen.
 
 Loop:
 1. Call `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
 2. Call `get_participant_observation`.
-3. Send one opening `set_participant_strategy` with `sequence_number=1`.
+3. Send one opening `set_participant_plan` with `sequence_number=1`.
 4. Call `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
-5. During combat, repeat: `get_participant_observation` -> choose exactly one `category`/`action`/`intensity`, optional `objective`/`target_zone`, and short `reasoning` -> call `set_participant_strategy`.
-6. Increment `sequence_number` after every strategy call.
-7. After each `set_participant_strategy`, immediately observe again if the match is still active.
-8. Do not choose timing fields. The server uses an 8000 ms policy lease by default; it is not a sleep timer and newer higher-sequence strategies override immediately.
+5. During combat, repeat: `get_participant_observation` -> choose one objective, one coordinate route, one engagement_policy, and short reasoning -> call `set_participant_plan`.
+6. Increment `sequence_number` after every plan call.
+7. After each `set_participant_plan`, immediately observe again if the match is still active.
+8. Do not choose timing fields. The server uses a 16000 ms route lease by default so routes can progress while agents still refresh from new observations. It is not a sleep timer and newer higher-sequence plans override immediately.
 9. Do not use `Start-Sleep`, timers, or manual waiting loops. Keep updates moving as fast as the chat environment allows.
 
 Allowed MCP tools:
 - `set_participant_ready`
 - `get_participant_observation`
-- `set_participant_strategy`
+- `set_participant_plan`
 - `wait_for_match_start`
 - `get_match_result`
 - `stop_participant_intent`
 - `get_duel_events` if useful
 
-Strategy schema:
+Plan schema:
 
 ```json
 {{
   "participant_id": "{participant_id}",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
-  "category": "engage",
-  "action": "strafe_fight",
-  "intensity": "medium",
-  "objective": "clear_side",
-  "target_zone": "right_side",
-  "reasoning": "enemy hidden, checking unvisited side",
+  "objective": "pick_up_shotgun",
+  "route": {route_example},
+  "engagement_policy": "engage_if_visible",
+  "reasoning": "take center weapon before forcing a fight",
   "sequence_number": 1
 }}
 ```
 
-The server applies an internal 8000 ms policy lease to every strategy call. Do not include timing fields in normal play.
-`objective`, `target_zone`, and `reasoning` are lightweight planning/logging fields, not detailed Doom movement controls.
+The server applies an internal 16000 ms route lease to every plan call. Do not include timing fields in normal play.
+`objective` and `reasoning` are lightweight planning/logging fields. The route is the only movement plan you submit.
 
-Allowed categories and actions:
-- `explore`: `scan_last_seen`, `patrol_left`, `patrol_right`, `rotate_route`, `probe_center`
-- `engage`: `push`, `strafe_fight`, `suppress`, `close_gap`, `finish_low_health`
-- `evade`: `kite`, `break_los`, `retreat_reset`, `dodge_strafe`, `hold_fire_reposition`
-- `position`: `flank_left`, `flank_right`, `camp_los`, `hold_angle`, `take_left_lane`, `take_right_lane`
-- `recover`: `unstuck`, `anti_spin`, `switch_lane`, `reset_to_center`, `reverse_route`
+Route rules:
+- `route` is a list of up to 16 grid cells, e.g. `["M05", "G05", "G12", "M17"]`.
+- Rows are `A-X` from north/top to south/bottom. Columns are `01-32` from west/left to east/right.
+- Each cell is `64 x 64` Doom units. The server converts cells into Doom coordinates at the cell center.
+- Use current `self.cell`, static map geometry, and `map.pickups[*].cell` to choose useful waypoints.
+- Do not put waypoints inside `#` wall cells.
+- Do not choose any cell listed under `Blocked route cells`.
+- Every straight route segment must avoid blocked cells, including the segment from your current `self.cell` to the first waypoint. Add intermediate cells to route around walls.
+- Do not use broad strategy labels like "clear upper" or "flank left" as the route. Submit exact cells only.
+- Do not replace a route just because it is still executing. Submit a new route when the route is blocked, stale, complete, stuck, enemy contact changes, or your plan intentionally changes.
+- The Doom autopilot handles frame-level turning, collision, and waypoint following.
 
-Allowed intensity:
-- `low`
-- `medium`
-- `high`
-
-Allowed objective:
-- `find_enemy`
-- `hold_advantage`
+Allowed engagement_policy:
+- `engage_if_visible`
+- `avoid_until_target`
+- `hold_fire`
 - `force_fight`
-- `break_contact`
-- `clear_side`
-- `control_center`
-- `finish_enemy`
-
-Allowed target_zone:
-- `left_side`
-- `right_side`
-- `top_lane`
-- `bottom_lane`
-- `center`
-- `last_seen`
-- `enemy_side`
 
 {_static_map_context_section(scenario_id, participant_id)}Decision rule:
-Use the observation, your own spawn, the static map, and the allowed action list to choose one strategy. Do not rely on fixed scripts. Adapt based on visibility, health, position, recent damage, stuck/spin signals, and map memory.
+Use the observation, your own spawn, the static map, pickup coordinates, and your chat memory to choose the next route. Do not rely on fixed scripts. Adapt based on visibility, health, position, recent damage, stuck/spin signals, and explored map areas.
 
 Stop rules:
 - If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.

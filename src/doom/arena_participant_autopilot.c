@@ -2,7 +2,9 @@
 // Doom Agent Arena participant autopilot decision logic.
 //
 
+#include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "arena_participant_autopilot.h"
@@ -17,8 +19,11 @@
 #define ARENA_AUTOPILOT_STUCK_BURST_WINDOW_TICKS 42
 #define ARENA_AUTOPILOT_STUCK_BURST_THRESHOLD 4
 #define ARENA_AUTOPILOT_STUCK_COOLDOWN_TICKS 84
+#define ARENA_AUTOPILOT_ROUTE_REACHED_DISTANCE 32
 
 static arena_participant_autopilot_debug_t arena_autopilot_debug[ARENA_PARTICIPANT_COUNT];
+static char arena_route_cursor_intent_id[ARENA_PARTICIPANT_COUNT][64];
+static int arena_route_cursor_index[ARENA_PARTICIPANT_COUNT];
 static int arena_autopilot_last_health[ARENA_PARTICIPANT_COUNT] = {-1, -1};
 static int arena_autopilot_last_strafe_direction[ARENA_PARTICIPANT_COUNT] = {-1, 1};
 static int arena_autopilot_stuck_burst_count[ARENA_PARTICIPANT_COUNT] = {0, 0};
@@ -59,6 +64,34 @@ static int NormalizeAngleError(int value)
         value += 360;
     }
     return value;
+}
+
+static int DoomAngleToPoint(int from_x, int from_y, int to_x, int to_y)
+{
+    double radians;
+    int degrees;
+
+    radians = atan2((double) (to_y - from_y), (double) (to_x - from_x));
+    degrees = (int) (radians * 180.0 / 3.14159265358979323846);
+    while (degrees < 0)
+    {
+        degrees += 360;
+    }
+    while (degrees >= 360)
+    {
+        degrees -= 360;
+    }
+    return degrees;
+}
+
+static int SquaredDistance(int x1, int y1, int x2, int y2)
+{
+    int dx;
+    int dy;
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+    return dx * dx + dy * dy;
 }
 
 static void CopyField(char *dest, size_t dest_size, const char *value)
@@ -665,6 +698,141 @@ static void ApplyNavigationTarget(const arena_participant_autopilot_input_t *inp
     }
 }
 
+static int ApplyRoutePlan(const arena_participant_autopilot_input_t *input,
+                          arena_participant_autopilot_command_t *command)
+{
+    int i;
+    int participant_index;
+    int target_x;
+    int target_y;
+    int route_error;
+    int route_abs_error;
+    int reached_distance_sq;
+
+    if (input == NULL
+        || command == NULL
+        || input->intent.route_waypoint_count <= 0)
+    {
+        return false;
+    }
+
+    participant_index = input->participant;
+    if (participant_index < 0 || participant_index >= ARENA_PARTICIPANT_COUNT)
+    {
+        participant_index = ARENA_PARTICIPANT_PLAYER_1;
+    }
+    if (strcmp(arena_route_cursor_intent_id[participant_index], input->intent.intent_id))
+    {
+        CopyField(arena_route_cursor_intent_id[participant_index],
+                  sizeof(arena_route_cursor_intent_id[participant_index]),
+                  input->intent.intent_id);
+        arena_route_cursor_index[participant_index] = 0;
+    }
+    if (arena_route_cursor_index[participant_index] < 0)
+    {
+        arena_route_cursor_index[participant_index] = 0;
+    }
+    if (arena_route_cursor_index[participant_index] >= input->intent.route_waypoint_count)
+    {
+        arena_route_cursor_index[participant_index] = input->intent.route_waypoint_count - 1;
+    }
+
+    reached_distance_sq = ARENA_AUTOPILOT_ROUTE_REACHED_DISTANCE
+        * ARENA_AUTOPILOT_ROUTE_REACHED_DISTANCE;
+
+    i = arena_route_cursor_index[participant_index];
+    while (i < input->intent.route_waypoint_count)
+    {
+        target_x = input->intent.route_x[i];
+        target_y = input->intent.route_y[i];
+        if (SquaredDistance(input->self_x, input->self_y, target_x, target_y) > reached_distance_sq)
+        {
+            break;
+        }
+        i++;
+    }
+    arena_route_cursor_index[participant_index] = i;
+
+    if (i >= input->intent.route_waypoint_count)
+    {
+        command->forward = 0;
+        command->strafe = 0;
+        command->turn = TurnForPolicy(input, command->aim_error);
+        CopyField(command->action,
+                  sizeof(command->action),
+                  command->attack ? "route_complete+attack" : "route_complete");
+        CopyField(command->reason,
+                  sizeof(command->reason),
+                  input->intent.plan_reasoning[0] == '\0'
+                    ? "route plan complete"
+                    : input->intent.plan_reasoning);
+        return true;
+    }
+
+    route_error = NormalizeAngleError(DoomAngleToPoint(input->self_x,
+                                                       input->self_y,
+                                                       target_x,
+                                                       target_y)
+                                      - input->self_angle);
+    route_abs_error = AbsInt(route_error);
+    command->route_waypoint_active = true;
+    command->route_target_x = target_x;
+    command->route_target_y = target_y;
+    command->route_waypoint_index = i + 1;
+    command->route_waypoint_count = input->intent.route_waypoint_count;
+    command->turn = TurnForAimError(route_error);
+
+    /*
+     * Route plans are waypoint-following commands, not aim-only combat
+     * commands.  The previous route steering stopped all translation when the
+     * next waypoint was more than ~85 degrees off-angle.  On grid routes with
+     * many 90-degree turns this made actors rotate in place, trigger stuck
+     * recovery, and appear to execute one tiny step at a time.  Keep lateral
+     * movement active while turning so the player arcs toward the next waypoint
+     * instead of freezing between cells.
+     */
+    /*
+     * Drive toward the waypoint in local movement space instead of treating
+     * the waypoint like an aiming target.  This makes the route behave closer
+     * to coordinate following:
+     *   - target ahead: move forward
+     *   - target side-on: strafe
+     *   - target behind: reverse
+     *
+     * Turning still happens, but translation does not stop just because the
+     * target is not centered in the view.
+     */
+    if (route_abs_error <= 60)
+    {
+        command->forward = 1;
+    }
+    else if (route_abs_error >= 120)
+    {
+        command->forward = -1;
+    }
+    else
+    {
+        command->forward = 0;
+    }
+    command->strafe = route_abs_error > 20 && route_abs_error < 170
+        ? (route_error > 0 ? 1 : -1)
+        : 0;
+    snprintf(command->action,
+             sizeof(command->action),
+             command->attack ? "route_waypoint+attack" : "route_waypoint");
+    snprintf(command->reason,
+             sizeof(command->reason),
+             "wp=%d/%d target=(%d,%d) %s",
+             i + 1,
+             input->intent.route_waypoint_count,
+             target_x,
+             target_y,
+             input->intent.plan_reasoning[0] == '\0'
+                ? "following MCP route plan"
+                : input->intent.plan_reasoning);
+    return true;
+}
+
 static void ApplyStrictSpacing(const arena_participant_autopilot_input_t *input,
                                arena_participant_autopilot_command_t *command)
 {
@@ -703,6 +871,13 @@ static arena_participant_autopilot_command_t FinalizeCommand(
     const arena_participant_autopilot_input_t *input,
     arena_participant_autopilot_command_t *command)
 {
+    if (strncmp(command->action, "primitive_", 10)
+        && ApplyRoutePlan(input, command))
+    {
+        ClampCommand(command);
+        ApplyReplanHints(input, command);
+        return *command;
+    }
     ApplyNavigationTarget(input, command, command->aim_error);
     ApplyStrictSpacing(input, command);
     ClampCommand(command);
@@ -1225,6 +1400,8 @@ arena_participant_autopilot_command_t ArenaParticipantAutopilot_Decide(
 
 void ArenaParticipantAutopilot_ResetDebug(void)
 {
+    memset(arena_route_cursor_intent_id, 0, sizeof(arena_route_cursor_intent_id));
+    memset(arena_route_cursor_index, 0, sizeof(arena_route_cursor_index));
     arena_autopilot_last_health[ARENA_PARTICIPANT_PLAYER_1] = -1;
     arena_autopilot_last_health[ARENA_PARTICIPANT_PLAYER_2] = -1;
     arena_autopilot_last_strafe_direction[ARENA_PARTICIPANT_PLAYER_1] = -1;

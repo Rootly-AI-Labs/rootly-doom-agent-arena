@@ -11,7 +11,7 @@
 
 #define ARENA_PARTICIPANT_INTENT_GRACE_MS 2000
 #define ARENA_PARTICIPANT_INTENT_LEGACY_FIELD_COUNT 12
-#define ARENA_PARTICIPANT_INTENT_FIELD_COUNT 32
+#define ARENA_PARTICIPANT_INTENT_FIELD_COUNT 46
 
 extern const char *Arena_RunId(void);
 extern const char *Arena_ScenarioId(void);
@@ -51,6 +51,10 @@ typedef struct
     char turn_policy[32];
     char navigation_target[32];
     char fire_mode[32];
+    char plan_objective[64];
+    char plan_route[256];
+    char plan_engagement_policy[32];
+    char plan_reasoning[128];
 } arena_participant_intent_row_t;
 
 typedef struct
@@ -289,6 +293,54 @@ static int OptionalNonNegativeInt(const char *value)
 
     parsed = strtol(value, &end, 10);
     return end != value && *end == '\0' && parsed >= 0;
+}
+
+static int ParseRouteWaypoints(const char *value,
+                               int *route_x,
+                               int *route_y,
+                               int max_waypoints)
+{
+    char buffer[256];
+    char *cursor;
+    char *part;
+    int count;
+    int x;
+    int y;
+    int consumed;
+
+    if (value == NULL || value[0] == '\0')
+    {
+        return 0;
+    }
+
+    CopyField(buffer, sizeof(buffer), value);
+    cursor = buffer;
+    count = 0;
+    while (count < max_waypoints && cursor != NULL && cursor[0] != '\0')
+    {
+        part = cursor;
+        cursor = strchr(cursor, ';');
+        if (cursor != NULL)
+        {
+            *cursor = '\0';
+            cursor++;
+        }
+
+        consumed = 0;
+        if (sscanf(part, " %d , %d %n", &x, &y, &consumed) != 2)
+        {
+            continue;
+        }
+        if (part[consumed] != '\0')
+        {
+            continue;
+        }
+        route_x[count] = x;
+        route_y[count] = y;
+        count++;
+    }
+
+    return count;
 }
 
 static int RowHasSequenceNumber(const arena_participant_intent_row_t *row)
@@ -646,6 +698,18 @@ static void StoreCandidate(arena_participant_intent_row_t *row,
     CopyRowField(row->fire_mode,
                  sizeof(row->fire_mode),
                  field_count > 31 ? fields[31] : "auto");
+    CopyRowField(row->plan_objective,
+                 sizeof(row->plan_objective),
+                 field_count > 41 ? fields[41] : "");
+    CopyRowField(row->plan_route,
+                 sizeof(row->plan_route),
+                 field_count > 42 ? fields[42] : "");
+    CopyRowField(row->plan_engagement_policy,
+                 sizeof(row->plan_engagement_policy),
+                 field_count > 43 ? fields[43] : "");
+    CopyRowField(row->plan_reasoning,
+                 sizeof(row->plan_reasoning),
+                 field_count > 44 ? fields[44] : "");
 }
 
 static void ApplyCandidate(arena_participant_id_t participant,
@@ -971,6 +1035,23 @@ static void ApplyCandidate(arena_participant_id_t participant,
     CopyField(intent.fire_mode,
               sizeof(intent.fire_mode),
               row->fire_mode);
+    CopyField(intent.plan_objective,
+              sizeof(intent.plan_objective),
+              row->plan_objective);
+    CopyField(intent.plan_route,
+              sizeof(intent.plan_route),
+              row->plan_route);
+    CopyField(intent.plan_engagement_policy,
+              sizeof(intent.plan_engagement_policy),
+              row->plan_engagement_policy);
+    CopyField(intent.plan_reasoning,
+              sizeof(intent.plan_reasoning),
+              row->plan_reasoning);
+    intent.route_waypoint_count = ParseRouteWaypoints(
+        intent.plan_route,
+        intent.route_x,
+        intent.route_y,
+        ARENA_PARTICIPANT_ROUTE_MAX_WAYPOINTS);
     if (now - slot->start_ms > duration_ms)
     {
         CopyField(intent.status, sizeof(intent.status), "grace");
@@ -991,7 +1072,7 @@ static void ApplyCandidate(arena_participant_id_t participant,
 void ArenaParticipantIntent_TickOrRefresh(void)
 {
     FILE *file;
-    char line[1536];
+    char line[4096];
     char *fields[ARENA_PARTICIPANT_INTENT_FIELD_COUNT];
     int line_number;
     int field_count;
