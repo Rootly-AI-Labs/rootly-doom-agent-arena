@@ -165,8 +165,6 @@ Important `map` fields:
 
 ```text
 current_zone
-bounds
-route_format
 pickups
 ```
 
@@ -175,9 +173,6 @@ Example `map` block:
 ```json
 {
   "current_zone": "left_side",
-  "bounds": {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768},
-  "grid": {"rows": "A-X", "cols": "01-32", "cell_size": 64},
-  "route_format": "list of up to 16 grid cells, e.g. ['M05', 'G05', 'G12', 'M17']; every straight segment must avoid blocked_cells",
   "pickups": [
     {"id": "health_top", "type": "health", "name": "medikit", "x": 0, "y": 672, "zone": "top_lane", "purpose": "restore_health", "distance": 900},
     {"id": "health_bottom", "type": "health", "name": "medikit", "x": 0, "y": -672, "zone": "bottom_lane", "purpose": "restore_health", "distance": 900},
@@ -198,6 +193,7 @@ map bounds
 coordinate frame
 legend
 ASCII map from scripts/map_blueprints/duel_e1m8_ascii.txt
+blocked route cells
 own selected spawn coordinate and angle
 own selected spawn grid cell
 pickup behavior note

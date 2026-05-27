@@ -28,6 +28,16 @@ function EnsureFile($Path, $DefaultContent) {
     }
 }
 
+function EnsureDirectory($Path) {
+    if (Test-Path -LiteralPath $Path -PathType Leaf) {
+        Fail "$Path is a file, but Docker needs it to be a directory."
+    }
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
+        New-Item -ItemType Directory -Path $Path -Force | Out-Null
+    }
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     Fail "Docker CLI was not found. Install Docker Desktop, then rerun this script."
 }
@@ -49,7 +59,9 @@ if ($Dev) {
 }
 
 $ControllerTokensPath = Join-Path $RepoRoot "src/arena_controller_tokens.local.json"
+$BenchmarkResultsPath = Join-Path $RepoRoot "benchmarks/results"
 EnsureFile $ControllerTokensPath "{}"
+EnsureDirectory $BenchmarkResultsPath
 
 Write-Host "Starting Doom Arena Docker backend on http://127.0.0.1:$Port ..."
 try {

@@ -694,10 +694,6 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         },
         "map": {
             "current_zone": current_zone,
-            "bounds": dict(MAP_BOUNDS),
-            "grid": {"rows": "A-X", "cols": "01-32", "cell_size": MAP_CELL_SIZE},
-            "blocked_cells": blocked_grid_cells(),
-            "route_format": "list of up to 16 grid cells, e.g. ['M05', 'G05', 'G12', 'M17']; every straight segment must avoid blocked_cells",
             "pickups": strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y")),
         },
     }

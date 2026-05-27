@@ -159,7 +159,6 @@ def _static_map_context_section(scenario_id: str, participant_id: str = "") -> s
     ascii_map = _variant_ascii_map(blueprint)
     if not ascii_map:
         return ""
-    wall_count = ascii_map.count("#")
     blocked_cells = _blocked_cell_list(ascii_map)
     return f"""
 Static map context:
@@ -171,11 +170,10 @@ Static map context:
 - Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
 - Grid frame: rows `A-X` are north/top to south/bottom; columns `01-32` are west/left to east/right.
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
-- Wall cells: `{wall_count}`. Every `#` is generated into Doom wall collision and line-of-sight blocking geometry.
 - Blocked route cells: {blocked_cells}.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
-- Observations include `map.pickups` with health pack and shotgun grid cells, coordinates, and distance from you; use them when deciding whether to heal, upgrade weapon, deny resources, or control center.
-- Use the map for broad strategy and memory, not exact path planning. The Doom autopilot handles collision pathing.
+- Observations include `map.pickups` with current pickup availability and distance from you.
+- Pick route cells that avoid `#` walls and advance your current objective. The Doom autopilot handles frame-level movement.
 
 ASCII map:
 ```text
@@ -228,6 +226,18 @@ def instructions(
             if participant_id == "player_1"
             else '["M28", "G28", "G21", "M17"]'
         )
+        stop_rules = (
+            """Stop rules:
+- If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.
+- If `phase="finished"` and `has_next_round=true`, poll only `get_match_result` until `run_id` changes, then start the next match with `set_participant_ready` and reset `sequence_number=1`.
+
+"""
+            if total_rounds > 1
+            else """Stop rule:
+- If `get_match_result` returns `phase="finished"`, call `stop_participant_intent` once, then stop all tool calls.
+
+"""
+        )
         return f"""# Doom Arena MCP Instructions: {participant_id}
 
 You are one of two separate MCP agents in Doom Arena Duel.
@@ -236,11 +246,8 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {strategy_token_line}
 {session_line}
 Core rules:
-- Use coordinate route planning for normal play.
-- Use `set_participant_plan` for movement and objective decisions.
-- Do not use `set_participant_strategy` or `set_participant_intent` for normal navigation in this mode.
-- Do not send detailed tactical parameters such as `movement_bias`, `fire_policy`, `distance_policy`, `navigation_target`, or `turn_policy`.
-- Do not call low-level movement/input tools.
+- Normal action tool: `set_participant_plan` only.
+- Do not use `set_participant_strategy`, `set_participant_intent`, detailed tactical parameters, or low-level movement/input tools in this mode.
 - Read compact observations using `match`, `self`, `opponent`, `tactical`, and `map`.
 - Choose objective, route, engagement_policy, and short reasoning together in one tool call.
 - Keep `reasoning` short: one sentence about why this route was chosen.
@@ -279,7 +286,6 @@ Plan schema:
 }}
 ```
 
-The server applies an internal 16000 ms route lease to every plan call. Do not include timing fields in normal play.
 `objective` and `reasoning` are lightweight planning/logging fields. The route is the only movement plan you submit.
 
 Route rules:
@@ -301,11 +307,9 @@ Allowed engagement_policy:
 - `force_fight`
 
 {_static_map_context_section(scenario_id, participant_id)}Decision rule:
-Use the observation, your own spawn, the static map, pickup coordinates, and your chat memory to choose the next route. Do not rely on fixed scripts. Adapt based on visibility, health, position, recent damage, stuck/spin signals, and explored map areas.
+Pick route cells that avoid `#` walls and advance your current objective. Adapt when visibility, health, pickups, damage, stuck/spin state, or enemy contact changes.
 
-Stop rules:
-- If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.
-- If `phase="finished"` and `has_next_round=true`, poll only `get_match_result` until `run_id` changes, then start the next match with `set_participant_ready` and reset `sequence_number=1`.
+{stop_rules}
 
 {_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
 """
