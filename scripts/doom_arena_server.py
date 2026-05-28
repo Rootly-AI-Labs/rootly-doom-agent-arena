@@ -132,7 +132,7 @@ ENEMY_COMMAND_HEADER = (
 )
 RUN_METADATA_HEADER = (
     "run_id\tscenario_id\tarena_mode\tstarted_at_ms\tplayer_1_model\t"
-    "player_2_model\tround\tseed\ttimeout_seconds\n"
+    "player_2_model\tround\tseed\ttimeout_seconds\tenable_weapon_pickups\n"
 )
 PARTICIPANTS = {"player_1", "player_2"}
 ALLOWED_PARTICIPANT_INTENTS = {"hold", "engage_opponent", "strafe_attack", "search"}
@@ -997,7 +997,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         participant_id: str,
         current_round: int,
         duel_session_id: str,
-        window: int = 2,
+        window: int = 1,
     ) -> list[dict[str, Any]]:
         if not duel_session_id or current_round <= 1:
             return []
@@ -1023,61 +1023,64 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         for round_num, round_dir in recap_rounds:
             summary_path = round_dir / "summary.json"
             stats_path = round_dir / "stats.json"
+            events_path = round_dir / "events.jsonl"
+            opponent_id = "player_2" if participant_id == "player_1" else "player_1"
             entry: dict[str, Any] = {
                 "round": round_num,
                 "winner": None,
-                "terminal_reason": None,
-                "elapsed_time_seconds": None,
-                "your_final_health": None,
-                "opponent_final_health": None,
-                "your_damage_dealt": None,
-                "opponent_damage_dealt": None,
-                "your_hit_rate": None,
-                "opponent_prevailing_intent": None,
-                "spawn_variant": None,
+                "you_won": False,
+                "your_damage": None,
+                "opponent_damage": None,
+                "your_opening": None,
+                "opponent_opening": None,
+                "shotgun_pickup_owner": None,
             }
             if summary_path.exists():
                 try:
                     s = json.loads(summary_path.read_text(encoding="utf-8"))
                     entry["winner"] = s.get("winner")
-                    entry["terminal_reason"] = s.get("terminal_reason")
-                    entry["elapsed_time_seconds"] = s.get("elapsed_time_seconds")
-                    entry["spawn_variant"] = s.get("scenario_id")
+                    entry["you_won"] = s.get("winner") == participant_id
                     if participant_id == "player_1":
-                        entry["your_final_health"] = s.get("player_1_health_end")
-                        entry["opponent_final_health"] = s.get("player_2_health_end")
-                        entry["your_damage_dealt"] = s.get("player_1_damage_dealt")
-                        shots_f = s.get("player_1_shots_fired") or 0
-                        shots_h = s.get("player_1_shots_hit") or 0
+                        entry["your_damage"] = s.get("player_1_damage_dealt")
+                        entry["opponent_damage"] = s.get("player_2_damage_dealt")
                     else:
-                        entry["your_final_health"] = s.get("player_2_health_end")
-                        entry["opponent_final_health"] = s.get("player_1_health_end")
-                        entry["your_damage_dealt"] = s.get("player_2_damage_dealt")
-                        shots_f = s.get("player_2_shots_fired") or 0
-                        shots_h = s.get("player_2_shots_hit") or 0
-                    entry["your_hit_rate"] = (
-                        round(shots_h / shots_f, 3) if shots_f > 0 else 0.0
-                    )
+                        entry["your_damage"] = s.get("player_2_damage_dealt")
+                        entry["opponent_damage"] = s.get("player_1_damage_dealt")
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
                     pass
             if stats_path.exists():
                 try:
                     st = json.loads(stats_path.read_text(encoding="utf-8"))
-                    opponent_id = "player_2" if participant_id == "player_1" else "player_1"
-                    by_p = st.get("by_participant", {})
-                    opp = by_p.get(opponent_id, {})
-                    # Best-guess prevailing intent from opponent's lifecycles
-                    lifecycles = st.get("intent_lifecycles", [])
-                    opp_intents = [
-                        str(lc.get("intent_raw") or lc.get("intent") or "")
-                        for lc in lifecycles
-                        if lc.get("participant_id") == opponent_id
-                        and lc.get("intent_raw") or lc.get("intent")
-                    ]
-                    if opp_intents:
-                        from collections import Counter as _C
-                        entry["opponent_prevailing_intent"] = _C(opp_intents).most_common(1)[0][0]
+                    openings: dict[str, str] = {}
+                    for call in st.get("calls", []):
+                        if call.get("tool_name") != "set_participant_plan":
+                            continue
+                        if call.get("is_error") or call.get("status") not in {"completed", None}:
+                            continue
+                        call_participant = str(call.get("participant_id") or "")
+                        if call_participant in openings:
+                            continue
+                        opening = str(call.get("plan_objective") or call.get("intent") or "").strip()
+                        if opening:
+                            openings[call_participant] = opening
+                    entry["your_opening"] = openings.get(participant_id)
+                    entry["opponent_opening"] = openings.get(opponent_id)
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
+                    pass
+            if events_path.exists():
+                try:
+                    for line in events_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                        if not line.strip():
+                            continue
+                        event_row = json.loads(line)
+                        event_text = str(event_row.get("event", ""))
+                        if event_text.startswith("pickup: player_1 shotgun"):
+                            entry["shotgun_pickup_owner"] = "player_1"
+                            break
+                        if event_text.startswith("pickup: player_2 shotgun"):
+                            entry["shotgun_pickup_owner"] = "player_2"
+                            break
+                except (OSError, ValueError, json.JSONDecodeError):
                     pass
             result.append(entry)
         return result
@@ -1628,7 +1631,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         text = ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace")
-        text = inject_arena_config_row(text, self.server.hide_enemy_position)
+        text = inject_arena_config_row(text, self.server.hide_enemy_position, self.server.enable_weapon_pickups)
         self.write_tsv_bytes(text.encode("utf-8"))
 
     def write_tsv(self, body: str) -> None:
@@ -2805,6 +2808,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             (restart_session and self.server.duel_session_id)
             or (continue_session and self.server.duel_session_id)
         )
+        if not new_session:
+            payload["enable_weapon_pickups"] = self.server.enable_weapon_pickups
+            payload["hide_enemy_position"] = self.server.hide_enemy_position
+            payload["enable_map_blueprint"] = self.server.enable_map_blueprint
+            payload["mirror_pair"] = self.server.mirror_pair
+            payload["randomize_spawns"] = self.server.duel_randomize_spawns
+            payload["control_mode"] = self.server.control_mode
         if new_session:
             self.server.duel_randomize_spawns = bool(payload.get("randomize_spawns", False))
             self.server.duel_scenario_pool = self.resolve_duel_scenario_pool(payload)
@@ -2967,6 +2977,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     "control_path": "external MCP clients call HTTP doom-arena tools",
                     "control_mode": self.server.control_mode,
                     "hide_enemy_position": self.server.hide_enemy_position,
+                    "enable_weapon_pickups": self.server.enable_weapon_pickups,
                     "randomize_spawns": self.server.duel_randomize_spawns,
                     "scenario_pool": list(self.server.duel_scenario_pool),
                     "enforce_controller_tokens": effective_enforce_tokens,
@@ -3141,13 +3152,14 @@ def read_arena_state() -> list[dict[str, str]]:
 
 
 CONFIG_COLUMN_HIDE_ENEMY = "hide_enemy_position"
+CONFIG_COLUMN_ENABLE_WEAPON_PICKUPS = "enable_weapon_pickups"
 
 
-def inject_arena_config_row(text: str, hide_enemy_position: bool) -> str:
+def inject_arena_config_row(text: str, hide_enemy_position: bool, enable_weapon_pickups: bool = True) -> str:
     """Append a duel-config column + synthetic config row to the state TSV.
 
-    Doom WASM writes the file with a fixed header; we extend it with a single
-    config column so the existing zip-based parser picks up the value on an
+    Doom WASM writes the file with a fixed header; we extend it with session
+    config columns so the existing zip-based parser picks up the values on an
     `arena_config` row that the observation builder can find by kind.
     """
     lines = text.splitlines()
@@ -3157,14 +3169,19 @@ def inject_arena_config_row(text: str, hide_enemy_position: bool) -> str:
     if CONFIG_COLUMN_HIDE_ENEMY not in header_cols:
         header_cols.append(CONFIG_COLUMN_HIDE_ENEMY)
         lines[0] = "\t".join(header_cols)
+    if CONFIG_COLUMN_ENABLE_WEAPON_PICKUPS not in header_cols:
+        header_cols.append(CONFIG_COLUMN_ENABLE_WEAPON_PICKUPS)
+        lines[0] = "\t".join(header_cols)
     try:
         kind_idx = header_cols.index("kind")
     except ValueError:
         return text
     config_idx = header_cols.index(CONFIG_COLUMN_HIDE_ENEMY)
+    weapon_idx = header_cols.index(CONFIG_COLUMN_ENABLE_WEAPON_PICKUPS)
     row = [""] * len(header_cols)
     row[kind_idx] = "arena_config"
     row[config_idx] = "1" if hide_enemy_position else "0"
+    row[weapon_idx] = "1" if enable_weapon_pickups else "0"
     lines.append("\t".join(row))
     return "\n".join(lines) + "\n"
 
@@ -3246,6 +3263,7 @@ def write_run_metadata(server: DoomArenaServer) -> None:
         str(server.round),
         str(server.seed),
         str(server.timeout_seconds),
+        "1" if server.enable_weapon_pickups else "0",
     ]
     ARENA_RUN_METADATA_TSV.write_text(
         RUN_METADATA_HEADER + "\t".join(row) + "\n",

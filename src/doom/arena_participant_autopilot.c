@@ -708,6 +708,7 @@ static int ApplyRoutePlan(const arena_participant_autopilot_input_t *input,
     int route_error;
     int route_abs_error;
     int reached_distance_sq;
+    int avoid_until_target;
 
     if (input == NULL
         || command == NULL
@@ -780,6 +781,12 @@ static int ApplyRoutePlan(const arena_participant_autopilot_input_t *input,
     command->route_target_y = target_y;
     command->route_waypoint_index = i + 1;
     command->route_waypoint_count = input->intent.route_waypoint_count;
+    avoid_until_target = IntentFieldEquals(input->intent.plan_engagement_policy,
+                                           "avoid_until_target");
+    if (avoid_until_target)
+    {
+        command->attack = false;
+    }
     /*
      * Route movement uses world-space waypoint thrust in the Doom-side
      * controller, so view angle does not need to point at the waypoint to move
@@ -787,7 +794,9 @@ static int ApplyRoutePlan(const arena_participant_autopilot_input_t *input,
      * opponent so route following can still deal damage instead of firing while
      * looking at the next path cell.
      */
-    command->turn = input->line_of_sight
+    command->turn = avoid_until_target
+        ? TurnForAimError(route_error)
+        : input->line_of_sight
         ? TurnForPolicy(input, command->aim_error)
         : TurnForAimError(route_error);
 

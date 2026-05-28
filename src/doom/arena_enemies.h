@@ -1,4 +1,4 @@
-//
+﻿//
 // Doom Agent Arena enemy spawning.
 //
 
@@ -39,6 +39,7 @@ const char *Arena_Player2Model(void);
 int Arena_Round(void);
 int Arena_Seed(void);
 int Arena_TimeoutSeconds(void);
+boolean Arena_WeaponPickupsEnabled(void);
 boolean Arena_GetSpawnSlot(int spawn_slot, int *x, int *y, int *angle);
 void Arena_LoadEnemies(void);
 void Arena_SpawnEnemies(void);

@@ -1,4 +1,4 @@
-//
+﻿//
 // Doom Agent Arena duel mode.
 //
 
@@ -1515,15 +1515,15 @@ static boolean ArenaDuel_Player1GiveHealth(int amount)
 
     player = &players[consoleplayer];
     mobj = ArenaDuel_Player1Mobj();
-    if (mobj == NULL || mobj->health >= MAXHEALTH)
+    if (mobj == NULL || mobj->health >= ARENA_DUEL_PARTICIPANT_HEALTH)
     {
         return false;
     }
 
     mobj->health += amount;
-    if (mobj->health > MAXHEALTH)
+    if (mobj->health > ARENA_DUEL_PARTICIPANT_HEALTH)
     {
-        mobj->health = MAXHEALTH;
+        mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     }
     player->health = mobj->health;
     return true;
@@ -1545,6 +1545,11 @@ static boolean ArenaDuel_Player1ApplyPickup(mobj_t *special)
     switch (special->type)
     {
     case MT_SHOTGUN:
+        if (!Arena_WeaponPickupsEnabled())
+        {
+            P_RemoveMobj(special);
+            return false;
+        }
         player->weaponowned[wp_shotgun] = true;
         player->readyweapon = wp_shotgun;
         player->pendingweapon = wp_shotgun;
@@ -1571,7 +1576,7 @@ static boolean ArenaDuel_Player1ApplyPickup(mobj_t *special)
         return true;
 
     case MT_MISC11:
-        if (!ArenaDuel_Player1GiveHealth(25))
+        if (!ArenaDuel_Player1GiveHealth(100))
         {
             return false;
         }
@@ -1699,15 +1704,15 @@ static void ArenaDuel_Player2Attack(void)
 
 static boolean ArenaDuel_Player2GiveHealth(int amount)
 {
-    if (arena_duel_player2 == NULL || arena_duel_player2->health >= MAXHEALTH)
+    if (arena_duel_player2 == NULL || arena_duel_player2->health >= ARENA_DUEL_PARTICIPANT_HEALTH)
     {
         return false;
     }
 
     arena_duel_player2->health += amount;
-    if (arena_duel_player2->health > MAXHEALTH)
+    if (arena_duel_player2->health > ARENA_DUEL_PARTICIPANT_HEALTH)
     {
-        arena_duel_player2->health = MAXHEALTH;
+        arena_duel_player2->health = ARENA_DUEL_PARTICIPANT_HEALTH;
     }
     return true;
 }
@@ -1724,6 +1729,11 @@ static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
     switch (special->type)
     {
     case MT_SHOTGUN:
+        if (!Arena_WeaponPickupsEnabled())
+        {
+            P_RemoveMobj(special);
+            return false;
+        }
         arena_duel_player2_ready_weapon = wp_shotgun;
         arena_duel_player2_ammo_shells = 200;
         ArenaDuel_Player2ViewPlayer();
@@ -1748,7 +1758,7 @@ static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
         return true;
 
     case MT_MISC11:
-        if (!ArenaDuel_Player2GiveHealth(25))
+        if (!ArenaDuel_Player2GiveHealth(100))
         {
             return false;
         }
@@ -2146,7 +2156,7 @@ void ArenaDuel_RestorePlayer1Mobj(void)
     // Called from P_Ticker BEFORE P_PlayerThink so that the autopilot
     // path (Arena_PlayerApplyAutopilotCommand) sees a valid
     // players[consoleplayer].mo. Doing this only inside ArenaDuel_Ticker
-    // happens too late — by then the autopilot has already dropped the
+    // happens too late â€” by then the autopilot has already dropped the
     // intent with reason "missing_participant_state".
     if (arena_duel_player1_cached_mo == NULL)
     {
@@ -2284,6 +2294,28 @@ void ArenaDuel_SpawnPlayer2(void)
     ArenaDuel_LogCollisionProfile("player_2", mobj);
 }
 
+static void ArenaDuel_RemoveDisabledWeaponPickups(void)
+{
+    thinker_t *thinker;
+    thinker_t *next;
+
+    if (Arena_WeaponPickupsEnabled()) {
+        return;
+    }
+
+    for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next) {
+        mobj_t *special;
+        next = thinker->next;
+        if (thinker->function.acp1 != (actionf_p1) P_MobjThinker) {
+            continue;
+        }
+        special = (mobj_t *) thinker;
+        if (special->type == MT_SHOTGUN) {
+            P_RemoveMobj(special);
+        }
+    }
+}
+
 void ArenaDuel_Ticker(void)
 {
     int player1_health;
@@ -2316,6 +2348,7 @@ void ArenaDuel_Ticker(void)
     }
 
     Arena_LoadRunMetadata();
+    ArenaDuel_RemoveDisabledWeaponPickups();
     ArenaParticipantCommands_Load();
     ArenaParticipantIntent_TickOrRefresh();
     ArenaDuel_LogIntentEvents();

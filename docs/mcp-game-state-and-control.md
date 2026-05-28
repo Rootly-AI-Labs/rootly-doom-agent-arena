@@ -45,10 +45,10 @@ Schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "pick_up_shotgun",
+  "objective": "control_center",
   "route": ["M05", "G05", "G12", "M17"],
   "engagement_policy": "engage_if_visible",
-  "reasoning": "take center weapon before forcing a fight",
+  "reasoning": "use safe cells while checking for the enemy",
   "sequence_number": 1
 }
 ```
@@ -59,7 +59,7 @@ Fields:
 | --- | --- |
 | `participant_id` | `player_1` or `player_2`. |
 | `controller_token` | Per-player token from the generated prompt. |
-| `objective` | Short free-form goal, for example `pick_up_shotgun`, `heal`, `clear_top`, `flank`, `force_fight`. |
+| `objective` | Short free-form goal, for example `control_center`, `heal`, `clear_top`, `flank`, `force_fight`. |
 | `route` | Up to 16 grid cells such as `M05`, `G05`, `G12`, `M17`. |
 | `engagement_policy` | How to behave while following the route. |
 | `reasoning` | One short sentence for logs/evaluation. |
@@ -73,6 +73,8 @@ avoid_until_target
 hold_fire
 force_fight
 ```
+
+`avoid_until_target` prioritizes movement. Doom suppresses attack while the route is still in progress, then normal firing can resume after the route target is reached.
 
 Route constraints:
 
@@ -165,17 +167,21 @@ Important `map` fields:
 
 ```text
 current_zone
+weapon_pickups_enabled
 pickups
 ```
+
+Observations can also include `active_plan` when an accepted route plan is currently active. It includes the objective, route cells, current waypoint, current waypoint index/count, and distance to the current waypoint.
 
 Example `map` block:
 
 ```json
 {
   "current_zone": "left_side",
+  "weapon_pickups_enabled": true,
   "pickups": [
-    {"id": "health_top", "type": "health", "name": "medikit", "x": 0, "y": 672, "zone": "top_lane", "purpose": "restore_health", "distance": 900},
-    {"id": "health_bottom", "type": "health", "name": "medikit", "x": 0, "y": -672, "zone": "bottom_lane", "purpose": "restore_health", "distance": 900},
+    {"id": "health_top", "type": "health", "name": "medikit", "x": 0, "y": 672, "zone": "top_lane", "purpose": "restore_health", "heals": 100, "max_health": 150, "distance": 900},
+    {"id": "health_bottom", "type": "health", "name": "medikit", "x": 0, "y": -672, "zone": "bottom_lane", "purpose": "restore_health", "heals": 100, "max_health": 150, "distance": 900},
     {"id": "weapon_center", "type": "weapon", "name": "shotgun", "x": 0, "y": 0, "zone": "center", "purpose": "upgrade_weapon", "distance": 900}
   ]
 }
@@ -324,7 +330,11 @@ health_bottom: medikit at x=0 y=-672
 weapon_center: shotgun at x=0 y=0
 ```
 
+Each medikit restores `+100` health, capped at the duel max health of `150`.
+
 Agents can choose route waypoints that chase, deny, or avoid these pickups.
+
+`weapon_pickups_enabled=false` means the shotgun is disabled for the session. In that mode, the Doom runtime removes shotgun objects, the UI hides the shotgun marker, and `map.pickups` only includes non-weapon resources such as health packs.
 
 ## Logs and latency
 
@@ -402,14 +412,17 @@ Those are no longer the default recommended interface for route-planning benchma
 5. get_participant_observation
 6. set_participant_plan with a new route and sequence_number=2
 7. repeat observe -> plan with increasing sequence_number
-8. when get_match_result returns phase=finished and has_next_round=false, call stop_participant_intent once and stop
+8. do not stop just because has_next_round=false; that only means the current match is the final match
+9. when get_match_result returns phase=finished and has_next_round=false, call stop_participant_intent once and stop
 ```
 
 For multi-round sessions:
 
 ```text
+if phase is waiting_for_agents, waiting_for_first_intents, or combat, keep playing even when has_next_round=false
 if phase=finished and has_next_round=true, poll get_match_result only
 when run_id changes, call set_participant_ready again
 reset sequence_number to 1
 send a new opening set_participant_plan
+if phase=finished and has_next_round=false, stop
 ```

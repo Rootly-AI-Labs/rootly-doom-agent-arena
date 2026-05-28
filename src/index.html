@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-us">
     <head>
         <title>Doom Arena</title>
@@ -1453,6 +1453,13 @@
                                     <option value="duel_e1m8_corner_spawn">Corner spawn</option>                                    <option value="duel_e1m8_blind_spawn" selected>Blind spawn</option>
                                 </select>
                             </div>
+                    <div class="arena-model-field">
+                        <label for="arena-enable-weapon-pickups">Weapon spawn</label>
+                        <select id="arena-enable-weapon-pickups">
+                            <option value="true" selected>True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
                             <div class="arena-model-field">
                                 <label for="arena-round">Matches in session</label>
                                 <input id="arena-round" type="number" min="1" value="1" />
@@ -1477,18 +1484,6 @@
                                     <span class="arena-toggle-text">
                                         <span class="arena-toggle-title">Rotate through all maps</span>
                                         <span class="arena-toggle-hint">Cycle each round through every active spawn variant in order. Stacks with randomization.</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="arena-config-section">
-                            <div class="arena-config-section-title">Agent behavior</div>
-                            <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field is-disabled" for="arena-enable-cross-round-recap" aria-disabled="true">
-                                    <input id="arena-enable-cross-round-recap" type="checkbox" disabled />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Cross-round learning recap - disabled</span>
-                                        <span class="arena-toggle-hint">Temporarily disabled. Cross-round recap is not active in the current hierarchical strategy flow.</span>
                                     </span>
                                 </label>
                             </div>
@@ -2330,6 +2325,9 @@
             }
 
             function drawTacticalWeaponsOnAutomap() {
+                if (!duelWeaponSpawnEnabled()) {
+                    return;
+                }
                 var canvas = document.getElementById("duel-player1-automap-canvas");
                 var ctx;
                 var bounds = tacticalOverlayBounds();
@@ -3224,8 +3222,20 @@
                 return String(node.value);
             }
 
+            function selectedWeaponSpawnEnabled() {
+                return selectedStringValue("arena-enable-weapon-pickups", "true") !== "false";
+            }
+
+            function duelWeaponSpawnEnabled() {
+                if (currentDuelSession && Object.prototype.hasOwnProperty.call(currentDuelSession, "enable_weapon_pickups")) {
+                    return !!currentDuelSession.enable_weapon_pickups;
+                }
+                return selectedWeaponSpawnEnabled();
+            }
+
             function buildDuelSessionPayload(continueSession, restartSession) {
                 var rounds = selectedNumberValue("arena-round", 1);
+                var preserveSessionSettings = (continueSession || restartSession) && currentDuelSession;
                 return {
                     arena_mode: "duel",
                     control_mode: "hierarchical",
@@ -3241,10 +3251,12 @@
                     hide_enemy_position: true,
                     randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
                     rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
-                    enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
-                    recap_window: 0,
+                    recap_window: 1,
                     enable_map_blueprint: selectedCheckboxValue("arena-enable-map-blueprint", false),
-                    enable_weapon_pickups: true,
+                    enable_weapon_pickups: preserveSessionSettings &&
+                        Object.prototype.hasOwnProperty.call(currentDuelSession, "enable_weapon_pickups")
+                        ? !!currentDuelSession.enable_weapon_pickups
+                        : selectedWeaponSpawnEnabled(),
                     mirror_pair: selectedCheckboxValue("arena-mirror-pair", false),
                     continue_session: !!continueSession,
                     restart_session: !!restartSession,
@@ -4575,13 +4587,16 @@
                     : "-";
                 var isHierarchical = row.strategy_source === "hierarchical";
                 var isPlan = !!(row.plan_route || row.plan_objective || row.plan_engagement_policy);
+                var isRejected = row.is_error || row.status === "error" || row.accepted === false;
                 var lifecycle = row.superseded_before_expiry
                     ? "superseded"
-                    : row.expired_before_next_intent
-                        ? "expired"
-                        : row.source === "state_current" || row.source === "participant_intents_tsv"
-                            ? "current"
-                            : "active/final";
+                    : isRejected
+                        ? "rejected"
+                        : row.expired_before_next_intent
+                            ? "expired"
+                            : row.source === "state_current" || row.source === "participant_intents_tsv"
+                                ? "current"
+                                : "accepted";
                 var strategyDetails = " | Strategy: category=" + formatCompactValue(row.strategy_category) +
                     " | action=" + formatCompactValue(row.strategy_action) +
                     " | intensity=" + formatCompactValue(row.strategy_intensity) +
@@ -4607,7 +4622,8 @@
                         " " + (isPlan ? "set_participant_plan" : (isHierarchical ? "set_participant_strategy" : "set_participant_intent")) +
                         " | seq " + sequence +
                         requestedText +
-                        " | " + lifecycle,
+                        " | " + lifecycle +
+                        (isRejected && row.error ? " | error=" + formatCompactValue(row.error) : ""),
                     decisionLatency: decisionLatencyForIntent(stats, row),
                     mcpLatency: formatMillis(row.mcp_call_latency_ms),
                     showDecisionLatency: true,
@@ -5914,7 +5930,7 @@
                         !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
                         !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
                         (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&
-                        !!currentDuelSession.enable_cross_round_recap === selectedCheckboxValue("arena-enable-cross-round-recap", false) &&
+                        !!currentDuelSession.enable_weapon_pickups === selectedWeaponSpawnEnabled() &&
                         !!currentDuelSession.enable_map_blueprint === selectedCheckboxValue("arena-enable-map-blueprint", false) &&
                         !!currentDuelSession.mirror_pair === selectedCheckboxValue("arena-mirror-pair", false);
                     if (sessionMatchesSettings) {
@@ -5979,19 +5995,14 @@
                 var randomizeSpawnsToggle = document.getElementById("arena-randomize-spawns");
                 var rotateAllMapsToggle = document.getElementById("arena-rotate-all-maps");
                 var simplifiedActionsToggle = document.getElementById("arena-enable-simplified-actions");
-                var recapToggle = document.getElementById("arena-enable-cross-round-recap");
+                var weaponPickupsToggle = document.getElementById("arena-enable-weapon-pickups");
                 var mapBlueprintToggle = document.getElementById("arena-enable-map-blueprint");
                 var mirrorPairToggle = document.getElementById("arena-mirror-pair");
                 [mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
-                 simplifiedActionsToggle, mapBlueprintToggle, mirrorPairToggle]
+                 simplifiedActionsToggle, weaponPickupsToggle, mapBlueprintToggle, mirrorPairToggle]
                     .forEach(function (el) {
                         if (el) { el.addEventListener("change", schedulePromptPreview); }
                     });
-                if (recapToggle) {
-                    recapToggle.addEventListener("change", function () {
-                        schedulePromptPreview();
-                    });
-                }
                 var roundsInput = document.getElementById("arena-round");
                 if (roundsInput) {
                     roundsInput.addEventListener("change", schedulePromptPreview);

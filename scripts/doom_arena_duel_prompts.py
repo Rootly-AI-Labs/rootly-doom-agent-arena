@@ -1,4 +1,4 @@
-"""Shared prompt and token helpers for browser-created Doom Arena duels."""
+﻿"""Shared prompt and token helpers for browser-created Doom Arena duels."""
 
 from __future__ import annotations
 
@@ -42,21 +42,14 @@ def load_map_blueprint(scenario_id: str) -> str:
 
 
 def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
-    if not enabled or total_rounds <= 1:
+    if total_rounds <= 1:
         return ""
     return """
-Cross-round learning:
-- Your observation includes a `previous_rounds` array with a recap of prior rounds.
-- Each entry has: `round`, `winner`, `terminal_reason`, `elapsed_time_seconds`,
-  `your_final_health`, `your_damage_dealt`, `your_hit_rate`,
-  `opponent_prevailing_intent`, `spawn_variant`.
-- On round 1 `previous_rounds` is empty — this is expected.
-- Use recaps to adapt: if you lost last round, change your opening intent or spacing.
-  If opponent's `prevailing_intent` was `search`, expect passive play and push early.
-- Do not spend more than one decision reacting to recap data; keep the observe-intent loop fast.
+Cross-round recap:
+- If `previous_rounds` appears in observations, use it only to avoid repeating failed openings.
+- Recaps are intentionally tiny: winner, whether you won, damage, first objectives, and resource pickup owner when available.
 
 """
-
 
 def build_controller_tokens(run_id: str, player_1_model: str, player_2_model: str, enforce: bool) -> dict[str, Any]:
     return {
@@ -172,7 +165,7 @@ Static map context:
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Blocked route cells: {blocked_cells}.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
-- Observations include `map.pickups` with current pickup availability and distance from you.
+- Observations include `map.pickups` with currently available resources and distance from you.
 - Pick route cells that avoid `#` walls and advance your current objective. The Doom autopilot handles frame-level movement.
 
 ASCII map:
@@ -228,13 +221,16 @@ def instructions(
         )
         stop_rules = (
             """Stop rules:
-- If `get_match_result` returns `phase="finished"` and `has_next_round=false`, call `stop_participant_intent` once, then stop all tool calls.
+- `has_next_round=false` only means there is no later match after the current one. It is not a stop signal by itself.
+- If `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat`, continue the normal ready/opening/observe/plan loop even when `has_next_round=false`.
+- Stop only when `get_match_result` returns `phase="finished"` and `has_next_round=false`; then call `stop_participant_intent` once and stop all tool calls.
 - If `phase="finished"` and `has_next_round=true`, poll only `get_match_result` until `run_id` changes, then start the next match with `set_participant_ready` and reset `sequence_number=1`.
 
 """
             if total_rounds > 1
             else """Stop rule:
-- If `get_match_result` returns `phase="finished"`, call `stop_participant_intent` once, then stop all tool calls.
+- This single match is still active while `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat`; continue the normal ready/opening/observe/plan loop.
+- Stop only when `get_match_result` returns `phase="finished"`; then call `stop_participant_intent` once and stop all tool calls.
 
 """
         )
@@ -262,6 +258,7 @@ Loop:
 7. After each `set_participant_plan`, immediately observe again if the match is still active.
 8. Do not choose timing fields. The server uses a 16000 ms route lease by default so routes can progress while agents still refresh from new observations. It is not a sleep timer and newer higher-sequence plans override immediately.
 9. Do not use `Start-Sleep`, timers, or manual waiting loops. Keep updates moving as fast as the chat environment allows.
+10. On the final match, `has_next_round=false` can appear before the match is finished. Keep playing until `phase="finished"`.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -278,10 +275,10 @@ Plan schema:
 {{
   "participant_id": "{participant_id}",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
-  "objective": "pick_up_shotgun",
+  "objective": "control_center",
   "route": {route_example},
   "engagement_policy": "engage_if_visible",
-  "reasoning": "take center weapon before forcing a fight",
+  "reasoning": "use safe cells while checking for the enemy",
   "sequence_number": 1
 }}
 ```
@@ -302,7 +299,7 @@ Route rules:
 
 Allowed engagement_policy:
 - `engage_if_visible`
-- `avoid_until_target`
+- `avoid_until_target` (prioritize reaching the route target; Doom suppresses attack while the route is still in progress)
 - `hold_fire`
 - `force_fight`
 
@@ -345,7 +342,7 @@ Loop template:
 8. Immediately call `get_participant_observation` again and choose the next high-level intent, even if the previous intent is still executing.
 9. Repeat observation and intent decisions until `get_match_result` shows `phase="finished"`.
 10. If `has_next_round=true`, stay in the same chat turn, keep polling `get_match_result` until `run_id` changes, then treat that as the next match: call `set_participant_ready` again, reset `sequence_number=1`, and repeat the opening flow.
-11. If `has_next_round=false`, stop after the final match result.
+11. If `has_next_round=false` before `phase="finished"`, keep playing the current final match. Stop only after the final match result reports `phase="finished"`.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -422,6 +419,7 @@ Intent policy:
 
 | Situation | Intent and tactical controls |
 | --- | --- |
+| Match `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat` and `has_next_round=false` | This is the active final match. Continue the normal ready/opening/observe/intent loop; do not stop yet. |
 | Match `phase` is `finished` and `has_next_round=false` | Call `stop_participant_intent`, then stop the loop. |
 | Match `phase` is `finished` and `has_next_round=true` | Keep polling `get_match_result` until `run_id` changes, then start the next match by calling `set_participant_ready` again and resetting `sequence_number` to `1`. |
 | Opponent hidden / `los_status=lost_los` | `search`, style `balanced`, `fire_policy=hold_fire`, `movement_bias=direct`, `distance_policy=maintain`, `navigation_target=last_seen_enemy`, omit `movement_primitive`. |
@@ -527,11 +525,13 @@ Loop behavior:
 - Do not call `Start-Sleep` or run your own delay.
 - Reassess and refresh the intent before it expires if the same plan still makes sense.
 - Keep incrementing `sequence_number` within the current match; reset it to `1` when a new `run_id` starts.
-- Stop when `get_match_result` returns `phase="finished"` and `has_next_round=false`.
+- Do not stop just because `has_next_round=false`; that can simply mean the current match is the final match.
+- Stop only when `get_match_result` returns `phase="finished"` and `has_next_round=false`.
 - If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
-Stop rules — read carefully:
+Stop rules - read carefully:
+- When `get_match_result` returns any phase other than `finished`, keep playing the current match even if `has_next_round=false`.
 - When `get_match_result` returns `phase="finished"` AND `has_next_round=false`:
   call `stop_participant_intent` once, then **stop all tool calls immediately**.
   Do not call `get_participant_observation`, `set_participant_intent`, or any other tool after this.

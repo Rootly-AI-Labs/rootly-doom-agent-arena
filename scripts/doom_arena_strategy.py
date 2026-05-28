@@ -62,6 +62,8 @@ STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
         "y": 672,
         "zone": "top_lane",
         "purpose": "restore_health",
+        "heals": 100,
+        "max_health": 150,
     },
     {
         "id": "health_bottom",
@@ -71,6 +73,8 @@ STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
         "y": -672,
         "zone": "bottom_lane",
         "purpose": "restore_health",
+        "heals": 100,
+        "max_health": 150,
     },
     {
         "id": "weapon_center",
@@ -516,9 +520,11 @@ def blocked_grid_cells() -> list[str]:
     return cells
 
 
-def strategy_pickups_for_observation(x: Any, y: Any) -> list[dict[str, Any]]:
+def strategy_pickups_for_observation(x: Any, y: Any, include_weapons: bool = True) -> list[dict[str, Any]]:
     pickups = []
     for pickup in STATIC_PICKUPS:
+        if pickup.get("type") == "weapon" and not include_weapons:
+            continue
         item = dict(pickup)
         item["distance"] = pickup_distance(pickup, x, y)
         item["cell"] = xy_to_grid_cell(pickup.get("x"), pickup.get("y"))
@@ -692,9 +698,20 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "spin_detected": spin,
             "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
         },
+        "active_plan": full_observation.get("active_plan") or None,
         "map": {
             "current_zone": current_zone,
-            "pickups": strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y")),
+            "weapon_pickups_enabled": (
+                full_observation.get("map", {}).get("weapon_pickups_enabled")
+                if isinstance(full_observation.get("map"), dict)
+                else True
+            ),
+            "pickups": (
+                full_observation.get("map", {}).get("pickups")
+                if isinstance(full_observation.get("map"), dict)
+                and isinstance(full_observation.get("map", {}).get("pickups"), list)
+                else strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y"))
+            ),
         },
     }
 

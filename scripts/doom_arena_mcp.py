@@ -262,6 +262,9 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         state = parse_state(self._request("GET", "/api/arena/state"))
         observation = make_participant_observation(state, participant_id)
+        active_plan = self._active_plan_for_observation(participant_id, observation)
+        if active_plan:
+            observation["active_plan"] = active_plan
         duel_session = self._read_duel_session_status()
         observation["duel_session_id"] = duel_session.get("duel_session_id", "")
         observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
@@ -275,13 +278,14 @@ class DoomArenaClient:
             observation["state"]["control_mode"] = normalize_control_mode(
                 duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)
             )
-        # Phase 1: cross-round recap
-        if duel_session.get("enable_cross_round_recap"):
+        current_round = int(duel_session.get("current_round", 1) or 1)
+        total_rounds = int(duel_session.get("total_rounds", 1) or 1)
+        if total_rounds > 1 and current_round > 1:
             observation["previous_rounds"] = self._fetch_previous_rounds_recap(
                 participant_id,
-                int(duel_session.get("current_round", 1)),
+                current_round,
                 str(duel_session.get("duel_session_id", "")),
-                int(duel_session.get("recap_window", 0)),
+                1,
             )
         if normalize_control_mode(duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)) == CONTROL_MODE_HIERARCHICAL:
             compact = make_strategy_observation(observation, CONTROL_MODE_HIERARCHICAL)
@@ -289,6 +293,92 @@ class DoomArenaClient:
                 compact["previous_rounds"] = observation["previous_rounds"]
             return json.dumps(compact, indent=2)
         return json.dumps(observation, indent=2)
+
+    def _active_plan_for_observation(self, participant_id: str, observation: dict[str, Any]) -> dict[str, Any]:
+        match_block = observation.get("match", {}) if isinstance(observation.get("match"), dict) else {}
+        self_block = observation.get("self", {}) if isinstance(observation.get("self"), dict) else {}
+        if match_block.get("phase") == "finished" or self_block.get("alive") is False:
+            return {}
+        rows = [
+            row
+            for row in self._read_participant_intent_rows()
+            if row.get("participant_id") == participant_id and row.get("plan_route")
+        ]
+        if not rows:
+            return {}
+
+        current_ms = now_ms()
+        live_rows = []
+        for row in rows:
+            try:
+                expires_at = int(row.get("expires_at_ms") or "0")
+            except ValueError:
+                expires_at = 0
+            if expires_at <= 0 or expires_at > current_ms:
+                live_rows.append(row)
+        rows = live_rows or rows
+        def sequence_value(row: dict[str, str]) -> int:
+            try:
+                return int(row.get("sequence_number") or "0")
+            except ValueError:
+                return 0
+        rows.sort(key=sequence_value)
+        row = rows[-1]
+
+        self_x = self_block.get("x")
+        self_y = self_block.get("y")
+        route_cells = [cell for cell in str(row.get("plan_route_cells", "")).split(";") if cell]
+        route_xy = []
+        for item in str(row.get("plan_route", "")).split(";"):
+            if "," not in item:
+                continue
+            x_text, y_text = item.split(",", 1)
+            try:
+                route_xy.append((int(float(x_text)), int(float(y_text))))
+            except ValueError:
+                continue
+        if not route_cells:
+            route_cells = [xy_to_grid_cell(x, y) for x, y in route_xy]
+
+        current_index = 0
+        distance_to_waypoint = None
+        try:
+            sx = float(self_x)
+            sy = float(self_y)
+            for index, (x, y) in enumerate(route_xy):
+                distance = int(round(math.dist((sx, sy), (float(x), float(y)))))
+                if distance > 32:
+                    current_index = index
+                    distance_to_waypoint = distance
+                    break
+            else:
+                current_index = max(0, len(route_xy) - 1)
+                distance_to_waypoint = 0 if route_xy else None
+        except (TypeError, ValueError):
+            current_index = 0
+
+        current_cell = route_cells[current_index] if current_index < len(route_cells) else ""
+        current_xy = route_xy[current_index] if current_index < len(route_xy) else None
+        return {
+            "accepted": True,
+            "status": "active",
+            "intent_id": row.get("intent_id", ""),
+            "sequence_number": row.get("sequence_number", ""),
+            "objective": row.get("plan_objective", ""),
+            "engagement_policy": row.get("plan_engagement_policy", ""),
+            "reasoning": row.get("plan_reasoning", ""),
+            "route_cells": route_cells,
+            "route": [{"x": x, "y": y} for x, y in route_xy],
+            "current_waypoint_index": current_index + 1 if route_xy else 0,
+            "current_waypoint_count": len(route_xy),
+            "current_waypoint_cell": current_cell,
+            "current_waypoint": (
+                {"x": current_xy[0], "y": current_xy[1]}
+                if current_xy is not None
+                else None
+            ),
+            "distance_to_waypoint": distance_to_waypoint,
+        }
 
     def current_participant_cell(self, participant_id: str) -> str:
         state = parse_state(self._request("GET", "/api/arena/state"))
@@ -2251,6 +2341,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     match = next((row for row in rows if row.get("kind") == "match"), {})
     config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
     hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
+    enable_weapon_pickups = config_row.get("enable_weapon_pickups", "1") != "0"
     state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
     participant = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == participant_id),
@@ -2380,7 +2471,12 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "policy_compliance_reason": self_state.get("policy_compliance_reason"),
         },
         "map": {
-            "pickups": strategy_pickups_for_observation(participant.get("x"), participant.get("y")),
+            "weapon_pickups_enabled": enable_weapon_pickups,
+            "pickups": strategy_pickups_for_observation(
+                participant.get("x"),
+                participant.get("y"),
+                include_weapons=enable_weapon_pickups,
+            ),
         },
         "match": {
             "phase": match.get("phase", participant.get("phase", "")),
@@ -2710,7 +2806,7 @@ def participant_plan_schema() -> dict[str, Any]:
             "objective": {
                 "type": "string",
                 "maxLength": PLAN_OBJECTIVE_MAX_CHARS,
-                "description": "Short free-form goal such as pick_up_shotgun, heal, flank, clear_top, or force_fight.",
+                "description": "Short free-form goal such as control_center, heal, flank, clear_top, or force_fight.",
             },
             "route": {
                 "type": "array",

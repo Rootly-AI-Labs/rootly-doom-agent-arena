@@ -10,6 +10,7 @@ control mode: hierarchical route planning
 primary action tool: set_participant_plan
 spawn variant: blind spawn
 fog of war: enabled
+weapon spawn: enabled
 policy lease: 8000ms
 map source: scripts/map_blueprints/duel_e1m8_ascii.txt
 cell size: 64 x 64 Doom units
@@ -29,15 +30,17 @@ Default action schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "pick_up_shotgun",
+  "objective": "control_center",
   "route": ["M05", "G05", "G12", "M17"],
   "engagement_policy": "engage_if_visible",
-  "reasoning": "take center weapon before forcing a fight",
+  "reasoning": "use safe cells while checking for the enemy",
   "sequence_number": 1
 }
 ```
 
 Routes use grid cells (`A-X`, `01-32`) instead of raw Doom coordinates. A route can contain up to 16 cells, and the server rejects waypoint segments that cross blocked `#` wall cells. The old `set_participant_strategy` category/action schema remains for compatibility, but it is not the default recommendation.
+
+When an agent uses `engagement_policy=avoid_until_target`, Doom follows the route first and suppresses attack until the active route is complete. This is intended for healing or resource routes where stopping to trade shots defeats the plan.
 
 ## Fog of war
 
@@ -56,3 +59,7 @@ health_top medikit: x=0 y=672
 health_bottom medikit: x=0 y=-672
 weapon_center shotgun: x=0 y=0
 ```
+
+Each medikit restores `+100` health, capped at the duel max health of `150`.
+
+The setup screen has a `Weapon spawn` option. When it is `False`, the shotgun is removed from the Doom map, hidden from the tactical overlay, and omitted from `map.pickups` and generated prompt context. Health pickups remain enabled.
