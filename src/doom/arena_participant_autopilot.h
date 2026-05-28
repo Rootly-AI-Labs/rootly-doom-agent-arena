@@ -39,6 +39,11 @@ typedef struct
     int aim_error;
     int stuck_recovery;
     int replan_recommended;
+    int route_waypoint_active;
+    int route_target_x;
+    int route_target_y;
+    int route_waypoint_index;
+    int route_waypoint_count;
     char replan_reasons[128];
     char action[64];
     char reason[96];

@@ -10,6 +10,8 @@
 
 #include "doomdef.h"
 #include "doomstat.h"
+#include "d_items.h"
+#include "info.h"
 #include "i_video.h"
 #include "m_random.h"
 #include "p_local.h"
@@ -36,9 +38,11 @@
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
+#define ARENA_DUEL_SHOTGUN_COOLDOWN_TICS 28
 #define ARENA_DUEL_UNSTICK_DISTANCE 128
 #define ARENA_DUEL_UNSTICK_PUSH_SPEED (0x24 * 2048)
 #define ARENA_DUEL_MAX_EVENTS 4096
+#define ARENA_DUEL_PATH_LOG_INTERVAL_TICKS 9
 
 typedef enum
 {
@@ -87,6 +91,8 @@ static mobj_t *arena_duel_player1_cached_mo;
 // mobj here from P_SpawnPlayer and use it as a fallback. The cache is cleared
 // in ArenaDuel_InitLevel so dangling pointers don't survive a level reload.
 static int arena_duel_player2_ammo_bullets;
+static int arena_duel_player2_ammo_shells;
+static int arena_duel_player1_attack_cooldown;
 static int arena_duel_player2_attack_cooldown;
 static int arena_duel_player2_attack_requests;
 static int arena_duel_player2_shots_fired;
@@ -113,6 +119,11 @@ static char arena_duel_last_intent_id[ARENA_PARTICIPANT_COUNT][64];
 static boolean arena_duel_intent_was_active[ARENA_PARTICIPANT_COUNT];
 static char arena_duel_last_autopilot_key[ARENA_PARTICIPANT_COUNT][192];
 static boolean arena_duel_stuck_recovery_was_active[ARENA_PARTICIPANT_COUNT];
+static boolean arena_duel_path_log_have_position[ARENA_PARTICIPANT_COUNT];
+static int arena_duel_path_log_last_tick[ARENA_PARTICIPANT_COUNT];
+static int arena_duel_path_log_last_x[ARENA_PARTICIPANT_COUNT];
+static int arena_duel_path_log_last_y[ARENA_PARTICIPANT_COUNT];
+static int arena_duel_path_log_last_angle[ARENA_PARTICIPANT_COUNT];
 static pixel_t *arena_duel_player1_view_buffer;
 static byte *arena_duel_player1_view_rgba;
 static int arena_duel_player1_view_frame;
@@ -126,14 +137,23 @@ static int arena_duel_player2_view_frame;
 static int arena_duel_player2_view_nonzero_pixels;
 static fixed_t arena_duel_player2_last_autopilot_x;
 static fixed_t arena_duel_player2_last_autopilot_y;
+static fixed_t arena_duel_player1_last_autopilot_x;
+static fixed_t arena_duel_player1_last_autopilot_y;
+static int arena_duel_player1_autopilot_stuck_ticks;
 static int arena_duel_player2_autopilot_stuck_ticks;
+static boolean arena_duel_player1_have_autopilot_position;
 static boolean arena_duel_player2_have_autopilot_position;
+static arena_participant_autopilot_command_t arena_duel_player1_last_autopilot_command;
+static arena_participant_autopilot_command_t arena_duel_player2_last_autopilot_command;
 static boolean arena_duel_waiting_event_logged;
 static boolean arena_duel_waiting_first_intents_event_logged;
 static boolean arena_duel_player1_health_initialized;
 static player_t arena_duel_player2_view_player;
 static boolean arena_duel_player2_view_player_initialized;
 static int arena_duel_player2_view_player_last_tick;
+static weapontype_t arena_duel_player2_ready_weapon;
+
+static void ArenaDuel_AddEvent(const char *message);
 
 static void ArenaDuel_CopyField(char *dest, size_t dest_size, const char *value)
 {
@@ -177,10 +197,17 @@ static int ArenaDuel_NormalizedAngleDegrees(angle_t angle)
 static player_t *ArenaDuel_Player2ViewPlayer(void)
 {
     int i;
+    weapontype_t ready_weapon;
 
     if (arena_duel_player2 == NULL)
     {
         return &players[displayplayer];
+    }
+
+    ready_weapon = arena_duel_player2_ready_weapon;
+    if (ready_weapon <= wp_fist || ready_weapon >= NUMWEAPONS)
+    {
+        ready_weapon = wp_pistol;
     }
 
     if (!arena_duel_player2_view_player_initialized)
@@ -189,8 +216,8 @@ static player_t *ArenaDuel_Player2ViewPlayer(void)
         arena_duel_player2_view_player = players[displayplayer];
         arena_duel_player2_view_player.mo = arena_duel_player2;
         arena_duel_player2_view_player.health = arena_duel_player2->health;
-        arena_duel_player2_view_player.readyweapon = wp_pistol;
-        arena_duel_player2_view_player.pendingweapon = wp_pistol;
+        arena_duel_player2_view_player.readyweapon = ready_weapon;
+        arena_duel_player2_view_player.pendingweapon = ready_weapon;
         for (i = 0; i < NUMWEAPONS; i++)
         {
             arena_duel_player2_view_player.weaponowned[i] = false;
@@ -202,8 +229,11 @@ static player_t *ArenaDuel_Player2ViewPlayer(void)
         }
         arena_duel_player2_view_player.weaponowned[wp_fist] = true;
         arena_duel_player2_view_player.weaponowned[wp_pistol] = true;
+        arena_duel_player2_view_player.weaponowned[ready_weapon] = true;
         arena_duel_player2_view_player.ammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
         arena_duel_player2_view_player.maxammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+        arena_duel_player2_view_player.ammo[am_shell] = arena_duel_player2_ammo_shells;
+        arena_duel_player2_view_player.maxammo[am_shell] = 200;
         P_SetupPsprites(&arena_duel_player2_view_player);
         arena_duel_player2_view_player_initialized = true;
         arena_duel_player2_view_player_last_tick = -1;
@@ -211,11 +241,14 @@ static player_t *ArenaDuel_Player2ViewPlayer(void)
 
     arena_duel_player2_view_player.mo = arena_duel_player2;
     arena_duel_player2_view_player.health = arena_duel_player2->health;
-    arena_duel_player2_view_player.readyweapon = wp_pistol;
+    arena_duel_player2_view_player.readyweapon = ready_weapon;
     arena_duel_player2_view_player.weaponowned[wp_fist] = true;
     arena_duel_player2_view_player.weaponowned[wp_pistol] = true;
+    arena_duel_player2_view_player.weaponowned[ready_weapon] = true;
     arena_duel_player2_view_player.ammo[am_clip] = arena_duel_player2_ammo_bullets;
     arena_duel_player2_view_player.maxammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+    arena_duel_player2_view_player.ammo[am_shell] = arena_duel_player2_ammo_shells;
+    arena_duel_player2_view_player.maxammo[am_shell] = 200;
 
     if (arena_duel_player2_view_player_last_tick != leveltime)
     {
@@ -226,9 +259,78 @@ static player_t *ArenaDuel_Player2ViewPlayer(void)
     return &arena_duel_player2_view_player;
 }
 
+static void ArenaDuel_SetPlayer2ViewPsprite(int position, statenum_t state)
+{
+    pspdef_t *psp;
+
+    if (position < 0 || position >= NUMPSPRITES || state <= S_NULL || state >= NUMSTATES)
+    {
+        return;
+    }
+
+    psp = &arena_duel_player2_view_player.psprites[position];
+    psp->state = &states[state];
+    psp->tics = states[state].tics;
+    psp->sx = states[state].misc1;
+    psp->sy = states[state].misc2;
+}
+
+static void ArenaDuel_TriggerPlayer2ViewFire(void)
+{
+    weapontype_t ready_weapon;
+    statenum_t weapon_state;
+    statenum_t flash_state;
+
+    if (arena_duel_player2 == NULL)
+    {
+        return;
+    }
+
+    ArenaDuel_Player2ViewPlayer();
+    ready_weapon = arena_duel_player2_ready_weapon;
+    if (ready_weapon <= wp_fist || ready_weapon >= NUMWEAPONS)
+    {
+        ready_weapon = wp_pistol;
+    }
+
+    weapon_state = weaponinfo[ready_weapon].atkstate;
+    flash_state = weaponinfo[ready_weapon].flashstate;
+    if (ready_weapon == wp_pistol && weapon_state == S_PISTOL1)
+    {
+        weapon_state = S_PISTOL2;
+    }
+    else if (ready_weapon == wp_shotgun && weapon_state == S_SGUN1)
+    {
+        weapon_state = S_SGUN2;
+    }
+
+    ArenaDuel_SetPlayer2ViewPsprite(ps_weapon, weapon_state);
+    ArenaDuel_SetPlayer2ViewPsprite(ps_flash, flash_state);
+}
+
 static int ArenaDuel_AbsInt(int value)
 {
     return value < 0 ? -value : value;
+}
+
+static void ArenaDuel_LogCollisionProfile(const char *participant, const mobj_t *mobj)
+{
+    char event[192];
+
+    if (participant == NULL || mobj == NULL)
+    {
+        return;
+    }
+
+    snprintf(event,
+             sizeof(event),
+             "collision_profile: %s radius=%d height=%d flags=%d type=%d",
+             participant,
+             mobj->radius >> FRACBITS,
+             mobj->height >> FRACBITS,
+             mobj->flags,
+             mobj->type);
+    ArenaDuel_AddEvent(event);
 }
 
 boolean ArenaDuel_Player1CanSeePlayer2(int relative_angle, int geometric_line_of_sight)
@@ -1088,6 +1190,60 @@ static void ArenaDuel_LogAutopilotEvent(arena_participant_id_t participant)
     arena_duel_stuck_recovery_was_active[participant] = debug.stuck_recovery ? true : false;
 }
 
+static void ArenaDuel_LogPathPoint(arena_participant_id_t participant)
+{
+    mobj_t *mobj;
+    arena_participant_autopilot_debug_t debug;
+    char event[192];
+    int x;
+    int y;
+    int angle;
+
+    if (!arena_duel_started || arena_duel_finished)
+    {
+        return;
+    }
+
+    mobj = participant == ARENA_PARTICIPANT_PLAYER_2
+        ? arena_duel_player2
+        : ArenaDuel_Player1Mobj();
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    if (arena_duel_path_log_have_position[participant]
+        && leveltime - arena_duel_path_log_last_tick[participant] < ARENA_DUEL_PATH_LOG_INTERVAL_TICKS)
+    {
+        return;
+    }
+
+    x = mobj->x >> FRACBITS;
+    y = mobj->y >> FRACBITS;
+    angle = ArenaDuel_NormalizedAngleDegrees(mobj->angle);
+    debug = ArenaParticipantAutopilot_Debug(participant);
+
+    snprintf(event,
+             sizeof(event),
+             "path_point: %s x=%d y=%d angle=%d dx=%d dy=%d dangle=%d action=%s aim_error=%d",
+             ArenaDuel_ParticipantName(participant),
+             x,
+             y,
+             angle,
+             arena_duel_path_log_have_position[participant] ? x - arena_duel_path_log_last_x[participant] : 0,
+             arena_duel_path_log_have_position[participant] ? y - arena_duel_path_log_last_y[participant] : 0,
+             arena_duel_path_log_have_position[participant] ? angle - arena_duel_path_log_last_angle[participant] : 0,
+             debug.autopilot_action,
+             debug.aim_error);
+    ArenaDuel_AddEvent(event);
+
+    arena_duel_path_log_have_position[participant] = true;
+    arena_duel_path_log_last_tick[participant] = leveltime;
+    arena_duel_path_log_last_x[participant] = x;
+    arena_duel_path_log_last_y[participant] = y;
+    arena_duel_path_log_last_angle[participant] = angle;
+}
+
 static void ArenaDuel_Finish(const char *winner, const char *reason)
 {
     char event[96];
@@ -1113,6 +1269,26 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
     fine_angle = angle >> ANGLETOFINESHIFT;
     mobj->momx += FixedMul(move, finecosine[fine_angle]);
     mobj->momy += FixedMul(move, finesine[fine_angle]);
+}
+
+static void ArenaDuel_ThrustTowardRouteWaypoint(
+    mobj_t *mobj,
+    const arena_participant_autopilot_command_t *command)
+{
+    angle_t angle;
+
+    if (mobj == NULL
+        || command == NULL
+        || !command->route_waypoint_active)
+    {
+        return;
+    }
+
+    angle = R_PointToAngle2(mobj->x,
+                            mobj->y,
+                            command->route_target_x * FRACUNIT,
+                            command->route_target_y * FRACUNIT);
+    ArenaDuel_Thrust(mobj, angle, ARENA_DUEL_MOVE_SPEED);
 }
 
 static void ArenaDuel_SeparateParticipantsIfStuck(void)
@@ -1232,10 +1408,236 @@ static void ArenaDuel_RefillPlayer1Ammo(void)
     }
 }
 
+static int ArenaDuel_Player1AutopilotStuckTicks(void)
+{
+    mobj_t *mobj;
+    fixed_t delta;
+
+    mobj = ArenaDuel_Player1Mobj();
+    if (mobj == NULL)
+    {
+        arena_duel_player1_have_autopilot_position = false;
+        arena_duel_player1_autopilot_stuck_ticks = 0;
+        return 0;
+    }
+
+    if (!arena_duel_player1_have_autopilot_position)
+    {
+        arena_duel_player1_have_autopilot_position = true;
+        arena_duel_player1_last_autopilot_x = mobj->x;
+        arena_duel_player1_last_autopilot_y = mobj->y;
+        arena_duel_player1_autopilot_stuck_ticks = 0;
+        return 0;
+    }
+
+    delta = P_AproxDistance(mobj->x - arena_duel_player1_last_autopilot_x,
+                            mobj->y - arena_duel_player1_last_autopilot_y);
+    arena_duel_player1_last_autopilot_x = mobj->x;
+    arena_duel_player1_last_autopilot_y = mobj->y;
+
+    if ((delta >> FRACBITS) == 0)
+    {
+        arena_duel_player1_autopilot_stuck_ticks++;
+    }
+    else
+    {
+        arena_duel_player1_autopilot_stuck_ticks = 0;
+    }
+
+    return arena_duel_player1_autopilot_stuck_ticks;
+}
+
+static void ArenaDuel_Player1Attack(void)
+{
+    player_t *player;
+    mobj_t *mobj;
+    fixed_t slope;
+    int damage;
+    int i;
+    weapontype_t ready_weapon;
+
+    player = &players[consoleplayer];
+    mobj = ArenaDuel_Player1Mobj();
+    if (mobj == NULL || mobj->health <= 0)
+    {
+        return;
+    }
+
+    if (arena_duel_player1_attack_cooldown > 0)
+    {
+        return;
+    }
+
+    ready_weapon = player->readyweapon;
+    if (ready_weapon <= wp_fist || ready_weapon >= NUMWEAPONS)
+    {
+        ready_weapon = wp_pistol;
+    }
+
+    slope = P_AimLineAttack(mobj, mobj->angle, 16 * 64 * FRACUNIT);
+    if (slope == 0)
+    {
+        slope = P_AimLineAttack(mobj, mobj->angle, MISSILERANGE);
+    }
+
+    if (ready_weapon == wp_shotgun && player->ammo[am_shell] > 0)
+    {
+        for (i = 0; i < 7; i++)
+        {
+            angle_t pellet_angle;
+
+            pellet_angle = mobj->angle + (P_SubRandom() << 18);
+            damage = 5 * (P_Random() % 3 + 1);
+            P_LineAttack(mobj, pellet_angle, MISSILERANGE, slope, damage);
+        }
+        S_StartSound(mobj, sfx_shotgn);
+        player->ammo[am_shell] = 200;
+        arena_duel_player1_attack_cooldown = ARENA_DUEL_SHOTGUN_COOLDOWN_TICS;
+    }
+    else
+    {
+        damage = 5 * (P_Random() % 3 + 1);
+        P_LineAttack(mobj, mobj->angle, MISSILERANGE, slope, damage);
+        S_StartSound(mobj, sfx_pistol);
+        player->ammo[am_clip] = 200;
+        arena_duel_player1_attack_cooldown = ARENA_DUEL_ATTACK_COOLDOWN_TICS;
+    }
+
+    P_SetMobjState(mobj, S_PLAY_ATK2);
+    arena_duel_player1_shots_fired++;
+    ArenaDuel_AddEvent("participant_fired: player_1");
+}
+
+static boolean ArenaDuel_Player1GiveHealth(int amount)
+{
+    player_t *player;
+    mobj_t *mobj;
+
+    player = &players[consoleplayer];
+    mobj = ArenaDuel_Player1Mobj();
+    if (mobj == NULL || mobj->health >= MAXHEALTH)
+    {
+        return false;
+    }
+
+    mobj->health += amount;
+    if (mobj->health > MAXHEALTH)
+    {
+        mobj->health = MAXHEALTH;
+    }
+    player->health = mobj->health;
+    return true;
+}
+
+static boolean ArenaDuel_Player1ApplyPickup(mobj_t *special)
+{
+    player_t *player;
+    mobj_t *mobj;
+    char event[128];
+
+    player = &players[consoleplayer];
+    mobj = ArenaDuel_Player1Mobj();
+    if (special == NULL || mobj == NULL)
+    {
+        return false;
+    }
+
+    switch (special->type)
+    {
+    case MT_SHOTGUN:
+        player->weaponowned[wp_shotgun] = true;
+        player->readyweapon = wp_shotgun;
+        player->pendingweapon = wp_shotgun;
+        player->maxammo[am_shell] = 200;
+        player->ammo[am_shell] = 200;
+        S_StartSound(mobj, sfx_wpnup);
+        snprintf(event,
+                 sizeof(event),
+                 "pickup: player_1 shotgun x=%d y=%d",
+                 special->x >> FRACBITS,
+                 special->y >> FRACBITS);
+        ArenaDuel_AddEvent(event);
+        P_RemoveMobj(special);
+        return true;
+
+    case MT_MISC10:
+        if (!ArenaDuel_Player1GiveHealth(10))
+        {
+            return false;
+        }
+        S_StartSound(mobj, sfx_itemup);
+        ArenaDuel_AddEvent("pickup: player_1 stimpack");
+        P_RemoveMobj(special);
+        return true;
+
+    case MT_MISC11:
+        if (!ArenaDuel_Player1GiveHealth(25))
+        {
+            return false;
+        }
+        S_StartSound(mobj, sfx_itemup);
+        ArenaDuel_AddEvent("pickup: player_1 medikit");
+        P_RemoveMobj(special);
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+static void ArenaDuel_CheckPlayer1Pickups(void)
+{
+    thinker_t *thinker;
+    thinker_t *next;
+    mobj_t *player1;
+
+    player1 = ArenaDuel_Player1Mobj();
+    if (player1 == NULL || player1->health <= 0)
+    {
+        return;
+    }
+
+    for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next)
+    {
+        mobj_t *special;
+        fixed_t pickup_distance;
+        fixed_t touch_distance;
+
+        next = thinker->next;
+        if (thinker->function.acp1 != (actionf_p1) P_MobjThinker)
+        {
+            continue;
+        }
+
+        special = (mobj_t *) thinker;
+        if (!(special->flags & MF_SPECIAL))
+        {
+            continue;
+        }
+
+        pickup_distance = P_AproxDistance(special->x - player1->x,
+                                          special->y - player1->y);
+        touch_distance = special->radius + player1->radius;
+        if (pickup_distance >= touch_distance)
+        {
+            continue;
+        }
+
+        if (special->z - player1->z > player1->height
+            || special->z - player1->z < -8 * FRACUNIT)
+        {
+            continue;
+        }
+
+        ArenaDuel_Player1ApplyPickup(special);
+    }
+}
+
 static void ArenaDuel_Player2Attack(void)
 {
     fixed_t slope;
     int damage;
+    int i;
 
     if (arena_duel_player2 == NULL || arena_duel_player2->health <= 0)
     {
@@ -1258,18 +1660,152 @@ static void ArenaDuel_Player2Attack(void)
                                 MISSILERANGE);
     }
 
-    damage = 5 * (P_Random() % 3 + 1);
-    P_LineAttack(arena_duel_player2,
-                 arena_duel_player2->angle,
-                 MISSILERANGE,
-                 slope,
-                 damage);
-    S_StartSound(arena_duel_player2, sfx_pistol);
+    if (arena_duel_player2_ready_weapon == wp_shotgun
+        && arena_duel_player2_ammo_shells > 0)
+    {
+        for (i = 0; i < 7; i++)
+        {
+            angle_t pellet_angle;
 
-    arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
+            pellet_angle = arena_duel_player2->angle + (P_SubRandom() << 18);
+            damage = 5 * (P_Random() % 3 + 1);
+            P_LineAttack(arena_duel_player2,
+                         pellet_angle,
+                         MISSILERANGE,
+                         slope,
+                         damage);
+        }
+        S_StartSound(arena_duel_player2, sfx_shotgn);
+        arena_duel_player2_ammo_shells = 200;
+        arena_duel_player2_attack_cooldown = ARENA_DUEL_SHOTGUN_COOLDOWN_TICS;
+    }
+    else
+    {
+        damage = 5 * (P_Random() % 3 + 1);
+        P_LineAttack(arena_duel_player2,
+                     arena_duel_player2->angle,
+                     MISSILERANGE,
+                     slope,
+                     damage);
+        S_StartSound(arena_duel_player2, sfx_pistol);
+        arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
+        arena_duel_player2_attack_cooldown = ARENA_DUEL_ATTACK_COOLDOWN_TICS;
+    }
+    ArenaDuel_TriggerPlayer2ViewFire();
+
     arena_duel_player2_shots_fired++;
-    arena_duel_player2_attack_cooldown = ARENA_DUEL_ATTACK_COOLDOWN_TICS;
     ArenaDuel_AddEvent("participant_fired: player_2");
+}
+
+static boolean ArenaDuel_Player2GiveHealth(int amount)
+{
+    if (arena_duel_player2 == NULL || arena_duel_player2->health >= MAXHEALTH)
+    {
+        return false;
+    }
+
+    arena_duel_player2->health += amount;
+    if (arena_duel_player2->health > MAXHEALTH)
+    {
+        arena_duel_player2->health = MAXHEALTH;
+    }
+    return true;
+}
+
+static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
+{
+    char event[128];
+
+    if (special == NULL || arena_duel_player2 == NULL)
+    {
+        return false;
+    }
+
+    switch (special->type)
+    {
+    case MT_SHOTGUN:
+        arena_duel_player2_ready_weapon = wp_shotgun;
+        arena_duel_player2_ammo_shells = 200;
+        ArenaDuel_Player2ViewPlayer();
+        S_StartSound(arena_duel_player2, sfx_wpnup);
+        snprintf(event,
+                 sizeof(event),
+                 "pickup: player_2 shotgun x=%d y=%d",
+                 special->x >> FRACBITS,
+                 special->y >> FRACBITS);
+        ArenaDuel_AddEvent(event);
+        P_RemoveMobj(special);
+        return true;
+
+    case MT_MISC10:
+        if (!ArenaDuel_Player2GiveHealth(10))
+        {
+            return false;
+        }
+        S_StartSound(arena_duel_player2, sfx_itemup);
+        ArenaDuel_AddEvent("pickup: player_2 stimpack");
+        P_RemoveMobj(special);
+        return true;
+
+    case MT_MISC11:
+        if (!ArenaDuel_Player2GiveHealth(25))
+        {
+            return false;
+        }
+        S_StartSound(arena_duel_player2, sfx_itemup);
+        ArenaDuel_AddEvent("pickup: player_2 medikit");
+        P_RemoveMobj(special);
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+static void ArenaDuel_CheckPlayer2Pickups(void)
+{
+    thinker_t *thinker;
+    thinker_t *next;
+
+    if (arena_duel_player2 == NULL || arena_duel_player2->health <= 0)
+    {
+        return;
+    }
+
+    for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next)
+    {
+        mobj_t *special;
+        fixed_t pickup_distance;
+        fixed_t touch_distance;
+
+        next = thinker->next;
+        if (thinker->function.acp1 != (actionf_p1) P_MobjThinker)
+        {
+            continue;
+        }
+
+        special = (mobj_t *) thinker;
+        if (!(special->flags & MF_SPECIAL))
+        {
+            continue;
+        }
+
+        pickup_distance = P_AproxDistance(special->x - arena_duel_player2->x,
+                                          special->y - arena_duel_player2->y);
+        touch_distance = special->radius + arena_duel_player2->radius;
+        if (pickup_distance >= touch_distance)
+        {
+            continue;
+        }
+
+        if (special->z - arena_duel_player2->z > arena_duel_player2->height
+            || special->z - arena_duel_player2->z < -8 * FRACUNIT)
+        {
+            continue;
+        }
+
+        ArenaDuel_Player2ApplyPickup(special);
+    }
 }
 
 static int ArenaDuel_Player2AutopilotStuckTicks(void)
@@ -1309,6 +1845,90 @@ static int ArenaDuel_Player2AutopilotStuckTicks(void)
     return arena_duel_player2_autopilot_stuck_ticks;
 }
 
+static arena_participant_command_t ArenaDuel_Player1Command(void)
+{
+    arena_participant_command_t command;
+    arena_participant_autopilot_input_t input;
+    arena_participant_autopilot_command_t autopilot;
+    player_t *player;
+    mobj_t *player1;
+    angle_t angle_to_player2;
+
+    command = ArenaParticipantCommands_Command(ARENA_PARTICIPANT_PLAYER_1);
+    if (!ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1))
+    {
+        memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 "no_active_intent");
+        return command;
+    }
+
+    player = &players[consoleplayer];
+    player1 = ArenaDuel_Player1Mobj();
+    if (player1 == NULL || arena_duel_player2 == NULL)
+    {
+        memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 "missing_participant_state");
+        return command;
+    }
+
+    memset(&input, 0, sizeof(input));
+    input.participant = ARENA_PARTICIPANT_PLAYER_1;
+    input.intent = ArenaParticipantIntent_Get(ARENA_PARTICIPANT_PLAYER_1);
+    input.self_x = player1->x >> FRACBITS;
+    input.self_y = player1->y >> FRACBITS;
+    input.self_angle = ArenaDuel_AngleDegrees(player1->angle);
+    input.opponent_x = arena_duel_player2->x >> FRACBITS;
+    input.opponent_y = arena_duel_player2->y >> FRACBITS;
+    input.opponent_health = arena_duel_player2->health;
+    input.self_ammo = player->ammo[am_clip];
+    if (player->readyweapon == wp_shotgun)
+    {
+        input.self_ammo = player->ammo[am_shell];
+    }
+    input.self_health = player1->health;
+    input.distance = P_AproxDistance(player1->x - arena_duel_player2->x,
+                                     player1->y - arena_duel_player2->y) >> FRACBITS;
+    angle_to_player2 = R_PointToAngle2(player1->x,
+                                       player1->y,
+                                       arena_duel_player2->x,
+                                       arena_duel_player2->y);
+    input.relative_angle =
+        -ArenaDuel_NormalizedAngleDegrees(angle_to_player2 - player1->angle);
+    input.line_of_sight = P_CheckSight(player1, arena_duel_player2) ? 1 : 0;
+    input.stuck_ticks = ArenaDuel_Player1AutopilotStuckTicks();
+    input.tick = leveltime;
+    input.phase_finished = arena_duel_finished ? 1 : 0;
+
+    autopilot = ArenaParticipantAutopilot_Decide(&input);
+    if (!autopilot.active)
+    {
+        memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 autopilot.reason);
+        return command;
+    }
+
+    arena_duel_player1_last_autopilot_command = autopilot;
+    ArenaParticipantAutopilot_RecordDecision(ARENA_PARTICIPANT_PLAYER_1,
+                                             &input.intent,
+                                             &autopilot);
+
+    memset(&command, 0, sizeof(command));
+    command.forward = autopilot.forward;
+    command.strafe = autopilot.strafe;
+    command.turn = autopilot.turn;
+    command.attack = autopilot.attack;
+    command.use = autopilot.use;
+    command.active = true;
+    command.valid = true;
+    ArenaDuel_CopyField(command.command_id, sizeof(command.command_id), "player_1_autopilot");
+    ArenaDuel_CopyField(command.status, sizeof(command.status), "autopilot");
+    ArenaDuel_CopyField(command.last_action, sizeof(command.last_action), autopilot.action);
+    return command;
+}
+
 static arena_participant_command_t ArenaDuel_Player2Command(void)
 {
     arena_participant_command_t command;
@@ -1320,6 +1940,7 @@ static arena_participant_command_t ArenaDuel_Player2Command(void)
     command = ArenaParticipantCommands_Command(ARENA_PARTICIPANT_PLAYER_2);
     if (!ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_2))
     {
+        memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_2,
                                                  "no_active_intent");
         return command;
@@ -1328,6 +1949,7 @@ static arena_participant_command_t ArenaDuel_Player2Command(void)
     player = &players[consoleplayer];
     if (player->mo == NULL || arena_duel_player2 == NULL)
     {
+        memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_2,
                                                  "missing_participant_state");
         return command;
@@ -1360,11 +1982,13 @@ static arena_participant_command_t ArenaDuel_Player2Command(void)
     autopilot = ArenaParticipantAutopilot_Decide(&input);
     if (!autopilot.active)
     {
+        memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_2,
                                                  autopilot.reason);
         return command;
     }
 
+    arena_duel_player2_last_autopilot_command = autopilot;
     ArenaParticipantAutopilot_RecordDecision(ARENA_PARTICIPANT_PLAYER_2,
                                              &input.intent,
                                              &autopilot);
@@ -1383,6 +2007,110 @@ static arena_participant_command_t ArenaDuel_Player2Command(void)
     return command;
 }
 
+static void ArenaDuel_TickPlayer1CustomAutopilot(void)
+{
+    arena_participant_command_t command;
+    mobj_t *player1;
+
+    player1 = ArenaDuel_Player1Mobj();
+    if (player1 == NULL)
+    {
+        memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 "missing_participant_state");
+        return;
+    }
+
+    if (player1->health <= 0)
+    {
+        player1->momx = 0;
+        player1->momy = 0;
+        memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+        return;
+    }
+
+    command = ArenaDuel_Player1Command();
+    ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_1);
+
+    player1->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
+
+    if (arena_duel_player1_last_autopilot_command.route_waypoint_active)
+    {
+        ArenaDuel_ThrustTowardRouteWaypoint(player1, &arena_duel_player1_last_autopilot_command);
+    }
+    else if (command.forward != 0)
+    {
+        ArenaDuel_Thrust(player1,
+                         player1->angle,
+                         command.forward * ARENA_DUEL_MOVE_SPEED);
+    }
+
+    if (!arena_duel_player1_last_autopilot_command.route_waypoint_active && command.strafe != 0)
+    {
+        ArenaDuel_Thrust(player1,
+                         player1->angle - ANG90,
+                         command.strafe * ARENA_DUEL_SIDE_SPEED);
+    }
+
+    if (command.attack)
+    {
+        ArenaDuel_Player1Attack();
+    }
+    ArenaDuel_CheckPlayer1Pickups();
+    ArenaDuel_LogPathPoint(ARENA_PARTICIPANT_PLAYER_1);
+}
+
+static void ArenaDuel_TickPlayer2CustomAutopilot(void)
+{
+    arena_participant_command_t command;
+
+    if (arena_duel_player2 == NULL)
+    {
+        memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_2,
+                                                 "missing_participant_state");
+        return;
+    }
+
+    if (arena_duel_player2->health <= 0)
+    {
+        arena_duel_player2->momx = 0;
+        arena_duel_player2->momy = 0;
+        memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
+        return;
+    }
+
+    command = ArenaDuel_Player2Command();
+    ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_2);
+
+    arena_duel_player2->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
+
+    if (arena_duel_player2_last_autopilot_command.route_waypoint_active)
+    {
+        ArenaDuel_ThrustTowardRouteWaypoint(arena_duel_player2, &arena_duel_player2_last_autopilot_command);
+    }
+    else if (command.forward != 0)
+    {
+        ArenaDuel_Thrust(arena_duel_player2,
+                         arena_duel_player2->angle,
+                         command.forward * ARENA_DUEL_MOVE_SPEED);
+    }
+
+    if (!arena_duel_player2_last_autopilot_command.route_waypoint_active && command.strafe != 0)
+    {
+        ArenaDuel_Thrust(arena_duel_player2,
+                         arena_duel_player2->angle - ANG90,
+                         command.strafe * ARENA_DUEL_SIDE_SPEED);
+    }
+
+    if (command.attack)
+    {
+        ArenaDuel_Player2Attack();
+    }
+    ArenaDuel_CheckPlayer2Pickups();
+    ArenaDuel_LogPathPoint(ARENA_PARTICIPANT_PLAYER_2);
+}
+
 boolean ArenaDuel_IsEnabled(void)
 {
     // gameepisode is reset to 0 after deathmatch init even though we
@@ -1395,6 +2123,11 @@ boolean ArenaDuel_IsEnabled(void)
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
 {
     arena_duel_player1_cached_mo = mobj;
+    if (mobj != NULL)
+    {
+        mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
+    }
+    ArenaDuel_LogCollisionProfile("player_1", mobj);
 }
 
 void ArenaDuel_RecordPlayer1WeaponFired(void)
@@ -1431,6 +2164,9 @@ void ArenaDuel_InitLevel(void)
     arena_duel_player2 = NULL;
     arena_duel_player1_cached_mo = NULL;
     arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
+    arena_duel_player2_ammo_shells = 0;
+    arena_duel_player2_ready_weapon = wp_pistol;
+    arena_duel_player1_attack_cooldown = 0;
     arena_duel_player2_attack_cooldown = 0;
     arena_duel_player2_attack_requests = 0;
     arena_duel_player2_shots_fired = 0;
@@ -1457,7 +2193,11 @@ void ArenaDuel_InitLevel(void)
     arena_duel_player2_view_player_initialized = false;
     arena_duel_player2_view_player_last_tick = -1;
     arena_duel_player2_have_autopilot_position = false;
+    arena_duel_player1_have_autopilot_position = false;
+    arena_duel_player1_autopilot_stuck_ticks = 0;
     arena_duel_player2_autopilot_stuck_ticks = 0;
+    memset(&arena_duel_player1_last_autopilot_command, 0, sizeof(arena_duel_player1_last_autopilot_command));
+    memset(&arena_duel_player2_last_autopilot_command, 0, sizeof(arena_duel_player2_last_autopilot_command));
     arena_duel_player1_health_initialized = false;
     arena_duel_waiting_event_logged = false;
     arena_duel_waiting_first_intents_event_logged = false;
@@ -1467,6 +2207,11 @@ void ArenaDuel_InitLevel(void)
     memset(arena_duel_stuck_recovery_was_active,
            0,
            sizeof(arena_duel_stuck_recovery_was_active));
+    memset(arena_duel_path_log_have_position, 0, sizeof(arena_duel_path_log_have_position));
+    memset(arena_duel_path_log_last_tick, 0, sizeof(arena_duel_path_log_last_tick));
+    memset(arena_duel_path_log_last_x, 0, sizeof(arena_duel_path_log_last_x));
+    memset(arena_duel_path_log_last_y, 0, sizeof(arena_duel_path_log_last_y));
+    memset(arena_duel_path_log_last_angle, 0, sizeof(arena_duel_path_log_last_angle));
     ArenaParticipantCommands_Init();
     ArenaParticipantIntent_Init();
     ArenaParticipantAutopilot_ResetDebug();
@@ -1515,6 +2260,8 @@ void ArenaDuel_SpawnPlayer2(void)
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
     mobj->angle = angle;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
+    mobj->radius = mobjinfo[MT_PLAYER].radius;
+    mobj->height = mobjinfo[MT_PLAYER].height;
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;
     strncpy(mobj->arena_entity_id,
@@ -1534,11 +2281,11 @@ void ArenaDuel_SpawnPlayer2(void)
            x,
            y);
     ArenaDuel_AddEvent("participant_spawned: player_2");
+    ArenaDuel_LogCollisionProfile("player_2", mobj);
 }
 
 void ArenaDuel_Ticker(void)
 {
-    arena_participant_command_t command;
     int player1_health;
     int player2_health;
     int delta;
@@ -1563,6 +2310,10 @@ void ArenaDuel_Ticker(void)
     ArenaDuel_EnsurePlayer1CombatState();
     ArenaDuel_RefillPlayer1Ammo();
     arena_duel_player2_ammo_bullets = ARENA_DUEL_PLAYER2_BULLETS;
+    if (arena_duel_player2_ready_weapon == wp_shotgun)
+    {
+        arena_duel_player2_ammo_shells = 200;
+    }
 
     Arena_LoadRunMetadata();
     ArenaParticipantCommands_Load();
@@ -1573,8 +2324,15 @@ void ArenaDuel_Ticker(void)
     if (!arena_duel_started)
     {
         const char *wait_reason;
+        mobj_t *player1_mobj;
 
         wait_reason = ArenaDuel_StartWaitReason();
+        player1_mobj = ArenaDuel_Player1Mobj();
+        if (player1_mobj != NULL)
+        {
+            player1_mobj->momx = 0;
+            player1_mobj->momy = 0;
+        }
         arena_duel_player2->momx = 0;
         arena_duel_player2->momy = 0;
         ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
@@ -1583,8 +2341,6 @@ void ArenaDuel_Ticker(void)
                                                  wait_reason);
         return;
     }
-
-    ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_1);
 
     player1_health = ArenaDuel_Player1Health();
     player2_health = arena_duel_player2->health;
@@ -1635,47 +2391,38 @@ void ArenaDuel_Ticker(void)
 
     if (arena_duel_finished)
     {
+        mobj_t *player1_mobj;
+
+        player1_mobj = ArenaDuel_Player1Mobj();
+        if (player1_mobj != NULL)
+        {
+            player1_mobj->momx = 0;
+            player1_mobj->momy = 0;
+        }
         arena_duel_player2->momx = 0;
         arena_duel_player2->momy = 0;
         return;
     }
 
+    if (arena_duel_player1_attack_cooldown > 0)
+    {
+        arena_duel_player1_attack_cooldown--;
+    }
     if (arena_duel_player2_attack_cooldown > 0)
     {
         arena_duel_player2_attack_cooldown--;
     }
 
-    if (arena_duel_player2->health <= 0)
-    {
-        arena_duel_player2->momx = 0;
-        arena_duel_player2->momy = 0;
-        return;
-    }
-
-    command = ArenaDuel_Player2Command();
-    ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_2);
-    ArenaDuel_EnsurePlayer1AutopilotMomentum();
     ArenaDuel_SeparateParticipantsIfStuck();
-
-    arena_duel_player2->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
-
-    if (command.forward != 0)
+    if ((leveltime & 1) == 0)
     {
-        ArenaDuel_Thrust(arena_duel_player2,
-                         arena_duel_player2->angle,
-                         command.forward * ARENA_DUEL_MOVE_SPEED);
+        ArenaDuel_TickPlayer1CustomAutopilot();
+        ArenaDuel_TickPlayer2CustomAutopilot();
     }
-
-    if (command.strafe != 0)
+    else
     {
-        ArenaDuel_Thrust(arena_duel_player2,
-                         arena_duel_player2->angle - ANG90,
-                         command.strafe * ARENA_DUEL_SIDE_SPEED);
-    }
-
-    if (command.attack)
-    {
-        ArenaDuel_Player2Attack();
+        ArenaDuel_TickPlayer2CustomAutopilot();
+        ArenaDuel_TickPlayer1CustomAutopilot();
     }
 }
 
@@ -1702,6 +2449,16 @@ mobj_t *ArenaDuel_Player2Mobj(void)
 int ArenaDuel_Player2AmmoBullets(void)
 {
     return arena_duel_player2_ammo_bullets;
+}
+
+int ArenaDuel_Player2AmmoShells(void)
+{
+    return arena_duel_player2_ammo_shells;
+}
+
+int ArenaDuel_Player2ReadyWeapon(void)
+{
+    return (int) arena_duel_player2_ready_weapon;
 }
 
 int ArenaDuel_ElapsedMs(void)

@@ -330,13 +330,31 @@
             #arena-start-game {
                 display: block;
                 width: 100%;
-                margin-top: 12px;
+                margin-top: 0;
                 cursor: pointer;
                 border: 1px solid rgba(188, 205, 151, 0.22);
                 background: #314124;
                 color: #f3f0df;
                 padding: 14px 12px;
                 font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-start-actions {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 150px;
+                gap: 10px;
+                margin-top: 12px;
+            }
+
+            #arena-refresh-arena {
+                cursor: pointer;
+                border: 1px solid rgba(216, 192, 122, 0.28);
+                background: #24261f;
+                color: #e4d6a1;
+                padding: 14px 12px;
+                font: 700 12px/1.2 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
             }
@@ -1485,13 +1503,6 @@
                                         <span class="arena-toggle-hint">After N rounds, swap Player 1 and Player 2 roles and run N more. Ensures fair pair-level comparison when spawn/weapon placement is asymmetric.</span>
                                     </span>
                                 </label>
-                                <label class="arena-toggle-field" for="arena-enable-weapon-pickups">
-                                    <input id="arena-enable-weapon-pickups" type="checkbox" />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Weapon pickups</span>
-                                        <span class="arena-toggle-hint">Spawn shotgun + chaingun on the map. Tests tactical literacy - does the model rush the better weapon? Requires engine spike (Phase 4) before this is active.</span>
-                                    </span>
-                                </label>
                             </div>
                         </div>
                         </div>
@@ -1524,7 +1535,10 @@
                             <span class="arena-mcp-status-value arena-mcp-client-list" id="arena-mcp-connected-clients">No MCP clients detected</span>
                         </div>
                     </div>
-                    <button id="arena-start-game" type="button">Start Benchmark</button>
+                    <div class="arena-start-actions">
+                        <button id="arena-start-game" type="button">Start Benchmark</button>
+                        <button id="arena-refresh-arena" type="button">Refresh Arena</button>
+                    </div>
                     <div class="arena-launcher-footer">
                         Built by <strong>Rootly AI Labs</strong>
                         <span class="arena-launcher-footer-subline">Rootly</span>
@@ -1749,7 +1763,7 @@
             var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
             var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
             var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
-            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\n";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\tplan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n";
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
@@ -2120,11 +2134,156 @@
                 drawTacticalPathTrail(ctx, bounds, "player_2", canvas.width, canvas.height);
             }
 
+            function drawTacticalGridOnAutomap() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+                var cellSize = 64;
+                var rows = 24;
+                var cols = 32;
+                var row;
+                var col;
+                var x;
+                var y;
+                var screen;
+                var center;
+                var labelEvery;
+                var fontSize;
+                var colLabelY;
+                var rowLabelX;
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+
+                fontSize = Math.max(7, Math.min(10, Math.floor(canvas.width / 58)));
+                labelEvery = 2;
+                colLabelY = Math.max(5, Math.floor(fontSize * 0.7));
+                rowLabelX = Math.max(5, Math.floor(fontSize * 0.7));
+
+                ctx.save();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "rgba(174, 208, 224, 0.07)";
+
+                for (col = 1; col < cols; col++) {
+                    x = bounds.x_min + col * cellSize;
+                    screen = automapWorldToScreen(bounds, x, bounds.y_min, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.moveTo(screen.x, 0);
+                    ctx.lineTo(screen.x, canvas.height);
+                    ctx.stroke();
+                }
+
+                for (row = 1; row < rows; row++) {
+                    y = bounds.y_max - row * cellSize;
+                    screen = automapWorldToScreen(bounds, bounds.x_min, y, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.moveTo(0, screen.y);
+                    ctx.lineTo(canvas.width, screen.y);
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = "rgba(6, 12, 18, 0.34)";
+                ctx.fillRect(0, 0, canvas.width, colLabelY + 4);
+                ctx.fillRect(0, 0, rowLabelX + 5, canvas.height);
+
+                ctx.fillStyle = "rgba(210, 232, 242, 0.46)";
+                ctx.font = "700 " + fontSize + "px Consolas, 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                for (col = 0; col < cols; col++) {
+                    if (col % labelEvery !== 0) {
+                        continue;
+                    }
+                    x = bounds.x_min + (col + 0.5) * cellSize;
+                    center = automapWorldToScreen(bounds, x, bounds.y_max - cellSize / 2, canvas.width, canvas.height);
+                    ctx.fillText(String(col + 1).padStart(2, "0"), center.x, colLabelY);
+                }
+
+                ctx.textAlign = "center";
+                for (row = 0; row < rows; row++) {
+                    if (row % labelEvery !== 0) {
+                        continue;
+                    }
+                    y = bounds.y_max - (row + 0.5) * cellSize;
+                    center = automapWorldToScreen(bounds, bounds.x_min + cellSize / 2, y, canvas.width, canvas.height);
+                    ctx.fillText(String.fromCharCode("A".charCodeAt(0) + row), rowLabelX, center.y);
+                }
+
+                ctx.strokeStyle = "rgba(210, 232, 242, 0.20)";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+                ctx.restore();
+            }
+
+            function drawTacticalWallCellsOnAutomap() {
+                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+                var obstacles = currentMapBlueprint && Array.isArray(currentMapBlueprint.obstacles)
+                    ? currentMapBlueprint.obstacles
+                    : [];
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height || obstacles.length === 0) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+
+                ctx.save();
+                obstacles.forEach(function(obstacle) {
+                    var obstacleBounds = obstacle && obstacle.bounds ? obstacle.bounds : obstacle;
+                    var xMin = Number(obstacleBounds && obstacleBounds.x_min);
+                    var xMax = Number(obstacleBounds && obstacleBounds.x_max);
+                    var yMin = Number(obstacleBounds && obstacleBounds.y_min);
+                    var yMax = Number(obstacleBounds && obstacleBounds.y_max);
+                    var topLeft;
+                    var bottomRight;
+                    var left;
+                    var top;
+                    var width;
+                    var height;
+
+                    if (![xMin, xMax, yMin, yMax].every(Number.isFinite)) {
+                        return;
+                    }
+
+                    topLeft = automapWorldToScreen(bounds, xMin, yMax, canvas.width, canvas.height);
+                    bottomRight = automapWorldToScreen(bounds, xMax, yMin, canvas.width, canvas.height);
+                    left = Math.min(topLeft.x, bottomRight.x);
+                    top = Math.min(topLeft.y, bottomRight.y);
+                    width = Math.abs(bottomRight.x - topLeft.x);
+                    height = Math.abs(bottomRight.y - topLeft.y);
+                    if (width <= 0 || height <= 0) {
+                        return;
+                    }
+
+                    ctx.fillStyle = "rgba(246, 243, 214, 0.22)";
+                    ctx.strokeStyle = "rgba(246, 243, 214, 0.72)";
+                    ctx.lineWidth = 1;
+                    ctx.fillRect(left, top, width, height);
+                    ctx.strokeRect(left + 0.5, top + 0.5, Math.max(0, width - 1), Math.max(0, height - 1));
+                });
+                ctx.restore();
+            }
+
             function drawTacticalHealthPacksOnAutomap() {
                 var canvas = document.getElementById("duel-player1-automap-canvas");
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var screen;
+                var slotNorthWest;
+                var slotSouthEast;
+                var slotLeft;
+                var slotTop;
+                var slotWidth;
+                var slotHeight;
                 var size = 9;
 
                 if (!canvas || !bounds || !canvas.width || !canvas.height) {
@@ -2137,6 +2296,18 @@
 
                 ctx.save();
                 tacticalHealthPackMarkers.forEach(function (marker) {
+                    slotNorthWest = automapWorldToScreen(bounds, marker.x - 64, marker.y + 32, canvas.width, canvas.height);
+                    slotSouthEast = automapWorldToScreen(bounds, marker.x + 64, marker.y - 32, canvas.width, canvas.height);
+                    slotLeft = Math.min(slotNorthWest.x, slotSouthEast.x);
+                    slotTop = Math.min(slotNorthWest.y, slotSouthEast.y);
+                    slotWidth = Math.abs(slotSouthEast.x - slotNorthWest.x);
+                    slotHeight = Math.abs(slotSouthEast.y - slotNorthWest.y);
+                    ctx.fillStyle = "rgba(72, 255, 137, 0.18)";
+                    ctx.fillRect(slotLeft, slotTop, slotWidth, slotHeight);
+                    ctx.strokeStyle = "rgba(72, 255, 137, 0.42)";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(slotLeft + 0.5, slotTop + 0.5, Math.max(1, slotWidth - 1), Math.max(1, slotHeight - 1));
+
                     screen = automapWorldToScreen(bounds, marker.x, marker.y, canvas.width, canvas.height);
                     ctx.beginPath();
                     ctx.arc(screen.x, screen.y, size, 0, Math.PI * 2);
@@ -2544,9 +2715,14 @@
 
             function setLauncherMode(mode) {
                 var startButton = document.getElementById("arena-start-game");
+                var refreshButton = document.getElementById("arena-refresh-arena");
 
                 if (startButton !== null) {
                     startButton.style.display = mode === "choose" || mode === "ready" ? "block" : "none";
+                }
+
+                if (refreshButton !== null) {
+                    refreshButton.style.display = mode === "choose" || mode === "ready" ? "block" : "none";
                 }
             }
 
@@ -3068,7 +3244,7 @@
                     enable_cross_round_recap: selectedCheckboxValue("arena-enable-cross-round-recap", false),
                     recap_window: 0,
                     enable_map_blueprint: selectedCheckboxValue("arena-enable-map-blueprint", false),
-                    enable_weapon_pickups: selectedCheckboxValue("arena-enable-weapon-pickups", false),
+                    enable_weapon_pickups: true,
                     mirror_pair: selectedCheckboxValue("arena-mirror-pair", false),
                     continue_session: !!continueSession,
                     restart_session: !!restartSession,
@@ -3112,6 +3288,12 @@
                     }
 
                     return response.json();
+                }).catch(function (error) {
+                    var message = error && error.message ? error.message : String(error || "unknown error");
+                    if (message.indexOf("Duel session failed") === 0) {
+                        throw error;
+                    }
+                    throw new Error("Duel setup failed. Refresh Arena and retry. " + message);
                 });
             }
 
@@ -3369,6 +3551,12 @@
                 url.searchParams.delete("arenaData");
                 url.searchParams.set("resetAt", String(Date.now()));
                 window.location.replace(url.toString());
+            }
+
+            function refreshArenaPage() {
+                updateLauncherStatus("Refreshing arena...");
+                clearStoredDuelSessionForReload();
+                reloadCleanDuelPage();
             }
 
             function resetDuelAndReload() {
@@ -4230,7 +4418,12 @@
                         executed_fire_action: "",
                         executed_movement_action: "",
                         executed_strafe_direction: "",
-                        policy_compliance_reason: ""
+                        policy_compliance_reason: "",
+                        plan_objective: row.plan_objective,
+                        plan_route: row.plan_route,
+                        plan_engagement_policy: row.plan_engagement_policy,
+                        plan_reasoning: row.plan_reasoning,
+                        plan_route_cells: row.plan_route_cells
                     };
                 });
             }
@@ -4334,8 +4527,14 @@
                 var intentRow = intentByCallId[call.call_id];
                 var syntheticIntentRow;
 
-                if ((call.tool_name === "set_participant_intent" || call.tool_name === "set_participant_strategy") && intentRow) {
+                if ((call.tool_name === "set_participant_intent" || call.tool_name === "set_participant_strategy" || call.tool_name === "set_participant_plan") && intentRow) {
                     return highLevelMcpCommandLine(intentRow, stats);
+                }
+                if (call.tool_name === "set_participant_plan" && (call.plan_route || call.plan_objective)) {
+                    syntheticIntentRow = Object.assign({}, call);
+                    syntheticIntentRow.issued_at_ms = syntheticIntentRow.issued_at_ms || call.started_at_ms;
+                    syntheticIntentRow.mcp_call_latency_ms = syntheticIntentRow.mcp_call_latency_ms || call.latency_ms;
+                    return highLevelMcpCommandLine(syntheticIntentRow, stats);
                 }
                 if (call.tool_name === "set_participant_strategy" && (call.strategy_category || call.strategy_action)) {
                     syntheticIntentRow = Object.assign({}, call);
@@ -4375,6 +4574,7 @@
                     ? row.sequence_number
                     : "-";
                 var isHierarchical = row.strategy_source === "hierarchical";
+                var isPlan = !!(row.plan_route || row.plan_objective || row.plan_engagement_policy);
                 var lifecycle = row.superseded_before_expiry
                     ? "superseded"
                     : row.expired_before_next_intent
@@ -4390,7 +4590,12 @@
                     (row.strategy_reasoning ? " | reasoning=" + formatCompactValue(row.strategy_reasoning) : "");
                 var requestedText = isHierarchical
                     ? strategyDetails
-                    : " | Intent: intent=" + (row.intent || "unknown") +
+                    : isPlan
+                        ? " | Plan: objective=" + formatCompactValue(row.plan_objective) +
+                            " | route=" + formatCompactValue(row.plan_route_cells || row.plan_route) +
+                            " | engagement=" + formatCompactValue(row.plan_engagement_policy) +
+                            (row.plan_reasoning ? " | reasoning=" + formatCompactValue(row.plan_reasoning) : "")
+                        : " | Intent: intent=" + (row.intent || "unknown") +
                         " | style=" + formatCompactValue(row.style) +
                         " | target=" + formatCompactValue(row.target_id) +
                         " | aggression=" + formatCompactValue(row.aggression) +
@@ -4399,7 +4604,7 @@
 
                 return {
                     text: "> " + formatRunTimestamp(row.issued_at_ms, stats) +
-                        " " + (isHierarchical ? "set_participant_strategy" : "set_participant_intent") +
+                        " " + (isPlan ? "set_participant_plan" : (isHierarchical ? "set_participant_strategy" : "set_participant_intent")) +
                         " | seq " + sequence +
                         requestedText +
                         " | " + lifecycle,
@@ -5281,6 +5486,8 @@
                 if (player1AutomapState.lastFrame !== previousFrame && !appendTacticalPathTrailPointsFromAutomap(canvas)) {
                     appendTacticalPathTrailPointsFromWasm();
                 }
+                drawTacticalGridOnAutomap();
+                drawTacticalWallCellsOnAutomap();
                 drawTacticalPathTrailsOnAutomap();
                 drawTacticalHealthPacksOnAutomap();
                 drawTacticalWeaponsOnAutomap();
@@ -5709,7 +5916,6 @@
                         (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&
                         !!currentDuelSession.enable_cross_round_recap === selectedCheckboxValue("arena-enable-cross-round-recap", false) &&
                         !!currentDuelSession.enable_map_blueprint === selectedCheckboxValue("arena-enable-map-blueprint", false) &&
-                        !!currentDuelSession.enable_weapon_pickups === selectedCheckboxValue("arena-enable-weapon-pickups", false) &&
                         !!currentDuelSession.mirror_pair === selectedCheckboxValue("arena-mirror-pair", false);
                     if (sessionMatchesSettings) {
                         loadDuelSessionStateForLauncher()
@@ -5731,6 +5937,9 @@
                     } else {
                         startDuel({ continueSession: false });
                     }
+                });
+                document.getElementById("arena-refresh-arena").addEventListener("click", function () {
+                    refreshArenaPage();
                 });
                 document.getElementById("duel-next-round").addEventListener("click", function () {
                     startDuel({ continueSession: true });
@@ -5772,10 +5981,9 @@
                 var simplifiedActionsToggle = document.getElementById("arena-enable-simplified-actions");
                 var recapToggle = document.getElementById("arena-enable-cross-round-recap");
                 var mapBlueprintToggle = document.getElementById("arena-enable-map-blueprint");
-                var weaponPickupsToggle = document.getElementById("arena-enable-weapon-pickups");
                 var mirrorPairToggle = document.getElementById("arena-mirror-pair");
                 [mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
-                 simplifiedActionsToggle, mapBlueprintToggle, weaponPickupsToggle, mirrorPairToggle]
+                 simplifiedActionsToggle, mapBlueprintToggle, mirrorPairToggle]
                     .forEach(function (el) {
                         if (el) { el.addEventListener("change", schedulePromptPreview); }
                     });

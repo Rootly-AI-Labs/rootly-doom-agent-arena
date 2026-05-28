@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="430" viewBox="0 0 980 430">
+<rect width="100%" height="100%" fill="#111511"/>
+<text x="490.0" y="30" fill="#d9f7a4" text-anchor="middle" font-family="Consolas, monospace" font-size="18" font-weight="700">Positioning exposure by model</text>
+<line x1="90" y1="340.0" x2="950" y2="340.0" stroke="#263024"/>
+<text x="82" y="344.0" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">0</text>
+<line x1="90" y1="268.8" x2="950" y2="268.8" stroke="#263024"/>
+<text x="82" y="272.8" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">12</text>
+<line x1="90" y1="197.5" x2="950" y2="197.5" stroke="#263024"/>
+<text x="82" y="201.5" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">24</text>
+<line x1="90" y1="126.2" x2="950" y2="126.2" stroke="#263024"/>
+<text x="82" y="130.2" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">37</text>
+<line x1="90" y1="55.0" x2="950" y2="55.0" stroke="#263024"/>
+<text x="82" y="59.0" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">49</text>
+<rect x="155.5" y="191.1" width="38.0" height="148.9" fill="#8bd450" rx="3"/>
+<text x="174.5" y="186.1" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">25</text>
+<rect x="197.5" y="55.0" width="38.0" height="285.0" fill="#ffd166" rx="3"/>
+<text x="216.5" y="50.0" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">49</text>
+<text x="197.5" y="364" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">Center %</text>
+<rect x="370.5" y="211.5" width="38.0" height="128.5" fill="#8bd450" rx="3"/>
+<text x="389.5" y="206.5" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">22</text>
+<rect x="412.5" y="81.0" width="38.0" height="259.0" fill="#ffd166" rx="3"/>
+<text x="431.5" y="76.0" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">44</text>
+<text x="412.5" y="364" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">Shotgun %</text>
+<rect x="585.5" y="305.4" width="38.0" height="34.6" fill="#8bd450" rx="3"/>
+<text x="604.5" y="300.4" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">6</text>
+<rect x="627.5" y="275.3" width="38.0" height="64.7" fill="#ffd166" rx="3"/>
+<text x="646.5" y="270.3" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">11</text>
+<text x="627.5" y="364" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">Left wall %</text>
+<rect x="800.5" y="303.7" width="38.0" height="36.3" fill="#8bd450" rx="3"/>
+<text x="819.5" y="298.7" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">6</text>
+<rect x="842.5" y="340.0" width="38.0" height="0.0" fill="#ffd166" rx="3"/>
+<text x="861.5" y="335.0" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="10">0</text>
+<text x="842.5" y="364" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">Right wall %</text>
+<rect x="90" y="396" width="12" height="12" fill="#8bd450"/>
+<text x="108" y="406" fill="#cfe6b8" font-family="Consolas, monospace" font-size="12">Codex Spark</text>
+<rect x="240" y="396" width="12" height="12" fill="#ffd166"/>
+<text x="258" y="406" fill="#cfe6b8" font-family="Consolas, monospace" font-size="12">GPT-5.5</text>
+</svg>

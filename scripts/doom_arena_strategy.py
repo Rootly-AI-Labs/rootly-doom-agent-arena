@@ -36,6 +36,22 @@ STRATEGY_REASONING_MAX_CHARS = 120
 COMMIT_MS_MIN = 3000
 COMMIT_MS_MAX = 8000
 COMMIT_MS_DEFAULT = 8000
+PLAN_ROUTE_MAX_WAYPOINTS = 16
+PLAN_REASONING_MAX_CHARS = 160
+PLAN_OBJECTIVE_MAX_CHARS = 64
+PLAN_ENGAGEMENT_POLICIES = {
+    "engage_if_visible",
+    "avoid_until_target",
+    "hold_fire",
+    "force_fight",
+}
+PLAN_METADATA_FIELDS = (
+    "plan_objective",
+    "plan_route",
+    "plan_engagement_policy",
+    "plan_reasoning",
+    "plan_route_cells",
+)
 
 STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
     {
@@ -66,6 +82,12 @@ STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
         "purpose": "upgrade_weapon",
     },
 )
+
+MAP_BOUNDS = {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768}
+MAP_CELL_SIZE = 64
+MAP_ROWS = 24
+MAP_COLS = 32
+MAP_ASCII_PATH = "scripts/map_blueprints/duel_e1m8_ascii.txt"
 
 STRATEGY_ACTIONS: dict[str, list[str]] = {
     "explore": ["scan_last_seen", "patrol_left", "patrol_right", "rotate_route", "probe_center"],
@@ -465,11 +487,41 @@ def pickup_distance(pickup: dict[str, Any], x: Any, y: Any) -> int | None:
         return None
 
 
+def xy_to_grid_cell(x: Any, y: Any) -> str:
+    try:
+        xf = float(x)
+        yf = float(y)
+    except (TypeError, ValueError):
+        return ""
+    col = int((xf - MAP_BOUNDS["x_min"]) // MAP_CELL_SIZE) + 1
+    row = int((MAP_BOUNDS["y_max"] - yf) // MAP_CELL_SIZE) + 1
+    col = max(1, min(MAP_COLS, col))
+    row = max(1, min(MAP_ROWS, row))
+    return f"{chr(ord('A') + row - 1)}{col:02d}"
+
+
+def blocked_grid_cells() -> list[str]:
+    try:
+        from pathlib import Path
+
+        path = Path(__file__).resolve().parents[1] / MAP_ASCII_PATH
+        rows = [line.rstrip("\n") for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    except OSError:
+        return []
+    cells = []
+    for row_index, row_text in enumerate(rows):
+        for col_index, char in enumerate(row_text):
+            if char == "#":
+                cells.append(f"{chr(ord('A') + row_index)}{col_index + 1:02d}")
+    return cells
+
+
 def strategy_pickups_for_observation(x: Any, y: Any) -> list[dict[str, Any]]:
     pickups = []
     for pickup in STATIC_PICKUPS:
         item = dict(pickup)
         item["distance"] = pickup_distance(pickup, x, y)
+        item["cell"] = xy_to_grid_cell(pickup.get("x"), pickup.get("y"))
         pickups.append(item)
     return pickups
 
@@ -618,6 +670,7 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "y": self_raw.get("y"),
             "angle": self_raw.get("angle"),
             "zone": current_zone,
+            "cell": xy_to_grid_cell(self_raw.get("x"), self_raw.get("y")),
         },
         "opponent": {
             "alive": bool(opponent_raw.get("alive")),

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="410" viewBox="0 0 900 410">
+<rect width="100%" height="100%" fill="#111511"/>
+<text x="450.0" y="30" fill="#d9f7a4" text-anchor="middle" font-family="Consolas, monospace" font-size="18" font-weight="700">Wins by model across side switch</text>
+<line x1="90" y1="330.0" x2="870" y2="330.0" stroke="#263024"/>
+<text x="82" y="334.0" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">0</text>
+<line x1="90" y1="261.2" x2="870" y2="261.2" stroke="#263024"/>
+<text x="82" y="265.2" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">5</text>
+<line x1="90" y1="192.5" x2="870" y2="192.5" stroke="#263024"/>
+<text x="82" y="196.5" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">10</text>
+<line x1="90" y1="123.8" x2="870" y2="123.8" stroke="#263024"/>
+<text x="82" y="127.8" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">14</text>
+<line x1="90" y1="55.0" x2="870" y2="55.0" stroke="#263024"/>
+<text x="82" y="59.0" fill="#9bab8c" text-anchor="end" font-family="Consolas, monospace" font-size="11">19</text>
+<rect x="90.0" y="315.5" width="380.0" height="14.5" fill="#8bd450" rx="4"/>
+<text x="280.0" y="309.5" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">1.0</text>
+<text x="280.0" y="354" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">Codex Spark</text>
+<rect x="490.0" y="55.0" width="380.0" height="275.0" fill="#ffd166" rx="4"/>
+<text x="680.0" y="49.0" fill="#f1f7e8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">19.0</text>
+<text x="680.0" y="354" fill="#cfe6b8" text-anchor="middle" font-family="Consolas, monospace" font-size="12">GPT-5.5</text>
+</svg>
