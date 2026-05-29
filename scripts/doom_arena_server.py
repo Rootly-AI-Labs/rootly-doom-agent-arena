@@ -84,6 +84,11 @@ DUEL_SCENARIOS = [
         "label": "Custom room corner spawn",
         "requires_wasm_rebuild": False,
     },
+    {
+        "scenario_id": "duel_e1m8_center_spawn",
+        "label": "Custom room center spawn",
+        "requires_wasm_rebuild": False,
+    },
 ]
 DUEL_SCENARIO_IDS = {entry["scenario_id"] for entry in DUEL_SCENARIOS}
 DUEL_ACTIVE_SCENARIO_IDS = {
@@ -1031,6 +1036,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "you_won": False,
                 "your_damage": None,
                 "opponent_damage": None,
+                "your_final_health": None,
+                "opponent_final_health": None,
+                "your_hit_rate": None,
+                "opponent_hit_rate": None,
                 "your_opening": None,
                 "opponent_opening": None,
                 "shotgun_pickup_owner": None,
@@ -1043,9 +1052,25 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     if participant_id == "player_1":
                         entry["your_damage"] = s.get("player_1_damage_dealt")
                         entry["opponent_damage"] = s.get("player_2_damage_dealt")
+                        entry["your_final_health"] = s.get("player_1_health_end")
+                        entry["opponent_final_health"] = s.get("player_2_health_end")
+                        your_shots_hit = s.get("player_1_shots_hit")
+                        your_shots_fired = s.get("player_1_shots_fired")
+                        opponent_shots_hit = s.get("player_2_shots_hit")
+                        opponent_shots_fired = s.get("player_2_shots_fired")
                     else:
                         entry["your_damage"] = s.get("player_2_damage_dealt")
                         entry["opponent_damage"] = s.get("player_1_damage_dealt")
+                        entry["your_final_health"] = s.get("player_2_health_end")
+                        entry["opponent_final_health"] = s.get("player_1_health_end")
+                        your_shots_hit = s.get("player_2_shots_hit")
+                        your_shots_fired = s.get("player_2_shots_fired")
+                        opponent_shots_hit = s.get("player_1_shots_hit")
+                        opponent_shots_fired = s.get("player_1_shots_fired")
+                    if your_shots_fired:
+                        entry["your_hit_rate"] = float(your_shots_hit or 0) / float(your_shots_fired)
+                    if opponent_shots_fired:
+                        entry["opponent_hit_rate"] = float(opponent_shots_hit or 0) / float(opponent_shots_fired)
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
                     pass
             if stats_path.exists():
@@ -2473,6 +2498,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             if not line.strip():
                 continue
             values = line.split("\t")
+            if len(values) < len(parse_header):
+                values.extend([""] * (len(parse_header) - len(values)))
             if len(values) != len(parse_header):
                 raise ValueError("participant intent TSV row has wrong column count")
             row = dict(zip(parse_header, values))

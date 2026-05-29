@@ -413,6 +413,7 @@ def main() -> int:
             str(REPO_ROOT / "src" / "doom"),
             str(REPO_ROOT / "src" / "doom" / "arena_participant_autopilot.c"),
             str(harness_path),
+            "-lm",
             "-o",
             str(exe_path),
         ]
