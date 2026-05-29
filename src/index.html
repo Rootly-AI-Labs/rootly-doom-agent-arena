@@ -782,7 +782,8 @@
             }
 
             #duel-tactical-map-image,
-            #duel-player1-automap-canvas {
+            #duel-player1-automap-canvas,
+            #duel-tactical-overlay-canvas {
                 display: block;
                 width: 100%;
                 height: 100%;
@@ -790,8 +791,18 @@
             }
 
             #duel-player1-automap-canvas {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
                 background: #0b0f0d;
                 image-rendering: pixelated;
+            }
+
+            #duel-tactical-overlay-canvas {
+                position: absolute;
+                inset: 0;
+                z-index: 2;
+                pointer-events: none;
             }
 
             .duel-tactical-map-caption {
@@ -805,6 +816,7 @@
             .duel-tactical-map-status {
                 position: absolute;
                 inset: 0;
+                z-index: 5;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -818,7 +830,7 @@
 
             .duel-tactical-coordinate-tooltip {
                 position: absolute;
-                z-index: 4;
+                z-index: 6;
                 display: inline-flex;
                 align-items: center;
                 gap: 4px;
@@ -835,6 +847,7 @@
             }
             .duel-tactical-marker {
                 position: absolute;
+                z-index: 4;
                 width: 0;
                 height: 0;
                 margin-left: -7px;
@@ -1475,6 +1488,7 @@
                         </div>
                         <div class="duel-tactical-map-stage" id="duel-tactical-map-stage">
                             <canvas id="duel-player1-automap-canvas"></canvas>
+                            <canvas id="duel-tactical-overlay-canvas"></canvas>
                             <div class="duel-tactical-map-status" id="duel-player1-automap-status">Waiting for automap...</div>
                             <div class="duel-tactical-coordinate-tooltip" id="duel-tactical-coordinate-tooltip" hidden>x: - | y: -</div>
                         </div>
@@ -1861,6 +1875,38 @@
                 };
             }
 
+            function syncTacticalOverlayCanvas(clearCanvas) {
+                var baseCanvas = document.getElementById("duel-player1-automap-canvas");
+                var overlayCanvas = document.getElementById("duel-tactical-overlay-canvas");
+                var size;
+                var ctx;
+
+                if (!baseCanvas || !overlayCanvas) {
+                    return null;
+                }
+
+                size = automapCanvasSize(baseCanvas);
+                if (overlayCanvas.width !== size.width) {
+                    overlayCanvas.width = size.width;
+                }
+                if (overlayCanvas.height !== size.height) {
+                    overlayCanvas.height = size.height;
+                }
+
+                if (clearCanvas) {
+                    ctx = overlayCanvas.getContext("2d");
+                    if (ctx) {
+                        ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                    }
+                }
+
+                return overlayCanvas;
+            }
+
+            function tacticalOverlayDrawingCanvas() {
+                return syncTacticalOverlayCanvas(false) || document.getElementById("duel-player1-automap-canvas");
+            }
+
             function automapProjection(bounds, width, height) {
                 var padding = 0;
                 var mapWidth = Math.max(1, bounds.x_max - bounds.x_min);
@@ -2047,7 +2093,7 @@
             }
 
             function drawTacticalPathTrailsOnAutomap() {
-                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var canvas = tacticalOverlayDrawingCanvas();
                 var ctx;
                 var bounds = tacticalOverlayBounds();
 
@@ -2063,7 +2109,7 @@
             }
 
             function drawTacticalGridOnAutomap() {
-                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var canvas = tacticalOverlayDrawingCanvas();
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var cellSize = 64;
@@ -2150,7 +2196,7 @@
             }
 
             function drawTacticalWallCellsOnAutomap() {
-                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var canvas = tacticalOverlayDrawingCanvas();
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var obstacles = currentMapBlueprint && Array.isArray(currentMapBlueprint.obstacles)
@@ -2203,7 +2249,7 @@
             }
 
             function drawTacticalHealthPacksOnAutomap() {
-                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var canvas = tacticalOverlayDrawingCanvas();
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var screen;
@@ -2262,7 +2308,7 @@
                 if (!duelWeaponSpawnEnabled()) {
                     return;
                 }
-                var canvas = document.getElementById("duel-player1-automap-canvas");
+                var canvas = tacticalOverlayDrawingCanvas();
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var screen;
@@ -5436,6 +5482,7 @@
                 if (player1AutomapState.lastFrame !== previousFrame && !appendTacticalPathTrailPointsFromAutomap(canvas)) {
                     appendTacticalPathTrailPointsFromWasm();
                 }
+                syncTacticalOverlayCanvas(true);
                 drawTacticalWallCellsOnAutomap();
                 drawTacticalPathTrailsOnAutomap();
                 drawTacticalHealthPacksOnAutomap();
