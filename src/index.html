@@ -3113,22 +3113,6 @@
                 }
             }
 
-            function formatSeenAgo(lastSeenAtMs) {
-                var parsed = Number(lastSeenAtMs);
-                var ageSeconds;
-
-                if (!Number.isFinite(parsed) || parsed <= 0) {
-                    return "seen recently";
-                }
-
-                ageSeconds = Math.max(0, Math.round((Date.now() - parsed) / 1000));
-                if (ageSeconds < 60) {
-                    return "seen " + ageSeconds + "s ago";
-                }
-
-                return "seen " + Math.round(ageSeconds / 60) + "m ago";
-            }
-
             function setMcpClientList(player1Label, player2Label) {
                 var node = document.getElementById("arena-mcp-connected-clients");
 
