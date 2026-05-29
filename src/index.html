@@ -393,6 +393,15 @@
                 letter-spacing: 0.04em;
             }
 
+            .arena-launcher-footer a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .arena-launcher-footer a:hover strong {
+                color: #b8e986;
+            }
+
             .arena-launcher-footer strong {
                 color: rgba(183, 207, 137, 0.82);
                 font-weight: 700;
@@ -427,6 +436,28 @@
                 display: none;
                 width: 800px;
                 margin: 0 auto;
+            }
+
+            #duel-play-footer {
+                display: none;
+                width: min(1120px, 100%);
+                margin: 4px auto 0;
+                text-align: right;
+                font: 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                color: rgba(184, 233, 134, 0.45);
+            }
+
+            #duel-play-footer a {
+                color: rgba(184, 233, 134, 0.65);
+                text-decoration: none;
+            }
+
+            #duel-play-footer a:hover {
+                color: #b8e986;
+            }
+
+            #duel-pov-grid.duel-active ~ #duel-play-footer {
+                display: block;
             }
 
             #duel-pov-grid.duel-active {
@@ -737,6 +768,22 @@
                 display: flex;
                 align-items: center;
                 gap: 6px;
+            }
+
+            #duel-header-byline {
+                font: 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                color: rgba(184, 233, 134, 0.65);
+                white-space: nowrap;
+                border: none;
+                background: none;
+                padding: 0;
+                text-transform: none;
+                text-decoration: none;
+            }
+
+            #duel-header-byline:hover {
+                background: none;
+                color: #b8e986;
             }
 
             #duel-tactical-panel {
@@ -1489,8 +1536,7 @@
                         <button id="arena-refresh-arena" type="button">Refresh Arena</button>
                     </div>
                     <div class="arena-launcher-footer">
-                        Built by <strong>Rootly AI Labs</strong>
-                        <span class="arena-launcher-footer-subline">Rootly</span>
+                        Built by <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener"><strong>Rootly AI Labs ❤️</strong></a>
                     </div>
                 </div>
             </div>
@@ -1502,6 +1548,7 @@
                     <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
                     <button type="button" id="duel-next-round" hidden>Next Match</button>
                     <button type="button" id="duel-menu">Menu</button>
+                    <a id="duel-header-byline" href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener">by Rootly AI Labs ❤️</a>
                 </div>
             </div>
             <div id="duel-tactical-panel">
@@ -1616,6 +1663,7 @@
                     </div>
                 </div>
             </div>
+            <div id="duel-play-footer">by <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener">Rootly AI Labs</a></div>
             <div id="arena-duel-dashboard">
                 <div class="duel-breakdown" id="duel-breakdown" hidden>
                     <div class="duel-log-title">Match Breakdown</div>
