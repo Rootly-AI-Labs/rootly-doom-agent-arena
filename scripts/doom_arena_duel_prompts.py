@@ -46,7 +46,7 @@ def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
         return ""
     return """
 Cross-round learning:
-- If `previous_rounds` appears in observations, use it only to avoid repeating failed openings.
+- If `previous_rounds` appears in observations, use it as prior match context.
 - Recaps are intentionally tiny: winner, whether you won, damage, first objectives, and resource pickup owner when available.
 
 """
@@ -426,43 +426,26 @@ Stable mode:
 - Use `duration_ms` between 20000 and 25000.
 - Use this when you need slower, more stable tactical planning.
 
-Intent policy:
+Full-control decision rule:
+- Use observations and your own reasoning to choose one valid high-level intent and parameters each turn.
+- Treat all tactical parameters as available controls, not recommendations.
+- The prompt intentionally does not prescribe what to do for specific combat situations.
+- Stop only according to the stop rules below.
 
-| Situation | Intent and tactical controls |
-| --- | --- |
-| Match `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat` and `has_next_round=false` | This is the active final match. Continue the normal ready/opening/observe/intent loop; do not stop yet. |
-| Match `phase` is `finished` and `has_next_round=false` | Call `stop_participant_intent`, then stop the loop. |
-| Match `phase` is `finished` and `has_next_round=true` | Keep polling `get_match_result` until `run_id` changes, then start the next match by calling `set_participant_ready` again and resetting `sequence_number` to `1`. |
-| Opponent hidden / `los_status=lost_los` | `search`, style `balanced`, `fire_policy=hold_fire`, `movement_bias=direct`, `distance_policy=maintain`, `navigation_target=last_seen_enemy`, omit `movement_primitive`. |
-| Opponent visible and far / `distance_bucket=far` | `engage_opponent`, style `balanced`, `distance_policy=close`, `movement_bias=direct`, `fire_policy=only_when_aligned`. |
-| Opponent visible and close / `distance_bucket=close` | `strafe_attack`, style `aggressive` or `evasive`, `distance_policy=kite` if pressured, otherwise `maintain`, `movement_bias=evasive` or `circle`, `fire_policy=suppressive`. |
-| Low health / `pressure_state=critical` or `losing` | Prefer `strafe_attack`, style `evasive`, `distance_policy=kite`, `movement_bias=evasive`, `fire_policy=burst_when_aligned` or `only_when_aligned`. |
-| Winning with good health | Prefer `strafe_attack`, style `aggressive`, `distance_policy=maintain`, `movement_bias=circle`, `fire_policy=suppressive`. |
-| `replan_recommended=true` | Change at least one of `distance_policy`, `movement_bias`, `fire_policy`, or `strafe_direction` unless the current policy already matches the reason. |
-| Unsure what to do | `engage_opponent`, style `balanced`, `distance_policy=maintain`, `movement_bias=direct`, `fire_policy=only_when_aligned`. |
-
-Tactical parameter rules:
-- `fire_policy=hold_fire` only when searching or avoiding bad shots with no line of sight.
-- `fire_policy=only_when_aligned` is the conservative default.
-- `fire_policy=burst_when_aligned` is for low health or evasive play.
-- `fire_policy=suppressive` is for visible close fights or when pushing an advantage.
-- `distance_policy=close` when the opponent is far and visible.
-- `distance_policy=maintain` when distance is ideal or you are winning a stable fight.
-- `distance_policy=kite` when target is close, health is low, or pressure is high.
-- `movement_bias=direct` when closing distance.
-- `movement_bias=circle` when visible and near ideal range.
-- `movement_bias=evasive` when close, losing, or taking damage.
-- `movement_bias=cautious` when winning near timeout or avoiding overcommitment.
-- `strafe_direction=alternate` is a good default for combat; switch to `left` or `right` if the prior direction is not working.
-- `aim_tolerance` and `min_fire_alignment` control how tightly aim must line up before firing; lower values are stricter.
-- `fire_burst_ms` controls burst length when using `fire_policy=burst_when_aligned`.
-- `min_distance`, `max_distance`, `retreat_if_closer_than`, and `push_if_farther_than` control spacing around the opponent.
-- `los_lost_action` controls what Doom does when line of sight is lost: `turn_left`, `turn_right`, `advance_last_seen`, `hold_angle`, or `sweep`.
-- `stuck_recovery_strategy` controls how Doom escapes stuck states: `back_up`, `turn_left`, `turn_right`, `strafe_out`, or `default`.
-- `movement_primitive` is optional and overrides the high-level movement pattern for one policy only: `advance`, `retreat`, `strafe_left`, `strafe_right`, `circle_left`, `circle_right`, or `hold_position`. Omit it unless you need that exact primitive right now.
-- `turn_policy` controls non-frame-level turning: `auto`, `turn_to_enemy`, `sweep_left`, `sweep_right`, `hold_angle`, or `face_last_seen`.
-- `navigation_target` controls broad movement target: `opponent`, `last_seen_enemy`, `center`, `left_lane`, `right_lane`, `keep_distance`, or `none`.
-- `fire_mode` controls firing style: `auto`, `hold_fire`, `fire_when_aligned`, `single_shot`, `burst`, or `suppressive`.
+Tactical parameter meanings:
+- `fire_policy`: when to fire.
+- `distance_policy`: whether to close, maintain, or create space.
+- `movement_bias`: broad movement style.
+- `strafe_direction`: lateral movement preference.
+- `aim_tolerance` and `min_fire_alignment`: firing alignment thresholds.
+- `fire_burst_ms`: burst length metadata for burst-style firing.
+- `min_distance`, `max_distance`, `retreat_if_closer_than`, and `push_if_farther_than`: spacing bounds.
+- `los_lost_action`: behavior when line of sight is lost.
+- `stuck_recovery_strategy`: behavior when stuck.
+- `movement_primitive`: optional one-policy movement override.
+- `turn_policy`: broad turning behavior.
+- `navigation_target`: broad navigation target.
+- `fire_mode`: firing style.
 
 State fields to watch:
 - `phase`

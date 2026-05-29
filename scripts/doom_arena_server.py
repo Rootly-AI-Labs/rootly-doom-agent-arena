@@ -1039,6 +1039,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "your_final_health": None,
                 "opponent_final_health": None,
                 "your_hit_rate": None,
+                "opponent_hit_rate": None,
                 "your_opening": None,
                 "opponent_opening": None,
                 "shotgun_pickup_owner": None,
@@ -1053,17 +1054,23 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         entry["opponent_damage"] = s.get("player_2_damage_dealt")
                         entry["your_final_health"] = s.get("player_1_health_end")
                         entry["opponent_final_health"] = s.get("player_2_health_end")
-                        fired = s.get("player_1_shots_fired")
-                        hit = s.get("player_1_shots_hit")
+                        your_shots_hit = s.get("player_1_shots_hit")
+                        your_shots_fired = s.get("player_1_shots_fired")
+                        opponent_shots_hit = s.get("player_2_shots_hit")
+                        opponent_shots_fired = s.get("player_2_shots_fired")
                     else:
                         entry["your_damage"] = s.get("player_2_damage_dealt")
                         entry["opponent_damage"] = s.get("player_1_damage_dealt")
                         entry["your_final_health"] = s.get("player_2_health_end")
                         entry["opponent_final_health"] = s.get("player_1_health_end")
-                        fired = s.get("player_2_shots_fired")
-                        hit = s.get("player_2_shots_hit")
-                    if fired and fired > 0:
-                        entry["your_hit_rate"] = round(hit / fired, 2) if hit is not None else None
+                        your_shots_hit = s.get("player_2_shots_hit")
+                        your_shots_fired = s.get("player_2_shots_fired")
+                        opponent_shots_hit = s.get("player_1_shots_hit")
+                        opponent_shots_fired = s.get("player_1_shots_fired")
+                    if your_shots_fired:
+                        entry["your_hit_rate"] = float(your_shots_hit or 0) / float(your_shots_fired)
+                    if opponent_shots_fired:
+                        entry["opponent_hit_rate"] = float(opponent_shots_hit or 0) / float(opponent_shots_fired)
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
                     pass
             if stats_path.exists():
@@ -2491,6 +2498,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             if not line.strip():
                 continue
             values = line.split("\t")
+            if len(values) < len(parse_header):
+                values.extend([""] * (len(parse_header) - len(values)))
             if len(values) != len(parse_header):
                 raise ValueError("participant intent TSV row has wrong column count")
             row = dict(zip(parse_header, values))
