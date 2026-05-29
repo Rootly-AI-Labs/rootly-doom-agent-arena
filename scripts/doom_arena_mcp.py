@@ -8,7 +8,6 @@ import json
 import math
 import os
 import sys
-import threading
 import time
 import traceback
 import urllib.error
@@ -111,7 +110,9 @@ class DoomArenaError(RuntimeError):
 
 
 class DoomArenaClient:
-    PRESENCE_HEARTBEAT_SECONDS = 20
+    # Don't re-POST presence on every single tool call; refreshing well inside
+    # the server's 25s stale window keeps the client "connected" without spam.
+    PRESENCE_MIN_PING_INTERVAL_MS = 5000
 
     def __init__(self, server_url: str):
         self.server_url = server_url.rstrip("/")
@@ -120,7 +121,7 @@ class DoomArenaClient:
         self.client_name = ""
         self.client_version = ""
         self.client_id = f"mcp_{os.getpid()}"
-        self._presence_thread_started = False
+        self._last_presence_ping_ms = 0
         # Keep MCP startup independent from the browser/arena HTTP state. Some
         # MCP clients expect initialize to be answered immediately and will mark
         # the server failed if startup performs slow network work.
@@ -130,11 +131,21 @@ class DoomArenaClient:
         if not isinstance(client_info, dict):
             client_info = {}
 
+        # Capture identity for later labeling, but do NOT register presence here.
+        # `initialize` fires whenever any assistant merely has this MCP server
+        # configured; presence should reflect agents actively using the arena,
+        # which we detect from real tool calls (see mark_active).
         self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
         self.client_version = str(client_info.get("version", "") or "").strip()
         self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
+
+    def mark_active(self) -> None:
+        """Refresh presence in response to a real arena tool call (throttled)."""
+        now = now_ms()
+        if now - self._last_presence_ping_ms < self.PRESENCE_MIN_PING_INTERVAL_MS:
+            return
+        self._last_presence_ping_ms = now
         self._post_presence_ping()
-        self._start_presence_heartbeat()
 
     def _post_presence_ping(self) -> None:
         body = json.dumps(
@@ -156,19 +167,6 @@ class DoomArenaClient:
                 response.read()
         except (OSError, urllib.error.URLError) as exc:
             log_mcp(f"mcp presence post failed: {exc}")
-
-    def _start_presence_heartbeat(self) -> None:
-        if self._presence_thread_started:
-            return
-        self._presence_thread_started = True
-
-        def beat() -> None:
-            while True:
-                time.sleep(self.PRESENCE_HEARTBEAT_SECONDS)
-                self._post_presence_ping()
-
-        thread = threading.Thread(target=beat, name="mcp-presence-heartbeat", daemon=True)
-        thread.start()
 
     def agent_label(self) -> str:
         if self.client_name and self.client_version:
@@ -2397,6 +2395,7 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
         if not isinstance(arguments, dict):
             arguments = {}
         EXTERNAL_MCP_CALL_COUNTER += 1
+        client.mark_active()
         started_at = now_ms()
         call_id = f"stdio_mcp_{os.getpid()}_{EXTERNAL_MCP_CALL_COUNTER:06d}"
         try:
