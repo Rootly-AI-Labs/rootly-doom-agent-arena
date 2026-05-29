@@ -98,10 +98,10 @@ STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
     },
 )
 
-MAP_BOUNDS = {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768}
+MAP_BOUNDS = {"x_min": -1056, "x_max": 1056, "y_min": -736, "y_max": 736}
 MAP_CELL_SIZE = 64
-MAP_ROWS = 24
-MAP_COLS = 32
+MAP_ROWS = 23
+MAP_COLS = 33
 MAP_ASCII_PATH = "scripts/map_blueprints/duel_e1m8_ascii.txt"
 
 STRATEGY_ACTIONS: dict[str, list[str]] = {

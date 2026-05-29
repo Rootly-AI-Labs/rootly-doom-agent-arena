@@ -30,8 +30,8 @@ The ASCII grid is centered around Doom world coordinate `(0, 0)`.
 
 For a 32-column by 24-row map with `cell_size=64`:
 
-- `x=-1024..1024`
-- `y=-768..768`
+- `x=-1056..1056`
+- `y=-736..736`
 - top row is north / `+y`
 - bottom row is south / `-y`
 - left side is west / `-x`

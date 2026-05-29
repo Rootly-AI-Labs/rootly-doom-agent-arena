@@ -195,7 +195,7 @@ def normalize_plan_route_field(value: Any) -> str:
             raise ValueError("plan_route must use x,y;x,y format")
         x = int(pieces[0])
         y = int(pieces[1])
-        if x < -1024 or x > 1024 or y < -768 or y > 768:
+        if x < -1056 or x > 1056 or y < -736 or y > 736:
             raise ValueError("plan_route waypoint is outside map bounds")
         points.append(f"{x},{y}")
     if len(points) > PLAN_ROUTE_MAX_WAYPOINTS:

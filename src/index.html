@@ -812,12 +812,14 @@
                 z-index: 1;
                 background: #0b0f0d;
                 image-rendering: pixelated;
+                opacity: 0;
             }
 
             #duel-tactical-overlay-canvas {
                 position: absolute;
                 inset: 0;
                 z-index: 2;
+                background: #07100d;
                 pointer-events: none;
             }
 
@@ -1773,7 +1775,7 @@
             var forceArenaMenuMode = false;
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
             var currentMapBlueprint = null;
-            var tacticalOverlayDefaultBounds = { x_min: -1024, x_max: 1024, y_min: -768, y_max: 768 };
+            var tacticalOverlayDefaultBounds = { x_min: -1056, x_max: 1056, y_min: -736, y_max: 736 };
             var tacticalPathTrailByParticipant = { player_1: [], player_2: [] };
             var tacticalPathTrailRunId = "";
             var tacticalPathTrailMaxPoints = 180;
@@ -1912,6 +1914,8 @@
                     ctx = overlayCanvas.getContext("2d");
                     if (ctx) {
                         ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                        ctx.fillStyle = "#07100d";
+                        ctx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
                     }
                 }
 
@@ -2128,8 +2132,8 @@
                 var ctx;
                 var bounds = tacticalOverlayBounds();
                 var cellSize = 64;
-                var rows = 24;
-                var cols = 32;
+                var rows = 23;
+                var cols = 33;
                 var row;
                 var col;
                 var x;
