@@ -87,10 +87,26 @@
             }
 
             .arena-launcher-card h1 {
-                margin: 0 0 8px;
+                margin: 0 0 4px;
                 font: 700 28px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
+            }
+
+            .arena-launcher-byline {
+                margin: 0 0 16px;
+                color: rgba(247, 245, 216, 0.45);
+                font: 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.06em;
+            }
+
+            .arena-launcher-byline a {
+                color: rgba(183, 207, 137, 0.7);
+                text-decoration: none;
+            }
+
+            .arena-launcher-byline a:hover {
+                color: rgba(183, 207, 137, 1);
             }
 
             .arena-launcher-card p {
@@ -1391,6 +1407,7 @@
             <div id="arena-launcher">
                 <div class="arena-launcher-card">
                     <h1 id="arena-launcher-title">Doom Arena Duel</h1>
+                    <p class="arena-launcher-byline">by <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener">Rootly AI Labs</a></p>
                     <p id="arena-launcher-message">Set up both MCP agents, then start the benchmark.</p>
                     <div class="arena-config-section">
                         <div class="arena-config-section-title">Match setup</div>
