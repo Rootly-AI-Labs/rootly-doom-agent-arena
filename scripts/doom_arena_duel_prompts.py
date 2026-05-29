@@ -14,10 +14,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 RESULTS_ROOT = REPO_ROOT / "benchmarks" / "results"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
-MAP_BOUNDS = {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768}
+MAP_BOUNDS = {"x_min": -1056, "x_max": 1056, "y_min": -736, "y_max": 736}
 MAP_CELL_SIZE = 64
-MAP_ROWS = 24
-MAP_COLS = 32
+MAP_ROWS = 23
+MAP_COLS = 33
 
 
 def _xy_to_grid_cell(x: Any, y: Any) -> str:
@@ -179,7 +179,7 @@ Static map context:
 - Cell size: each ASCII cell is `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
 - Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
-- Grid frame: rows `A-X` are north/top to south/bottom; columns `01-32` are west/left to east/right.
+- Grid frame: rows `A-W` are north/top to south/bottom; columns `01-33` are west/left to east/right.
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Blocked route cells: {blocked_cells}.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
@@ -300,7 +300,7 @@ Plan schema:
 
 Route rules:
 - `route` is a list of up to 16 grid cells, e.g. `["M05", "G05", "G12", "M17"]`.
-- Rows are `A-X` from north/top to south/bottom. Columns are `01-32` from west/left to east/right.
+- Rows are `A-W` from north/top to south/bottom. Columns are `01-33` from west/left to east/right.
 - Each cell is `64 x 64` Doom units. The server converts cells into Doom coordinates at the cell center.
 - Do not put waypoints inside `#` wall cells.
 - Do not choose any cell listed under `Blocked route cells`.

@@ -79,8 +79,8 @@ force_fight
 Route constraints:
 
 ```text
-rows A-X
-columns 01-32
+rows A-W
+columns 01-33
 maximum 16 cells
 cells cannot be # wall cells
 straight route segments cannot cross # wall cells

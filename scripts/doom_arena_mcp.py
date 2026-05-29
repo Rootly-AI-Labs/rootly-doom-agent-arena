@@ -2835,8 +2835,8 @@ def participant_plan_schema() -> dict[str, Any]:
                 "maxItems": PLAN_ROUTE_MAX_WAYPOINTS,
                 "items": {
                     "type": "string",
-                    "pattern": "^[A-Xa-x](0[1-9]|[12][0-9]|3[0-2])$",
-                    "description": "Grid cell label, e.g. M06. Rows A-X, columns 01-32.",
+                    "pattern": "^[A-Wa-w](0[1-9]|[12][0-9]|3[0-3])$",
+                    "description": "Grid cell label, e.g. M06. Rows A-W, columns 01-33.",
                 },
             },
             "engagement_policy": {"type": "string", "enum": sorted(PLAN_ENGAGEMENT_POLICIES)},
