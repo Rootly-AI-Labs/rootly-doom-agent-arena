@@ -84,6 +84,11 @@ DUEL_SCENARIOS = [
         "label": "Custom room corner spawn",
         "requires_wasm_rebuild": False,
     },
+    {
+        "scenario_id": "duel_e1m8_center_spawn",
+        "label": "Custom room center spawn",
+        "requires_wasm_rebuild": False,
+    },
 ]
 DUEL_SCENARIO_IDS = {entry["scenario_id"] for entry in DUEL_SCENARIOS}
 DUEL_ACTIVE_SCENARIO_IDS = {
@@ -1031,6 +1036,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "you_won": False,
                 "your_damage": None,
                 "opponent_damage": None,
+                "your_final_health": None,
+                "opponent_final_health": None,
+                "your_hit_rate": None,
                 "your_opening": None,
                 "opponent_opening": None,
                 "shotgun_pickup_owner": None,
@@ -1043,9 +1051,19 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     if participant_id == "player_1":
                         entry["your_damage"] = s.get("player_1_damage_dealt")
                         entry["opponent_damage"] = s.get("player_2_damage_dealt")
+                        entry["your_final_health"] = s.get("player_1_health_end")
+                        entry["opponent_final_health"] = s.get("player_2_health_end")
+                        fired = s.get("player_1_shots_fired")
+                        hit = s.get("player_1_shots_hit")
                     else:
                         entry["your_damage"] = s.get("player_2_damage_dealt")
                         entry["opponent_damage"] = s.get("player_1_damage_dealt")
+                        entry["your_final_health"] = s.get("player_2_health_end")
+                        entry["opponent_final_health"] = s.get("player_1_health_end")
+                        fired = s.get("player_2_shots_fired")
+                        hit = s.get("player_2_shots_hit")
+                    if fired and fired > 0:
+                        entry["your_hit_rate"] = round(hit / fired, 2) if hit is not None else None
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
                     pass
             if stats_path.exists():

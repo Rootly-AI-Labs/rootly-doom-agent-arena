@@ -42,10 +42,10 @@ def load_map_blueprint(scenario_id: str) -> str:
 
 
 def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
-    if total_rounds <= 1:
+    if not enabled or total_rounds <= 1:
         return ""
     return """
-Cross-round recap:
+Cross-round learning:
 - If `previous_rounds` appears in observations, use it only to avoid repeating failed openings.
 - Recaps are intentionally tiny: winner, whether you won, damage, first objectives, and resource pickup owner when available.
 
