@@ -110,10 +110,6 @@ class DoomArenaError(RuntimeError):
 
 
 class DoomArenaClient:
-    # Don't re-POST presence on every single tool call; refreshing well inside
-    # the server's 25s stale window keeps the client "connected" without spam.
-    PRESENCE_MIN_PING_INTERVAL_MS = 5000
-
     def __init__(self, server_url: str):
         self.server_url = server_url.rstrip("/")
         self.run_id = "run_unknown"
@@ -121,7 +117,6 @@ class DoomArenaClient:
         self.client_name = ""
         self.client_version = ""
         self.client_id = f"mcp_{os.getpid()}"
-        self._last_presence_ping_ms = 0
         # Keep MCP startup independent from the browser/arena HTTP state. Some
         # MCP clients expect initialize to be answered immediately and will mark
         # the server failed if startup performs slow network work.
@@ -130,43 +125,9 @@ class DoomArenaClient:
         client_info = params.get("clientInfo") if isinstance(params, dict) else {}
         if not isinstance(client_info, dict):
             client_info = {}
-
-        # Capture identity for later labeling, but do NOT register presence here.
-        # `initialize` fires whenever any assistant merely has this MCP server
-        # configured; presence should reflect agents actively using the arena,
-        # which we detect from real tool calls (see mark_active).
         self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
         self.client_version = str(client_info.get("version", "") or "").strip()
         self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
-
-    def mark_active(self) -> None:
-        """Refresh presence in response to a real arena tool call (throttled)."""
-        now = now_ms()
-        if now - self._last_presence_ping_ms < self.PRESENCE_MIN_PING_INTERVAL_MS:
-            return
-        self._last_presence_ping_ms = now
-        self._post_presence_ping()
-
-    def _post_presence_ping(self) -> None:
-        body = json.dumps(
-            {
-                "client_id": self.client_id,
-                "client_name": self.client_name,
-                "client_version": self.client_version,
-                "connected_at_ms": now_ms(),
-            }
-        ).encode("utf-8")
-        request = urllib.request.Request(
-            self.server_url + "/api/arena/mcp-presence",
-            data=body,
-            method="POST",
-            headers={"Content-Type": "application/json; charset=utf-8"},
-        )
-        try:
-            with urllib.request.urlopen(request, timeout=0.5) as response:
-                response.read()
-        except (OSError, urllib.error.URLError) as exc:
-            log_mcp(f"mcp presence post failed: {exc}")
 
     def agent_label(self) -> str:
         if self.client_name and self.client_version:
@@ -2395,7 +2356,6 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
         if not isinstance(arguments, dict):
             arguments = {}
         EXTERNAL_MCP_CALL_COUNTER += 1
-        client.mark_active()
         started_at = now_ms()
         call_id = f"stdio_mcp_{os.getpid()}_{EXTERNAL_MCP_CALL_COUNTER:06d}"
         try:
