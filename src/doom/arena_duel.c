@@ -1482,12 +1482,12 @@ static void ArenaDuel_Player1Attack(void)
 
     if (ready_weapon == wp_shotgun && player->ammo[am_shell] > 0)
     {
-        for (i = 0; i < 7; i++)
+        for (i = 0; i < 5; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = mobj->angle + (P_SubRandom() << 18);
-            damage = 5 * (P_Random() % 3 + 1);
+            damage = (P_Random() & 1) ? 10 : 6;
             P_LineAttack(mobj, pellet_angle, MISSILERANGE, slope, damage);
         }
         S_StartSound(mobj, sfx_shotgn);
@@ -1668,12 +1668,12 @@ static void ArenaDuel_Player2Attack(void)
     if (arena_duel_player2_ready_weapon == wp_shotgun
         && arena_duel_player2_ammo_shells > 0)
     {
-        for (i = 0; i < 7; i++)
+        for (i = 0; i < 5; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = arena_duel_player2->angle + (P_SubRandom() << 18);
-            damage = 5 * (P_Random() % 3 + 1);
+            damage = (P_Random() & 1) ? 10 : 6;
             P_LineAttack(arena_duel_player2,
                          pellet_angle,
                          MISSILERANGE,
