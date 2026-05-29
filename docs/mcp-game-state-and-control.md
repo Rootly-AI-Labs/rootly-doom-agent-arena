@@ -180,9 +180,8 @@ Example `map` block:
   "current_zone": "left_side",
   "weapon_pickups_enabled": true,
   "pickups": [
-    {"id": "health_top", "available": true, "cell": "B17", "distance": 900},
-    {"id": "health_bottom", "available": true, "cell": "W17", "distance": 900},
-    {"id": "weapon_center", "available": true, "cell": "M17", "distance": 900}
+    {"id": "health_d06", "available": true, "cell": "D06", "distance": 900},
+    {"id": "shotgun_i12", "available": true, "cell": "I12", "distance": 900}
   ]
 }
 ```
@@ -322,13 +321,7 @@ Visibility is directional. Player 1 seeing Player 2 does not automatically mean 
 
 ## Pickups
 
-The generated prompt gives static pickup locations once:
-
-```text
-health_top: medikit at x=0 y=672
-health_bottom: medikit at x=0 y=-672
-weapon_center: shotgun at x=0 y=0
-```
+The generated prompt gives static pickup locations once. Pickup locations are derived from `H` and `S` markers in `scripts/map_blueprints/duel_e1m8_ascii.txt`, so moving those markers updates the WAD, minimap, generated prompt, and observation pickup cells.
 
 Each medikit restores `+100` health, capped at the duel max health of `150`.
 

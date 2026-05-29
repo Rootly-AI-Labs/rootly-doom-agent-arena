@@ -134,17 +134,18 @@ def _blocked_cell_list(ascii_map: str) -> str:
     return ", ".join(cells)
 
 
-def _static_pickup_context(enable_weapon_pickups: bool) -> str:
-    pickups = [
-        ("health_top", "medikit", 0, 672, "heals +100 up to 150"),
-        ("health_bottom", "medikit", 0, -672, "heals +100 up to 150"),
-    ]
-    if enable_weapon_pickups:
-        pickups.append(("weapon_center", "shotgun", 0, 0, "7-pellet weapon pickup"))
+def _static_pickup_context(enable_weapon_pickups: bool, blueprint: dict[str, Any]) -> str:
+    pickups = []
+    for pickup in blueprint.get("pickups", []):
+        if pickup.get("type") == "weapon" and not enable_weapon_pickups:
+            continue
+        name = str(pickup.get("name") or pickup.get("type") or "pickup")
+        note = "heals +100 up to 150" if pickup.get("type") == "health" else "5-pellet weapon pickup"
+        pickups.append((pickup.get("id", ""), name, pickup.get("x"), pickup.get("y"), note))
     lines = []
     for pickup_id, name, x, y, note in pickups:
         lines.append(f"- {pickup_id}: {name}, cell={_xy_to_grid_cell(x, y)}, x={x}, y={y}, {note}.")
-    return "\n".join(lines)
+    return "\n".join(lines) if lines else "- none"
 
 
 def _static_map_context_section(
@@ -186,7 +187,7 @@ Static map context:
 - The Doom autopilot handles frame-level movement.
 
 Static resources:
-{_static_pickup_context(enable_weapon_pickups)}
+{_static_pickup_context(enable_weapon_pickups, blueprint)}
 
 ASCII map:
 ```text

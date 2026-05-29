@@ -8,6 +8,8 @@ from collections import deque
 from copy import deepcopy
 from typing import Any
 
+from doom_arena_map_blueprints import load_geometry_blueprint
+
 
 CONTROL_MODE_FULL = "full"
 CONTROL_MODE_HIERARCHICAL = "hierarchical"
@@ -55,34 +57,43 @@ PLAN_METADATA_FIELDS = (
 
 STATIC_PICKUPS: tuple[dict[str, Any], ...] = (
     {
-        "id": "health_top",
+        "id": "health_nw",
         "type": "health",
         "name": "medikit",
-        "x": 0,
-        "y": 672,
-        "zone": "top_lane",
+        "x": -672,
+        "y": 544,
+        "zone": "top_left",
         "purpose": "restore_health",
         "heals": 100,
         "max_health": 150,
     },
     {
-        "id": "health_bottom",
+        "id": "health_se",
         "type": "health",
         "name": "medikit",
-        "x": 0,
-        "y": -672,
-        "zone": "bottom_lane",
+        "x": 672,
+        "y": -544,
+        "zone": "bottom_right",
         "purpose": "restore_health",
         "heals": 100,
         "max_health": 150,
     },
     {
-        "id": "weapon_center",
+        "id": "shotgun_nw",
         "type": "weapon",
         "name": "shotgun",
-        "x": 0,
-        "y": 0,
-        "zone": "center",
+        "x": -608,
+        "y": 544,
+        "zone": "top_left",
+        "purpose": "upgrade_weapon",
+    },
+    {
+        "id": "shotgun_se",
+        "type": "weapon",
+        "name": "shotgun",
+        "x": 608,
+        "y": -544,
+        "zone": "bottom_right",
         "purpose": "upgrade_weapon",
     },
 )
@@ -522,14 +533,18 @@ def blocked_grid_cells() -> list[str]:
 
 def strategy_pickups_for_observation(x: Any, y: Any, include_weapons: bool = True) -> list[dict[str, Any]]:
     pickups = []
-    for pickup in STATIC_PICKUPS:
+    try:
+        static_pickups = tuple(load_geometry_blueprint("duel_e1m8").get("pickups", []))
+    except Exception:
+        static_pickups = STATIC_PICKUPS
+    for pickup in static_pickups:
         if pickup.get("type") == "weapon" and not include_weapons:
             continue
         pickups.append(
             {
                 "id": pickup.get("id", ""),
                 "available": True,
-                "cell": xy_to_grid_cell(pickup.get("x"), pickup.get("y")),
+                "cell": pickup.get("cell") or xy_to_grid_cell(pickup.get("x"), pickup.get("y")),
                 "distance": pickup_distance(pickup, x, y),
             }
         )

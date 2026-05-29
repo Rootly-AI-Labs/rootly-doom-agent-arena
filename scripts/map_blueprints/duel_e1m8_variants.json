@@ -14,14 +14,14 @@
                                        "label":  "Open sight spawn",
                                        "spawns":  {
                                                       "player_1":  {
-                                                                       "x":  -608,
-                                                                       "y":  544,
-                                                                       "angle_deg":  0
+                                                                       "x":  -992,
+                                                                       "y":  736,
+                                                                       "angle_deg":  315
                                                                    },
                                                       "player_2":  {
-                                                                       "x":  672,
-                                                                       "y":  544,
-                                                                       "angle_deg":  180
+                                                                       "x":  992,
+                                                                       "y":  -736,
+                                                                       "angle_deg":  135
                                                                    }
                                                   }
                                    },
@@ -30,14 +30,14 @@
                                                    "label":  "Blind spawn",
                                                    "spawns":  {
                                                                   "player_1":  {
-                                                                                   "x":  -900,
-                                                                                   "y":  0,
-                                                                                   "angle_deg":  0
+                                                                                   "x":  -992,
+                                                                                   "y":  736,
+                                                                                   "angle_deg":  315
                                                                                },
                                                                   "player_2":  {
-                                                                                   "x":  900,
-                                                                                   "y":  0,
-                                                                                   "angle_deg":  180
+                                                                                   "x":  992,
+                                                                                   "y":  -736,
+                                                                                   "angle_deg":  135
                                                                                }
                                                               }
                                                },
@@ -46,14 +46,14 @@
                                                     "label":  "Corner spawn",
                                                     "spawns":  {
                                                                    "player_1":  {
-                                                                                    "x":  -768,
-                                                                                    "y":  -512,
-                                                                                    "angle_deg":  45
+                                                                                    "x":  -992,
+                                                                                    "y":  736,
+                                                                                    "angle_deg":  315
                                                                                 },
                                                                    "player_2":  {
-                                                                                    "x":  768,
-                                                                                    "y":  512,
-                                                                                    "angle_deg":  225
+                                                                                    "x":  992,
+                                                                                    "y":  -736,
+                                                                                    "angle_deg":  135
                                                                                 }
                                                                }
                                                 }

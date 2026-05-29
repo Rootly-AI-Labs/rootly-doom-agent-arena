@@ -275,6 +275,49 @@ static void ArenaDuel_SetPlayer2ViewPsprite(int position, statenum_t state)
     psp->sy = states[state].misc2;
 }
 
+static void ArenaDuel_SetPlayer1ViewPsprite(int position, statenum_t state)
+{
+    player_t *player;
+    pspdef_t *psp;
+
+    if (position < 0 || position >= NUMPSPRITES || state <= S_NULL || state >= NUMSTATES)
+    {
+        return;
+    }
+
+    player = &players[consoleplayer];
+    psp = &player->psprites[position];
+    psp->state = &states[state];
+    psp->tics = states[state].tics;
+    psp->sx = states[state].misc1;
+    psp->sy = states[state].misc2;
+}
+
+static void ArenaDuel_TriggerPlayer1ViewFire(weapontype_t ready_weapon)
+{
+    statenum_t weapon_state;
+    statenum_t flash_state;
+
+    if (ready_weapon <= wp_fist || ready_weapon >= NUMWEAPONS)
+    {
+        ready_weapon = wp_pistol;
+    }
+
+    weapon_state = weaponinfo[ready_weapon].atkstate;
+    flash_state = weaponinfo[ready_weapon].flashstate;
+    if (ready_weapon == wp_pistol && weapon_state == S_PISTOL1)
+    {
+        weapon_state = S_PISTOL2;
+    }
+    else if (ready_weapon == wp_shotgun && weapon_state == S_SGUN1)
+    {
+        weapon_state = S_SGUN2;
+    }
+
+    ArenaDuel_SetPlayer1ViewPsprite(ps_weapon, weapon_state);
+    ArenaDuel_SetPlayer1ViewPsprite(ps_flash, flash_state);
+}
+
 static void ArenaDuel_TriggerPlayer2ViewFire(void)
 {
     weapontype_t ready_weapon;
@@ -306,6 +349,24 @@ static void ArenaDuel_TriggerPlayer2ViewFire(void)
 
     ArenaDuel_SetPlayer2ViewPsprite(ps_weapon, weapon_state);
     ArenaDuel_SetPlayer2ViewPsprite(ps_flash, flash_state);
+}
+
+static void ArenaDuel_SetPlayer2ViewReadyWeapon(weapontype_t ready_weapon)
+{
+    if (ready_weapon <= wp_fist || ready_weapon >= NUMWEAPONS)
+    {
+        ready_weapon = wp_pistol;
+    }
+
+    ArenaDuel_Player2ViewPlayer();
+    arena_duel_player2_view_player.readyweapon = ready_weapon;
+    arena_duel_player2_view_player.pendingweapon = ready_weapon;
+    arena_duel_player2_view_player.weaponowned[ready_weapon] = true;
+    arena_duel_player2_view_player.ammo[am_clip] = arena_duel_player2_ammo_bullets;
+    arena_duel_player2_view_player.maxammo[am_clip] = ARENA_DUEL_PLAYER2_BULLETS;
+    arena_duel_player2_view_player.ammo[am_shell] = arena_duel_player2_ammo_shells;
+    arena_duel_player2_view_player.maxammo[am_shell] = 200;
+    ArenaDuel_SetPlayer2ViewPsprite(ps_weapon, weaponinfo[ready_weapon].readystate);
 }
 
 static int ArenaDuel_AbsInt(int value)
@@ -904,10 +965,41 @@ static void ArenaDuel_EnsurePlayer1Label(void)
     mobj->arena_label[sizeof(mobj->arena_label) - 1] = '\0';
 }
 
+static void ArenaDuel_Player1Spawn(int *x, int *y, angle_t *angle)
+{
+    switch (ArenaDuel_SpawnVariant())
+    {
+    case ARENA_DUEL_SPAWN_BLIND:
+        *x = -992;
+        *y = 736;
+        *angle = ANG270 + ANG45;
+        break;
+    case ARENA_DUEL_SPAWN_CORNER:
+        *x = -992;
+        *y = 736;
+        *angle = ANG270 + ANG45;
+        break;
+    case ARENA_DUEL_SPAWN_CENTER:
+        *x = -320;
+        *y = -520;
+        *angle = 0;
+        break;
+    case ARENA_DUEL_SPAWN_OPEN:
+    default:
+        *x = -992;
+        *y = 736;
+        *angle = ANG270 + ANG45;
+        break;
+    }
+}
+
 static void ArenaDuel_EnsurePlayer1StartingHealth(void)
 {
     player_t *player;
     mobj_t *mobj;
+    int x;
+    int y;
+    angle_t angle;
 
     if (arena_duel_player1_health_initialized)
     {
@@ -921,6 +1013,12 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
     }
 
     mobj = player->mo;
+    ArenaDuel_Player1Spawn(&x, &y, &angle);
+    P_UnsetThingPosition(mobj);
+    mobj->x = x << FRACBITS;
+    mobj->y = y << FRACBITS;
+    mobj->angle = angle;
+    P_SetThingPosition(mobj);
     mobj->momx = 0;
     mobj->momy = 0;
     mobj->z = mobj->floorz;
@@ -930,6 +1028,11 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
     player->armortype = 0;
     player->armorpoints = 0;
     arena_duel_player1_health_initialized = true;
+    printf("Doom Agent Arena: spawned duel player_1 at (%d, %d)\n",
+           x,
+           y);
+    ArenaDuel_AddEvent("participant_spawned: player_1");
+    ArenaDuel_LogCollisionProfile("player_1", mobj);
 }
 
 static void ArenaDuel_EnsurePlayer1CombatState(void)
@@ -1504,6 +1607,7 @@ static void ArenaDuel_Player1Attack(void)
     }
 
     P_SetMobjState(mobj, S_PLAY_ATK2);
+    ArenaDuel_TriggerPlayer1ViewFire(ready_weapon);
     arena_duel_player1_shots_fired++;
     ArenaDuel_AddEvent("participant_fired: player_1");
 }
@@ -1736,7 +1840,7 @@ static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
         }
         arena_duel_player2_ready_weapon = wp_shotgun;
         arena_duel_player2_ammo_shells = 200;
-        ArenaDuel_Player2ViewPlayer();
+        ArenaDuel_SetPlayer2ViewReadyWeapon(wp_shotgun);
         S_StartSound(arena_duel_player2, sfx_wpnup);
         snprintf(event,
                  sizeof(event),
@@ -2245,14 +2349,14 @@ void ArenaDuel_SpawnPlayer2(void)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        x = 900;
-        y = 0;
-        angle = ANG180;
+        x = 992;
+        y = -736;
+        angle = ANG90 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
-        x = 768;
-        y = 512;
-        angle = ANG180 + ANG45;
+        x = 992;
+        y = -736;
+        angle = ANG90 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CENTER:
         x = 320;
@@ -2261,9 +2365,9 @@ void ArenaDuel_SpawnPlayer2(void)
         break;
     case ARENA_DUEL_SPAWN_OPEN:
     default:
-        x = 672;
-        y = 544;
-        angle = ANG180;
+        x = 992;
+        y = -736;
+        angle = ANG90 + ANG45;
         break;
     }
 

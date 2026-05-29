@@ -1656,7 +1656,7 @@
         </div>
 
         <script>
-            var doomAssetCacheBust = "cache-bust-20260524-automap";
+            var doomAssetCacheBust = "cache-bust-20260529-p2-shotgun-view";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
@@ -1753,13 +1753,8 @@
             var tacticalPathTrailMaxJumpDistance = 240;
             var tacticalPathTrailConfirmJumpDistance = 96;
             var tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
-            var tacticalHealthPackMarkers = [
-                { x: 0, y: 672, label: "H" },
-                { x: 0, y: -672, label: "H" }
-            ];
-            var tacticalWeaponMarkers = [
-                { x: 0, y: 0, label: "S" }
-            ];
+            var tacticalHealthPackMarkers = [];
+            var tacticalWeaponMarkers = [];
             var currentMapBlueprintScenarioId = "";
             var blueprintRequestScenarioId = "";
 
@@ -1811,14 +1806,39 @@
                         blueprintRequestScenarioId = "";
                         currentMapBlueprint = payload && payload.blueprint ? payload.blueprint : null;
                         currentMapBlueprintScenarioId = currentMapBlueprint ? scenarioId : "";
+                        updateTacticalPickupMarkersFromBlueprint(currentMapBlueprint);
                         return currentMapBlueprint;
                     })
                     .catch(function () {
                         blueprintRequestScenarioId = "";
                         currentMapBlueprint = null;
                         currentMapBlueprintScenarioId = "";
+                        updateTacticalPickupMarkersFromBlueprint(null);
                         return null;
                     });
+            }
+
+            function updateTacticalPickupMarkersFromBlueprint(blueprint) {
+                tacticalHealthPackMarkers = [];
+                tacticalWeaponMarkers = [];
+                if (!blueprint || !Array.isArray(blueprint.pickups)) {
+                    return;
+                }
+                blueprint.pickups.forEach(function (pickup) {
+                    var marker = {
+                        x: Number(pickup.x),
+                        y: Number(pickup.y),
+                        label: pickup.type === "weapon" ? "S" : "H"
+                    };
+                    if (!Number.isFinite(marker.x) || !Number.isFinite(marker.y)) {
+                        return;
+                    }
+                    if (pickup.type === "weapon") {
+                        tacticalWeaponMarkers.push(marker);
+                    } else if (pickup.type === "health") {
+                        tacticalHealthPackMarkers.push(marker);
+                    }
+                });
             }
 
             function doomAngleToCssRotation(angleValue) {
@@ -2080,7 +2100,7 @@
                 ctx.fillRect(0, 0, rowLabelX + 5, canvas.height);
 
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = "rgba(174, 208, 224, 0.08)";
+                ctx.strokeStyle = "rgba(174, 208, 224, 0.18)";
 
                 for (col = 1; col < cols; col++) {
                     x = bounds.x_min + col * cellSize;
@@ -2100,7 +2120,7 @@
                     ctx.stroke();
                 }
 
-                ctx.fillStyle = "rgba(210, 232, 242, 0.48)";
+                ctx.fillStyle = "rgba(210, 232, 242, 0.62)";
                 ctx.font = "700 " + fontSize + "px Consolas, 'Courier New', monospace";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
@@ -2459,9 +2479,9 @@
 
                 if (!spawn) {
                     if (participantId === "player_1") {
-                        spawn = { x: -900, y: 0, z: 0, angle_deg: 0 };
+                        spawn = { x: -992, y: 736, z: 0, angle_deg: 315 };
                     } else if (participantId === "player_2") {
-                        spawn = { x: 900, y: 0, z: 0, angle_deg: 180 };
+                        spawn = { x: 992, y: -736, z: 0, angle_deg: 135 };
                     }
                 }
 
@@ -2722,7 +2742,7 @@
                 doomScriptLoaded = true;
                 script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "websockets-doom.js?v=cache-bust-20260524-automap";
+                script.src = "websockets-doom.js?v=cache-bust-20260529-p2-shotgun-view";
                 script.addEventListener("load", function () {
                     disableDoomPointerCapture();
                 });
@@ -5416,11 +5436,11 @@
                 if (player1AutomapState.lastFrame !== previousFrame && !appendTacticalPathTrailPointsFromAutomap(canvas)) {
                     appendTacticalPathTrailPointsFromWasm();
                 }
-                drawTacticalGridOnAutomap();
                 drawTacticalWallCellsOnAutomap();
                 drawTacticalPathTrailsOnAutomap();
                 drawTacticalHealthPacksOnAutomap();
                 drawTacticalWeaponsOnAutomap();
+                drawTacticalGridOnAutomap();
             }
 
             function refreshPlayer2Pov() {
