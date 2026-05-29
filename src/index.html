@@ -864,30 +864,56 @@
                 white-space: nowrap;
             }
             .duel-tactical-marker {
+                --tactical-marker-color: #f7f5d8;
                 position: absolute;
                 z-index: 4;
-                width: 0;
-                height: 0;
-                margin-left: -7px;
-                margin-top: -8px;
-                border-left: 7px solid transparent;
-                border-right: 7px solid transparent;
-                border-bottom: 16px solid #f7f5d8;
-                filter: drop-shadow(0 0 2px rgba(12, 12, 12, 0.95)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
+                width: 22px;
+                height: 22px;
+                margin-left: -11px;
+                margin-top: -11px;
+                border: 2px solid rgba(248, 255, 232, 0.92);
+                border-radius: 999px;
+                background: var(--tactical-marker-color);
+                box-shadow: 0 0 0 2px rgba(5, 8, 6, 0.92), 0 0 8px rgba(255, 255, 255, 0.22);
                 pointer-events: none;
-                transform-origin: 50% 62%;
+                transform-origin: 50% 50%;
             }
 
             .duel-tactical-marker[hidden] {
                 display: none;
             }
 
+            .duel-tactical-marker::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 2px;
+                width: 11px;
+                height: 13px;
+                background: rgba(3, 8, 6, 0.88);
+                clip-path: polygon(50% 0, 8% 100%, 92% 100%);
+                transform: translateX(-50%);
+                filter: drop-shadow(0 0 1px rgba(248, 255, 232, 0.75));
+            }
+
+            .duel-tactical-marker::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 60%;
+                width: 4px;
+                height: 4px;
+                border-radius: 999px;
+                background: rgba(5, 8, 6, 0.82);
+                transform: translate(-50%, -50%);
+            }
+
             .duel-tactical-marker.player-1 {
-                border-bottom-color: #7ddcff;
+                --tactical-marker-color: #7ddcff;
             }
 
             .duel-tactical-marker.player-2 {
-                border-bottom-color: #ff7a7a;
+                --tactical-marker-color: #ff7a7a;
             }
 
             .duel-tactical-meta {
@@ -1927,14 +1953,27 @@
             }
 
             function automapProjection(bounds, width, height) {
-                var padding = 0;
+                var labelPadX = Math.max(18, Math.floor(width * 0.038));
+                var labelPadY = Math.max(16, Math.floor(height * 0.045));
+                var rightPad = 2;
+                var bottomPad = 2;
                 var mapWidth = Math.max(1, bounds.x_max - bounds.x_min);
                 var mapHeight = Math.max(1, bounds.y_max - bounds.y_min);
-                var scaleX = Math.max(1, width - 1 - padding * 2) / mapWidth;
-                var scaleY = Math.max(1, height - 1 - padding * 2) / mapHeight;
+                var availableWidth = Math.max(1, width - labelPadX - rightPad);
+                var availableHeight = Math.max(1, height - labelPadY - bottomPad);
+                var scaleX = availableWidth / mapWidth;
+                var scaleY = availableHeight / mapHeight;
+                var scale = Math.min(scaleX, scaleY);
+                var drawWidth = mapWidth * scale;
+                var drawHeight = mapHeight * scale;
                 return {
-                    padding: padding,
-                    scale: Math.min(scaleX, scaleY),
+                    offsetX: labelPadX + (availableWidth - drawWidth) / 2,
+                    offsetY: labelPadY + (availableHeight - drawHeight) / 2,
+                    labelPadX: labelPadX,
+                    labelPadY: labelPadY,
+                    drawWidth: drawWidth,
+                    drawHeight: drawHeight,
+                    scale: scale,
                     width: width,
                     height: height,
                 };
@@ -1943,15 +1982,15 @@
             function automapWorldToScreen(bounds, x, y, width, height) {
                 var projection = automapProjection(bounds, width, height);
                 return {
-                    x: projection.padding + (x - bounds.x_min) * projection.scale,
-                    y: height - 1 - projection.padding - (y - bounds.y_min) * projection.scale,
+                    x: projection.offsetX + (x - bounds.x_min) * projection.scale,
+                    y: projection.offsetY + (bounds.y_max - y) * projection.scale,
                 };
             }
 
             function automapScreenToWorld(bounds, screenX, screenY, width, height) {
                 var projection = automapProjection(bounds, width, height);
-                var mapX = bounds.x_min + (screenX - projection.padding) / projection.scale;
-                var mapY = bounds.y_min + (height - 1 - projection.padding - screenY) / projection.scale;
+                var mapX = bounds.x_min + (screenX - projection.offsetX) / projection.scale;
+                var mapY = bounds.y_max - (screenY - projection.offsetY) / projection.scale;
                 return {
                     x: Math.min(bounds.x_max, Math.max(bounds.x_min, mapX)),
                     y: Math.min(bounds.y_max, Math.max(bounds.y_min, mapY)),
@@ -2144,6 +2183,11 @@
                 var fontSize;
                 var colLabelY;
                 var rowLabelX;
+                var projection;
+                var leftX;
+                var rightX;
+                var topY;
+                var bottomY;
 
                 if (!canvas || !bounds || !canvas.width || !canvas.height) {
                     return;
@@ -2154,15 +2198,20 @@
                 }
 
                 fontSize = Math.max(7, Math.min(10, Math.floor(canvas.width / 58)));
-                labelEvery = 2;
-                colLabelY = Math.max(5, Math.floor(fontSize * 0.7));
-                rowLabelX = Math.max(5, Math.floor(fontSize * 0.7));
+                labelEvery = 1;
+                projection = automapProjection(bounds, canvas.width, canvas.height);
+                leftX = projection.offsetX;
+                rightX = projection.offsetX + projection.drawWidth;
+                topY = projection.offsetY;
+                bottomY = projection.offsetY + projection.drawHeight;
+                colLabelY = Math.max(fontSize / 2 + 1, topY / 2);
+                rowLabelX = Math.max(fontSize / 2 + 1, leftX / 2);
 
                 ctx.save();
 
-                ctx.fillStyle = "rgba(6, 12, 18, 0.14)";
-                ctx.fillRect(0, 0, canvas.width, colLabelY + 4);
-                ctx.fillRect(0, 0, rowLabelX + 5, canvas.height);
+                ctx.fillStyle = "rgba(6, 12, 18, 0.22)";
+                ctx.fillRect(0, 0, canvas.width, Math.max(0, topY));
+                ctx.fillRect(0, 0, Math.max(0, leftX), canvas.height);
 
                 ctx.lineWidth = 1;
                 ctx.strokeStyle = "rgba(174, 208, 224, 0.18)";
@@ -2171,8 +2220,8 @@
                     x = bounds.x_min + col * cellSize;
                     screen = automapWorldToScreen(bounds, x, bounds.y_min, canvas.width, canvas.height);
                     ctx.beginPath();
-                    ctx.moveTo(Math.round(screen.x) + 0.5, 0);
-                    ctx.lineTo(Math.round(screen.x) + 0.5, canvas.height);
+                    ctx.moveTo(Math.round(screen.x) + 0.5, topY);
+                    ctx.lineTo(Math.round(screen.x) + 0.5, bottomY);
                     ctx.stroke();
                 }
 
@@ -2180,8 +2229,8 @@
                     y = bounds.y_max - row * cellSize;
                     screen = automapWorldToScreen(bounds, bounds.x_min, y, canvas.width, canvas.height);
                     ctx.beginPath();
-                    ctx.moveTo(0, Math.round(screen.y) + 0.5);
-                    ctx.lineTo(canvas.width, Math.round(screen.y) + 0.5);
+                    ctx.moveTo(leftX, Math.round(screen.y) + 0.5);
+                    ctx.lineTo(rightX, Math.round(screen.y) + 0.5);
                     ctx.stroke();
                 }
 
@@ -2210,7 +2259,7 @@
 
                 ctx.strokeStyle = "rgba(210, 232, 242, 0.22)";
                 ctx.lineWidth = 1;
-                ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+                ctx.strokeRect(leftX + 0.5, topY + 0.5, projection.drawWidth - 1, projection.drawHeight - 1);
                 ctx.restore();
             }
 
@@ -2544,9 +2593,9 @@
 
                 if (!spawn) {
                     if (participantId === "player_1") {
-                        spawn = { x: -992, y: 736, z: 0, angle_deg: 315 };
+                        spawn = { x: -1024, y: 704, z: 0, angle_deg: 315 };
                     } else if (participantId === "player_2") {
-                        spawn = { x: 992, y: -736, z: 0, angle_deg: 135 };
+                        spawn = { x: 1024, y: -704, z: 0, angle_deg: 135 };
                     }
                 }
 
