@@ -45,10 +45,10 @@ Schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "control_center",
-  "route": ["M05", "G05", "G12", "M17"],
+  "objective": "your_goal",
+  "route": ["A01", "A02"],
   "engagement_policy": "engage_if_visible",
-  "reasoning": "use safe cells while checking for the enemy",
+  "reasoning": "short reason",
   "sequence_number": 1
 }
 ```
@@ -59,7 +59,7 @@ Fields:
 | --- | --- |
 | `participant_id` | `player_1` or `player_2`. |
 | `controller_token` | Per-player token from the generated prompt. |
-| `objective` | Short free-form goal, for example `control_center`, `heal`, `clear_top`, `flank`, `force_fight`. |
+| `objective` | Short free-form goal chosen by the model. |
 | `route` | Up to 16 grid cells such as `M05`, `G05`, `G12`, `M17`. |
 | `engagement_policy` | How to behave while following the route. |
 | `reasoning` | One short sentence for logs/evaluation. |
@@ -180,9 +180,9 @@ Example `map` block:
   "current_zone": "left_side",
   "weapon_pickups_enabled": true,
   "pickups": [
-    {"id": "health_top", "type": "health", "name": "medikit", "x": 0, "y": 672, "zone": "top_lane", "purpose": "restore_health", "heals": 100, "max_health": 150, "distance": 900},
-    {"id": "health_bottom", "type": "health", "name": "medikit", "x": 0, "y": -672, "zone": "bottom_lane", "purpose": "restore_health", "heals": 100, "max_health": 150, "distance": 900},
-    {"id": "weapon_center", "type": "weapon", "name": "shotgun", "x": 0, "y": 0, "zone": "center", "purpose": "upgrade_weapon", "distance": 900}
+    {"id": "health_top", "available": true, "cell": "B17", "distance": 900},
+    {"id": "health_bottom", "available": true, "cell": "W17", "distance": 900},
+    {"id": "weapon_center", "available": true, "cell": "M17", "distance": 900}
   ]
 }
 ```
@@ -322,7 +322,7 @@ Visibility is directional. Player 1 seeing Player 2 does not automatically mean 
 
 ## Pickups
 
-Current map pickups are exposed in observations through `map.pickups`:
+The generated prompt gives static pickup locations once:
 
 ```text
 health_top: medikit at x=0 y=672
@@ -332,7 +332,7 @@ weapon_center: shotgun at x=0 y=0
 
 Each medikit restores `+100` health, capped at the duel max health of `150`.
 
-Agents can choose route waypoints that chase, deny, or avoid these pickups.
+Repeated observations keep pickup data compact: `id`, `available`, `cell`, and `distance`.
 
 `weapon_pickups_enabled=false` means the shotgun is disabled for the session. In that mode, the Doom runtime removes shotgun objects, the UI hides the shotgun marker, and `map.pickups` only includes non-weapon resources such as health packs.
 

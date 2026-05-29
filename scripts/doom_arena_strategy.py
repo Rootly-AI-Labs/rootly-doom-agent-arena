@@ -525,10 +525,14 @@ def strategy_pickups_for_observation(x: Any, y: Any, include_weapons: bool = Tru
     for pickup in STATIC_PICKUPS:
         if pickup.get("type") == "weapon" and not include_weapons:
             continue
-        item = dict(pickup)
-        item["distance"] = pickup_distance(pickup, x, y)
-        item["cell"] = xy_to_grid_cell(pickup.get("x"), pickup.get("y"))
-        pickups.append(item)
+        pickups.append(
+            {
+                "id": pickup.get("id", ""),
+                "available": True,
+                "cell": xy_to_grid_cell(pickup.get("x"), pickup.get("y")),
+                "distance": pickup_distance(pickup, x, y),
+            }
+        )
     return pickups
 
 

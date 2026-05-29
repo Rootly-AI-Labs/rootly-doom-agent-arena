@@ -134,7 +134,24 @@ def _blocked_cell_list(ascii_map: str) -> str:
     return ", ".join(cells)
 
 
-def _static_map_context_section(scenario_id: str, participant_id: str = "") -> str:
+def _static_pickup_context(enable_weapon_pickups: bool) -> str:
+    pickups = [
+        ("health_top", "medikit", 0, 672, "heals +100 up to 150"),
+        ("health_bottom", "medikit", 0, -672, "heals +100 up to 150"),
+    ]
+    if enable_weapon_pickups:
+        pickups.append(("weapon_center", "shotgun", 0, 0, "7-pellet weapon pickup"))
+    lines = []
+    for pickup_id, name, x, y, note in pickups:
+        lines.append(f"- {pickup_id}: {name}, cell={_xy_to_grid_cell(x, y)}, x={x}, y={y}, {note}.")
+    return "\n".join(lines)
+
+
+def _static_map_context_section(
+    scenario_id: str,
+    participant_id: str = "",
+    enable_weapon_pickups: bool = True,
+) -> str:
     try:
         blueprint = load_geometry_blueprint(scenario_id)
     except Exception:
@@ -165,8 +182,11 @@ Static map context:
 {own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
 - Blocked route cells: {blocked_cells}.
 - Opponent spawn and player markers are intentionally omitted from the static map prompt.
-- Observations include `map.pickups` with currently available resources and distance from you.
-- Pick route cells that avoid `#` walls and advance your current objective. The Doom autopilot handles frame-level movement.
+- Observations include compact `map.pickups` entries with resource id, availability, cell, and distance from you.
+- The Doom autopilot handles frame-level movement.
+
+Static resources:
+{_static_pickup_context(enable_weapon_pickups)}
 
 ASCII map:
 ```text
@@ -190,6 +210,7 @@ def instructions(
     enable_map_blueprint: bool = False,
     scenario_id: str = "duel_e1m8",
     control_mode: str = "full",
+    enable_weapon_pickups: bool = True,
 ) -> str:
     token_line = (
         f"Your controller_token is: `{controller_token}`\n\n"
@@ -213,11 +234,6 @@ def instructions(
             "`stop_participant_intent`, and `get_match_result`.\n"
             if enforce_tokens
             else "Controller token enforcement is disabled for this local trusted smoke run.\n"
-        )
-        route_example = (
-            '["M05", "G05", "G12", "M17"]'
-            if participant_id == "player_1"
-            else '["M28", "G28", "G21", "M17"]'
         )
         stop_rules = (
             """Stop rules:
@@ -249,16 +265,12 @@ Core rules:
 - Keep `reasoning` short: one sentence about why this route was chosen.
 
 Loop:
-1. Call `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
-2. Call `get_participant_observation`.
-3. Send one opening `set_participant_plan` with `sequence_number=1`.
-4. Call `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
-5. During combat, repeat: `get_participant_observation` -> choose one objective, one coordinate route, one engagement_policy, and short reasoning -> call `set_participant_plan`.
-6. Increment `sequence_number` after every plan call.
-7. After each `set_participant_plan`, immediately observe again if the match is still active.
-8. Do not choose timing fields. The server uses a 16000 ms route lease by default so routes can progress while agents still refresh from new observations. It is not a sleep timer and newer higher-sequence plans override immediately.
-9. Do not use `Start-Sleep`, timers, or manual waiting loops. Keep updates moving as fast as the chat environment allows.
-10. On the final match, `has_next_round=false` can appear before the match is finished. Keep playing until `phase="finished"`.
+- Ready once, observe, send an opening `set_participant_plan` with `sequence_number=1`, then call `wait_for_match_start`.
+- During combat, repeat: `get_participant_observation` -> `set_participant_plan` -> observe again.
+- Increment `sequence_number` after every plan call.
+- Do not choose timing fields or wait for the route lease; newer higher-sequence plans override immediately.
+- Do not use `Start-Sleep`, timers, or manual waiting loops.
+- On the final match, `has_next_round=false` can appear before the match is finished. Keep playing until `phase="finished"`.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -275,10 +287,10 @@ Plan schema:
 {{
   "participant_id": "{participant_id}",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
-  "objective": "control_center",
-  "route": {route_example},
+  "objective": "your_goal",
+  "route": ["A01", "A02"],
   "engagement_policy": "engage_if_visible",
-  "reasoning": "use safe cells while checking for the enemy",
+  "reasoning": "short reason",
   "sequence_number": 1
 }}
 ```
@@ -289,7 +301,6 @@ Route rules:
 - `route` is a list of up to 16 grid cells, e.g. `["M05", "G05", "G12", "M17"]`.
 - Rows are `A-X` from north/top to south/bottom. Columns are `01-32` from west/left to east/right.
 - Each cell is `64 x 64` Doom units. The server converts cells into Doom coordinates at the cell center.
-- Use current `self.cell`, static map geometry, and `map.pickups[*].cell` to choose useful waypoints.
 - Do not put waypoints inside `#` wall cells.
 - Do not choose any cell listed under `Blocked route cells`.
 - Every straight route segment must avoid blocked cells, including the segment from your current `self.cell` to the first waypoint. Add intermediate cells to route around walls.
@@ -303,8 +314,7 @@ Allowed engagement_policy:
 - `hold_fire`
 - `force_fight`
 
-{_static_map_context_section(scenario_id, participant_id)}Decision rule:
-Pick route cells that avoid `#` walls and advance your current objective. Adapt when visibility, health, pickups, damage, stuck/spin state, or enemy contact changes.
+{_static_map_context_section(scenario_id, participant_id, enable_weapon_pickups)}
 
 {stop_rules}
 

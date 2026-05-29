@@ -2932,6 +2932,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             enable_map_blueprint=self.server.enable_map_blueprint,
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
+            enable_weapon_pickups=self.server.enable_weapon_pickups,
         )
         player_2_instructions = render_participant_instructions(
             "player_2",
@@ -2947,6 +2948,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             enable_map_blueprint=self.server.enable_map_blueprint,
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
+            enable_weapon_pickups=self.server.enable_weapon_pickups,
         )
         player_1_path = run_dir / "player_1_mcp_instructions.md"
         player_2_path = run_dir / "player_2_mcp_instructions.md"

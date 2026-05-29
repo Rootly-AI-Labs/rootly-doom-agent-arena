@@ -40,6 +40,7 @@ from doom_arena_strategy import (
     record_strategy,
     strategy_pickups_for_observation,
 )
+from doom_arena_map_blueprints import load_geometry_blueprint
 
 
 VALID_ENEMY_COMMANDS = {"normal", "hold", "chase_player", "guard_position"}
@@ -380,11 +381,31 @@ class DoomArenaClient:
             "distance_to_waypoint": distance_to_waypoint,
         }
 
-    def current_participant_cell(self, participant_id: str) -> str:
-        state = parse_state(self._request("GET", "/api/arena/state"))
+    def participant_spawn_cell(self, participant_id: str) -> str:
+        scenario_id = self.scenario_id
+        duel_session = self._read_duel_session_status()
+        if duel_session.get("scenario_id"):
+            scenario_id = str(duel_session.get("scenario_id"))
+        try:
+            blueprint = load_geometry_blueprint(scenario_id)
+        except Exception:
+            return ""
+        spawns = blueprint.get("spawns", {})
+        spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
+        return xy_to_grid_cell(spawn.get("x"), spawn.get("y"))
+
+    def current_participant_cell(self, participant_id: str, allow_spawn_fallback: bool = False) -> str:
+        try:
+            state = parse_state(self._request("GET", "/api/arena/state"))
+        except DoomArenaError as exc:
+            if allow_spawn_fallback and "has not been written yet" in str(exc):
+                return self.participant_spawn_cell(participant_id)
+            raise
         for row in state:
             if row.get("kind") == "participant" and row.get("entity_id") == participant_id:
                 return xy_to_grid_cell(row.get("x"), row.get("y"))
+        if allow_spawn_fallback:
+            return self.participant_spawn_cell(participant_id)
         return ""
 
     def _fetch_previous_rounds_recap(
@@ -874,7 +895,7 @@ class DoomArenaClient:
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
-        start_cell = self.current_participant_cell(participant_id)
+        start_cell = self.current_participant_cell(participant_id, allow_spawn_fallback=True)
         route_text, route_cells = normalize_plan_route(route, start_cell=start_cell)
         objective_text = normalize_plan_objective(objective)
         engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
@@ -2806,7 +2827,7 @@ def participant_plan_schema() -> dict[str, Any]:
             "objective": {
                 "type": "string",
                 "maxLength": PLAN_OBJECTIVE_MAX_CHARS,
-                "description": "Short free-form goal such as control_center, heal, flank, clear_top, or force_fight.",
+                "description": "Short free-form goal chosen by the model.",
             },
             "route": {
                 "type": "array",

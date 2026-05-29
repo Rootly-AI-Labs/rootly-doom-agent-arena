@@ -30,10 +30,10 @@ Default action schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "control_center",
-  "route": ["M05", "G05", "G12", "M17"],
+  "objective": "your_goal",
+  "route": ["A01", "A02"],
   "engagement_policy": "engage_if_visible",
-  "reasoning": "use safe cells while checking for the enemy",
+  "reasoning": "short reason",
   "sequence_number": 1
 }
 ```
@@ -52,7 +52,7 @@ The generated prompt includes the ASCII map once. It includes each agent's own s
 
 ## Pickups
 
-Current pickups are exposed in `map.pickups`:
+Static pickup locations are included in the generated prompt once. Repeated observations expose compact `map.pickups` entries:
 
 ```text
 health_top medikit: x=0 y=672

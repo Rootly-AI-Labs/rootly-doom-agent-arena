@@ -127,67 +127,6 @@
                 text-align: left;
             }
 
-            .arena-advanced-settings {
-                margin: 14px 0 0;
-                text-align: left;
-                border: 1px solid rgba(173, 186, 145, 0.18);
-                background: linear-gradient(180deg, #1c211a 0%, #181c17 100%);
-                padding: 4px 16px 16px;
-                border-radius: 2px;
-            }
-
-            .arena-advanced-settings summary {
-                cursor: pointer;
-                color: #d8c07a;
-                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                padding: 10px 0;
-                list-style: none;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                user-select: none;
-            }
-
-            .arena-advanced-settings summary::-webkit-details-marker {
-                display: none;
-            }
-
-            .arena-advanced-settings summary::before {
-                content: ">";
-                color: #b8e986;
-                font-size: 10px;
-                transition: transform 0.15s ease;
-                display: inline-block;
-            }
-
-            .arena-advanced-settings[open] summary::before {
-                transform: rotate(90deg);
-            }
-
-            .arena-advanced-settings[open] summary {
-                border-bottom: 1px solid rgba(173, 186, 145, 0.12);
-                margin-bottom: 14px;
-            }
-
-            .arena-advanced-grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 14px;
-            }
-
-            .arena-advanced-grid > .arena-config-section {
-                margin: 0;
-                min-width: 0;
-            }
-
-            @media (max-width: 760px) {
-                .arena-advanced-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-
             .arena-config-section {
                 margin: 0 0 16px;
             }
@@ -999,6 +938,7 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
+                align-items: stretch;
             }
 
             .duel-prompt-instruction {
@@ -1085,6 +1025,9 @@
                 margin-top: 10px;
                 padding-top: 8px;
                 border-top: 1px solid rgba(255, 255, 255, 0.14);
+                display: flex;
+                flex-direction: column;
+                min-height: 260px;
             }
 
             .duel-prompt-card-header {
@@ -1118,13 +1061,19 @@
 
             .duel-prompt-card textarea {
                 width: 100%;
-                min-height: 88px;
+                min-height: 200px;
+                height: 200px;
                 resize: vertical;
+                overflow: auto;
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 background: #10130d;
                 color: #f7f5d8;
                 padding: 8px;
                 font: 11px/1.3 Consolas, "Courier New", monospace;
+            }
+
+            .duel-prompt-card textarea:hover {
+                border-color: rgba(184, 233, 134, 0.42);
             }
 
             .duel-player-log {
@@ -1466,42 +1415,6 @@
                             </div>
                         </div>
                     </div>
-                    <details class="arena-advanced-settings">
-                        <summary>Advanced</summary>
-                        <div class="arena-advanced-grid">
-                        <div class="arena-config-section">
-                            <div class="arena-config-section-title">Bias mitigation</div>
-                            <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field" for="arena-randomize-spawns">
-                                    <input id="arena-randomize-spawns" type="checkbox" />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Randomize spawn variant each round</span>
-                                        <span class="arena-toggle-hint">Per-round random pick between open and blind spawn. Averages out spawn-position advantage across a multi-round session.</span>
-                                    </span>
-                                </label>
-                                <label class="arena-toggle-field" for="arena-rotate-all-maps">
-                                    <input id="arena-rotate-all-maps" type="checkbox" />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Rotate through all maps</span>
-                                        <span class="arena-toggle-hint">Cycle each round through every active spawn variant in order. Stacks with randomization.</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="arena-config-section">
-                            <div class="arena-config-section-title">Match setup extras</div>
-                            <div class="arena-toggle-stack">
-                                <label class="arena-toggle-field" for="arena-mirror-pair">
-                                    <input id="arena-mirror-pair" type="checkbox" />
-                                    <span class="arena-toggle-text">
-                                        <span class="arena-toggle-title">Mirrored pair session</span>
-                                        <span class="arena-toggle-hint">After N rounds, swap Player 1 and Player 2 roles and run N more. Ensures fair pair-level comparison when spawn/weapon placement is asymmetric.</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        </div>
-                    </details>
                     <div class="duel-prompt-panel" id="arena-launcher-prompts">
                         <div class="duel-prompt-instruction">
                             Paste each prompt into your favorite MCP client (Codex, Claude, OpenCode...).
@@ -2161,15 +2074,20 @@
                 rowLabelX = Math.max(5, Math.floor(fontSize * 0.7));
 
                 ctx.save();
+
+                ctx.fillStyle = "rgba(6, 12, 18, 0.14)";
+                ctx.fillRect(0, 0, canvas.width, colLabelY + 4);
+                ctx.fillRect(0, 0, rowLabelX + 5, canvas.height);
+
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = "rgba(174, 208, 224, 0.07)";
+                ctx.strokeStyle = "rgba(174, 208, 224, 0.08)";
 
                 for (col = 1; col < cols; col++) {
                     x = bounds.x_min + col * cellSize;
                     screen = automapWorldToScreen(bounds, x, bounds.y_min, canvas.width, canvas.height);
                     ctx.beginPath();
-                    ctx.moveTo(screen.x, 0);
-                    ctx.lineTo(screen.x, canvas.height);
+                    ctx.moveTo(Math.round(screen.x) + 0.5, 0);
+                    ctx.lineTo(Math.round(screen.x) + 0.5, canvas.height);
                     ctx.stroke();
                 }
 
@@ -2177,16 +2095,12 @@
                     y = bounds.y_max - row * cellSize;
                     screen = automapWorldToScreen(bounds, bounds.x_min, y, canvas.width, canvas.height);
                     ctx.beginPath();
-                    ctx.moveTo(0, screen.y);
-                    ctx.lineTo(canvas.width, screen.y);
+                    ctx.moveTo(0, Math.round(screen.y) + 0.5);
+                    ctx.lineTo(canvas.width, Math.round(screen.y) + 0.5);
                     ctx.stroke();
                 }
 
-                ctx.fillStyle = "rgba(6, 12, 18, 0.34)";
-                ctx.fillRect(0, 0, canvas.width, colLabelY + 4);
-                ctx.fillRect(0, 0, rowLabelX + 5, canvas.height);
-
-                ctx.fillStyle = "rgba(210, 232, 242, 0.46)";
+                ctx.fillStyle = "rgba(210, 232, 242, 0.48)";
                 ctx.font = "700 " + fontSize + "px Consolas, 'Courier New', monospace";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
@@ -2209,9 +2123,9 @@
                     ctx.fillText(String.fromCharCode("A".charCodeAt(0) + row), rowLabelX, center.y);
                 }
 
-                ctx.strokeStyle = "rgba(210, 232, 242, 0.20)";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+                ctx.strokeStyle = "rgba(210, 232, 242, 0.22)";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
                 ctx.restore();
             }
 
@@ -3249,15 +3163,15 @@
                     decision_cadence_ms: 750,
                     intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
                     hide_enemy_position: true,
-                    randomize_spawns: selectedCheckboxValue("arena-randomize-spawns", false),
-                    rotate_all_maps: selectedCheckboxValue("arena-rotate-all-maps", false),
+                    randomize_spawns: false,
+                    rotate_all_maps: false,
                     recap_window: 1,
-                    enable_map_blueprint: selectedCheckboxValue("arena-enable-map-blueprint", false),
+                    enable_map_blueprint: false,
                     enable_weapon_pickups: preserveSessionSettings &&
                         Object.prototype.hasOwnProperty.call(currentDuelSession, "enable_weapon_pickups")
                         ? !!currentDuelSession.enable_weapon_pickups
                         : selectedWeaponSpawnEnabled(),
-                    mirror_pair: selectedCheckboxValue("arena-mirror-pair", false),
+                    mirror_pair: false,
                     continue_session: !!continueSession,
                     restart_session: !!restartSession,
                 };
@@ -5927,12 +5841,12 @@
                         currentDuelSession.run_id &&
                         currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn") &&
                         !!currentDuelSession.hide_enemy_position === true &&
-                        !!currentDuelSession.randomize_spawns === selectedCheckboxValue("arena-randomize-spawns", false) &&
-                        !!currentDuelSession.rotate_all_maps === selectedCheckboxValue("arena-rotate-all-maps", false) &&
+                        !!currentDuelSession.randomize_spawns === false &&
+                        !!currentDuelSession.rotate_all_maps === false &&
                         (currentDuelSession.control_mode || "hierarchical") === "hierarchical" &&
                         !!currentDuelSession.enable_weapon_pickups === selectedWeaponSpawnEnabled() &&
-                        !!currentDuelSession.enable_map_blueprint === selectedCheckboxValue("arena-enable-map-blueprint", false) &&
-                        !!currentDuelSession.mirror_pair === selectedCheckboxValue("arena-mirror-pair", false);
+                        !!currentDuelSession.enable_map_blueprint === false &&
+                        !!currentDuelSession.mirror_pair === false;
                     if (sessionMatchesSettings) {
                         loadDuelSessionStateForLauncher()
                             .then(function (serverSession) {
@@ -5992,14 +5906,8 @@
                     };
                 })();
                 var mapSelect = document.getElementById("arena-duel-map");
-                var randomizeSpawnsToggle = document.getElementById("arena-randomize-spawns");
-                var rotateAllMapsToggle = document.getElementById("arena-rotate-all-maps");
-                var simplifiedActionsToggle = document.getElementById("arena-enable-simplified-actions");
                 var weaponPickupsToggle = document.getElementById("arena-enable-weapon-pickups");
-                var mapBlueprintToggle = document.getElementById("arena-enable-map-blueprint");
-                var mirrorPairToggle = document.getElementById("arena-mirror-pair");
-                [mapSelect, randomizeSpawnsToggle, rotateAllMapsToggle,
-                 simplifiedActionsToggle, weaponPickupsToggle, mapBlueprintToggle, mirrorPairToggle]
+                [mapSelect, weaponPickupsToggle]
                     .forEach(function (el) {
                         if (el) { el.addEventListener("change", schedulePromptPreview); }
                     });
