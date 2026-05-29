@@ -29,6 +29,7 @@ from doom_arena_duel_prompts import (
     instructions as render_participant_instructions,
     write_controller_tokens,
 )
+from doom_arena_map_blueprints import load_geometry_blueprint
 from doom_arena_mcp import DoomArenaClient, DoomArenaError, call_tool, tool_definitions
 from doom_arena_strategy import (
     CONTROL_MODE_HIERARCHICAL,
@@ -41,7 +42,6 @@ from doom_arena_strategy import (
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
-MAP_BLUEPRINTS_DIR = REPO_ROOT / "scripts" / "map_blueprints"
 
 ARENA_STATE_TSV = SRC_DIR / "arena_game_state.local.tsv"
 ARENA_EVENTS_TSV = SRC_DIR / "arena_duel_events.local.tsv"
@@ -1707,11 +1707,12 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         query = urlparse(self.path).query
         params = parse_qs(query)
         scenario_id = params.get("scenario_id", [None])[0] or self.server.scenario_id or "duel_e1m8"
-        path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.json"
-        if not path.exists():
+        try:
+            blueprint = load_geometry_blueprint(scenario_id)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
             self.write_json(
                 HTTPStatus.NOT_FOUND,
-                {"ok": False, "error": f"No blueprint found for scenario_id={scenario_id}"},
+                {"ok": False, "error": f"No blueprint found for scenario_id={scenario_id}: {error}"},
             )
             return
         self.write_json(
@@ -1719,7 +1720,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             {
                 "ok": True,
                 "scenario_id": scenario_id,
-                "blueprint": json.loads(path.read_text(encoding="utf-8")),
+                "blueprint": blueprint,
             },
         )
 

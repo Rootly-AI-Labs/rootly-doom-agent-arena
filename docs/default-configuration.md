@@ -52,13 +52,7 @@ The generated prompt includes the ASCII map once. It includes each agent's own s
 
 ## Pickups
 
-Static pickup locations are included in the generated prompt once. Repeated observations expose compact `map.pickups` entries:
-
-```text
-health_top medikit: x=0 y=672
-health_bottom medikit: x=0 y=-672
-weapon_center shotgun: x=0 y=0
-```
+Pickup locations are derived from `H` and `S` markers in `scripts/map_blueprints/duel_e1m8_ascii.txt`. They are included in the generated prompt once, and repeated observations expose compact `map.pickups` entries with `id`, `available`, `cell`, and `distance`.
 
 Each medikit restores `+100` health, capped at the duel max health of `150`.
 

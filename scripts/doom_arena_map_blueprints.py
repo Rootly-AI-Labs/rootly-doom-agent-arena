@@ -53,6 +53,10 @@ def ascii_cell_rect(row_index: int, col_index: int, row_count: int, col_count: i
     return left, bottom, right, top
 
 
+def ascii_cell_label(row_index: int, col_index: int) -> str:
+    return f"{chr(ord('A') + row_index)}{col_index + 1:02d}"
+
+
 def _ascii_marker_spawns(rows: list[str], cell_size: int) -> dict[str, dict[str, int]]:
     if not rows:
         return {}
@@ -72,29 +76,113 @@ def _ascii_marker_spawns(rows: list[str], cell_size: int) -> dict[str, dict[str,
     return spawns
 
 
+def _ascii_marker_pickups(rows: list[str], cell_size: int) -> list[dict[str, Any]]:
+    if not rows:
+        return []
+    row_count = len(rows)
+    col_count = len(rows[0])
+    pickups: list[dict[str, Any]] = []
+    for row_index, row in enumerate(rows):
+        for col_index, char in enumerate(row):
+            if char not in ("H", "S"):
+                continue
+            left, bottom, right, top = ascii_cell_rect(row_index, col_index, row_count, col_count, cell_size)
+            cell = ascii_cell_label(row_index, col_index)
+            x = (left + right) // 2
+            y = (bottom + top) // 2
+            if char == "H":
+                pickups.append(
+                    {
+                        "id": f"health_{cell.lower()}",
+                        "type": "health",
+                        "name": "medikit",
+                        "x": x,
+                        "y": y,
+                        "cell": cell,
+                        "purpose": "restore_health",
+                        "heals": 100,
+                        "max_health": 150,
+                    }
+                )
+            else:
+                pickups.append(
+                    {
+                        "id": f"shotgun_{cell.lower()}",
+                        "type": "weapon",
+                        "name": "shotgun",
+                        "x": x,
+                        "y": y,
+                        "cell": cell,
+                        "purpose": "upgrade_weapon",
+                    }
+                )
+    return pickups
+
+
 def _ascii_wall_obstacles(rows: list[str], cell_size: int) -> list[dict[str, Any]]:
     if not rows:
         return []
     row_count = len(rows)
     col_count = len(rows[0])
+    wall_cells = {
+        (row_index, col_index)
+        for row_index, row in enumerate(rows)
+        for col_index, char in enumerate(row)
+        if char == "#"
+    }
+    wall_thickness = cell_size
+    half_thickness = wall_thickness // 2
     obstacles: list[dict[str, Any]] = []
+
+    def add_wall(label: str, left: int, bottom: int, right: int, top: int) -> None:
+        obstacles.append(
+            {
+                "kind": "wall",
+                "label": label,
+                "x": (left + right) // 2,
+                "y": (bottom + top) // 2,
+                "width": right - left,
+                "height": top - bottom,
+                "bounds": {"x_min": left, "x_max": right, "y_min": bottom, "y_max": top},
+            }
+        )
+
     for row_index, row in enumerate(rows):
         for col_index, char in enumerate(row):
             if char != "#":
                 continue
             left, bottom, right, top = ascii_cell_rect(row_index, col_index, row_count, col_count, cell_size)
-            obstacles.append(
-                {
-                    "kind": "wall",
-                    "label": f"wall_r{row_index}_c{col_index}",
-                    "x": (left + right) // 2,
-                    "y": (bottom + top) // 2,
-                    "width": right - left,
-                    "height": top - bottom,
-                    "bounds": {"x_min": left, "x_max": right, "y_min": bottom, "y_max": top},
-                }
-            )
+            center_x = (left + right) // 2
+            center_y = (bottom + top) // 2
+            has_horizontal_neighbor = (row_index, col_index - 1) in wall_cells or (row_index, col_index + 1) in wall_cells
+            has_vertical_neighbor = (row_index - 1, col_index) in wall_cells or (row_index + 1, col_index) in wall_cells
+            if has_horizontal_neighbor:
+                add_wall(
+                    f"wall_r{row_index}_c{col_index}_h",
+                    left,
+                    center_y - half_thickness,
+                    right,
+                    center_y + half_thickness,
+                )
+            if has_vertical_neighbor:
+                add_wall(
+                    f"wall_r{row_index}_c{col_index}_v",
+                    center_x - half_thickness,
+                    bottom,
+                    center_x + half_thickness,
+                    top,
+                )
+            if not has_horizontal_neighbor and not has_vertical_neighbor:
+                add_wall(
+                    f"wall_r{row_index}_c{col_index}_post",
+                    center_x - half_thickness,
+                    center_y - half_thickness,
+                    center_x + half_thickness,
+                    center_y + half_thickness,
+                )
     return obstacles
+
+
 def load_geometry_blueprint(scenario_id: str | None = "duel_e1m8") -> dict[str, Any]:
     config = load_variants_config()
     cell_size = int(config.get("cell_size", 64))
@@ -109,6 +197,7 @@ def load_geometry_blueprint(scenario_id: str | None = "duel_e1m8") -> dict[str, 
     y_min = -(map_height // 2)
     y_max = y_min + map_height
     obstacles = _ascii_wall_obstacles(rows, cell_size)
+    pickups = _ascii_marker_pickups(rows, cell_size)
     spawns = _ascii_marker_spawns(rows, cell_size)
     spawns.update(variant.get("spawns", {}))
     summary = f"{map_config.get('label', map_id)} generated from {map_config.get('ascii', 'duel_e1m8_ascii.txt')}."
@@ -125,6 +214,7 @@ def load_geometry_blueprint(scenario_id: str | None = "duel_e1m8") -> dict[str, 
         "bounds": {"x_min": x_min, "x_max": x_max, "y_min": y_min, "y_max": y_max},
         "compass": {"north": "+y", "east": "+x"},
         "obstacles": obstacles,
+        "pickups": pickups,
         "sightlines": [{"label": obstacle["label"], "blocked_by": "wall"} for obstacle in obstacles],
         "spawns": spawns,
         "notes": [

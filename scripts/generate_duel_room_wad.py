@@ -214,10 +214,10 @@ def shotgun(Thing, x: int, y: int):
     return thing
 
 
-def add_common_things(editor, Thing, spawns: dict) -> None:
+def add_common_things(editor, Thing, spawns: dict, pickups: list[dict] | None = None) -> None:
     player_1_spawn = spawns.get("player_1", {"x": -608, "y": 544, "angle_deg": 0})
     player_2_spawn = spawns.get("player_2", {"x": 672, "y": 544, "angle_deg": 180})
-    editor.things.extend([
+    common_things = [
         player_start(Thing, int(player_1_spawn["x"]), int(player_1_spawn["y"]), int(player_1_spawn["angle_deg"]), 1),
         player_start(Thing, int(player_2_spawn["x"]), int(player_2_spawn["y"]), int(player_2_spawn["angle_deg"]), 2),
         player_start(Thing, -320, -520, 0, 3),
@@ -226,10 +226,16 @@ def add_common_things(editor, Thing, spawns: dict) -> None:
         deathmatch_start(Thing, 768, -512, 135),
         deathmatch_start(Thing, 768, 512, 225),
         deathmatch_start(Thing, -768, 512, 315),
-        medikit(Thing, 0, 672),
-        medikit(Thing, 0, -672),
-        shotgun(Thing, 0, 0),
-    ])
+    ]
+    for pickup in pickups or []:
+        pickup_type = str(pickup.get("type", "")).lower()
+        x = int(pickup.get("x", 0))
+        y = int(pickup.get("y", 0))
+        if pickup_type == "health":
+            common_things.append(medikit(Thing, x, y))
+        elif pickup_type == "weapon":
+            common_things.append(shotgun(Thing, x, y))
+    editor.things.extend(common_things)
 
 
 def finish_editor(editor, bounds: dict, WAD, Lump, Seg, SubSector) -> None:
@@ -409,8 +415,7 @@ def build_wad(blueprint: dict) -> None:
     bounds = blueprint_bounds(blueprint)
     rows = [row for row in blueprint.get("ascii_map", "").splitlines() if row]
     if rows:
-        cell_size = int(blueprint.get("cell_size", 64))
-        obstacles = sorted(ascii_wall_component_obstacles(rows, cell_size), key=lambda item: obstacle_rect(item)[0])
+        obstacles = sorted(wall_obstacles(blueprint), key=lambda item: (obstacle_rect(item)[0], obstacle_rect(item)[1]))
     else:
         obstacles = sorted(wall_obstacles(blueprint), key=lambda item: obstacle_rect(item)[0])
     if len(obstacles) > 2:
@@ -420,7 +425,7 @@ def build_wad(blueprint: dict) -> None:
         sector_bboxes = walkable_grid_rects(bounds, wall_rects)
         for rect in sector_bboxes:
             draw_rect_sector(editor, rect, wall_sidedef)
-        add_common_things(editor, Thing, blueprint.get("spawns", {}))
+        add_common_things(editor, Thing, blueprint.get("spawns", {}), blueprint.get("pickups", []))
         build_grid_partitioned_wad(editor, bounds, WAD, Lump, Node, Seg, SubSector, Linedef, sector_bboxes)
         return
 
@@ -437,7 +442,7 @@ def build_wad(blueprint: dict) -> None:
             ],
             sidedef=wall_sidedef,
         )
-        add_common_things(editor, Thing, blueprint.get("spawns", {}))
+        add_common_things(editor, Thing, blueprint.get("spawns", {}), blueprint.get("pickups", []))
         finish_editor(editor, bounds, WAD, Lump, Seg, SubSector)
         return
 
@@ -483,7 +488,7 @@ def build_wad(blueprint: dict) -> None:
             ],
             sidedef=wall_sidedef,
         )
-        add_common_things(editor, Thing, blueprint.get("spawns", {}))
+        add_common_things(editor, Thing, blueprint.get("spawns", {}), blueprint.get("pickups", []))
         build_partitioned_wad(editor, bounds, WAD, Lump, Node, Seg, SubSector, Linedef, [(wall_left, wall_bottom, wall_right, wall_top)])
         return
 
@@ -544,7 +549,7 @@ def build_wad(blueprint: dict) -> None:
         sidedef=wall_sidedef,
     )
 
-    add_common_things(editor, Thing, blueprint.get("spawns", {}))
+    add_common_things(editor, Thing, blueprint.get("spawns", {}), blueprint.get("pickups", []))
     build_partitioned_wad(editor, bounds, WAD, Lump, Node, Seg, SubSector, Linedef, [
         (w1_left, wall_bottom, w1_right, wall_top),
         (w2_left, wall_bottom, w2_right, wall_top),
