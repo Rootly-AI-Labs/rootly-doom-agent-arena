@@ -15,6 +15,32 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from doom_arena_strategy import (
+    ALL_STRATEGY_ACTIONS,
+    CONTROL_MODE_HIERARCHICAL,
+    STRATEGY_ACTIONS,
+    STRATEGY_INTENSITIES,
+    STRATEGY_OBJECTIVES,
+    STRATEGY_TARGET_ZONES,
+    STRATEGY_REASONING_MAX_CHARS,
+    STRATEGY_METADATA_FIELDS,
+    PLAN_ENGAGEMENT_POLICIES,
+    MAP_BOUNDS,
+    MAP_CELL_SIZE,
+    MAP_COLS,
+    MAP_ROWS,
+    PLAN_METADATA_FIELDS,
+    PLAN_OBJECTIVE_MAX_CHARS,
+    PLAN_REASONING_MAX_CHARS,
+    PLAN_ROUTE_MAX_WAYPOINTS,
+    expand_strategy,
+    make_strategy_observation,
+    normalize_control_mode,
+    record_strategy,
+    strategy_pickups_for_observation,
+)
+from doom_arena_map_blueprints import load_geometry_blueprint
+
 
 VALID_ENEMY_COMMANDS = {"normal", "hold", "chase_player", "guard_position"}
 DEFAULT_SCENARIO_ID = "e1m8_arena"
@@ -36,7 +62,9 @@ PARTICIPANT_INTENT_HEADER = (
     "strafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\t"
     "aim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\t"
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
-    "turn_policy\tnavigation_target\tfire_mode\tintent_raw\n"
+    "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
+    "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\t"
+    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -62,7 +90,11 @@ VALID_MOVEMENT_PRIMITIVES = {
 VALID_TURN_POLICIES = {"auto", "turn_to_enemy", "sweep_left", "sweep_right", "hold_angle", "face_last_seen"}
 VALID_NAVIGATION_TARGETS = {"none", "opponent", "last_seen_enemy", "center", "left_lane", "right_lane", "keep_distance"}
 VALID_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "burst", "suppressive"}
+PARTICIPANT_VIEW_HALF_ANGLE_DEGREES = 45
+PARTICIPANT_HIT_REVEAL_MS = 4000
+PLAN_ROUTE_LEASE_MS = 16000
 REPO_ROOT = Path(__file__).resolve().parents[1]
+MAP_ASCII_PATH = REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_ascii.txt"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MCP_LOG_PATH = os.environ.get("DOOM_ARENA_MCP_LOG", str(REPO_ROOT / "src" / "arena_mcp_stdio.log"))
 MCP_OUTPUT_FRAMING = "content-length"
@@ -136,7 +168,7 @@ class DoomArenaClient:
 
     def get_arena_state(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows)
+        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         if run_id and state.get("run_id") not in {"", run_id}:
             raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
         return json.dumps(state, indent=2)
@@ -151,7 +183,7 @@ class DoomArenaClient:
 
     def get_match_result(self, run_id: str | None = None) -> str:
         rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows)
+        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         duel_session = self._read_duel_session_status()
         if run_id and state.get("run_id") not in {"", run_id}:
             raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
@@ -190,6 +222,9 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         state = parse_state(self._request("GET", "/api/arena/state"))
         observation = make_participant_observation(state, participant_id)
+        active_plan = self._active_plan_for_observation(participant_id, observation)
+        if active_plan:
+            observation["active_plan"] = active_plan
         duel_session = self._read_duel_session_status()
         observation["duel_session_id"] = duel_session.get("duel_session_id", "")
         observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
@@ -200,15 +235,137 @@ class DoomArenaClient:
             observation["state"]["current_round"] = observation["current_round"]
             observation["state"]["total_rounds"] = observation["total_rounds"]
             observation["state"]["has_next_round"] = observation["has_next_round"]
-        # Phase 1: cross-round recap
-        if duel_session.get("enable_cross_round_recap"):
+            observation["state"]["control_mode"] = normalize_control_mode(
+                duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)
+            )
+        current_round = int(duel_session.get("current_round", 1) or 1)
+        total_rounds = int(duel_session.get("total_rounds", 1) or 1)
+        if total_rounds > 1 and current_round > 1:
             observation["previous_rounds"] = self._fetch_previous_rounds_recap(
                 participant_id,
-                int(duel_session.get("current_round", 1)),
+                current_round,
                 str(duel_session.get("duel_session_id", "")),
-                int(duel_session.get("recap_window", 0)),
+                1,
             )
+        if normalize_control_mode(duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL)) == CONTROL_MODE_HIERARCHICAL:
+            compact = make_strategy_observation(observation, CONTROL_MODE_HIERARCHICAL)
+            if "previous_rounds" in observation:
+                compact["previous_rounds"] = observation["previous_rounds"]
+            return json.dumps(compact, indent=2)
         return json.dumps(observation, indent=2)
+
+    def _active_plan_for_observation(self, participant_id: str, observation: dict[str, Any]) -> dict[str, Any]:
+        match_block = observation.get("match", {}) if isinstance(observation.get("match"), dict) else {}
+        self_block = observation.get("self", {}) if isinstance(observation.get("self"), dict) else {}
+        if match_block.get("phase") == "finished" or self_block.get("alive") is False:
+            return {}
+        rows = [
+            row
+            for row in self._read_participant_intent_rows()
+            if row.get("participant_id") == participant_id and row.get("plan_route")
+        ]
+        if not rows:
+            return {}
+
+        current_ms = now_ms()
+        live_rows = []
+        for row in rows:
+            try:
+                expires_at = int(row.get("expires_at_ms") or "0")
+            except ValueError:
+                expires_at = 0
+            if expires_at <= 0 or expires_at > current_ms:
+                live_rows.append(row)
+        rows = live_rows or rows
+        def sequence_value(row: dict[str, str]) -> int:
+            try:
+                return int(row.get("sequence_number") or "0")
+            except ValueError:
+                return 0
+        rows.sort(key=sequence_value)
+        row = rows[-1]
+
+        self_x = self_block.get("x")
+        self_y = self_block.get("y")
+        route_cells = [cell for cell in str(row.get("plan_route_cells", "")).split(";") if cell]
+        route_xy = []
+        for item in str(row.get("plan_route", "")).split(";"):
+            if "," not in item:
+                continue
+            x_text, y_text = item.split(",", 1)
+            try:
+                route_xy.append((int(float(x_text)), int(float(y_text))))
+            except ValueError:
+                continue
+        if not route_cells:
+            route_cells = [xy_to_grid_cell(x, y) for x, y in route_xy]
+
+        current_index = 0
+        distance_to_waypoint = None
+        try:
+            sx = float(self_x)
+            sy = float(self_y)
+            for index, (x, y) in enumerate(route_xy):
+                distance = int(round(math.dist((sx, sy), (float(x), float(y)))))
+                if distance > 32:
+                    current_index = index
+                    distance_to_waypoint = distance
+                    break
+            else:
+                current_index = max(0, len(route_xy) - 1)
+                distance_to_waypoint = 0 if route_xy else None
+        except (TypeError, ValueError):
+            current_index = 0
+
+        current_cell = route_cells[current_index] if current_index < len(route_cells) else ""
+        current_xy = route_xy[current_index] if current_index < len(route_xy) else None
+        return {
+            "accepted": True,
+            "status": "active",
+            "intent_id": row.get("intent_id", ""),
+            "sequence_number": row.get("sequence_number", ""),
+            "objective": row.get("plan_objective", ""),
+            "engagement_policy": row.get("plan_engagement_policy", ""),
+            "reasoning": row.get("plan_reasoning", ""),
+            "route_cells": route_cells,
+            "route": [{"x": x, "y": y} for x, y in route_xy],
+            "current_waypoint_index": current_index + 1 if route_xy else 0,
+            "current_waypoint_count": len(route_xy),
+            "current_waypoint_cell": current_cell,
+            "current_waypoint": (
+                {"x": current_xy[0], "y": current_xy[1]}
+                if current_xy is not None
+                else None
+            ),
+            "distance_to_waypoint": distance_to_waypoint,
+        }
+
+    def participant_spawn_cell(self, participant_id: str) -> str:
+        scenario_id = self.scenario_id
+        duel_session = self._read_duel_session_status()
+        if duel_session.get("scenario_id"):
+            scenario_id = str(duel_session.get("scenario_id"))
+        try:
+            blueprint = load_geometry_blueprint(scenario_id)
+        except Exception:
+            return ""
+        spawns = blueprint.get("spawns", {})
+        spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
+        return xy_to_grid_cell(spawn.get("x"), spawn.get("y"))
+
+    def current_participant_cell(self, participant_id: str, allow_spawn_fallback: bool = False) -> str:
+        try:
+            state = parse_state(self._request("GET", "/api/arena/state"))
+        except DoomArenaError as exc:
+            if allow_spawn_fallback and "has not been written yet" in str(exc):
+                return self.participant_spawn_cell(participant_id)
+            raise
+        for row in state:
+            if row.get("kind") == "participant" and row.get("entity_id") == participant_id:
+                return xy_to_grid_cell(row.get("x"), row.get("y"))
+        if allow_spawn_fallback:
+            return self.participant_spawn_cell(participant_id)
+        return ""
 
     def _fetch_previous_rounds_recap(
         self,
@@ -315,6 +472,9 @@ class DoomArenaClient:
                 and str(participant_state.get("intent_status", "inactive")) == "inactive"
                 and participant_id not in intent_participants
             ):
+                opening_tool = "set_participant_plan" if normalize_control_mode(
+                    self._read_duel_session_status().get("control_mode", CONTROL_MODE_HIERARCHICAL)
+                ) == CONTROL_MODE_HIERARCHICAL else "set_participant_intent"
                 return json.dumps(
                     {
                         "started": False,
@@ -322,7 +482,7 @@ class DoomArenaClient:
                         "participant_id": participant_id,
                         "needs_opening_intent": True,
                         "instruction": (
-                            "Call set_participant_intent once with an opening high-level intent "
+                            f"Call {opening_tool} once with an opening high-level policy "
                             "before waiting again. Doom will hold it until the other participant "
                             "also has an opening intent."
                         ),
@@ -449,6 +609,19 @@ class DoomArenaClient:
         navigation_target: str = "opponent",
         fire_mode: str = "auto",
         rationale: str | None = None,
+        strategy_source: str = "",
+        strategy_category: str = "",
+        strategy_action: str = "",
+        strategy_intensity: str = "",
+        strategy_commit_ms: Any = None,
+        strategy_objective: str = "",
+        strategy_target_zone: str = "",
+        strategy_reasoning: str = "",
+        plan_objective: str = "",
+        plan_route: str = "",
+        plan_engagement_policy: str = "",
+        plan_reasoning: str = "",
+        plan_route_cells: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
@@ -590,6 +763,20 @@ class DoomArenaClient:
             "navigation_target": navigation_target,
             "fire_mode": fire_mode,
         }
+        if strategy_source:
+            payload["strategy_source"] = strategy_source
+            payload["strategy_category"] = strategy_category
+            payload["strategy_action"] = strategy_action
+            payload["strategy_intensity"] = strategy_intensity
+            payload["strategy_commit_ms"] = strategy_commit_ms if strategy_commit_ms is not None else duration_ms
+        payload["strategy_objective"] = strategy_objective
+        payload["strategy_target_zone"] = strategy_target_zone
+        payload["strategy_reasoning"] = strategy_reasoning
+        payload["plan_objective"] = plan_objective
+        payload["plan_route"] = plan_route
+        payload["plan_engagement_policy"] = plan_engagement_policy
+        payload["plan_reasoning"] = plan_reasoning
+        payload["plan_route_cells"] = plan_route_cells
         rationale_text = str(rationale).strip() if rationale else ""
         if rationale_text:
             payload["rationale"] = rationale_text[:1024]
@@ -636,11 +823,214 @@ class DoomArenaClient:
                     "turn_policy": turn_policy,
                     "navigation_target": navigation_target,
                     "fire_mode": fire_mode,
+                    "strategy_source": strategy_source or None,
+                    "strategy_category": strategy_category or None,
+                    "strategy_action": strategy_action or None,
+                    "strategy_intensity": strategy_intensity or None,
+                    "strategy_commit_ms": int(strategy_commit_ms) if strategy_commit_ms not in {None, ""} else None,
+                    "strategy_objective": strategy_objective or None,
+                    "strategy_target_zone": strategy_target_zone or None,
+                    "strategy_reasoning": strategy_reasoning or None,
+                    "plan_objective": plan_objective or None,
+                    "plan_route": plan_route or None,
+                    "plan_engagement_policy": plan_engagement_policy or None,
+                    "plan_reasoning": plan_reasoning or None,
+                    "plan_route_cells": plan_route_cells or None,
                 },
                 "server_response": parse_optional_json(response_text),
             },
             indent=2,
         )
+
+    def set_participant_plan(
+        self,
+        participant_id: str,
+        route: Any,
+        objective: str = "",
+        engagement_policy: str = "engage_if_visible",
+        reasoning: str = "",
+        controller_token: str | None = None,
+        sequence_number: Any = None,
+    ) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        start_cell = self.current_participant_cell(participant_id, allow_spawn_fallback=True)
+        route_text, route_cells = normalize_plan_route(route, start_cell=start_cell)
+        objective_text = normalize_plan_objective(objective)
+        engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
+        reasoning_text = normalize_plan_reasoning(reasoning)
+
+        intent = "search"
+        style = "balanced"
+        aggression = 0.55
+        fire_policy = "only_when_aligned"
+        fire_mode = "fire_when_aligned"
+        distance_policy = "maintain"
+        if engagement_policy_text == "hold_fire":
+            fire_policy = "hold_fire"
+            fire_mode = "hold_fire"
+            aggression = 0.25
+        elif engagement_policy_text == "avoid_until_target":
+            style = "evasive"
+            distance_policy = "kite"
+            aggression = 0.35
+        elif engagement_policy_text == "force_fight":
+            intent = "engage_opponent"
+            style = "aggressive"
+            fire_policy = "suppressive"
+            fire_mode = "suppressive"
+            distance_policy = "close"
+            aggression = 0.85
+
+        result = json.loads(
+            self.set_participant_intent(
+                participant_id,
+                intent,
+                style,
+                None,
+                650,
+                aggression,
+                PLAN_ROUTE_LEASE_MS,
+                controller_token,
+                strafe_direction="auto",
+                movement_bias="direct",
+                fire_policy=fire_policy,
+                distance_policy=distance_policy,
+                replan_if=["stuck", "lost_los", "low_health"],
+                sequence_number=sequence_number,
+                decision_cadence_ms=750,
+                aim_tolerance=12,
+                fire_burst_ms=250,
+                min_fire_alignment=8,
+                min_distance=300,
+                max_distance=1100,
+                retreat_if_closer_than=280,
+                push_if_farther_than=1200,
+                los_lost_action="advance_last_seen",
+                stuck_recovery_strategy="strafe_out",
+                movement_primitive="",
+                turn_policy="auto",
+                navigation_target="none",
+                fire_mode=fire_mode,
+                plan_objective=objective_text,
+                plan_route=route_text,
+                plan_engagement_policy=engagement_policy_text,
+                plan_reasoning=reasoning_text,
+                plan_route_cells=";".join(route_cells),
+            )
+        )
+        result["plan"] = {
+            "objective": objective_text,
+            "route": route_cells,
+            "engagement_policy": engagement_policy_text,
+            "reasoning": reasoning_text,
+            "sequence_number": sequence_number,
+        }
+        return json.dumps(result, indent=2)
+
+    def set_participant_strategy(
+        self,
+        participant_id: str,
+        category: str,
+        action: str,
+        intensity: str = "medium",
+        commit_ms: int = 8000,
+        controller_token: str | None = None,
+        sequence_number: Any = None,
+        objective: str = "",
+        target_zone: str = "",
+        reasoning: str = "",
+    ) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        rows = parse_state(self._request("GET", "/api/arena/state"))
+        full_observation = make_participant_observation(rows, participant_id)
+        duel_session = self._read_duel_session_status()
+        control_mode = normalize_control_mode(duel_session.get("control_mode", CONTROL_MODE_HIERARCHICAL))
+        context = make_strategy_observation(full_observation, control_mode)
+        expanded = expand_strategy(
+            participant_id=participant_id,
+            category=category,
+            action=action,
+            intensity=intensity,
+            commit_ms=commit_ms,
+            sequence_number=sequence_number,
+            target_zone=target_zone,
+            objective=objective,
+            reasoning=reasoning,
+            context=context,
+        )
+        record_strategy(
+            str(full_observation.get("state", {}).get("run_id", self.run_id)),
+            participant_id,
+            str(expanded["strategy_category"]),
+            str(expanded["strategy_action"]),
+        )
+        result = json.loads(
+            self.set_participant_intent(
+                participant_id,
+                str(expanded["intent"]),
+                str(expanded["style"]),
+                str(expanded.get("target_id", "")),
+                int(expanded["preferred_distance"]),
+                float(expanded["aggression"]),
+                int(expanded["duration_ms"]),
+                controller_token,
+                strafe_direction=str(expanded["strafe_direction"]),
+                movement_bias=str(expanded["movement_bias"]),
+                fire_policy=str(expanded["fire_policy"]),
+                distance_policy=str(expanded["distance_policy"]),
+                replan_if=expanded["replan_if"],
+                sequence_number=expanded.get("sequence_number"),
+                decision_cadence_ms=expanded["decision_cadence_ms"],
+                aim_tolerance=expanded["aim_tolerance"],
+                fire_burst_ms=expanded["fire_burst_ms"],
+                min_fire_alignment=expanded["min_fire_alignment"],
+                min_distance=expanded["min_distance"],
+                max_distance=expanded["max_distance"],
+                retreat_if_closer_than=expanded["retreat_if_closer_than"],
+                push_if_farther_than=expanded["push_if_farther_than"],
+                los_lost_action=str(expanded["los_lost_action"]),
+                stuck_recovery_strategy=str(expanded["stuck_recovery_strategy"]),
+                movement_primitive=str(expanded.get("movement_primitive", "")),
+                turn_policy=str(expanded["turn_policy"]),
+                navigation_target=str(expanded["navigation_target"]),
+                fire_mode=str(expanded["fire_mode"]),
+                strategy_source=str(expanded["strategy_source"]),
+                strategy_category=str(expanded["strategy_category"]),
+                strategy_action=str(expanded["strategy_action"]),
+                strategy_intensity=str(expanded["strategy_intensity"]),
+                strategy_commit_ms=expanded["strategy_commit_ms"],
+                strategy_objective=str(expanded.get("strategy_objective", "")),
+                strategy_target_zone=str(expanded.get("strategy_target_zone", "")),
+                strategy_reasoning=str(expanded.get("strategy_reasoning", "")),
+            )
+        )
+        result["strategy"] = {
+            "category": expanded["strategy_category"],
+            "action": expanded["strategy_action"],
+            "intensity": expanded["strategy_intensity"],
+            "commit_ms": expanded["strategy_commit_ms"],
+            "objective": expanded.get("strategy_objective", ""),
+            "target_zone": expanded.get("strategy_target_zone", ""),
+            "reasoning": expanded.get("strategy_reasoning", ""),
+            "sequence_number": expanded.get("sequence_number"),
+        }
+        result["expanded_intent"] = {
+            key: expanded.get(key)
+            for key in (
+                "intent",
+                "style",
+                "movement_bias",
+                "distance_policy",
+                "fire_policy",
+                "navigation_target",
+                "turn_policy",
+                "los_lost_action",
+                "stuck_recovery_strategy",
+            )
+        }
+        return json.dumps(result, indent=2)
 
     def stop_participant_intent(self, participant_id: str, controller_token: str | None = None) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -1063,7 +1453,12 @@ PARTICIPANT_INTENT_KEYS = [
     "turn_policy",
     "navigation_target",
     "fire_mode",
+    "intent_raw",
+    *STRATEGY_METADATA_FIELDS,
+    *PLAN_METADATA_FIELDS,
 ]
+PARTICIPANT_INTENT_STRATEGY_FIELDS = STRATEGY_METADATA_FIELDS
+PARTICIPANT_INTENT_PLAN_FIELDS = PLAN_METADATA_FIELDS
 PARTICIPANT_INTENT_LEGACY_KEYS = PARTICIPANT_INTENT_KEYS[:12]
 
 
@@ -1142,6 +1537,201 @@ def normalize_tactical_enum(
     if text not in allowed:
         raise DoomArenaError(f"{field_name} must be one of " + ", ".join(sorted(allowed)))
     return text
+
+
+def normalize_plan_objective(value: Any) -> str:
+    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_OBJECTIVE_MAX_CHARS]
+
+
+def normalize_plan_reasoning(value: Any) -> str:
+    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_REASONING_MAX_CHARS]
+
+
+def normalize_plan_engagement_policy(value: Any) -> str:
+    text = str(value or "engage_if_visible").strip().lower()
+    if text not in PLAN_ENGAGEMENT_POLICIES:
+        raise DoomArenaError(
+            "engagement_policy must be one of "
+            + ", ".join(sorted(PLAN_ENGAGEMENT_POLICIES))
+        )
+    return text
+
+
+def point_hits_static_wall(x: int, y: int) -> bool:
+    try:
+        rows = [
+            line.rstrip("\n")
+            for line in MAP_ASCII_PATH.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+    except OSError:
+        return False
+    if not rows:
+        return False
+    cell_size = 64
+    col = int((x - PLAN_BOUNDS["x_min"]) // cell_size)
+    row = int((PLAN_BOUNDS["y_max"] - y) // cell_size)
+    if row < 0 or row >= len(rows) or col < 0 or col >= len(rows[row]):
+        return False
+    return rows[row][col] == "#"
+
+
+def normalize_grid_cell(value: Any) -> str:
+    if isinstance(value, str):
+        text = value.strip().upper()
+    elif isinstance(value, (list, tuple)) and len(value) == 2:
+        text = f"{str(value[0]).strip().upper()}{int(value[1]):02d}"
+    else:
+        raise DoomArenaError("route cells must be strings like M06 or tuples like ['M', 6]")
+    if len(text) < 2:
+        raise DoomArenaError("route cell must look like M06")
+    row_text = text[0]
+    col_text = text[1:]
+    if not row_text.isalpha() or not col_text.isdigit():
+        raise DoomArenaError("route cell must look like M06")
+    row = ord(row_text) - ord("A") + 1
+    col = int(col_text)
+    if row < 1 or row > MAP_ROWS:
+        raise DoomArenaError(f"route row must be A-{chr(ord('A') + MAP_ROWS - 1)}")
+    if col < 1 or col > MAP_COLS:
+        raise DoomArenaError(f"route column must be 01-{MAP_COLS:02d}")
+    return f"{row_text}{col:02d}"
+
+
+def grid_cell_to_xy(cell: str) -> tuple[int, int]:
+    row = ord(cell[0]) - ord("A") + 1
+    col = int(cell[1:])
+    x = int(MAP_BOUNDS["x_min"] + (col - 0.5) * MAP_CELL_SIZE)
+    y = int(MAP_BOUNDS["y_max"] - (row - 0.5) * MAP_CELL_SIZE)
+    return x, y
+
+
+def xy_to_grid_cell(x: Any, y: Any) -> str:
+    try:
+        xf = float(x)
+        yf = float(y)
+    except (TypeError, ValueError):
+        return ""
+    col = int((xf - MAP_BOUNDS["x_min"]) // MAP_CELL_SIZE) + 1
+    row = int((MAP_BOUNDS["y_max"] - yf) // MAP_CELL_SIZE) + 1
+    col = max(1, min(MAP_COLS, col))
+    row = max(1, min(MAP_ROWS, row))
+    return f"{chr(ord('A') + row - 1)}{col:02d}"
+
+
+def grid_cell_to_row_col(cell: str) -> tuple[int, int]:
+    return ord(cell[0]) - ord("A"), int(cell[1:]) - 1
+
+
+def row_col_to_grid_cell(row: int, col: int) -> str:
+    row = max(0, min(MAP_ROWS - 1, row))
+    col = max(0, min(MAP_COLS - 1, col))
+    return f"{chr(ord('A') + row)}{col + 1:02d}"
+
+
+def cell_hits_static_wall(cell: str) -> bool:
+    try:
+        rows = [
+            line.rstrip("\n")
+            for line in MAP_ASCII_PATH.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+    except OSError:
+        return False
+    row = ord(cell[0]) - ord("A")
+    col = int(cell[1:]) - 1
+    if row < 0 or row >= len(rows) or col < 0 or col >= len(rows[row]):
+        return False
+    return rows[row][col] == "#"
+
+
+def blocked_cells_crossed_by_segment(start_cell: str, end_cell: str) -> list[str]:
+    if not start_cell or not end_cell or start_cell == end_cell:
+        return []
+    start_row, start_col = grid_cell_to_row_col(start_cell)
+    end_row, end_col = grid_cell_to_row_col(end_cell)
+    steps = max(abs(end_row - start_row), abs(end_col - start_col)) * 8 + 1
+    blocked: list[str] = []
+    seen: set[str] = set()
+    for step in range(steps + 1):
+        ratio = step / steps
+        row = int(round(start_row + (end_row - start_row) * ratio))
+        col = int(round(start_col + (end_col - start_col) * ratio))
+        cell = row_col_to_grid_cell(row, col)
+        if cell in {start_cell, end_cell} or cell in seen:
+            continue
+        seen.add(cell)
+        if cell_hits_static_wall(cell):
+            blocked.append(cell)
+    return blocked
+
+
+def validate_route_segments(cells: list[str], start_cell: str = "") -> None:
+    route_cells = ([start_cell] if start_cell else []) + cells
+    for from_cell, to_cell in zip(route_cells, route_cells[1:]):
+        blocked = blocked_cells_crossed_by_segment(from_cell, to_cell)
+        if blocked:
+            shown = ", ".join(blocked[:8])
+            suffix = "" if len(blocked) <= 8 else f", plus {len(blocked) - 8} more"
+            raise DoomArenaError(
+                f"route segment {from_cell}->{to_cell} crosses blocked cell(s): "
+                f"{shown}{suffix}. Add intermediate waypoints around the wall."
+            )
+
+
+def normalize_plan_route(route: Any, start_cell: str = "") -> tuple[str, list[str]]:
+    cells: list[str] = []
+    raw_points: list[Any]
+
+    if isinstance(route, str):
+        raw_points = [item.strip() for item in route.replace(",", ";").split(";") if item.strip()]
+    elif isinstance(route, list):
+        raw_points = route
+    else:
+        raise DoomArenaError("route must be a list of grid cells, e.g. ['M06', 'M12']")
+
+    if not raw_points:
+        raise DoomArenaError("route must include at least one waypoint")
+    if len(raw_points) > PLAN_ROUTE_MAX_WAYPOINTS:
+        raise DoomArenaError(f"route can include at most {PLAN_ROUTE_MAX_WAYPOINTS} waypoints")
+
+    for item in raw_points:
+        cell = normalize_grid_cell(item)
+        if cell_hits_static_wall(cell):
+            raise DoomArenaError("route cell cannot be a wall cell")
+        cells.append(cell)
+
+    validate_route_segments(cells, start_cell=start_cell)
+    xy_points = [grid_cell_to_xy(cell) for cell in cells]
+    return ";".join(f"{x},{y}" for x, y in xy_points), cells
+
+
+def route_cells_text_for_telemetry(route: Any) -> str:
+    try:
+        if isinstance(route, str):
+            return ";".join(part.strip().upper() for part in route.replace(",", ";").split(";") if part.strip())[:80]
+        if isinstance(route, list):
+            cells = []
+            for item in route:
+                if isinstance(item, (list, tuple)) and len(item) == 2:
+                    cells.append(f"{str(item[0]).strip().upper()}{int(item[1]):02d}")
+                else:
+                    cells.append(str(item).strip().upper())
+            return ";".join(cell for cell in cells if cell)[:80]
+    except (TypeError, ValueError):
+        pass
+    return str(route or "").replace("\t", " ").strip()[:80]
+
+
+def mcp_plan_telemetry_fields(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    if tool_name != "set_participant_plan":
+        return {}
+    return {
+        "plan_objective": str(arguments.get("objective", "")).replace("\t", " ").strip()[:64],
+        "plan_route_cells": route_cells_text_for_telemetry(arguments.get("route", "")),
+        "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
+        "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+    }
 
 
 def normalize_replan_if(value: Any) -> str:
@@ -1269,6 +1859,11 @@ def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
         row.setdefault("turn_policy", "auto")
         row.setdefault("navigation_target", "opponent")
         row.setdefault("fire_mode", "auto")
+        row.setdefault("intent_raw", row.get("intent", ""))
+        for field in PARTICIPANT_INTENT_STRATEGY_FIELDS:
+            row.setdefault(field, "")
+        for field in PARTICIPANT_INTENT_PLAN_FIELDS:
+            row.setdefault(field, "")
         if (
             row["participant_id"] in PARTICIPANTS
             and row["target_id"] in PARTICIPANTS
@@ -1521,6 +2116,38 @@ def enrich_participant_state(
     return observation
 
 
+def participant_geometry_los(row: dict[str, str]) -> bool:
+    return row.get("line_of_sight", "0") == "1"
+
+
+def hit_reveal_active(participant: dict[str, Any]) -> bool:
+    last_taken_ms = participant.get("last_damage_taken_ms")
+    if last_taken_ms is None:
+        return False
+    try:
+        age_ms = now_ms() - int(last_taken_ms)
+    except (TypeError, ValueError):
+        return False
+    return 0 <= age_ms <= PARTICIPANT_HIT_REVEAL_MS
+
+
+def participant_directional_visibility(participant: dict[str, Any]) -> bool:
+    if not bool(participant.get("geometric_line_of_sight")):
+        return False
+    relative_angle = int(participant.get("opponent_relative_angle") or 0)
+    in_view = abs(relative_angle) <= PARTICIPANT_VIEW_HALF_ANGLE_DEGREES
+    return in_view or hit_reveal_active(participant)
+
+
+def apply_directional_visibility(participant: dict[str, Any]) -> None:
+    in_view = abs(int(participant.get("opponent_relative_angle") or 0)) <= PARTICIPANT_VIEW_HALF_ANGLE_DEGREES
+    revealed_by_hit = hit_reveal_active(participant)
+    visible = participant_directional_visibility(participant)
+    participant["opponent_in_view_cone"] = in_view
+    participant["opponent_revealed_by_hit"] = revealed_by_hit
+    participant["opponent_visible"] = visible
+    participant["los_status"] = "visible" if visible else "lost_los"
+
 def participant_state(row: dict[str, str]) -> dict[str, Any]:
     observation = {
         "participant_id": row.get("entity_id", ""),
@@ -1576,12 +2203,13 @@ def participant_state(row: dict[str, str]) -> dict[str, Any]:
         "invalid_actions": as_int(row, "invalid_actions"),
         "opponent_distance": as_int(row, "distance_to_player"),
         "opponent_relative_angle": as_int(row, "relative_angle_to_player"),
-        "opponent_visible": row.get("line_of_sight", "0") == "1",
+        "geometric_line_of_sight": participant_geometry_los(row),
+        "opponent_visible": participant_geometry_los(row),
     }
     return observation
 
 
-def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
+def make_shared_arena_state(rows: list[dict[str, str]], directional_visibility: bool = False) -> dict[str, Any]:
     match = next((row for row in rows if row.get("kind") == "match"), {})
     player_1_row = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == "player_1"),
@@ -1599,6 +2227,9 @@ def make_shared_arena_state(rows: list[dict[str, str]]) -> dict[str, Any]:
     if player_1_row or player_2_row:
         enrich_participant_state(player_1, player_2, run_id)
         enrich_participant_state(player_2, player_1, run_id)
+        if directional_visibility:
+            apply_directional_visibility(player_1)
+            apply_directional_visibility(player_2)
     state = {
         "mode": mode,
         "run_id": run_id,
@@ -1690,7 +2321,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     match = next((row for row in rows if row.get("kind") == "match"), {})
     config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
     hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
-    state = make_shared_arena_state(rows)
+    enable_weapon_pickups = config_row.get("enable_weapon_pickups", "1") != "0"
+    state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
     participant = next(
         (row for row in rows if row.get("kind") == "participant" and row.get("entity_id") == participant_id),
         {},
@@ -1702,7 +2334,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     )
     self_state = state.get(participant_id, {})
     opponent_state = state.get(opponent_id, {})
-    opponent_visible = participant.get("line_of_sight", "0") == "1"
+    opponent_visible = bool(self_state.get("opponent_visible", participant.get("line_of_sight", "0") == "1"))
 
     if hide_enemy_position:
         opponent_block: dict[str, Any] = {
@@ -1715,8 +2347,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
                 {
                     "distance": as_int(participant, "distance_to_player"),
                     "relative_angle": as_int(participant, "relative_angle_to_player"),
-                    "distance_bucket": opponent_state.get("distance_bucket"),
-                    "los_status": opponent_state.get("los_status"),
+                    "distance_bucket": self_state.get("distance_bucket"),
+                    "los_status": self_state.get("los_status"),
                 }
             )
     else:
@@ -1732,8 +2364,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "distance": as_int(participant, "distance_to_player"),
             "relative_angle": as_int(participant, "relative_angle_to_player"),
             "pressure_state": opponent_state.get("pressure_state"),
-            "distance_bucket": opponent_state.get("distance_bucket"),
-            "los_status": opponent_state.get("los_status"),
+            "distance_bucket": self_state.get("distance_bucket"),
+            "los_status": self_state.get("los_status"),
             "requested_fire_policy": opponent_state.get("requested_fire_policy"),
             "executed_fire_action": opponent_state.get("executed_fire_action"),
             "requested_distance_policy": opponent_state.get("requested_distance_policy"),
@@ -1817,6 +2449,14 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "executed_navigation_target": self_state.get("executed_navigation_target"),
             "executed_fire_mode": self_state.get("executed_fire_mode"),
             "policy_compliance_reason": self_state.get("policy_compliance_reason"),
+        },
+        "map": {
+            "weapon_pickups_enabled": enable_weapon_pickups,
+            "pickups": strategy_pickups_for_observation(
+                participant.get("x"),
+                participant.get("y"),
+                include_weapons=enable_weapon_pickups,
+            ),
         },
         "match": {
             "phase": match.get("phase", participant.get("phase", "")),
@@ -1905,7 +2545,7 @@ def tool_definitions() -> list[dict[str, Any]]:
         {"name": "get_enemy_observation", "description": "Return enemy-commander observation JSON.", "inputSchema": empty_schema()},
         {
             "name": "get_participant_observation",
-            "description": "Return symmetric duel observation JSON for one participant.",
+            "description": "Return directional duel observation JSON for one participant.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -1948,6 +2588,16 @@ def tool_definitions() -> list[dict[str, Any]]:
             "name": "set_participant_intent",
             "description": "Set high-level autopilot intent for player_1 or player_2.",
             "inputSchema": participant_intent_schema(),
+        },
+        {
+            "name": "set_participant_strategy",
+            "description": "Set compact hierarchical strategy for player_1 or player_2. The server expands it into a full participant intent.",
+            "inputSchema": participant_strategy_schema(),
+        },
+        {
+            "name": "set_participant_plan",
+            "description": "Set a coordinate waypoint route for player_1 or player_2. The server validates the route and Doom follows it through the normal autopilot intent path.",
+            "inputSchema": participant_plan_schema(),
         },
         {
             "name": "stop_participant_intent",
@@ -2108,6 +2758,55 @@ def participant_intent_schema() -> dict[str, Any]:
     }
 
 
+def participant_strategy_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
+            "controller_token": {"type": "string"},
+            "category": {"type": "string", "enum": sorted(STRATEGY_ACTIONS)},
+            "action": {"type": "string", "enum": ALL_STRATEGY_ACTIONS},
+            "intensity": {"type": "string", "enum": sorted(STRATEGY_INTENSITIES)},
+            "sequence_number": {"type": "integer", "minimum": 0},
+            "objective": {"type": "string", "enum": [""] + sorted(STRATEGY_OBJECTIVES)},
+            "target_zone": {"type": "string", "enum": [""] + sorted(STRATEGY_TARGET_ZONES)},
+            "reasoning": {"type": "string", "maxLength": STRATEGY_REASONING_MAX_CHARS},
+        },
+        "required": ["participant_id", "category", "action"],
+        "additionalProperties": False,
+    }
+
+
+def participant_plan_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": {
+            "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
+            "controller_token": {"type": "string"},
+            "objective": {
+                "type": "string",
+                "maxLength": PLAN_OBJECTIVE_MAX_CHARS,
+                "description": "Short free-form goal chosen by the model.",
+            },
+            "route": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": PLAN_ROUTE_MAX_WAYPOINTS,
+                "items": {
+                    "type": "string",
+                    "pattern": "^[A-Xa-x](0[1-9]|[12][0-9]|3[0-2])$",
+                    "description": "Grid cell label, e.g. M06. Rows A-X, columns 01-32.",
+                },
+            },
+            "engagement_policy": {"type": "string", "enum": sorted(PLAN_ENGAGEMENT_POLICIES)},
+            "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
+            "sequence_number": {"type": "integer", "minimum": 0},
+        },
+        "required": ["participant_id", "route"],
+        "additionalProperties": False,
+    }
+
+
 def helper_schema(name: str) -> dict[str, Any]:
     return {
         "name": name,
@@ -2156,6 +2855,29 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             optional_string(arguments.get("controller_token")),
             int(arguments.get("timeout_ms", 60000)),
             int(arguments.get("poll_ms", 250)),
+        )
+    if name == "set_participant_plan":
+        return client.set_participant_plan(
+            str(arguments["participant_id"]),
+            arguments["route"],
+            str(arguments.get("objective", "")),
+            str(arguments.get("engagement_policy", "engage_if_visible")),
+            str(arguments.get("reasoning", "")),
+            optional_string(arguments.get("controller_token")),
+            arguments.get("sequence_number"),
+        )
+    if name == "set_participant_strategy":
+        return client.set_participant_strategy(
+            str(arguments["participant_id"]),
+            str(arguments["category"]),
+            str(arguments["action"]),
+            str(arguments.get("intensity", "medium")),
+            int(arguments.get("commit_ms", 8000)),
+            optional_string(arguments.get("controller_token")),
+            arguments.get("sequence_number"),
+            str(arguments.get("objective", "")),
+            str(arguments.get("target_zone", "")),
+            str(arguments.get("reasoning", "")),
         )
     if name == "set_participant_input":
         if not EXPOSE_LOW_LEVEL_PARTICIPANT_MCP:
@@ -2374,6 +3096,7 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
                     "completed_at_ms": completed_at,
                     "is_error": False,
                     "result": result_payload if isinstance(result_payload, dict) else {},
+                    **mcp_plan_telemetry_fields(tool_name, arguments),
                 }
             )
             send_response(message_id, {"content": [{"type": "text", "text": text}], "isError": False})
@@ -2391,6 +3114,7 @@ def handle_message(client: DoomArenaClient, message: dict[str, Any]) -> bool:
                     "completed_at_ms": completed_at,
                     "is_error": True,
                     "error": str(exc),
+                    **mcp_plan_telemetry_fields(tool_name, arguments),
                 }
             )
             send_response(message_id, {"content": [{"type": "text", "text": str(exc)}], "isError": True})
@@ -2429,3 +3153,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+

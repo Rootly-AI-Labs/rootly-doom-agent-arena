@@ -12,6 +12,7 @@
 #include "i_timer.h"
 #include "p_local.h"
 #include "r_main.h"
+#include "tables.h"
 #include "arena_duel.h"
 #include "arena_enemies.h"
 #include "arena_participant_autopilot.h"
@@ -22,6 +23,7 @@
 #define ARENA_PLAYER_COMMAND_PATH "arena_player_command.local.tsv"
 #define ARENA_PLAYER_FORWARD_SPEED 0x32
 #define ARENA_PLAYER_SIDE_SPEED 0x28
+#define ARENA_PLAYER_ROUTE_SPEED (ARENA_PLAYER_FORWARD_SPEED * 2048)
 #define ARENA_PLAYER_TURN_SPEED 1280
 
 typedef struct
@@ -128,6 +130,30 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
     ticcmd_t *cmd,
     const arena_participant_autopilot_command_t *command);
 
+static void Arena_PlayerApplyRouteWaypointMovement(
+    player_t *player,
+    const arena_participant_autopilot_command_t *command)
+{
+    angle_t angle;
+    int fine_angle;
+
+    if (player == NULL
+        || player->mo == NULL
+        || command == NULL
+        || !command->route_waypoint_active)
+    {
+        return;
+    }
+
+    angle = R_PointToAngle2(player->mo->x,
+                            player->mo->y,
+                            command->route_target_x * FRACUNIT,
+                            command->route_target_y * FRACUNIT);
+    fine_angle = angle >> ANGLETOFINESHIFT;
+    player->mo->momx += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finecosine[fine_angle]);
+    player->mo->momy += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finesine[fine_angle]);
+}
+
 static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
 {
     int now_ms;
@@ -138,6 +164,13 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
     arena_participant_autopilot_command_t command;
 
     now_ms = I_GetTimeMS();
+
+    if (ArenaDuel_IsEnabled())
+    {
+        ArenaParticipantAutopilot_RecordFallback(ARENA_PARTICIPANT_PLAYER_1,
+                                                 "duel_custom_participant_path");
+        return false;
+    }
 
     if (!ArenaParticipantIntent_HasActive(ARENA_PARTICIPANT_PLAYER_1))
     {
@@ -207,6 +240,10 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
                                              &input.intent,
                                              &command);
 
+    if (command.route_waypoint_active)
+    {
+        Arena_PlayerApplyRouteWaypointMovement(player, &command);
+    }
     Arena_PlayerApplyAutopilotCommandToTiccmd(cmd, &command);
 
     return true;
@@ -216,8 +253,8 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
     ticcmd_t *cmd,
     const arena_participant_autopilot_command_t *command)
 {
-    cmd->forwardmove = command->forward * ARENA_PLAYER_FORWARD_SPEED;
-    cmd->sidemove = command->strafe * ARENA_PLAYER_SIDE_SPEED;
+    cmd->forwardmove = command->route_waypoint_active ? 0 : command->forward * ARENA_PLAYER_FORWARD_SPEED;
+    cmd->sidemove = command->route_waypoint_active ? 0 : command->strafe * ARENA_PLAYER_SIDE_SPEED;
     cmd->angleturn = -command->turn * ARENA_PLAYER_TURN_SPEED;
 
     if (command->attack)

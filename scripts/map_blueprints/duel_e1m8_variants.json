@@ -1,0 +1,61 @@
+{
+    "cell_size":  64,
+    "default_map":  "duel_e1m8",
+    "default_variant":  "duel_e1m8",
+    "maps":  {
+                 "duel_e1m8":  {
+                                   "label":  "Custom duel room",
+                                   "ascii":  "duel_e1m8_ascii.txt"
+                               }
+             },
+    "variants":  {
+                     "duel_e1m8":  {
+                                       "map_id":  "duel_e1m8",
+                                       "label":  "Open sight spawn",
+                                       "spawns":  {
+                                                      "player_1":  {
+                                                                       "x":  -608,
+                                                                       "y":  544,
+                                                                       "angle_deg":  0
+                                                                   },
+                                                      "player_2":  {
+                                                                       "x":  672,
+                                                                       "y":  544,
+                                                                       "angle_deg":  180
+                                                                   }
+                                                  }
+                                   },
+                     "duel_e1m8_blind_spawn":  {
+                                                   "map_id":  "duel_e1m8",
+                                                   "label":  "Blind spawn",
+                                                   "spawns":  {
+                                                                  "player_1":  {
+                                                                                   "x":  -900,
+                                                                                   "y":  0,
+                                                                                   "angle_deg":  0
+                                                                               },
+                                                                  "player_2":  {
+                                                                                   "x":  900,
+                                                                                   "y":  0,
+                                                                                   "angle_deg":  180
+                                                                               }
+                                                              }
+                                               },
+                     "duel_e1m8_corner_spawn":  {
+                                                    "map_id":  "duel_e1m8",
+                                                    "label":  "Corner spawn",
+                                                    "spawns":  {
+                                                                   "player_1":  {
+                                                                                    "x":  -768,
+                                                                                    "y":  -512,
+                                                                                    "angle_deg":  45
+                                                                                },
+                                                                   "player_2":  {
+                                                                                    "x":  768,
+                                                                                    "y":  512,
+                                                                                    "angle_deg":  225
+                                                                                }
+                                                               }
+                                                }
+                 }
+}

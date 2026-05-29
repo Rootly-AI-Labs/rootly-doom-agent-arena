@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005-2014 Simon Howard
 //
@@ -750,7 +750,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
         {
         case ARENA_DUEL_SPAWN_BLIND:
             // Left side of the room divider with no opening line of sight.
-            arena_start.x = -640;
+            arena_start.x = -900;
             arena_start.y = 0;
             arena_start.angle = 0;
             break;
@@ -1159,3 +1159,6 @@ P_SpawnPlayerMissile
 
     P_CheckMissileSpawn (th);
 }
+
+
+

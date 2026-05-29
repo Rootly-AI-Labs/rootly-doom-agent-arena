@@ -9,6 +9,7 @@
 #include "arena_participant_commands.h"
 
 #define ARENA_PARTICIPANT_INTENT_PATH "arena_participant_intents.local.tsv"
+#define ARENA_PARTICIPANT_ROUTE_MAX_WAYPOINTS 16
 
 typedef enum
 {
@@ -62,6 +63,13 @@ typedef struct
     char turn_policy[32];
     char navigation_target[32];
     char fire_mode[32];
+    int route_waypoint_count;
+    int route_x[ARENA_PARTICIPANT_ROUTE_MAX_WAYPOINTS];
+    int route_y[ARENA_PARTICIPANT_ROUTE_MAX_WAYPOINTS];
+    char plan_objective[64];
+    char plan_route[256];
+    char plan_engagement_policy[32];
+    char plan_reasoning[128];
     char status[32];
     char reason[96];
 } arena_participant_intent_t;

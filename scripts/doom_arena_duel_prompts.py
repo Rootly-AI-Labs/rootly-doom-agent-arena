@@ -1,4 +1,4 @@
-"""Shared prompt and token helpers for browser-created Doom Arena duels."""
+﻿"""Shared prompt and token helpers for browser-created Doom Arena duels."""
 
 from __future__ import annotations
 
@@ -7,65 +7,49 @@ import secrets
 from pathlib import Path
 from typing import Any
 
+from doom_arena_map_blueprints import format_map_blueprint_prompt, load_geometry_blueprint, load_variants_config
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RESULTS_ROOT = REPO_ROOT / "benchmarks" / "results"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
 MAP_BLUEPRINTS_DIR = Path(__file__).resolve().parent / "map_blueprints"
+MAP_BOUNDS = {"x_min": -1024, "x_max": 1024, "y_min": -768, "y_max": 768}
+MAP_CELL_SIZE = 64
+MAP_ROWS = 24
+MAP_COLS = 32
+
+
+def _xy_to_grid_cell(x: Any, y: Any) -> str:
+    try:
+        xf = float(x)
+        yf = float(y)
+    except (TypeError, ValueError):
+        return ""
+    col = int((xf - MAP_BOUNDS["x_min"]) // MAP_CELL_SIZE) + 1
+    row = int((MAP_BOUNDS["y_max"] - yf) // MAP_CELL_SIZE) + 1
+    col = max(1, min(MAP_COLS, col))
+    row = max(1, min(MAP_ROWS, row))
+    return f"{chr(ord('A') + row - 1)}{col:02d}"
 
 
 def load_map_blueprint(scenario_id: str) -> str:
-    txt_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.txt"
-    json_path = MAP_BLUEPRINTS_DIR / f"{scenario_id}.json"
-    parts: list[str] = []
-    if txt_path.exists():
-        parts.append(txt_path.read_text(encoding="utf-8").strip())
-    if json_path.exists():
-        parts.append(json_path.read_text(encoding="utf-8").strip())
-    return "\n\n".join(parts) if parts else ""
+    config = load_variants_config()
+    scenario_text = str(scenario_id or "").strip()
+    if scenario_text not in config.get("variants", {}):
+        return ""
+    return format_map_blueprint_prompt(scenario_text)
 
 
 def _cross_round_recap_section(enabled: bool, total_rounds: int) -> str:
-    if not enabled or total_rounds <= 1:
+    if total_rounds <= 1:
         return ""
     return """
-Cross-round learning:
-- Your observation includes a `previous_rounds` array with a recap of prior rounds.
-- Each entry has: `round`, `winner`, `terminal_reason`, `elapsed_time_seconds`,
-  `your_final_health`, `your_damage_dealt`, `your_hit_rate`,
-  `opponent_prevailing_intent`, `spawn_variant`.
-- On round 1 `previous_rounds` is empty — this is expected.
-- Use recaps to adapt: if you lost last round, change your opening intent or spacing.
-  If opponent's `prevailing_intent` was `search`, expect passive play and push early.
-- Do not spend more than one decision reacting to recap data; keep the observe-intent loop fast.
+Cross-round recap:
+- If `previous_rounds` appears in observations, use it only to avoid repeating failed openings.
+- Recaps are intentionally tiny: winner, whether you won, damage, first objectives, and resource pickup owner when available.
 
 """
-
-
-def _simplified_actions_section(enabled: bool) -> str:
-    if not enabled:
-        return ""
-    return """
-Simplified action set (active for this session):
-Instead of the 4 legacy intents, use these 10 named actions. Each action has a
-built-in tactical preset — you only need to supply `aggression`, `fire_policy`,
-and `duration_ms` (plus optional `rationale`).
-
-| Action | When to use |
-|---|---|
-| `push_opponent` | Opponent is far; close the gap directly |
-| `flank_left` / `flank_right` | Circle to the side; break angle |
-| `circle_strafe_left` / `circle_strafe_right` | In close combat; keep moving |
-| `kite` | Under pressure; back away while firing |
-| `hold_position` | Anchor a spot; wait for opponent to come to you |
-| `camp_los` | Hold a sightline; fire only when aligned |
-| `patrol_last_seen` | LOS lost; sweep toward last known position |
-| `retreat_and_regroup` | Low health or losing; disengage cautiously |
-
-fire_policy values: `hold_fire` | `only_when_aligned` | `suppressive`
-
-"""
-
 
 def build_controller_tokens(run_id: str, player_1_model: str, player_2_model: str, enforce: bool) -> dict[str, Any]:
     return {
@@ -97,10 +81,117 @@ def _map_blueprint_section(enabled: bool, scenario_id: str) -> str:
     return f"""
 Map blueprint:
 Coordinates in your observations use the same frame as the blueprint below.
-North is +Y, East is +X. Movement is collision-pathed by the autopilot — use
+North is +Y, East is +X. Movement is collision-pathed by the autopilot - use
 the blueprint for strategic reasoning, not for exact pathing.
 
 {blueprint}
+
+"""
+
+
+def _nearest_spawn_marker_cell(rows: list[list[str]], row: int, col: int) -> tuple[int, int]:
+    row_count = len(rows)
+    col_count = len(rows[0]) if rows else 0
+    if row_count <= 0 or col_count <= 0:
+        return row, col
+    row = max(0, min(row_count - 1, row))
+    col = max(0, min(col_count - 1, col))
+    if rows[row][col] != "#":
+        return row, col
+    limit = max(row_count, col_count)
+    for radius in range(1, limit + 1):
+        for candidate_row in range(row - radius, row + radius + 1):
+            for candidate_col in range(col - radius, col + radius + 1):
+                if abs(candidate_row - row) != radius and abs(candidate_col - col) != radius:
+                    continue
+                if not (0 <= candidate_row < row_count and 0 <= candidate_col < col_count):
+                    continue
+                if rows[candidate_row][candidate_col] != "#":
+                    return candidate_row, candidate_col
+    return row, col
+
+
+def _variant_ascii_map(blueprint: dict[str, Any]) -> str:
+    raw_ascii = str(blueprint.get("ascii_map", "")).strip()
+    if not raw_ascii:
+        return ""
+    rows = []
+    for raw_row in raw_ascii.splitlines():
+        if not raw_row:
+            continue
+        # Static prompt maps show geometry only. Strip player/spawn markers so
+        # the initial prompt does not reveal participant locations.
+        rows.append("".join("#" if char == "#" else "." for char in raw_row))
+    return "\n".join(rows)
+
+
+def _blocked_cell_list(ascii_map: str) -> str:
+    cells = []
+    for row_index, row_text in enumerate(ascii_map.splitlines()):
+        for col_index, char in enumerate(row_text):
+            if char == "#":
+                cells.append(f"{chr(ord('A') + row_index)}{col_index + 1:02d}")
+    return ", ".join(cells)
+
+
+def _static_pickup_context(enable_weapon_pickups: bool) -> str:
+    pickups = [
+        ("health_top", "medikit", 0, 672, "heals +100 up to 150"),
+        ("health_bottom", "medikit", 0, -672, "heals +100 up to 150"),
+    ]
+    if enable_weapon_pickups:
+        pickups.append(("weapon_center", "shotgun", 0, 0, "7-pellet weapon pickup"))
+    lines = []
+    for pickup_id, name, x, y, note in pickups:
+        lines.append(f"- {pickup_id}: {name}, cell={_xy_to_grid_cell(x, y)}, x={x}, y={y}, {note}.")
+    return "\n".join(lines)
+
+
+def _static_map_context_section(
+    scenario_id: str,
+    participant_id: str = "",
+    enable_weapon_pickups: bool = True,
+) -> str:
+    try:
+        blueprint = load_geometry_blueprint(scenario_id)
+    except Exception:
+        return ""
+    bounds = blueprint.get("bounds", {})
+    spawns = blueprint.get("spawns", {})
+    own_spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
+    own_spawn_line = ""
+    if own_spawn:
+        own_spawn_cell = _xy_to_grid_cell(own_spawn.get("x"), own_spawn.get("y"))
+        own_spawn_line = (
+            f"- Your selected spawn: x={own_spawn.get('x')} y={own_spawn.get('y')} "
+            f"cell={own_spawn_cell} angle={own_spawn.get('angle_deg')}. Opponent spawn is intentionally omitted.\n"
+        )
+    ascii_map = _variant_ascii_map(blueprint)
+    if not ascii_map:
+        return ""
+    blocked_cells = _blocked_cell_list(ascii_map)
+    return f"""
+Static map context:
+- The static map is provided here once so repeated observations stay compact.
+- Use this map from chat memory while observations provide live positions and visibility.
+- Map: `{blueprint.get('map_id', 'duel_e1m8')}` / variant `{blueprint.get('scenario_id', scenario_id)}`.
+- Cell size: each ASCII cell is `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
+- Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
+- Coordinate frame: +x is east/right, -x is west/left, +y is north/up, -y is south/down.
+- Grid frame: rows `A-X` are north/top to south/bottom; columns `01-32` are west/left to east/right.
+{own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
+- Blocked route cells: {blocked_cells}.
+- Opponent spawn and player markers are intentionally omitted from the static map prompt.
+- Observations include compact `map.pickups` entries with resource id, availability, cell, and distance from you.
+- The Doom autopilot handles frame-level movement.
+
+Static resources:
+{_static_pickup_context(enable_weapon_pickups)}
+
+ASCII map:
+```text
+{ascii_map}
+```
 
 """
 
@@ -116,9 +207,10 @@ def instructions(
     current_round: int = 1,
     total_rounds: int = 1,
     enable_cross_round_recap: bool = False,
-    enable_simplified_actions: bool = False,
     enable_map_blueprint: bool = False,
     scenario_id: str = "duel_e1m8",
+    control_mode: str = "full",
+    enable_weapon_pickups: bool = True,
 ) -> str:
     token_line = (
         f"Your controller_token is: `{controller_token}`\n\n"
@@ -134,6 +226,100 @@ def instructions(
         if total_rounds > 1
         else "This benchmark session has a single match.\n"
     )
+    if str(control_mode).strip().lower() == "hierarchical":
+        strategy_token_line = (
+            f"Your controller_token is: `{controller_token}`\n\n"
+            "Always include `controller_token` when calling `set_participant_ready`, "
+            "`wait_for_match_start`, `get_participant_observation`, `set_participant_plan`, "
+            "`stop_participant_intent`, and `get_match_result`.\n"
+            if enforce_tokens
+            else "Controller token enforcement is disabled for this local trusted smoke run.\n"
+        )
+        stop_rules = (
+            """Stop rules:
+- `has_next_round=false` only means there is no later match after the current one. It is not a stop signal by itself.
+- If `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat`, continue the normal ready/opening/observe/plan loop even when `has_next_round=false`.
+- Stop only when `get_match_result` returns `phase="finished"` and `has_next_round=false`; then call `stop_participant_intent` once and stop all tool calls.
+- If `phase="finished"` and `has_next_round=true`, poll only `get_match_result` until `run_id` changes, then start the next match with `set_participant_ready` and reset `sequence_number=1`.
+
+"""
+            if total_rounds > 1
+            else """Stop rule:
+- This single match is still active while `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat`; continue the normal ready/opening/observe/plan loop.
+- Stop only when `get_match_result` returns `phase="finished"`; then call `stop_participant_intent` once and stop all tool calls.
+
+"""
+        )
+        return f"""# Doom Arena MCP Instructions: {participant_id}
+
+You are one of two separate MCP agents in Doom Arena Duel.
+You control only `{participant_id}`. Do not control `{opponent_id}`.
+
+{strategy_token_line}
+{session_line}
+Core rules:
+- Normal action tool: `set_participant_plan` only.
+- Do not use `set_participant_strategy`, `set_participant_intent`, detailed tactical parameters, or low-level movement/input tools in this mode.
+- Read compact observations using `match`, `self`, `opponent`, `tactical`, and `map`.
+- Choose objective, route, engagement_policy, and short reasoning together in one tool call.
+- Keep `reasoning` short: one sentence about why this route was chosen.
+
+Loop:
+- Ready once, observe, send an opening `set_participant_plan` with `sequence_number=1`, then call `wait_for_match_start`.
+- During combat, repeat: `get_participant_observation` -> `set_participant_plan` -> observe again.
+- Increment `sequence_number` after every plan call.
+- Do not choose timing fields or wait for the route lease; newer higher-sequence plans override immediately.
+- Do not use `Start-Sleep`, timers, or manual waiting loops.
+- On the final match, `has_next_round=false` can appear before the match is finished. Keep playing until `phase="finished"`.
+
+Allowed MCP tools:
+- `set_participant_ready`
+- `get_participant_observation`
+- `set_participant_plan`
+- `wait_for_match_start`
+- `get_match_result`
+- `stop_participant_intent`
+- `get_duel_events` if useful
+
+Plan schema:
+
+```json
+{{
+  "participant_id": "{participant_id}",
+  "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
+  "objective": "your_goal",
+  "route": ["A01", "A02"],
+  "engagement_policy": "engage_if_visible",
+  "reasoning": "short reason",
+  "sequence_number": 1
+}}
+```
+
+`objective` and `reasoning` are lightweight planning/logging fields. The route is the only movement plan you submit.
+
+Route rules:
+- `route` is a list of up to 16 grid cells, e.g. `["M05", "G05", "G12", "M17"]`.
+- Rows are `A-X` from north/top to south/bottom. Columns are `01-32` from west/left to east/right.
+- Each cell is `64 x 64` Doom units. The server converts cells into Doom coordinates at the cell center.
+- Do not put waypoints inside `#` wall cells.
+- Do not choose any cell listed under `Blocked route cells`.
+- Every straight route segment must avoid blocked cells, including the segment from your current `self.cell` to the first waypoint. Add intermediate cells to route around walls.
+- Do not use broad strategy labels like "clear upper" or "flank left" as the route. Submit exact cells only.
+- Do not replace a route just because it is still executing. Submit a new route when the route is blocked, stale, complete, stuck, enemy contact changes, or your plan intentionally changes.
+- The Doom autopilot handles frame-level turning, collision, and waypoint following.
+
+Allowed engagement_policy:
+- `engage_if_visible`
+- `avoid_until_target` (prioritize reaching the route target; Doom suppresses attack while the route is still in progress)
+- `hold_fire`
+- `force_fight`
+
+{_static_map_context_section(scenario_id, participant_id, enable_weapon_pickups)}
+
+{stop_rules}
+
+{_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
+"""
     return f"""# Doom Arena MCP Instructions: {participant_id}
 
 You are one of two separate MCP agents in Doom Arena Duel.
@@ -166,7 +352,7 @@ Loop template:
 8. Immediately call `get_participant_observation` again and choose the next high-level intent, even if the previous intent is still executing.
 9. Repeat observation and intent decisions until `get_match_result` shows `phase="finished"`.
 10. If `has_next_round=true`, stay in the same chat turn, keep polling `get_match_result` until `run_id` changes, then treat that as the next match: call `set_participant_ready` again, reset `sequence_number=1`, and repeat the opening flow.
-11. If `has_next_round=false`, stop after the final match result.
+11. If `has_next_round=false` before `phase="finished"`, keep playing the current final match. Stop only after the final match result reports `phase="finished"`.
 
 Allowed MCP tools:
 - `set_participant_ready`
@@ -243,6 +429,7 @@ Intent policy:
 
 | Situation | Intent and tactical controls |
 | --- | --- |
+| Match `phase` is `waiting_for_agents`, `waiting_for_first_intents`, or `combat` and `has_next_round=false` | This is the active final match. Continue the normal ready/opening/observe/intent loop; do not stop yet. |
 | Match `phase` is `finished` and `has_next_round=false` | Call `stop_participant_intent`, then stop the loop. |
 | Match `phase` is `finished` and `has_next_round=true` | Keep polling `get_match_result` until `run_id` changes, then start the next match by calling `set_participant_ready` again and resetting `sequence_number` to `1`. |
 | Opponent hidden / `los_status=lost_los` | `search`, style `balanced`, `fire_policy=hold_fire`, `movement_bias=direct`, `distance_policy=maintain`, `navigation_target=last_seen_enemy`, omit `movement_primitive`. |
@@ -348,11 +535,13 @@ Loop behavior:
 - Do not call `Start-Sleep` or run your own delay.
 - Reassess and refresh the intent before it expires if the same plan still makes sense.
 - Keep incrementing `sequence_number` within the current match; reset it to `1` when a new `run_id` starts.
-- Stop when `get_match_result` returns `phase="finished"` and `has_next_round=false`.
+- Do not stop just because `has_next_round=false`; that can simply mean the current match is the final match.
+- Stop only when `get_match_result` returns `phase="finished"` and `has_next_round=false`.
 - If `phase="finished"` and `has_next_round=true`, keep polling until `run_id` changes, then start the next match.
 - During benchmark loops, avoid prose if tool-only behavior is expected.
 
-Stop rules — read carefully:
+Stop rules - read carefully:
+- When `get_match_result` returns any phase other than `finished`, keep playing the current match even if `has_next_round=false`.
 - When `get_match_result` returns `phase="finished"` AND `has_next_round=false`:
   call `stop_participant_intent` once, then **stop all tool calls immediately**.
   Do not call `get_participant_observation`, `set_participant_intent`, or any other tool after this.
@@ -374,8 +563,16 @@ Rules:
 
 {_map_blueprint_section(enable_map_blueprint, scenario_id)}
 {_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
-{_simplified_actions_section(enable_simplified_actions)}
 Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-"""Regression tests for the rationale/token-tracking/spawn/scenario improvements.
+﻿"""Regression tests for the rationale/token-tracking/spawn/scenario improvements.
 
 These cover the new server-side surface introduced after the baseline 32%-failure
 investigation; they do not exercise the C engine (which requires a WASM rebuild).
@@ -15,8 +15,7 @@ def make_handler_with_state(
     run_id: str = "run_test",
     scenario_id: str = "duel_e1m8",
     randomize_spawns: bool = False,
-    scenario_pool=None,
-    enable_simplified_actions: bool = False,
+    scenario_pool=None
 ):
     handler = server.DoomArenaHandler.__new__(server.DoomArenaHandler)
     handler.server = SimpleNamespace(
@@ -43,12 +42,12 @@ def make_handler_with_state(
         duel_randomize_spawns=randomize_spawns,
         duel_scenario_pool=list(scenario_pool or []),
         duel_scenario_history=[],
-        enable_simplified_actions=enable_simplified_actions,
         enable_cross_round_recap=False,
         recap_window=2,
         enable_map_blueprint=False,
         enable_weapon_pickups=False,
         mirror_pair=False,
+        control_mode="hierarchical",
     )
     return handler
 
@@ -231,96 +230,73 @@ def test_duel_active_scenario_ids_includes_all_built_scenarios():
     }
 
 
-# ---------- Phase 2: action translator + precedence ----------
+# ---------- Hierarchical strategy expansion ----------
 
 
-def test_legacy_intent_passthrough_sets_intent_raw_equal():
-    handler = make_handler_with_state(enable_simplified_actions=True)
-    row = handler.normalize_participant_intent({
-        "participant_id": "player_1",
-        "intent": "engage_opponent",
-        "duration_ms": 5000,
-        "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-    })
-    assert row["intent"] == "engage_opponent"
-    assert row["intent_raw"] == "engage_opponent"
+def test_strategy_expansion_valid_for_all_category_actions():
+    from doom_arena_strategy import STRATEGY_ACTIONS, expand_strategy
+
+    handler = make_handler_with_state()
+    issued = (__import__("time").time_ns() // 1_000_000) + 10000
+    for category, actions in STRATEGY_ACTIONS.items():
+        for action in actions:
+            payload = expand_strategy(
+                participant_id="player_1",
+                category=category,
+                action=action,
+                intensity="medium",
+                commit_ms=3000,
+                sequence_number=1,
+            )
+            payload.update({"issued_at_ms": issued, "expires_at_ms": issued + int(payload["duration_ms"])})
+            row = handler.normalize_participant_intent(payload)
+            assert row["intent"] in {"engage_opponent", "strafe_attack", "hold", "search"}
+            assert row["strategy_source"] == "hierarchical"
+            assert row["strategy_category"] == category
+            assert row["strategy_action"] == action
 
 
-def test_new_action_translates_to_legacy_intent():
-    handler = make_handler_with_state(enable_simplified_actions=True)
-    row = handler.normalize_participant_intent({
-        "participant_id": "player_1",
-        "intent": "push_opponent",
-        "duration_ms": 5000,
-        "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-    })
-    assert row["intent"] == "engage_opponent"
-    assert row["intent_raw"] == "push_opponent"
-    assert row["distance_policy"] == "close"
-    assert row["movement_bias"] == "direct"
-
-
-def test_preset_wins_over_matching_llm_value():
-    handler = make_handler_with_state(enable_simplified_actions=True)
-    row = handler.normalize_participant_intent({
-        "participant_id": "player_1",
-        "intent": "push_opponent",
-        "distance_policy": "close",   # same as preset — OK
-        "duration_ms": 5000,
-        "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-    })
-    assert row["intent"] == "engage_opponent"
-
-
-def test_preset_conflict_raises_400():
+def test_strategy_expansion_rejects_invalid_category_action_combo():
     import pytest
-    handler = make_handler_with_state(enable_simplified_actions=True)
-    with pytest.raises(ValueError, match="fixes movement_bias"):
-        handler.normalize_participant_intent({
-            "participant_id": "player_1",
-            "intent": "flank_left",
-            "movement_bias": "evasive",   # conflicts with preset=circle
-            "duration_ms": 5000,
-            "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-        })
+    from doom_arena_strategy import expand_strategy
+
+    with pytest.raises(ValueError, match="action must be one of"):
+        expand_strategy(
+            participant_id="player_1",
+            category="engage",
+            action="patrol_left",
+            intensity="medium",
+            commit_ms=3000,
+        )
 
 
-def test_new_action_rejected_when_flag_off():
-    import pytest
-    handler = make_handler_with_state(enable_simplified_actions=False)
-    with pytest.raises(ValueError):
-        handler.normalize_participant_intent({
-            "participant_id": "player_1",
-            "intent": "push_opponent",
-            "duration_ms": 5000,
-            "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-        })
+def test_strategy_expansion_clamps_commit_ms_and_preserves_metadata():
+    from doom_arena_strategy import expand_strategy
 
+    payload = expand_strategy(
+        participant_id="player_1",
+        category="engage",
+        action="strafe_fight",
+        intensity="high",
+        commit_ms=99999,
+        sequence_number=7,
+    )
+    assert payload["duration_ms"] == 8000
+    assert payload["strategy_commit_ms"] == 8000
+    assert payload["strategy_intensity"] == "high"
+    assert payload["sequence_number"] == 7
+    assert payload["intent"] == "strafe_attack"
 
-def test_all_new_actions_translate_correctly():
-    handler = make_handler_with_state(enable_simplified_actions=True)
-    action_to_legacy = {
-        "push_opponent": "engage_opponent",
-        "flank_left": "engage_opponent",
-        "flank_right": "engage_opponent",
-        "circle_strafe_left": "strafe_attack",
-        "circle_strafe_right": "strafe_attack",
-        "kite": "strafe_attack",
-        "hold_position": "hold",
-        "camp_los": "hold",
-        "patrol_last_seen": "search",
-        "retreat_and_regroup": "search",
-    }
-    for new_action, expected_legacy in action_to_legacy.items():
-        row = handler.normalize_participant_intent({
-            "participant_id": "player_1",
-            "intent": new_action,
-            "duration_ms": 5000,
-            "issued_at_ms": __import__("time").time_ns() // 1_000_000,
-        })
-        assert row["intent"] == expected_legacy, f"{new_action} should map to {expected_legacy}"
-        assert row["intent_raw"] == new_action
-
+    payload = expand_strategy(
+        participant_id="player_1",
+        category="engage",
+        action="strafe_fight",
+        intensity="low",
+        commit_ms=1,
+        sequence_number=8,
+    )
+    assert payload["duration_ms"] == 3000
+    assert payload["strategy_commit_ms"] == 3000
 
 # ---------- Phase 1: previous-round recap ----------
 
@@ -465,28 +441,4 @@ def test_post_finish_stop_rule_always_present():
     assert "stop all tool calls immediately" in prompt
 
 
-def test_simplified_actions_section_present_when_flag_on():
-    from doom_arena_duel_prompts import instructions
-    prompt = instructions(
-        participant_id="player_1",
-        model="test",
-        opponent_id="player_2",
-        controller_token="tok",
-        enforce_tokens=False,
-        enable_simplified_actions=True,
-    )
-    assert "push_opponent" in prompt
-    assert "flank_left" in prompt
 
-
-def test_simplified_actions_section_absent_when_flag_off():
-    from doom_arena_duel_prompts import instructions
-    prompt = instructions(
-        participant_id="player_1",
-        model="test",
-        opponent_id="player_2",
-        controller_token="tok",
-        enforce_tokens=False,
-        enable_simplified_actions=False,
-    )
-    assert "push_opponent" not in prompt

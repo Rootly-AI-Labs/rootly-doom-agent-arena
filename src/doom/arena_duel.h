@@ -20,8 +20,12 @@ boolean ArenaDuel_IsEnabled(void);
 boolean ArenaDuel_IsFinished(void);
 boolean ArenaDuel_IsStarted(void);
 boolean ArenaDuel_IsPlayer2(const mobj_t *mobj);
+boolean ArenaDuel_Player1CanSeePlayer2(int relative_angle, int geometric_line_of_sight);
+boolean ArenaDuel_Player2CanSeePlayer1(int relative_angle, int geometric_line_of_sight);
 mobj_t *ArenaDuel_Player2Mobj(void);
 int ArenaDuel_Player2AmmoBullets(void);
+int ArenaDuel_Player2AmmoShells(void);
+int ArenaDuel_Player2ReadyWeapon(void);
 int ArenaDuel_ElapsedMs(void);
 int ArenaDuel_ElapsedSecondsTenths(void);
 int ArenaDuel_TimeoutSeconds(void);
@@ -47,6 +51,19 @@ int ArenaDuel_Player1ViewFrame(void);
 int ArenaDuel_Player1ViewNonzeroPixels(void);
 uintptr_t ArenaDuel_Player1ViewPaletted(void);
 uintptr_t ArenaDuel_Player1ViewRGBA(void);
+void ArenaDuel_RenderPlayer1Automap(void);
+int ArenaDuel_Player1AutomapWidth(void);
+int ArenaDuel_Player1AutomapHeight(void);
+int ArenaDuel_Player1AutomapFrame(void);
+int ArenaDuel_Player1AutomapNonzeroPixels(void);
+uintptr_t ArenaDuel_Player1AutomapPaletted(void);
+uintptr_t ArenaDuel_Player1AutomapRGBA(void);
+int ArenaDuel_Player1PositionValid(void);
+int ArenaDuel_Player1WorldX(void);
+int ArenaDuel_Player1WorldY(void);
+int ArenaDuel_Player2PositionValid(void);
+int ArenaDuel_Player2WorldX(void);
+int ArenaDuel_Player2WorldY(void);
 void ArenaDuel_RenderPlayer2View(void);
 int ArenaDuel_Player2ViewWidth(void);
 int ArenaDuel_Player2ViewHeight(void);
@@ -57,3 +74,5 @@ uintptr_t ArenaDuel_Player2ViewRGBA(void);
 uintptr_t ArenaDuel_PalettePointer(void);
 
 #endif
+
+

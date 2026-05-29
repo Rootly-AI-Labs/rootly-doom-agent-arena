@@ -1,4 +1,4 @@
-//
+﻿//
 // Doom Agent Arena enemy spawning.
 //
 
@@ -42,6 +42,7 @@ static char arena_player_2_model[32] = "";
 static int arena_round = 1;
 static int arena_seed = 0;
 static int arena_timeout_seconds = 120;
+static int arena_enable_weapon_pickups = 1;
 
 static void Arena_CopyField(char *dest, size_t dest_size, const char *value)
 {
@@ -113,6 +114,11 @@ int Arena_Seed(void)
 int Arena_TimeoutSeconds(void)
 {
     return arena_timeout_seconds > 0 ? arena_timeout_seconds : 120;
+}
+
+boolean Arena_WeaponPickupsEnabled(void)
+{
+    return arena_enable_weapon_pickups != 0;
 }
 
 int Arena_EnemyCount(void)
@@ -251,7 +257,7 @@ void Arena_LoadRunMetadata(void)
 {
     FILE *file;
     char line[256];
-    char *fields[9];
+    char *fields[10];
     int field_count;
 
     Arena_CopyField(arena_run_id, sizeof(arena_run_id), "run_unknown");
@@ -262,6 +268,7 @@ void Arena_LoadRunMetadata(void)
     arena_round = 1;
     arena_seed = 0;
     arena_timeout_seconds = 120;
+    arena_enable_weapon_pickups = 1;
 
     file = fopen(ARENA_RUN_METADATA_PATH, "r");
     if (file == NULL)
@@ -282,7 +289,7 @@ void Arena_LoadRunMetadata(void)
     }
 
     Arena_Chomp(line);
-    field_count = Arena_SplitTsv(line, fields, 9);
+    field_count = Arena_SplitTsv(line, fields, 10);
     if (field_count >= 2)
     {
         Arena_CopyField(arena_run_id, sizeof(arena_run_id), fields[0]);
@@ -302,6 +309,10 @@ void Arena_LoadRunMetadata(void)
         arena_round = atoi(fields[6]);
         arena_seed = atoi(fields[7]);
         arena_timeout_seconds = atoi(fields[8]);
+        if (field_count >= 10)
+        {
+            arena_enable_weapon_pickups = atoi(fields[9]) != 0;
+        }
     }
     if (arena_round <= 0)
     {
