@@ -4207,12 +4207,12 @@
                 return intent === "none" || intentStatus === "inactive";
             }
 
-            function updateCommandWaitingOverlay(overlayId, player) {
+            function updateCommandWaitingOverlay(overlayId, player, matchOver) {
                 var node = document.getElementById(overlayId);
                 if (node === null) {
                     return;
                 }
-                node.hidden = !playerWaitingForCommand(player);
+                node.hidden = matchOver || !playerWaitingForCommand(player);
             }
 
             function appendBreakdownStat(parent, label, value) {
@@ -5596,8 +5596,9 @@
                 setText("duel-p1-angle", player1Angle);
                 setText("duel-p2-xy", player2XY);
                 setText("duel-p2-angle", player2Angle);
-                updateCommandWaitingOverlay("player-1-command-waiting", player1);
-                updateCommandWaitingOverlay("player-2-command-waiting", player2);
+                var matchOver = participantIsDead(player1) || participantIsDead(player2);
+                updateCommandWaitingOverlay("player-1-command-waiting", player1, matchOver);
+                updateCommandWaitingOverlay("player-2-command-waiting", player2, matchOver);
                 renderTacticalMap(player1, player2);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
                 updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);

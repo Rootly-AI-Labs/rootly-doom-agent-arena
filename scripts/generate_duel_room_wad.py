@@ -146,8 +146,8 @@ def write_tactical_map_svg(blueprint: dict) -> None:
 def build_blockmap(bounds: dict, num_lines: int) -> bytes:
     block_origin_x = bounds["x_min"]
     block_origin_y = bounds["y_min"]
-    block_width = max(1, (bounds["x_max"] - bounds["x_min"]) // 128)
-    block_height = max(1, (bounds["y_max"] - bounds["y_min"]) // 128)
+    block_width = max(1, -(-( bounds["x_max"] - bounds["x_min"]) // 128))
+    block_height = max(1, -(-(bounds["y_max"] - bounds["y_min"]) // 128))
     offsets_count = block_width * block_height
     line_list = list(range(num_lines)) + [-1]
     list_offset = 4 + offsets_count
