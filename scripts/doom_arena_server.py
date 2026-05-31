@@ -54,6 +54,7 @@ ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
 MCP_PRESENCE_STALE_AFTER_MS = 25000
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
+DEFAULT_DUEL_SCENARIO_ID = "duel_e1m8_blind_spawn"
 DEFAULT_ARENA_MODE = "enemies"
 DUEL_DEFAULTS = {
     "arena_mode": "duel",
@@ -811,6 +812,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.mcp_calls.append(record)
             if not is_error and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy", "set_participant_plan"}:
                 self.record_intent_lifecycle_locked(record, text)
+            self.append_decision_trace_record_locked(record, text)
             self.write_mcp_stats_locked()
 
     def record_token_chars_locked(self, participant_id: str, request_chars: int, response_chars: int) -> None:
@@ -845,9 +847,30 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.attach_mcp_result_payload_summary_locked(record, payload)
 
     def attach_mcp_result_payload_summary_locked(self, record: dict[str, Any], payload: dict[str, Any]) -> None:
-        for key in ("accepted", "ready", "cleared", "started", "phase", "run_id", "intent_id", "issued_at_ms", "expires_at_ms"):
+        for key in (
+            "accepted",
+            "ready",
+            "cleared",
+            "started",
+            "phase",
+            "run_id",
+            "intent_id",
+            "issued_at_ms",
+            "expires_at_ms",
+            "error_type",
+            "error",
+            "rejected_at_ms",
+        ):
             if key in payload:
                 record[key] = payload[key]
+        plan = payload.get("plan")
+        if isinstance(plan, dict):
+            for key in ("objective", "route", "engagement_policy", "reasoning", "sequence_number"):
+                if key in plan:
+                    record[f"plan_{key}" if key != "route" else "plan_route_cells"] = plan[key]
+        diagnostics = payload.get("route_diagnostics")
+        if isinstance(diagnostics, dict):
+            record["route_diagnostics"] = diagnostics
         normalized = payload.get("normalized_intent")
         if isinstance(normalized, dict):
             for key in (
@@ -997,6 +1020,92 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         with self.server.stats_lock:
             self.server.rationale_count = getattr(self.server, "rationale_count", 0) + len(records)
 
+    def append_decision_trace_record_locked(self, record: dict[str, Any], result_text: str) -> None:
+        tool_name = str(record.get("tool_name", ""))
+        if tool_name not in {"get_participant_observation", "set_participant_plan"}:
+            return
+        payload: dict[str, Any] = {}
+        try:
+            parsed = json.loads(result_text) if result_text else {}
+            if isinstance(parsed, dict):
+                payload = parsed
+        except json.JSONDecodeError:
+            payload = {}
+
+        trace: dict[str, Any] = {
+            "ts_ms": now_ms(),
+            "run_id": record.get("run_id", self.server.run_id),
+            "scenario_id": record.get("scenario_id", self.server.scenario_id),
+            "call_id": record.get("call_id", ""),
+            "request_index": record.get("request_index"),
+            "tool_name": tool_name,
+            "participant_id": record.get("participant_id", ""),
+            "started_at_ms": record.get("started_at_ms"),
+            "completed_at_ms": record.get("completed_at_ms"),
+            "latency_ms": record.get("latency_ms"),
+            "is_error": bool(record.get("is_error")),
+            "request_chars": record.get("request_chars", 0),
+            "response_chars": record.get("response_chars", 0),
+        }
+
+        if tool_name == "set_participant_plan":
+            plan = payload.get("plan") if isinstance(payload.get("plan"), dict) else {}
+            diagnostics = (
+                payload.get("route_diagnostics")
+                if isinstance(payload.get("route_diagnostics"), dict)
+                else record.get("route_diagnostics", {})
+            )
+            trace.update(
+                {
+                    "accepted": payload.get("accepted", record.get("accepted")),
+                    "error_type": payload.get("error_type", record.get("error_type", "")),
+                    "error": payload.get("error", record.get("error", "")),
+                    "objective": plan.get("objective", record.get("plan_objective", "")),
+                    "route_cells": plan.get("route", record.get("plan_route_cells", "")),
+                    "engagement_policy": plan.get("engagement_policy", record.get("plan_engagement_policy", "")),
+                    "reasoning": plan.get("reasoning", record.get("plan_reasoning", "")),
+                    "sequence_number": plan.get("sequence_number", record.get("sequence_number")),
+                    "route_diagnostics": diagnostics if isinstance(diagnostics, dict) else {},
+                }
+            )
+        elif tool_name == "get_participant_observation":
+            self_block = payload.get("self") if isinstance(payload.get("self"), dict) else {}
+            opponent_block = payload.get("opponent") if isinstance(payload.get("opponent"), dict) else {}
+            match_block = payload.get("match") if isinstance(payload.get("match"), dict) else {}
+            active_plan = payload.get("active_plan") if isinstance(payload.get("active_plan"), dict) else None
+            trace["observation"] = {
+                "match": {
+                    "phase": match_block.get("phase"),
+                    "round": match_block.get("round"),
+                    "total_rounds": match_block.get("total_rounds"),
+                    "time_left_seconds": match_block.get("time_left_seconds"),
+                    "winner": match_block.get("winner"),
+                },
+                "self": {
+                    "cell": self_block.get("cell"),
+                    "x": self_block.get("x"),
+                    "y": self_block.get("y"),
+                    "angle": self_block.get("angle"),
+                    "health": self_block.get("health"),
+                    "alive": self_block.get("alive"),
+                },
+                "opponent": {
+                    "visible": opponent_block.get("visible"),
+                    "last_seen": opponent_block.get("last_seen"),
+                    "distance_bucket": opponent_block.get("distance_bucket"),
+                },
+                "tactical": payload.get("tactical", {}),
+                "active_plan": active_plan,
+            }
+
+        try:
+            run_dir = self.run_dir(str(trace.get("run_id") or self.server.run_id))
+            run_dir.mkdir(parents=True, exist_ok=True)
+            with (run_dir / "decision_trace.jsonl").open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(trace, sort_keys=True) + "\n")
+        except OSError:
+            pass
+
     def build_previous_rounds_recap(
         self,
         participant_id: str,
@@ -1042,7 +1151,6 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "opponent_hit_rate": None,
                 "your_opening": None,
                 "opponent_opening": None,
-                "shotgun_pickup_owner": None,
             }
             if summary_path.exists():
                 try:
@@ -1092,21 +1200,6 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     entry["opponent_opening"] = openings.get(opponent_id)
                 except (OSError, KeyError, ValueError, json.JSONDecodeError):
                     pass
-            if events_path.exists():
-                try:
-                    for line in events_path.read_text(encoding="utf-8", errors="replace").splitlines():
-                        if not line.strip():
-                            continue
-                        event_row = json.loads(line)
-                        event_text = str(event_row.get("event", ""))
-                        if event_text.startswith("pickup: player_1 shotgun"):
-                            entry["shotgun_pickup_owner"] = "player_1"
-                            break
-                        if event_text.startswith("pickup: player_2 shotgun"):
-                            entry["shotgun_pickup_owner"] = "player_2"
-                            break
-                except (OSError, ValueError, json.JSONDecodeError):
-                    pass
             result.append(entry)
         return result
 
@@ -1149,6 +1242,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             None,
         )
         if existing is not None:
+            diagnostics = payload.get("route_diagnostics")
+            if isinstance(diagnostics, dict):
+                existing["route_diagnostics"] = diagnostics
             if call_record is not None:
                 existing["call_id"] = call_record["call_id"]
                 existing["request_index"] = call_record.get("request_index")
@@ -1196,6 +1292,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "previous_intent_id": "",
             "gap_after_previous_expiry_ms": None,
         }
+        diagnostics = payload.get("route_diagnostics")
+        if isinstance(diagnostics, dict):
+            intent_record["route_diagnostics"] = diagnostics
         for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
             intent_record[key] = normalized.get(key)
         for key in PARTICIPANT_INTENT_STRATEGY_FIELDS:
@@ -1713,7 +1812,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def read_map_blueprint(self) -> None:
         query = urlparse(self.path).query
         params = parse_qs(query)
-        scenario_id = params.get("scenario_id", [None])[0] or self.server.scenario_id or "duel_e1m8"
+        scenario_id = params.get("scenario_id", [None])[0] or self.server.scenario_id or DEFAULT_DUEL_SCENARIO_ID
         try:
             blueprint = load_geometry_blueprint(scenario_id)
         except (OSError, ValueError, json.JSONDecodeError) as error:
@@ -2046,6 +2145,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     self.attach_mcp_result_summary_locked(record, result_text)
                 if not record.get("is_error") and record.get("tool_name") in {"set_participant_intent", "set_participant_strategy", "set_participant_plan"} and result_text:
                     self.record_intent_lifecycle_locked(record, result_text)
+                self.append_decision_trace_record_locked(record, result_text)
                 self.write_mcp_stats_locked()
         except (TypeError, ValueError, json.JSONDecodeError) as exc:
             self.write_json(
@@ -2185,6 +2285,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def current_run_participant_intent_rows(self) -> list[dict[str, str]]:
         rows_by_participant: dict[str, dict[str, str]] = {}
         current_ms = now_ms()
+        keep_expired_for_start_barrier = True
+        try:
+            score = score_from_state(read_arena_state())
+            if (
+                score.get("run_id") == self.server.run_id
+                and score.get("phase") in {"combat", "finished"}
+            ):
+                keep_expired_for_start_barrier = False
+        except (OSError, ValueError):
+            keep_expired_for_start_barrier = True
 
         for row in self.read_participant_intent_rows():
             participant_id = row.get("participant_id", "")
@@ -2194,7 +2304,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 continue
             if row.get("scenario_id", "") != self.server.scenario_id:
                 continue
-            if int(row.get("expires_at_ms", "0") or 0) <= current_ms:
+            if (
+                not keep_expired_for_start_barrier
+                and int(row.get("expires_at_ms", "0") or 0) <= current_ms
+            ):
                 continue
             if self.participant_intent_row_preferred(rows_by_participant.get(participant_id), row):
                 rows_by_participant[participant_id] = row
@@ -2209,7 +2322,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 continue
             if str(intent.get("scenario_id", "")) != self.server.scenario_id:
                 continue
-            if int(intent.get("expires_at_ms") or 0) <= current_ms:
+            if (
+                not keep_expired_for_start_barrier
+                and int(intent.get("expires_at_ms") or 0) <= current_ms
+            ):
                 continue
 
             row = self.normalize_participant_intent(intent)
@@ -2223,11 +2339,18 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def update_participant_intent_row(self, intent_row: dict[str, str]) -> str:
         rows = self.current_run_participant_intent_rows()
-        current_ms = now_ms()
+        existing_row = next(
+            (
+                row for row in rows
+                if row.get("participant_id") == intent_row["participant_id"]
+            ),
+            None,
+        )
+        if existing_row is not None and not self.participant_intent_row_preferred(existing_row, intent_row):
+            return self.participant_intent_rows_to_tsv(rows)
         rows = [
             row for row in rows
             if row.get("participant_id") != intent_row["participant_id"]
-            and int(row.get("expires_at_ms", "0")) > current_ms
         ]
         rows.append(intent_row)
         return self.participant_intent_rows_to_tsv(rows)
@@ -2269,12 +2392,28 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 + ", ".join(sorted(ALLOWED_PARTICIPANT_INTENT_STYLES))
             )
 
-        issued = int(payload.get("issued_at_ms", now_ms()))
+        current_ms = now_ms()
+        server_lease_authoritative = any(
+            str(payload.get(key, "")).strip()
+            for key in (
+                "strategy_source",
+                "strategy_category",
+                "strategy_action",
+                "plan_objective",
+                "plan_route",
+                "plan_route_cells",
+                "plan_engagement_policy",
+            )
+        )
+        issued = int(payload.get("issued_at_ms", current_ms))
         duration = int(payload.get("duration_ms", 7000))
         if duration <= 0:
             raise ValueError("duration_ms must be positive")
-        expires = int(payload.get("expires_at_ms", issued + duration))
-        current_ms = now_ms()
+        if server_lease_authoritative:
+            issued = current_ms
+            expires = current_ms + duration
+        else:
+            expires = int(payload.get("expires_at_ms", issued + duration))
         if expires <= issued:
             raise ValueError("expires_at_ms must be after issued_at_ms")
         if expires <= current_ms:
@@ -2780,7 +2919,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         explicit_pool = payload.get("scenario_pool")
         randomize_spawns = bool(payload.get("randomize_spawns", False))
         rotate_all_maps = bool(payload.get("rotate_all_maps", False))
-        scenario_id = str(payload.get("scenario_id", "duel_e1m8"))
+        scenario_id = str(payload.get("scenario_id", DEFAULT_DUEL_SCENARIO_ID))
 
         if isinstance(explicit_pool, list):
             sanitized = [
@@ -2804,12 +2943,12 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         if scenario_id in DUEL_SCENARIO_IDS:
             return [scenario_id]
 
-        return ["duel_e1m8"]
+        return [DEFAULT_DUEL_SCENARIO_ID]
 
     def pick_round_scenario_id(self, round_number: int, payload: dict[str, Any]) -> str:
         pool = list(self.server.duel_scenario_pool)
         if not pool:
-            return str(payload.get("scenario_id", "duel_e1m8"))
+            return str(payload.get("scenario_id", DEFAULT_DUEL_SCENARIO_ID))
         if len(pool) == 1:
             return pool[0]
         if self.server.duel_randomize_spawns:
@@ -3078,7 +3217,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.server.scenario_id = str(
             payload.get(
                 "scenario_id",
-                "duel_e1m8" if arena_mode == "duel" else self.server.args.scenario_id,
+                DEFAULT_DUEL_SCENARIO_ID if arena_mode == "duel" else self.server.args.scenario_id,
             )
         )
 

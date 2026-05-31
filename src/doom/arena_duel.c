@@ -35,6 +35,9 @@
 #endif
 
 #define ARENA_DUEL_MOVE_SPEED (0x32 * 2048)
+#define ARENA_DUEL_ROUTE_SPEED ((ARENA_DUEL_MOVE_SPEED * 7) / 2)
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE 160
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED ((ARENA_DUEL_MOVE_SPEED * 5) / 2)
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
@@ -1379,6 +1382,9 @@ static void ArenaDuel_ThrustTowardRouteWaypoint(
     const arena_participant_autopilot_command_t *command)
 {
     angle_t angle;
+    int fine_angle;
+    fixed_t speed;
+    int distance;
 
     if (mobj == NULL
         || command == NULL
@@ -1391,7 +1397,15 @@ static void ArenaDuel_ThrustTowardRouteWaypoint(
                             mobj->y,
                             command->route_target_x * FRACUNIT,
                             command->route_target_y * FRACUNIT);
-    ArenaDuel_Thrust(mobj, angle, ARENA_DUEL_MOVE_SPEED);
+    distance = P_AproxDistance(command->route_target_x * FRACUNIT - mobj->x,
+                               command->route_target_y * FRACUNIT - mobj->y) >> FRACBITS;
+    speed = distance <= ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE
+        ? ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED
+        : ARENA_DUEL_ROUTE_SPEED;
+    fine_angle = angle >> ANGLETOFINESHIFT;
+    mobj->angle = angle;
+    mobj->momx = FixedMul(speed, finecosine[fine_angle]);
+    mobj->momy = FixedMul(speed, finesine[fine_angle]);
 }
 
 static void ArenaDuel_SeparateParticipantsIfStuck(void)
@@ -2943,6 +2957,14 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player1WorldY(void)
     return mobj != NULL ? mobj->y >> FRACBITS : 0;
 }
 
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AngleDegrees(void)
+{
+    mobj_t *mobj;
+
+    mobj = ArenaDuel_Player1Mobj();
+    return mobj != NULL ? ArenaDuel_AngleDegrees(mobj->angle) : 0;
+}
+
 ARENA_DUEL_EXPORT int ArenaDuel_Player2PositionValid(void)
 {
     return arena_duel_player2 != NULL;
@@ -2956,6 +2978,11 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldX(void)
 ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldY(void)
 {
     return arena_duel_player2 != NULL ? arena_duel_player2->y >> FRACBITS : 0;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player2AngleDegrees(void)
+{
+    return arena_duel_player2 != NULL ? ArenaDuel_AngleDegrees(arena_duel_player2->angle) : 0;
 }
 
 ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)

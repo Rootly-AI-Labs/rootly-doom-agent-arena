@@ -695,6 +695,20 @@
                 text-rendering: geometricPrecision;
             }
 
+            .duel-match-pill {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid rgba(255, 206, 107, 0.46);
+                border-radius: 999px;
+                background: rgba(255, 206, 107, 0.14);
+                color: #ffce6b;
+                padding: 4px 9px;
+                margin-right: 6px;
+                font: 900 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                box-shadow: 0 0 12px rgba(255, 206, 107, 0.12);
+            }
+
             .duel-shared {
                 margin-top: 5px;
                 color: #b8e986;
@@ -989,6 +1003,45 @@
                 color: #f7f5d8;
                 padding: 9px 11px;
                 font: 700 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .duel-prompt-change-indicator {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border: 1px solid rgba(184, 233, 134, 0.24);
+                border-radius: 999px;
+                background: rgba(7, 16, 13, 0.72);
+                color: #b8e986;
+                padding: 4px 8px;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .duel-prompt-change-indicator::before {
+                content: "";
+                width: 7px;
+                height: 7px;
+                border-radius: 999px;
+                background: #b8e986;
+                box-shadow: 0 0 8px rgba(184, 233, 134, 0.55);
+            }
+
+            .duel-prompt-change-indicator.is-changed {
+                border-color: rgba(255, 206, 107, 0.48);
+                color: #ffce6b;
+            }
+
+            .duel-prompt-change-indicator.is-changed::before {
+                background: #ffce6b;
+                box-shadow: 0 0 8px rgba(255, 206, 107, 0.7);
             }
 
             .duel-player-panel {
@@ -1439,8 +1492,7 @@
                             <div class="arena-model-field">
                                 <label for="arena-duel-map">Map / spawn variant</label>
                                 <select id="arena-duel-map">
-                                    <option value="duel_e1m8">Open sight spawn</option>
-                                    <option value="duel_e1m8_corner_spawn">Corner spawn</option>                                    <option value="duel_e1m8_blind_spawn" selected>Blind spawn</option>
+                                    <option value="duel_e1m8_blind_spawn" selected>Blind spawn</option>
                                 </select>
                             </div>
                     <div class="arena-model-field">
@@ -1458,7 +1510,8 @@
                     </div>
                     <div class="duel-prompt-panel" id="arena-launcher-prompts">
                         <div class="duel-prompt-instruction">
-                            Paste each prompt into your favorite MCP client (Codex, Claude, OpenCode...).
+                            <span>Paste each prompt into your favorite MCP client (Codex, Claude, OpenCode...).</span>
+                            <span class="duel-prompt-change-indicator" id="duel-prompt-change-indicator">Prompts update with settings</span>
                         </div>
                         <div class="duel-prompt-grid">
                             <div class="duel-prompt-card" id="duel-p1-prompt-card">
@@ -1500,7 +1553,6 @@
                 </div>
                 <div id="duel-header-actions">
                     <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
-                    <button type="button" id="duel-next-round" hidden>Next Match</button>
                     <button type="button" id="duel-menu">Menu</button>
                 </div>
             </div>
@@ -1797,6 +1849,9 @@
             var tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
             var tacticalHealthPackMarkers = [];
             var tacticalWeaponMarkers = [];
+            var latestTacticalPlayerById = { player_1: null, player_2: null };
+            var tacticalOverlayLiveWasmRunId = "";
+            var tacticalOverlayHasLiveWasm = false;
             var currentMapBlueprintScenarioId = "";
             var blueprintRequestScenarioId = "";
 
@@ -1868,8 +1923,12 @@
                 }
                 blueprint.pickups.forEach(function (pickup) {
                     var marker = {
+                        id: String(pickup.id || ""),
+                        type: String(pickup.type || ""),
                         x: Number(pickup.x),
                         y: Number(pickup.y),
+                        cell: pickup.cell || "",
+                        available: pickup.available !== false,
                         label: pickup.type === "weapon" ? "S" : "H"
                     };
                     if (!Number.isFinite(marker.x) || !Number.isFinite(marker.y)) {
@@ -1880,6 +1939,38 @@
                     } else if (pickup.type === "health") {
                         tacticalHealthPackMarkers.push(marker);
                     }
+                });
+            }
+
+            function updateTacticalPickupAvailabilityFromRows(rows) {
+                var liveRows;
+                var liveKeys = {};
+                var hasLiveRows;
+                var bounds = tacticalOverlayBounds();
+
+                if (!Array.isArray(rows)) {
+                    return;
+                }
+                liveRows = rows.filter(function (row) {
+                    return row && row.kind === "pickup";
+                });
+                hasLiveRows = liveRows.length > 0;
+                if (!hasLiveRows || !bounds) {
+                    return;
+                }
+                liveRows.forEach(function (row) {
+                    var type = String(row.type || "").toLowerCase();
+                    var x = Number(row.x);
+                    var y = Number(row.y);
+                    var cell = row.cell || (Number.isFinite(x) && Number.isFinite(y) ? tacticalGridCellLabel(bounds, x, y) : "");
+                    var available = row.available === undefined || row.available === "" || row.available === "1" || row.available === 1 || row.available === true;
+                    if (type && cell && available) {
+                        liveKeys[type + ":" + cell] = true;
+                    }
+                });
+                tacticalHealthPackMarkers.concat(tacticalWeaponMarkers).forEach(function (marker) {
+                    var cell = marker.cell || tacticalGridCellLabel(bounds, marker.x, marker.y);
+                    marker.available = !!liveKeys[String(marker.type || "").toLowerCase() + ":" + cell];
                 });
             }
 
@@ -1982,6 +2073,20 @@
                 };
             }
 
+            function tacticalGridCellLabel(bounds, x, y) {
+                var cellSize = Number(currentMapBlueprint && currentMapBlueprint.cell_size) || 64;
+                var colCount = Math.max(1, Math.round((bounds.x_max - bounds.x_min) / cellSize));
+                var rowCount = Math.max(1, Math.round((bounds.y_max - bounds.y_min) / cellSize));
+                var col = Math.floor((x - bounds.x_min) / cellSize) + 1;
+                var row = Math.floor((bounds.y_max - y) / cellSize) + 1;
+                var rowLetter;
+
+                col = Math.max(1, Math.min(colCount, col));
+                row = Math.max(1, Math.min(rowCount, row));
+                rowLetter = String.fromCharCode("A".charCodeAt(0) + row - 1);
+                return rowLetter + String(col).padStart(2, "0");
+            }
+
             function tacticalMapMarkerPosition(bounds, x, y) {
                 var canvas = document.getElementById("duel-player1-automap-canvas");
                 var size = automapCanvasSize(canvas);
@@ -2013,6 +2118,8 @@
                 tacticalPathTrailByParticipant = { player_1: [], player_2: [] };
                 tacticalPathTrailPendingJumpByParticipant = { player_1: null, player_2: null };
                 tacticalPathTrailRunId = currentArenaRunId || "";
+                tacticalOverlayLiveWasmRunId = "";
+                tacticalOverlayHasLiveWasm = false;
             }
 
             function tacticalPathTrailColor(participantId) {
@@ -2330,6 +2437,7 @@
                     slotTop = Math.min(slotNorthWest.y, slotSouthEast.y);
                     slotWidth = Math.abs(slotSouthEast.x - slotNorthWest.x);
                     slotHeight = Math.abs(slotSouthEast.y - slotNorthWest.y);
+                    ctx.globalAlpha = marker.available === false ? 0.28 : 1;
                     ctx.fillStyle = "rgba(72, 255, 137, 0.18)";
                     ctx.fillRect(slotLeft, slotTop, slotWidth, slotHeight);
                     ctx.strokeStyle = "rgba(72, 255, 137, 0.42)";
@@ -2353,6 +2461,7 @@
                     ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
                     ctx.lineWidth = 2;
                     ctx.stroke();
+                    ctx.globalAlpha = 1;
                 });
                 ctx.restore();
             }
@@ -2377,6 +2486,7 @@
                 ctx.save();
                 tacticalWeaponMarkers.forEach(function (marker) {
                     screen = automapWorldToScreen(bounds, marker.x, marker.y, canvas.width, canvas.height);
+                    ctx.globalAlpha = marker.available === false ? 0.28 : 1;
                     ctx.beginPath();
                     ctx.rect(screen.x - 10, screen.y - 7, 20, 14);
                     ctx.fillStyle = "rgba(255, 205, 88, 0.94)";
@@ -2390,15 +2500,120 @@
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
                     ctx.fillText(marker.label, screen.x, screen.y + 0.5);
+                    ctx.globalAlpha = 1;
                 });
                 ctx.restore();
+            }
+
+            function drawTacticalFacingArrow(ctx, bounds, player, color) {
+                var x = Number(player && player.x);
+                var y = Number(player && player.y);
+                var angle = Number(player && player.angle);
+                var canvas = ctx && ctx.canvas;
+                var screen;
+                var radians;
+                var dx;
+                var dy;
+                var forwardLength;
+                var backLength;
+                var halfWidth;
+                var tipX;
+                var tipY;
+                var backCenterX;
+                var backCenterY;
+                var leftX;
+                var leftY;
+                var rightX;
+                var rightY;
+
+                if (!canvas || !bounds || ![x, y, angle].every(Number.isFinite)) {
+                    return;
+                }
+
+                screen = automapWorldToScreen(bounds, x, y, canvas.width, canvas.height);
+                radians = angle * Math.PI / 180;
+                dx = Math.cos(radians);
+                dy = -Math.sin(radians);
+                forwardLength = Math.max(10, Math.min(16, canvas.width / 36));
+                backLength = Math.max(5, Math.min(8, forwardLength * 0.48));
+                halfWidth = Math.max(5, Math.min(8, forwardLength * 0.5));
+                tipX = screen.x + dx * forwardLength;
+                tipY = screen.y + dy * forwardLength;
+                backCenterX = screen.x - dx * backLength;
+                backCenterY = screen.y - dy * backLength;
+                leftX = backCenterX + dy * halfWidth;
+                leftY = backCenterY - dx * halfWidth;
+                rightX = backCenterX - dy * halfWidth;
+                rightY = backCenterY + dx * halfWidth;
+
+                ctx.save();
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.beginPath();
+                ctx.moveTo(tipX, tipY);
+                ctx.lineTo(leftX, leftY);
+                ctx.lineTo(rightX, rightY);
+                ctx.closePath();
+                ctx.strokeStyle = "rgba(3, 8, 6, 0.96)";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(tipX, tipY, 1.8, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawTacticalFacingArrowsOnAutomap() {
+                var canvas = tacticalOverlayDrawingCanvas();
+                var ctx;
+                var bounds = tacticalOverlayBounds();
+
+                if (!canvas || !bounds || !canvas.width || !canvas.height) {
+                    return;
+                }
+                ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    return;
+                }
+                drawTacticalFacingArrow(ctx, bounds, latestTacticalPlayerById.player_1, "#7ddcff");
+                drawTacticalFacingArrow(ctx, bounds, latestTacticalPlayerById.player_2, "#ff7a7a");
+            }
+
+            function setTacticalMarkerFromPlayer(participantId, player) {
+                var bounds = tacticalOverlayBounds();
+                var marker = document.getElementById(participantId === "player_2" ? "duel-tactical-marker-p2" : "duel-tactical-marker-p1");
+                var x = Number(player && player.x);
+                var y = Number(player && player.y);
+                var angle = Number(player && player.angle);
+                var markerPosition;
+
+                if (!marker || !bounds || !Number.isFinite(x) || !Number.isFinite(y)) {
+                    return;
+                }
+                markerPosition = tacticalMapMarkerPosition(bounds, x, y);
+                marker.hidden = false;
+                marker.style.left = markerPosition.leftPct + "%";
+                marker.style.top = markerPosition.topPct + "%";
+                marker.style.transform = Number.isFinite(angle)
+                    ? "rotate(" + doomAngleToCssRotation(angle) + "deg)"
+                    : "";
+            }
+
+            function liveDuelWasmPositionsAvailable() {
+                return currentArenaMode === "duel"
+                    && typeof Module !== "undefined"
+                    && typeof Module.ccall === "function";
             }
 
             function wasmDuelPlayerPosition(participantId) {
                 var prefix = participantId === "player_2" ? "ArenaDuel_Player2" : "ArenaDuel_Player1";
                 var valid;
 
-                if (typeof Module === "undefined" || typeof Module.ccall !== "function") {
+                if (!liveDuelWasmPositionsAvailable()) {
                     return null;
                 }
 
@@ -2409,7 +2624,8 @@
                     }
                     return {
                         x: Module.ccall(prefix + "WorldX", "number", [], []),
-                        y: Module.ccall(prefix + "WorldY", "number", [], [])
+                        y: Module.ccall(prefix + "WorldY", "number", [], []),
+                        angle: Module.ccall(prefix + "AngleDegrees", "number", [], [])
                     };
                 } catch (error) {
                     return null;
@@ -2420,10 +2636,23 @@
                 var player1 = wasmDuelPlayerPosition("player_1");
                 var player2 = wasmDuelPlayerPosition("player_2");
 
+                if (currentArenaRunId && tacticalOverlayLiveWasmRunId && currentArenaRunId !== tacticalOverlayLiveWasmRunId) {
+                    tacticalOverlayHasLiveWasm = false;
+                    tacticalOverlayLiveWasmRunId = "";
+                    latestTacticalPlayerById = { player_1: null, player_2: null };
+                }
                 if (player1) {
+                    tacticalOverlayHasLiveWasm = true;
+                    tacticalOverlayLiveWasmRunId = currentArenaRunId || tacticalOverlayLiveWasmRunId;
+                    latestTacticalPlayerById.player_1 = Object.assign({}, latestTacticalPlayerById.player_1 || {}, player1);
+                    setTacticalMarkerFromPlayer("player_1", latestTacticalPlayerById.player_1);
                     appendTacticalPathTrailPoint("player_1", player1);
                 }
                 if (player2) {
+                    tacticalOverlayHasLiveWasm = true;
+                    tacticalOverlayLiveWasmRunId = currentArenaRunId || tacticalOverlayLiveWasmRunId;
+                    latestTacticalPlayerById.player_2 = Object.assign({}, latestTacticalPlayerById.player_2 || {}, player2);
+                    setTacticalMarkerFromPlayer("player_2", latestTacticalPlayerById.player_2);
                     appendTacticalPathTrailPoint("player_2", player2);
                 }
             }
@@ -2528,6 +2757,7 @@
                     var ratioY;
                     var mapX;
                     var mapY;
+                    var cellLabel;
                     var tooltipWidth;
                     var tooltipHeight;
                     var left;
@@ -2550,8 +2780,9 @@
                     );
                     mapX = worldPosition.x;
                     mapY = worldPosition.y;
+                    cellLabel = tacticalGridCellLabel(bounds, mapX, mapY);
 
-                    tooltip.textContent = "x: " + String(Math.round(mapX)) + " | y: " + String(Math.round(mapY));
+                    tooltip.textContent = cellLabel + " | x: " + String(Math.round(mapX)) + " | y: " + String(Math.round(mapY));
                     tooltip.hidden = false;
 
                     stageRect = stage.getBoundingClientRect();
@@ -2639,6 +2870,8 @@
                 var p1Marker = document.getElementById("duel-tactical-marker-p1");
                 var p2Marker = document.getElementById("duel-tactical-marker-p2");
                 var bounds;
+                var livePlayer1;
+                var livePlayer2;
                 var p1x;
                 var p1y;
                 var p2x;
@@ -2648,8 +2881,31 @@
                 setDuelTacticalPanelVisible(currentArenaMode === "duel");
                 setText("duel-tactical-scenario", scenarioDisplayName(currentArenaScenarioId));
 
+                if (liveDuelWasmPositionsAvailable()) {
+                    livePlayer1 = wasmDuelPlayerPosition("player_1");
+                    livePlayer2 = wasmDuelPlayerPosition("player_2");
+                    if (livePlayer1) {
+                        player1 = Object.assign({}, player1 || {}, livePlayer1);
+                    }
+                    if (livePlayer2) {
+                        player2 = Object.assign({}, player2 || {}, livePlayer2);
+                    }
+                }
+                if (tacticalOverlayHasLiveWasm) {
+                    if (latestTacticalPlayerById.player_1) {
+                        player1 = latestTacticalPlayerById.player_1;
+                    }
+                    if (latestTacticalPlayerById.player_2) {
+                        player2 = latestTacticalPlayerById.player_2;
+                    }
+                }
+
                 player1 = participantWithSpawnFallback(player1, "player_1");
                 player2 = participantWithSpawnFallback(player2, "player_2");
+                if (!tacticalOverlayHasLiveWasm) {
+                    latestTacticalPlayerById.player_1 = player1 || null;
+                    latestTacticalPlayerById.player_2 = player2 || null;
+                }
                 bounds = tacticalOverlayBounds();
                 if (!bounds) {
                     if (mapStatus) {
@@ -2684,7 +2940,7 @@
                     }
                     setText("duel-tactical-p1", playerCoordinateLabel(player1));
                 } else {
-                    if (p1Marker) {
+                    if (p1Marker && !tacticalOverlayHasLiveWasm) {
                         p1Marker.hidden = true;
                     }
                     setText("duel-tactical-p1", "-");
@@ -2701,7 +2957,7 @@
                     }
                     setText("duel-tactical-p2", playerCoordinateLabel(player2));
                 } else {
-                    if (p2Marker) {
+                    if (p2Marker && !tacticalOverlayHasLiveWasm) {
                         p2Marker.hidden = true;
                     }
                     setText("duel-tactical-p2", "-");
@@ -3216,7 +3472,7 @@
             }
 
             function setArenaLauncherButtonsDisabled(disabled) {
-                var buttons = document.querySelectorAll("[data-arena-mode], #arena-start-game, #duel-next-round");
+                var buttons = document.querySelectorAll("[data-arena-mode], #arena-start-game");
 
                 buttons.forEach(function (button) {
                     button.disabled = disabled;
@@ -3348,6 +3604,24 @@
                 if (node !== null) {
                     node.value = text || "";
                 }
+            }
+
+            function setPromptChangeIndicator(text, changed) {
+                var node = document.getElementById("duel-prompt-change-indicator");
+
+                if (node === null) {
+                    return;
+                }
+                node.textContent = text || "Prompts update with settings";
+                node.classList.toggle("is-changed", !!changed);
+            }
+
+            function markPromptSettingsChanged() {
+                setPromptChangeIndicator("Prompt changed", true);
+            }
+
+            function markPromptSettingsSynced() {
+                setPromptChangeIndicator("Prompt synced", false);
             }
 
             function storedDuelSessionPayload() {
@@ -3495,6 +3769,9 @@
 
                 setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
                 setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+                if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
+                    markPromptSettingsSynced();
+                }
                 updateReadinessPanel();
             }
 
@@ -3571,7 +3848,7 @@
                 resetDuelPovFrameState();
                 resetDuelStatsState();
                 clearDuelBreakdown();
-                setText("duel-title", "Match 1/1 | Elapsed 0.0s | Phase: waiting | Winner: TBD");
+                resetDuelTitle();
                 setText("duel-p1-health", "150");
                 setText("duel-p2-health", "150");
                 setText("duel-p1-action", "-");
@@ -4621,6 +4898,20 @@
                 var isHierarchical = row.strategy_source === "hierarchical";
                 var isPlan = !!(row.plan_route || row.plan_objective || row.plan_engagement_policy);
                 var isRejected = row.is_error || row.status === "error" || row.accepted === false;
+                var routeDiagnostics = row.route_diagnostics && typeof row.route_diagnostics === "object"
+                    ? row.route_diagnostics
+                    : null;
+                var droppedPassedCells = routeDiagnostics && Array.isArray(routeDiagnostics.dropped_passed_cells)
+                    ? routeDiagnostics.dropped_passed_cells
+                    : [];
+                var insertedConnectorCells = routeDiagnostics && Array.isArray(routeDiagnostics.inserted_connector_cells)
+                    ? routeDiagnostics.inserted_connector_cells
+                    : [];
+                var insertedConnectorText = insertedConnectorCells.map(function (item) {
+                    return item && item.from && item.to && item.inserted
+                        ? item.from + "->" + item.inserted + "->" + item.to
+                        : String(item);
+                }).join(";");
                 var lifecycle = row.superseded_before_expiry
                     ? "superseded"
                     : isRejected
@@ -4642,7 +4933,9 @@
                         ? " | Plan: objective=" + formatCompactValue(row.plan_objective) +
                             " | route=" + formatCompactValue(row.plan_route_cells || row.plan_route) +
                             " | engagement=" + formatCompactValue(row.plan_engagement_policy) +
-                            (row.plan_reasoning ? " | reasoning=" + formatCompactValue(row.plan_reasoning) : "")
+                            (row.plan_reasoning ? " | reasoning=" + formatCompactValue(row.plan_reasoning) : "") +
+                            (droppedPassedCells.length ? " | rebased: dropped=" + formatCompactValue(droppedPassedCells.join(";")) : "") +
+                            (insertedConnectorText ? " | repaired: inserted=" + formatCompactValue(insertedConnectorText) : "")
                         : " | Intent: intent=" + (row.intent || "unknown") +
                         " | style=" + formatCompactValue(row.style) +
                         " | target=" + formatCompactValue(row.target_id) +
@@ -4923,6 +5216,32 @@
                 button.textContent = "Next Match (" + nextRoundNumber + "/" + totalRounds + ")";
             }
 
+            function escapeDuelTitleText(value) {
+                return String(value === undefined || value === null ? "" : value)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            function renderDuelTitle(roundLabel, elapsed, phase, winner) {
+                var node = document.getElementById("duel-title");
+                var winnerText = phase === "finished" ? (winner || "none") : "TBD";
+
+                if (node === null) {
+                    return;
+                }
+                node.innerHTML =
+                    "<span class=\"duel-match-pill\">Match " + escapeDuelTitleText(roundLabel) + "</span>" +
+                    "<span>Elapsed " + escapeDuelTitleText(elapsed) + "s | Phase: " + escapeDuelTitleText(phase) +
+                    " | Winner: " + escapeDuelTitleText(winnerText) + "</span>";
+            }
+
+            function resetDuelTitle() {
+                renderDuelTitle("1/1", "0.0", "waiting", "");
+            }
+
             function renderMatchResultsLink() {
                 var resultsLink = document.getElementById("duel-results-link");
                 var resultsAnchor = document.getElementById("duel-results-anchor");
@@ -5066,7 +5385,8 @@
             function updateParticipantDeathOverlay(participantId, player, opponentLabel, phase, winner, terminalReason) {
                 var overlay = document.getElementById(participantId.replace("_", "-") + "-death-overlay");
                 var detail = document.getElementById(participantId.replace("_", "-") + "-death-detail");
-                var dead = participantIsDead(player);
+                var matchHasStarted = phase === "combat" || phase === "finished";
+                var dead = matchHasStarted && participantIsDead(player);
                 var reason;
 
                 if (overlay === null) {
@@ -5514,14 +5834,13 @@
             }
 
             function refreshPlayer1Automap() {
-                var canvas, status, previousFrame;
+                var canvas, status;
 
                 if (currentArenaMode !== "duel" || typeof Module === "undefined" || typeof Module.ccall !== "function") { return; }
                 canvas = document.getElementById("duel-player1-automap-canvas");
                 status = document.getElementById("duel-player1-automap-status");
                 if (canvas === null) { return; }
 
-                previousFrame = player1AutomapState.lastFrame;
                 renderPovToCanvas(
                     "P1 automap", canvas, status,
                     "ArenaDuel_Player1AutomapFrame",
@@ -5532,15 +5851,14 @@
                     "ArenaDuel_Player1AutomapNonzeroPixels",
                     player1AutomapState
                 );
-                if (player1AutomapState.lastFrame !== previousFrame && !appendTacticalPathTrailPointsFromAutomap(canvas)) {
-                    appendTacticalPathTrailPointsFromWasm();
-                }
+                appendTacticalPathTrailPointsFromWasm();
                 syncTacticalOverlayCanvas(true);
                 drawTacticalWallCellsOnAutomap();
                 drawTacticalPathTrailsOnAutomap();
                 drawTacticalHealthPacksOnAutomap();
                 drawTacticalWeaponsOnAutomap();
                 drawTacticalGridOnAutomap();
+                drawTacticalFacingArrowsOnAutomap();
             }
 
             function refreshPlayer2Pov() {
@@ -5617,7 +5935,7 @@
                     elapsed = duelFinishedElapsedByRun[runId];
                 }
                 roundLabel = String(roundNumber) + "/" + String(totalRounds);
-                setText("duel-title", "Match " + roundLabel + " | Elapsed " + elapsed + "s | Phase: " + phase + " | Winner: " + (phase === "finished" ? (winner || "none") : "TBD"));
+                renderDuelTitle(roundLabel, elapsed, phase, winner);
                 setText("duel-player-1-name", "Player 1");
                 setText("duel-player-2-name", "Player 2");
                 setText("duel-p1-health", player1.health || "-");
@@ -5645,6 +5963,7 @@
                 updateCommandWaitingOverlay("player-1-command-waiting", player1);
                 updateCommandWaitingOverlay("player-2-command-waiting", player2);
                 renderTacticalMap(player1, player2);
+                updateTacticalPickupAvailabilityFromRows(rows);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
                 updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
@@ -5991,9 +6310,6 @@
                 document.getElementById("arena-refresh-arena").addEventListener("click", function () {
                     refreshArenaPage();
                 });
-                document.getElementById("duel-next-round").addEventListener("click", function () {
-                    startDuel({ continueSession: true });
-                });
                 document.getElementById("duel-menu").addEventListener("click", function () {
                     returnToArenaMenu();
                 });
@@ -6016,6 +6332,7 @@
                 var schedulePromptPreview = (function () {
                     var pending = null;
                     return function () {
+                        markPromptSettingsChanged();
                         if (pending !== null) {
                             window.clearTimeout(pending);
                         }

@@ -6,6 +6,7 @@ import math
 import time
 from collections import deque
 from copy import deepcopy
+from functools import lru_cache
 from typing import Any
 
 from doom_arena_map_blueprints import load_geometry_blueprint
@@ -515,6 +516,7 @@ def xy_to_grid_cell(x: Any, y: Any) -> str:
     return f"{chr(ord('A') + row - 1)}{col:02d}"
 
 
+@lru_cache(maxsize=1)
 def blocked_grid_cells() -> list[str]:
     try:
         from pathlib import Path
@@ -531,23 +533,44 @@ def blocked_grid_cells() -> list[str]:
     return cells
 
 
-def strategy_pickups_for_observation(x: Any, y: Any, include_weapons: bool = True) -> list[dict[str, Any]]:
+def strategy_pickups_for_observation(
+    x: Any,
+    y: Any,
+    include_weapons: bool = True,
+    live_pickups: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     pickups = []
     try:
         static_pickups = tuple(load_geometry_blueprint("duel_e1m8").get("pickups", []))
     except Exception:
         static_pickups = STATIC_PICKUPS
+    live_cells_by_type: set[tuple[str, str]] | None = None
+    if live_pickups is not None:
+        live_cells_by_type = set()
+        for live in live_pickups:
+            live_type = str(live.get("type", "")).strip().lower()
+            live_cell = xy_to_grid_cell(live.get("x"), live.get("y"))
+            if live_type and live_cell:
+                live_cells_by_type.add((live_type, live_cell))
     for pickup in static_pickups:
         if pickup.get("type") == "weapon" and not include_weapons:
             continue
-        pickups.append(
-            {
-                "id": pickup.get("id", ""),
-                "available": True,
-                "cell": pickup.get("cell") or xy_to_grid_cell(pickup.get("x"), pickup.get("y")),
-                "distance": pickup_distance(pickup, x, y),
-            }
-        )
+        pickup_type = str(pickup.get("type", ""))
+        pickup_cell = pickup.get("cell") or xy_to_grid_cell(pickup.get("x"), pickup.get("y"))
+        item = {
+            "id": pickup.get("id", ""),
+            "type": pickup_type,
+            "name": pickup.get("name", ""),
+            "available": True if live_cells_by_type is None else (pickup_type, pickup_cell) in live_cells_by_type,
+            "cell": pickup_cell,
+            "x": pickup.get("x"),
+            "y": pickup.get("y"),
+            "distance": pickup_distance(pickup, x, y),
+        }
+        for key in ("heals", "max_health", "zone", "purpose"):
+            if key in pickup:
+                item[key] = pickup.get(key)
+        pickups.append(item)
     return pickups
 
 
@@ -648,10 +671,16 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     current_zone = classify_zone(self_raw.get("x"), self_raw.get("y"), scenario_id)
     opponent_visible = bool(opponent_raw.get("visible"))
     if opponent_visible:
-        bucket["last_seen_ms"] = current_ms
-        opponent_x = opponent_raw.get("x", self_state.get("opponent_x"))
-        opponent_y = opponent_raw.get("y", self_state.get("opponent_y"))
-        bucket["last_seen_zone"] = classify_zone(opponent_x, opponent_y, scenario_id)
+        opponent_x = opponent_raw.get("x")
+        opponent_y = opponent_raw.get("y")
+        if opponent_x is not None and opponent_y is not None:
+            bucket["last_seen_ms"] = current_ms
+            opponent_angle = opponent_raw.get("angle")
+            bucket["last_seen_x"] = opponent_x
+            bucket["last_seen_y"] = opponent_y
+            bucket["last_seen_angle"] = opponent_angle
+            bucket["last_seen_zone"] = classify_zone(opponent_x, opponent_y, scenario_id)
+            bucket["last_seen_cell"] = xy_to_grid_cell(opponent_x, opponent_y)
 
     snapshot = {
         "time_ms": current_ms,
@@ -660,7 +689,7 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         "angle": self_raw.get("angle", 0),
         "health": self_raw.get("health", 0),
         "damage_dealt": self_raw.get("damage_dealt", 0),
-        "distance_bucket": self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket"),
+        "distance_bucket": (self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket")) if opponent_visible else "unknown",
         "los_status": self_raw.get("los_status") or tactical_raw.get("los_status"),
         "opponent_visible": opponent_visible,
     }
@@ -672,8 +701,53 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     last_seen_ms = bucket.get("last_seen_ms")
     last_seen_age = current_ms - int(last_seen_ms) if last_seen_ms else None
     pressure = pressure_bucket(self_raw.get("health"), opponent_raw.get("health"), "health" in opponent_raw)
-    distance_bucket = self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown"
+    distance_bucket = (self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown") if opponent_visible else "unknown"
     los = self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los")
+
+    active_plan = full_observation.get("active_plan") if isinstance(full_observation.get("active_plan"), dict) else None
+    last_route_result = None
+    if active_plan:
+        current_cell = active_plan.get("current_waypoint_cell")
+        last_route_result = {
+            "status": active_plan.get("status") or "active",
+            "current_cell": current_cell,
+            "distance_to_waypoint": active_plan.get("distance_to_waypoint"),
+        }
+        if stuck:
+            last_route_result.update(
+                {
+                    "status": "stuck",
+                    "failed_cell": current_cell,
+                    "reason": "no_progress_near_waypoint",
+                }
+            )
+        elif spin:
+            last_route_result.update(
+                {
+                    "status": "spin",
+                    "failed_cell": current_cell,
+                    "reason": "turning_without_progress",
+                }
+            )
+        elif result == "no_progress":
+            last_route_result.update(
+                {
+                    "status": "no_progress",
+                    "failed_cell": current_cell,
+                    "reason": "route_active_without_measured_progress",
+                }
+            )
+
+    map_block = full_observation.get("map", {}) if isinstance(full_observation.get("map"), dict) else {}
+    pickups = (
+        map_block.get("pickups")
+        if isinstance(map_block.get("pickups"), list)
+        else strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y"))
+    )
+    pickup_summary = {
+        "available": sum(1 for pickup in pickups if pickup.get("available") is not False),
+        "unavailable": sum(1 for pickup in pickups if pickup.get("available") is False),
+    }
 
     return {
         "control_mode": normalize_control_mode(control_mode),
@@ -701,11 +775,15 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "alive": bool(opponent_raw.get("alive")),
             "visible": opponent_visible,
             "health": opponent_raw.get("health") if opponent_visible and "health" in opponent_raw else None,
+            "x": opponent_raw.get("x") if opponent_visible and "x" in opponent_raw else None,
+            "y": opponent_raw.get("y") if opponent_visible and "y" in opponent_raw else None,
+            "cell": opponent_raw.get("cell") if opponent_visible and "cell" in opponent_raw else None,
             "distance_bucket": distance_bucket,
             "relative_angle_bucket": relative_angle_bucket(opponent_raw.get("relative_angle") if opponent_visible else None),
             "last_seen": {
                 "age_ms": last_seen_age,
                 "zone": bucket.get("last_seen_zone", "unknown"),
+                "cell": bucket.get("last_seen_cell") or None,
             },
         },
         "tactical": {
@@ -717,20 +795,21 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "spin_detected": spin,
             "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
         },
-        "active_plan": full_observation.get("active_plan") or None,
+        "active_plan": active_plan,
+        "last_route_result": last_route_result,
         "map": {
+            "bounds": dict(MAP_BOUNDS),
+            "cell_size": MAP_CELL_SIZE,
+            "rows": MAP_ROWS,
+            "cols": MAP_COLS,
+            "row_labels": f"A-{chr(ord('A') + MAP_ROWS - 1)}",
+            "col_labels": f"01-{MAP_COLS:02d}",
+            "blocked_cells": blocked_grid_cells(),
+            "blocked_cell_count": len(blocked_grid_cells()),
             "current_zone": current_zone,
-            "weapon_pickups_enabled": (
-                full_observation.get("map", {}).get("weapon_pickups_enabled")
-                if isinstance(full_observation.get("map"), dict)
-                else True
-            ),
-            "pickups": (
-                full_observation.get("map", {}).get("pickups")
-                if isinstance(full_observation.get("map"), dict)
-                and isinstance(full_observation.get("map", {}).get("pickups"), list)
-                else strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y"))
-            ),
+            "weapon_pickups_enabled": map_block.get("weapon_pickups_enabled", True),
+            "pickup_summary": pickup_summary,
+            "pickups": pickups,
         },
     }
 

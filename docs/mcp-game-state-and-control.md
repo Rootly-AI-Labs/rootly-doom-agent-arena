@@ -82,11 +82,14 @@ Route constraints:
 rows A-W
 columns 01-33
 maximum 16 cells
+every consecutive segment must be horizontal or vertical
+diagonal segments are rejected
 cells cannot be # wall cells
 straight route segments cannot cross # wall cells
+straight route segments cannot pass too close to wall corners
 ```
 
-The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. If any segment crosses a blocked cell, the plan is rejected and the model must add intermediate cells to route around the wall.
+The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. Every consecutive segment must share the same row or the same column. If any segment is diagonal, crosses a blocked cell, or comes within the wall-clearance margin of a blocked cell, the plan is rejected and the model must add wider intermediate cells to route around the wall corner.
 
 The server stores the accepted plan as:
 
@@ -135,6 +138,7 @@ ammo
 alive
 x
 y
+cell
 angle
 zone
 ```
@@ -145,10 +149,14 @@ Important `opponent` fields:
 alive
 visible
 health if visible
+x if visible
+y if visible
+cell if visible
 distance_bucket
 relative_angle_bucket
 last_seen.age_ms
 last_seen.zone
+last_seen.cell
 ```
 
 Important `tactical` fields:
@@ -167,21 +175,32 @@ Important `map` fields:
 
 ```text
 current_zone
+grid bounds
+cell size
+row/column labels
+blocked cells
 weapon_pickups_enabled
 pickups
 ```
 
 Observations can also include `active_plan` when an accepted route plan is currently active. It includes the objective, route cells, current waypoint, current waypoint index/count, and distance to the current waypoint.
+It also includes route execution diagnostics such as waypoints reached, waypoints remaining, status, and distance to the final waypoint.
 
 Example `map` block:
 
 ```json
 {
   "current_zone": "left_side",
+  "bounds": {"x_min": -1056, "x_max": 1056, "y_min": -736, "y_max": 736},
+  "cell_size": 64,
+  "row_labels": "A-W",
+  "col_labels": "01-33",
+  "blocked_cells": ["C05", "C28"],
+  "blocked_cell_count": 42,
   "weapon_pickups_enabled": true,
   "pickups": [
-    {"id": "health_d06", "available": true, "cell": "D06", "distance": 900},
-    {"id": "shotgun_i12", "available": true, "cell": "I12", "distance": 900}
+    {"id": "health_d06", "type": "health", "name": "medikit", "available": true, "cell": "D06", "x": -672, "y": 544, "distance": 900},
+    {"id": "shotgun_i12", "type": "weapon", "name": "shotgun", "available": true, "cell": "I12", "x": -608, "y": 544, "distance": 900}
   ]
 }
 ```
@@ -315,9 +334,9 @@ If the lease expires before a replacement arrives, Doom may mark the policy `sta
 
 ## Fog of war
 
-Fog of war is enabled by default. In fog mode, the agent always sees its own position and state, but opponent exact coordinates are restricted unless the opponent is visible from that participant's perspective.
+Fog of war is enabled by default. In fog mode, the agent always sees its own position and state, but opponent exact coordinates are restricted unless the opponent is currently visible from that participant's perspective.
 
-Visibility is directional. Player 1 seeing Player 2 does not automatically mean Player 2 sees Player 1. If a player is shot or damaged, the observation can reveal enough recent-contact context for recovery and response.
+Visibility is directional and wall-gated. A participant sees the opponent only when Doom reports line of sight, the static ASCII map segment between them does not cross a `#` wall cell, and the opponent is inside the participant's view cone. If a participant is hit while looking away, the hit can briefly reveal the opponent only while geometric line of sight is still open. If the opponent moves behind a wall, live `x`, `y`, `cell`, health delta, pressure, and distance bucket disappear; only stale `last_seen` memory remains.
 
 ## Pickups
 
@@ -325,7 +344,8 @@ The generated prompt gives static pickup locations once. Pickup locations are de
 
 Each medikit restores `+100` health, capped at the duel max health of `150`.
 
-Repeated observations keep pickup data compact: `id`, `available`, `cell`, and `distance`.
+Repeated observations keep pickup data structured: `id`, `type`, `name`, `available`, `cell`, `x`, `y`, and `distance`.
+`available` is derived from live Doom pickup objects. When a pickup is no longer present, observations expose only `available=false`; they do not expose who took it or when.
 
 `weapon_pickups_enabled=false` means the shotgun is disabled for the session. In that mode, the Doom runtime removes shotgun objects, the UI hides the shotgun marker, and `map.pickups` only includes non-weapon resources such as health packs.
 
@@ -355,6 +375,22 @@ next set_participant_plan started_at_ms - previous get_participant_observation c
 MCP latency measures local tool/server round-trip time after the request is sent.
 
 Run stats persist `plan_objective`, `plan_route_cells`, `plan_engagement_policy`, and `plan_reasoning` on `set_participant_plan` calls so failed or stuck runs can be diagnosed from the submitted route.
+
+Invalid route plans return structured rejection payloads instead of only surfacing a generic tool failure. The response includes:
+
+```text
+accepted=false
+error_type
+error
+plan
+route_diagnostics.start_cell
+route_diagnostics.from_cell
+route_diagnostics.to_cell
+route_diagnostics.blocked_cells_crossed
+route_diagnostics.wall_clearance_cells
+```
+
+Each round also writes `decision_trace.jsonl`. It records model-facing observations and plan submissions, including accepted/rejected status, objective, route cells, engagement policy, reasoning, route diagnostics, latency, and active-plan execution state. This file is intended to separate model planning errors from MCP/server/Doom execution issues.
 
 Total MCP commands count all tool calls, not only action calls:
 

@@ -23,7 +23,9 @@
 #define ARENA_PLAYER_COMMAND_PATH "arena_player_command.local.tsv"
 #define ARENA_PLAYER_FORWARD_SPEED 0x32
 #define ARENA_PLAYER_SIDE_SPEED 0x28
-#define ARENA_PLAYER_ROUTE_SPEED (ARENA_PLAYER_FORWARD_SPEED * 2048)
+#define ARENA_PLAYER_ROUTE_SPEED (((ARENA_PLAYER_FORWARD_SPEED * 2048) * 7) / 2)
+#define ARENA_PLAYER_ROUTE_TURN_DAMPING_DISTANCE 160
+#define ARENA_PLAYER_ROUTE_TURN_DAMPING_SPEED (((ARENA_PLAYER_FORWARD_SPEED * 2048) * 5) / 2)
 #define ARENA_PLAYER_TURN_SPEED 1280
 
 typedef struct
@@ -136,6 +138,8 @@ static void Arena_PlayerApplyRouteWaypointMovement(
 {
     angle_t angle;
     int fine_angle;
+    fixed_t speed;
+    int distance;
 
     if (player == NULL
         || player->mo == NULL
@@ -149,9 +153,15 @@ static void Arena_PlayerApplyRouteWaypointMovement(
                             player->mo->y,
                             command->route_target_x * FRACUNIT,
                             command->route_target_y * FRACUNIT);
+    distance = P_AproxDistance(command->route_target_x * FRACUNIT - player->mo->x,
+                               command->route_target_y * FRACUNIT - player->mo->y) >> FRACBITS;
+    speed = distance <= ARENA_PLAYER_ROUTE_TURN_DAMPING_DISTANCE
+        ? ARENA_PLAYER_ROUTE_TURN_DAMPING_SPEED
+        : ARENA_PLAYER_ROUTE_SPEED;
     fine_angle = angle >> ANGLETOFINESHIFT;
-    player->mo->momx += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finecosine[fine_angle]);
-    player->mo->momy += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finesine[fine_angle]);
+    player->mo->angle = angle;
+    player->mo->momx = FixedMul(speed, finecosine[fine_angle]);
+    player->mo->momy = FixedMul(speed, finesine[fine_angle]);
 }
 
 static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
@@ -255,7 +265,9 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
 {
     cmd->forwardmove = command->route_waypoint_active ? 0 : command->forward * ARENA_PLAYER_FORWARD_SPEED;
     cmd->sidemove = command->route_waypoint_active ? 0 : command->strafe * ARENA_PLAYER_SIDE_SPEED;
-    cmd->angleturn = -command->turn * ARENA_PLAYER_TURN_SPEED;
+    cmd->angleturn = command->route_waypoint_active
+        ? 0
+        : -command->turn * ARENA_PLAYER_TURN_SPEED;
 
     if (command->attack)
     {
