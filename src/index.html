@@ -393,6 +393,15 @@
                 letter-spacing: 0.04em;
             }
 
+            .arena-launcher-footer a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .arena-launcher-footer a:hover strong {
+                color: #b8e986;
+            }
+
             .arena-launcher-footer strong {
                 color: rgba(183, 207, 137, 0.82);
                 font-weight: 700;
@@ -427,6 +436,28 @@
                 display: none;
                 width: 800px;
                 margin: 0 auto;
+            }
+
+            #duel-play-footer {
+                display: none;
+                width: min(1120px, 100%);
+                margin: 4px auto 0;
+                text-align: right;
+                font: 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                color: rgba(184, 233, 134, 0.45);
+            }
+
+            #duel-play-footer a {
+                color: rgba(184, 233, 134, 0.65);
+                text-decoration: none;
+            }
+
+            #duel-play-footer a:hover {
+                color: #b8e986;
+            }
+
+            #duel-pov-grid.duel-active ~ #duel-play-footer {
+                display: block;
             }
 
             #duel-pov-grid.duel-active {
@@ -753,6 +784,22 @@
                 display: flex;
                 align-items: center;
                 gap: 6px;
+            }
+
+            #duel-header-byline {
+                font: 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                color: rgba(184, 233, 134, 0.65);
+                white-space: nowrap;
+                border: none;
+                background: none;
+                padding: 0;
+                text-transform: none;
+                text-decoration: none;
+            }
+
+            #duel-header-byline:hover {
+                background: none;
+                color: #b8e986;
             }
 
             #duel-tactical-panel {
@@ -1571,8 +1618,7 @@
                         <button id="arena-refresh-arena" type="button">Refresh Arena</button>
                     </div>
                     <div class="arena-launcher-footer">
-                        Built by <strong>Rootly AI Labs</strong>
-                        <span class="arena-launcher-footer-subline">Rootly</span>
+                        Built by <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener"><strong>Rootly AI Labs ❤️</strong></a>
                     </div>
                 </div>
             </div>
@@ -1583,6 +1629,7 @@
                 <div id="duel-header-actions">
                     <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
                     <button type="button" id="duel-menu">Menu</button>
+                    <a id="duel-header-byline" href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener">by Rootly AI Labs ❤️</a>
                 </div>
             </div>
             <div id="duel-tactical-panel">
@@ -1697,6 +1744,7 @@
                     </div>
                 </div>
             </div>
+            <div id="duel-play-footer">by <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener">Rootly AI Labs</a></div>
             <div id="arena-duel-dashboard">
                 <div class="duel-breakdown" id="duel-breakdown" hidden>
                     <div class="duel-log-title">Match Breakdown</div>
@@ -1853,7 +1901,6 @@
             var currentDuelSession = null;
             var participantReadyById = { player_1: false, player_2: false };
             var participantReadyAgentById = { player_1: "", player_2: "" };
-            var connectedMcpClients = [];
             var latestRunStats = null;
             var runStatsFetchInFlight = false;
             var lastRunStatsFetchAt = 0;
@@ -4338,23 +4385,7 @@
                 }
             }
 
-            function formatSeenAgo(lastSeenAtMs) {
-                var parsed = Number(lastSeenAtMs);
-                var ageSeconds;
-
-                if (!Number.isFinite(parsed) || parsed <= 0) {
-                    return "seen recently";
-                }
-
-                ageSeconds = Math.max(0, Math.round((Date.now() - parsed) / 1000));
-                if (ageSeconds < 60) {
-                    return "seen " + ageSeconds + "s ago";
-                }
-
-                return "seen " + Math.round(ageSeconds / 60) + "m ago";
-            }
-
-            function setMcpClientList(clients) {
+            function setMcpClientList(player1Label, player2Label) {
                 var node = document.getElementById("arena-mcp-connected-clients");
 
                 if (node === null) {
@@ -4364,58 +4395,31 @@
                 node.classList.remove("reachable", "unreachable", "ready");
                 node.innerHTML = "";
 
-                if (!clients || clients.length === 0) {
-                    [
-                        { label: "P1", value: "waiting for MCP client connection" },
-                        { label: "P2", value: "waiting for MCP client connection" }
-                    ].forEach(function (placeholder) {
-                        var line = document.createElement("div");
-                        var label = document.createElement("span");
-                        var value = document.createElement("span");
+                [
+                    { label: "P1", agent: player1Label },
+                    { label: "P2", agent: player2Label }
+                ].forEach(function (slot) {
+                    var line = document.createElement("div");
+                    var label = document.createElement("span");
+                    var value = document.createElement("span");
 
-                        line.className = "arena-mcp-client-placeholder";
-                        label.className = "arena-mcp-client-placeholder-label";
-                        value.className = "arena-mcp-client-placeholder-value";
-                        label.textContent = placeholder.label;
-                        value.textContent = placeholder.value;
-                        line.appendChild(label);
-                        line.appendChild(value);
-                        node.appendChild(line);
-                    });
-                    return;
-                }
-
-                node.classList.add("reachable");
-                clients.forEach(function (client) {
-                    var line = document.createElement("span");
-                    var name = client.client_name || "MCP client";
-                    var version = client.client_version || "";
-                    var label = version ? name + " " + version : name;
-                    var ageMs = Number(client.last_seen_at_ms);
-                    var ageSeconds = Number.isFinite(ageMs) && ageMs > 0
-                        ? Math.max(0, Math.round((Date.now() - ageMs) / 1000))
-                        : null;
-
-                    line.className = "arena-mcp-client-line";
-                    if (ageSeconds !== null && ageSeconds >= 20) {
-                        line.classList.add("arena-mcp-client-line-warning");
-                    }
-                    line.textContent = label + " - " + formatSeenAgo(client.last_seen_at_ms);
+                    line.className = slot.agent ? "arena-mcp-client-line" : "arena-mcp-client-placeholder";
+                    label.className = "arena-mcp-client-placeholder-label";
+                    value.className = "arena-mcp-client-placeholder-value";
+                    label.textContent = slot.label;
+                    value.textContent = slot.agent ? slot.agent + " · ready" : "waiting for benchmark prompt";
+                    line.appendChild(label);
+                    line.appendChild(value);
                     node.appendChild(line);
                 });
-
-                var hint = document.createElement("span");
-                hint.className = "arena-mcp-client-hint";
-                hint.textContent = "Client considered dead after 25s without contact.";
-                node.appendChild(hint);
             }
 
             function updateMcpSetupModels() {
                 var player1Ready = !!participantReadyById.player_1;
                 var player2Ready = !!participantReadyById.player_2;
-                var player1Label = participantReadyAgentById.player_1 || "Player 1 MCP agent";
-                var player2Label = participantReadyAgentById.player_2 || "Player 2 MCP agent";
-                setMcpClientList(connectedMcpClients);
+                var player1Label = participantReadyAgentById.player_1 || "";
+                var player2Label = participantReadyAgentById.player_2 || "";
+                setMcpClientList(player1Label, player2Label);
 
                 setMcpStatusValue(
                     "arena-mcp-player-1-model",
@@ -4452,7 +4456,6 @@
                     .then(function (results) {
                         var presence = results[1] || {};
                         setMcpStatusValue("arena-mcp-reachability", "Reachable", "reachable");
-                        connectedMcpClients = Array.isArray(presence.clients) ? presence.clients : [];
                         if (presence.ready_agents) {
                             participantReadyAgentById.player_1 = presence.ready_agents.player_1 || participantReadyAgentById.player_1 || "";
                             participantReadyAgentById.player_2 = presence.ready_agents.player_2 || participantReadyAgentById.player_2 || "";
@@ -4461,7 +4464,6 @@
                     })
                     .catch(function () {
                         setMcpStatusValue("arena-mcp-reachability", "Not reachable", "unreachable");
-                        connectedMcpClients = [];
                         updateMcpSetupModels();
                     });
             }
@@ -4569,12 +4571,12 @@
                 return intent === "none" || intentStatus === "inactive";
             }
 
-            function updateCommandWaitingOverlay(overlayId, player) {
+            function updateCommandWaitingOverlay(overlayId, player, matchOver) {
                 var node = document.getElementById(overlayId);
                 if (node === null) {
                     return;
                 }
-                node.hidden = !playerWaitingForCommand(player);
+                node.hidden = matchOver || !playerWaitingForCommand(player);
             }
 
             function appendBreakdownStat(parent, label, value) {
@@ -6137,8 +6139,9 @@
                 setText("duel-p1-angle", player1Angle);
                 setText("duel-p2-xy", player2XY);
                 setText("duel-p2-angle", player2Angle);
-                updateCommandWaitingOverlay("player-1-command-waiting", player1);
-                updateCommandWaitingOverlay("player-2-command-waiting", player2);
+                var matchOver = participantIsDead(player1) || participantIsDead(player2);
+                updateCommandWaitingOverlay("player-1-command-waiting", player1, matchOver);
+                updateCommandWaitingOverlay("player-2-command-waiting", player2, matchOver);
                 renderTacticalMap(player1, player2);
                 updateTacticalPickupAvailabilityFromRows(rows);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
