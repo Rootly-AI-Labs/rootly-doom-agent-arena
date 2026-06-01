@@ -295,6 +295,7 @@ ACTION SCHEMA
   "route": ["A01", "A02"],
   "objective": "short goal",
   "reasoning": "optional, max 12 words",
+  "plan_note": "optional public plan, max 180 chars",
   "sequence_number": 1
 }}
 ```
@@ -304,6 +305,7 @@ ROUTE FACTS
 - Consecutive cells must be horizontal or vertical; diagonals are rejected.
 - Do not route through `#` wall cells.
 - `objective` is free text. `reasoning` is optional and capped to 12 words.
+- `plan_note` is optional public planning context for analysis; keep it concise.
 - Doom executes accepted routes literally and handles frame-level movement/firing.
 - The default behavior is to shoot if visible while following the route.
 

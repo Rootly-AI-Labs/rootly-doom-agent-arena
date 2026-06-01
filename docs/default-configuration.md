@@ -32,13 +32,13 @@ Default action schema:
   "controller_token": "...",
   "objective": "your_goal",
   "route": ["A01", "A02"],
-  "engagement_policy": "engage_if_visible",
   "reasoning": "short reason",
+  "plan_note": "optional public plan",
   "sequence_number": 1
 }
 ```
 
-Routes use grid cells (`A-W`, `01-33`) instead of raw Doom coordinates. A route can contain up to 16 cells. Every consecutive segment must be horizontal or vertical, and the server rejects diagonal segments, blocked `#` wall cells, blocked-cell crossings, and segments that pass too close to wall corners. The old `set_participant_strategy` category/action schema remains for compatibility, but it is not the default recommendation.
+Routes use grid cells (`A-W`, `01-33`) instead of raw Doom coordinates. A route can contain up to 8 cells. Every consecutive segment must be horizontal or vertical, and the server rejects diagonal segments, blocked `#` wall cells, blocked-cell crossings, and segments that pass too close to wall corners. `plan_note` is logged for analysis and ignored by Doom movement. The old `set_participant_strategy` category/action schema remains for compatibility, but it is not the default recommendation.
 
 When an agent uses `engagement_policy=avoid_until_target`, Doom follows the route first and suppresses attack until the active route is complete. This is intended for healing or resource routes where stopping to trade shots defeats the plan.
 

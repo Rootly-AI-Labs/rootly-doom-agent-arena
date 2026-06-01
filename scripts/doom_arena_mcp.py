@@ -1057,15 +1057,16 @@ class DoomArenaClient:
         objective: str = "",
         engagement_policy: str = "engage_if_visible",
         reasoning: str = "",
-        plan_summary: str = "",
+        plan_note: str = "",
         controller_token: str | None = None,
         sequence_number: Any = None,
+        plan_summary: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         objective_text = normalize_plan_objective(objective)
         reasoning_text = normalize_plan_reasoning(reasoning)
-        summary_text = normalize_plan_summary(plan_summary)
+        summary_text = normalize_plan_summary(plan_note or plan_summary)
         try:
             engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
             current_position = self.current_participant_position(participant_id, allow_spawn_fallback=True)
@@ -1156,6 +1157,7 @@ class DoomArenaClient:
             "objective": objective_text,
             "route": route_cells,
             "reasoning": reasoning_text,
+            "plan_note": summary_text,
             "sequence_number": sequence_number,
         }
         result["route_diagnostics"] = {
@@ -2289,7 +2291,7 @@ def mcp_plan_telemetry_fields(tool_name: str, arguments: dict[str, Any]) -> dict
         "plan_route_cells": route_cells_text_for_telemetry(arguments.get("route", "")),
         "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
         "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
-        "plan_summary": " ".join(str(arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
+        "plan_summary": " ".join(str(arguments.get("plan_note") or arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
     }
 
 
@@ -3396,6 +3398,11 @@ def participant_plan_schema() -> dict[str, Any]:
                 },
             },
             "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
+            "plan_note": {
+                "type": "string",
+                "maxLength": PLAN_SUMMARY_MAX_CHARS,
+                "description": "Optional public planning note for analysis. Stored as plan_summary and ignored by Doom movement.",
+            },
             "sequence_number": {"type": "integer", "minimum": 0},
         },
         "required": ["participant_id", "route"],
@@ -3459,7 +3466,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments.get("objective", "")),
             str(arguments.get("engagement_policy", "engage_if_visible")),
             str(arguments.get("reasoning", "")),
-            str(arguments.get("plan_summary", "")),
+            str(arguments.get("plan_note") or arguments.get("plan_summary", "")),
             optional_string(arguments.get("controller_token")),
             arguments.get("sequence_number"),
         )
