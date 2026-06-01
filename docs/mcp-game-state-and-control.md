@@ -49,6 +49,7 @@ Schema:
   "route": ["A01", "A02"],
   "engagement_policy": "engage_if_visible",
   "reasoning": "short reason",
+  "plan_summary": "goal, risk, fallback in one short line",
   "sequence_number": 1
 }
 ```
@@ -63,6 +64,7 @@ Fields:
 | `route` | Up to 16 grid cells such as `M05`, `G05`, `G12`, `M17`. |
 | `engagement_policy` | How to behave while following the route. |
 | `reasoning` | One short sentence for logs/evaluation. |
+| `plan_summary` | Optional compact public reasoning summary for analysis. |
 | `sequence_number` | Increment every decision. Higher values override older policies. |
 
 Allowed `engagement_policy` values:
@@ -116,6 +118,8 @@ self
 opponent
 tactical
 map
+last_plan
+last_plan_result
 previous_rounds when enabled
 ```
 
@@ -178,13 +182,47 @@ current_zone
 grid bounds
 cell size
 row/column labels
-blocked cells
+blocked cell count
 weapon_pickups_enabled
 pickups
 ```
 
-Observations can also include `active_plan` when an accepted route plan is currently active. It includes the objective, route cells, current waypoint, current waypoint index/count, and distance to the current waypoint.
-It also includes route execution diagnostics such as waypoints reached, waypoints remaining, status, and distance to the final waypoint.
+Observations can include `last_plan` and `last_plan_result` after an accepted route command.
+
+`last_plan` is the last public MCP command submitted by the model:
+
+```json
+{
+  "accepted": true,
+  "sequence_number": 4,
+  "objective": "take lower shotgun",
+  "route_cells": ["W08", "W17", "R17"],
+  "engagement_policy": "avoid_until_target",
+  "reasoning": "upgrade weapon before forcing contact",
+  "plan_summary": "target lower shotgun, avoid center wall, fight if seen",
+  "issued_at_ms": 123456,
+  "expires_at_ms": 131456
+}
+```
+
+`last_plan_result` is Doom-side execution feedback for that plan:
+
+```json
+{
+  "status": "active",
+  "current_waypoint_index": 2,
+  "current_waypoint_count": 3,
+  "current_waypoint_cell": "W17",
+  "waypoints_reached": 1,
+  "waypoints_remaining": 2,
+  "distance_to_waypoint": 96,
+  "distance_to_final_waypoint": 512
+}
+```
+
+These fields are public command/result memory, not hidden chain-of-thought. They let the model compare intent against execution and adjust the next plan.
+
+`active_plan` remains as a compatibility alias for older clients. It includes the objective, route cells, current waypoint, current waypoint index/count, distance to the current waypoint, waypoints reached, waypoints remaining, status, and distance to the final waypoint.
 
 Example `map` block:
 
@@ -195,7 +233,6 @@ Example `map` block:
   "cell_size": 64,
   "row_labels": "A-W",
   "col_labels": "01-33",
-  "blocked_cells": ["C05", "C28"],
   "blocked_cell_count": 42,
   "weapon_pickups_enabled": true,
   "pickups": [
@@ -361,6 +398,7 @@ route
 route cells
 engagement_policy
 reasoning
+plan_summary
 sequence_number
 decision latency
 MCP latency
@@ -374,7 +412,7 @@ next set_participant_plan started_at_ms - previous get_participant_observation c
 
 MCP latency measures local tool/server round-trip time after the request is sent.
 
-Run stats persist `plan_objective`, `plan_route_cells`, `plan_engagement_policy`, and `plan_reasoning` on `set_participant_plan` calls so failed or stuck runs can be diagnosed from the submitted route.
+Run stats persist `plan_objective`, `plan_route_cells`, `plan_engagement_policy`, `plan_reasoning`, and optional `plan_summary` on `set_participant_plan` calls so failed or stuck runs can be diagnosed from the submitted route.
 
 Invalid route plans return structured rejection payloads instead of only surfacing a generic tool failure. The response includes:
 
@@ -455,3 +493,33 @@ reset sequence_number to 1
 send a new opening set_participant_plan
 if phase=finished and has_next_round=false, stop
 ```
+
+## Match logging outputs
+
+Each match writes raw debug artifacts plus a compact derived summary under:
+
+```text
+benchmarks/results/session_.../round_XX_run_.../
+```
+
+Important artifacts:
+
+- `summary.json`: final outcome, winner, terminal reason, elapsed time, final health, damage, and shots.
+- `analysis_summary.json`: compact benchmark metrics intended for comparison.
+- `stats.json`: full MCP call, latency, lifecycle, and command telemetry.
+- `decision_trace.jsonl`: observation and plan trace.
+- `events.jsonl`: raw runtime/game events such as path points, pickups, damage, and match finish.
+
+`analysis_summary.json` keeps the high-signal fields:
+
+- `outcome`: winner, terminal reason, elapsed time, timeout.
+- `combat`: damage dealt/taken, shots fired/hit, accuracy, final health.
+- `resources`: first shotgun pickup, first health pickup, pickup counts, and compact pickup events.
+- `routing`: plan counts, invalid plan counts, route errors, route repairs, dropped passed cells, inserted connector cells, and path summaries.
+- `latency`: decision and MCP average, p95, and max latency.
+- `errors`: compact error counts.
+- `lifecycle`: stale/sticky and superseded plan counts.
+- `fairness`: scenario, spawn variant, player models, fog-of-war, weapon-spawn, and seed.
+- `reasoning`: recent objective/route/engagement/reasoning/plan-summary samples.
+
+Repeated compact observations intentionally omit the full `blocked_cells` list. The static ASCII map and blocked geometry are provided in the initial MCP prompt; repeated observations keep only compact map metadata and live state.

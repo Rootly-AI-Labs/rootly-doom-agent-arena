@@ -140,7 +140,7 @@ def _static_pickup_context(enable_weapon_pickups: bool, blueprint: dict[str, Any
         if pickup.get("type") == "weapon" and not enable_weapon_pickups:
             continue
         name = str(pickup.get("name") or pickup.get("type") or "pickup")
-        note = "heals +100 up to 150" if pickup.get("type") == "health" else "5-pellet weapon pickup"
+        note = "heals +100 up to 150" if pickup.get("type") == "health" else "close-range weapon upgrade with damage boost"
         pickups.append((pickup.get("id", ""), name, pickup.get("x"), pickup.get("y"), note))
     lines = []
     for pickup_id, name, x, y, note in pickups:
@@ -263,7 +263,8 @@ ROLE AND LOOP
 - Keep playing until `match.phase="finished"`; on the final match, `has_next_round=false` can appear before the match is finished.
 
 OBSERVATION
-- Use `match`, `self`, `opponent`, `tactical`, `map`, `active_plan`, and `last_route_result` when present.
+- Use `match`, `self`, `opponent`, `tactical`, `map`, `last_plan`, `last_plan_result`, and `active_plan` when present.
+- `last_plan` is your last accepted public MCP plan. `last_plan_result` is execution feedback for that plan. Use them to continue, repair, or replace your route.
 - Static map facts are given once below; observations provide live position, visibility, route status, and pickup availability.
 
 ACTION SCHEMA
@@ -276,19 +277,21 @@ ACTION SCHEMA
   "route": ["A01", "A02"],
   "engagement_policy": "engage_if_visible",
   "reasoning": "short reason",
+  "plan_summary": "goal, risk, fallback in one short line",
   "sequence_number": 1
 }}
 ```
 
 ROUTE FACTS
 - `objective` and `reasoning` are free text for planning/logs.
+- `plan_summary` is optional; use one short public summary if useful for analysis.
 - `engagement_policy`: `engage_if_visible`, `avoid_until_target`, `hold_fire`, or `force_fight`.
 - `route` is up to 16 grid cells. Rows `A-W` run north/top to south/bottom; columns `01-33` run west/left to east/right.
 - Each cell is `64 x 64` Doom units; the server moves to each cell center.
 - Consecutive route cells must share a row or column. Diagonal segments are rejected.
 - Valid: `["W33", "W23", "Q23"]`. Invalid: `["W33", "Q23"]`.
 - Waypoints inside walls, segments crossing walls, and segments too close to wall corners are rejected.
-- If observations include `last_route_result`, treat it as feedback about the previous route execution.
+- If observations include `last_plan` or `last_plan_result`, treat them as public feedback about the previous route execution, not hidden chain-of-thought.
 
 {_static_map_context_section(scenario_id, participant_id, enable_weapon_pickups)}
 

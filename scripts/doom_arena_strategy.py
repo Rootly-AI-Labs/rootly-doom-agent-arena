@@ -41,6 +41,7 @@ COMMIT_MS_MAX = 8000
 COMMIT_MS_DEFAULT = 8000
 PLAN_ROUTE_MAX_WAYPOINTS = 16
 PLAN_REASONING_MAX_CHARS = 160
+PLAN_SUMMARY_MAX_CHARS = 180
 PLAN_OBJECTIVE_MAX_CHARS = 64
 PLAN_ENGAGEMENT_POLICIES = {
     "engage_if_visible",
@@ -53,6 +54,7 @@ PLAN_METADATA_FIELDS = (
     "plan_route",
     "plan_engagement_policy",
     "plan_reasoning",
+    "plan_summary",
     "plan_route_cells",
 )
 
@@ -705,6 +707,12 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     los = self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los")
 
     active_plan = full_observation.get("active_plan") if isinstance(full_observation.get("active_plan"), dict) else None
+    last_plan = full_observation.get("last_plan") if isinstance(full_observation.get("last_plan"), dict) else None
+    last_plan_result = (
+        full_observation.get("last_plan_result")
+        if isinstance(full_observation.get("last_plan_result"), dict)
+        else None
+    )
     last_route_result = None
     if active_plan:
         current_cell = active_plan.get("current_waypoint_cell")
@@ -737,6 +745,8 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
                     "reason": "route_active_without_measured_progress",
                 }
             )
+    if last_plan_result is None:
+        last_plan_result = last_route_result
 
     map_block = full_observation.get("map", {}) if isinstance(full_observation.get("map"), dict) else {}
     pickups = (
@@ -795,6 +805,8 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "spin_detected": spin,
             "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
         },
+        "last_plan": last_plan,
+        "last_plan_result": last_plan_result,
         "active_plan": active_plan,
         "last_route_result": last_route_result,
         "map": {
@@ -804,7 +816,6 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "cols": MAP_COLS,
             "row_labels": f"A-{chr(ord('A') + MAP_ROWS - 1)}",
             "col_labels": f"01-{MAP_COLS:02d}",
-            "blocked_cells": blocked_grid_cells(),
             "blocked_cell_count": len(blocked_grid_cells()),
             "current_zone": current_zone,
             "weapon_pickups_enabled": map_block.get("weapon_pickups_enabled", True),

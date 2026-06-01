@@ -62,7 +62,7 @@ DUEL_DEFAULTS = {
     "player_2_model": "",
     "round": 1,
     "seed": 42,
-    "timeout_seconds": 120,
+    "timeout_seconds": 180,
 }
 
 # Scenarios available to the duel arena. Each scenario maps to a configured
@@ -129,7 +129,7 @@ PARTICIPANT_INTENT_HEADER = (
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
     "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\t"
-    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n"
+    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_summary\tplan_route_cells\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 ENEMY_COMMAND_HEADER = (
@@ -239,6 +239,7 @@ def mcp_plan_argument_fields(tool_name: str, arguments: dict[str, Any]) -> dict[
         "plan_route_cells": route_cells_text_for_stats(arguments.get("route", "")),
         "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
         "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+        "plan_summary": " ".join(str(arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
     }
 
 
@@ -357,6 +358,8 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.summary_written_runs: set[str] = set()
         self.run_results_dirs: dict[str, Path] = {self.run_id: RESULTS_ROOT / self.run_id}
         self.current_run_results_dir: Path = self.run_results_dirs[self.run_id]
+        self.latest_arena_state_by_run_id: dict[str, str] = {}
+        self.latest_arena_state_at_ms_by_run_id: dict[str, int] = {}
         self.duel_session_id = ""
         self.duel_total_rounds = 1
         self.duel_current_round = 0
@@ -529,6 +532,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/arena/run-summary":
             self.read_run_artifact("summary.json")
+            return
+
+        if path == "/api/arena/run-analysis":
+            self.read_run_artifact("analysis_summary.json")
             return
 
         if path == "/api/arena/run-results":
@@ -865,7 +872,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 record[key] = payload[key]
         plan = payload.get("plan")
         if isinstance(plan, dict):
-            for key in ("objective", "route", "engagement_policy", "reasoning", "sequence_number"):
+            for key in ("objective", "route", "engagement_policy", "reasoning", "plan_summary", "sequence_number"):
                 if key in plan:
                     record[f"plan_{key}" if key != "route" else "plan_route_cells"] = plan[key]
         diagnostics = payload.get("route_diagnostics")
@@ -1064,6 +1071,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     "route_cells": plan.get("route", record.get("plan_route_cells", "")),
                     "engagement_policy": plan.get("engagement_policy", record.get("plan_engagement_policy", "")),
                     "reasoning": plan.get("reasoning", record.get("plan_reasoning", "")),
+                    "plan_summary": plan.get("plan_summary", record.get("plan_summary", "")),
                     "sequence_number": plan.get("sequence_number", record.get("sequence_number")),
                     "route_diagnostics": diagnostics if isinstance(diagnostics, dict) else {},
                 }
@@ -1547,6 +1555,289 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         run_dir.mkdir(parents=True, exist_ok=True)
         payload = self.build_mcp_stats_payload_locked()
         (run_dir / "stats.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        analysis = self.build_analysis_summary_locked(payload, run_dir)
+        (run_dir / "analysis_summary.json").write_text(
+            json.dumps(analysis, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+    def build_analysis_summary_locked(self, stats: dict[str, Any], run_dir: Path) -> dict[str, Any]:
+        summary = self.read_json_artifact(run_dir / "summary.json")
+        events = self.read_jsonl_artifact(run_dir / "events.jsonl")
+        calls = stats.get("calls", []) if isinstance(stats.get("calls"), list) else []
+        lifecycles = stats.get("intent_lifecycles", []) if isinstance(stats.get("intent_lifecycles"), list) else []
+        decision_turns = stats.get("inferred_decision_turns", []) if isinstance(stats.get("inferred_decision_turns"), list) else []
+
+        def as_number(value: Any, default: float = 0.0) -> float:
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                return default
+
+        def average(values: list[float]) -> float | None:
+            return round(sum(values) / len(values), 2) if values else None
+
+        def percentile(values: list[float], ratio: float) -> float | None:
+            if not values:
+                return None
+            ordered = sorted(values)
+            index = int(round((len(ordered) - 1) * ratio))
+            return round(ordered[index], 2)
+
+        def participant_combat(participant_id: str) -> dict[str, Any]:
+            prefix = "player_1" if participant_id == "player_1" else "player_2"
+            shots_fired = as_number(summary.get(f"{prefix}_shots_fired"))
+            shots_hit = as_number(summary.get(f"{prefix}_shots_hit"))
+            return {
+                "damage_dealt": int(as_number(summary.get(f"{prefix}_damage_dealt"))),
+                "damage_taken": int(as_number(summary.get("player_2_damage_dealt" if prefix == "player_1" else "player_1_damage_dealt"))),
+                "shots_fired": int(shots_fired),
+                "shots_hit": int(shots_hit),
+                "accuracy": round(shots_hit / shots_fired, 3) if shots_fired > 0 else None,
+                "final_health": int(as_number(summary.get(f"{prefix}_health_end"))),
+            }
+
+        mcp_latencies = [
+            as_number(call.get("latency_ms"))
+            for call in calls
+            if call.get("latency_ms") is not None
+        ]
+        decision_latencies = [
+            as_number(turn.get("inferred_decision_latency_ms"))
+            for turn in decision_turns
+            if turn.get("inferred_decision_latency_ms") is not None
+        ]
+        errors: dict[str, int] = {}
+        plan_errors: dict[str, int] = {}
+        plan_counts = {"player_1": 0, "player_2": 0}
+        invalid_plan_counts = {"player_1": 0, "player_2": 0}
+        route_repair_count = 0
+        route_rebase_count = 0
+        inserted_connector_cells: list[dict[str, Any]] = []
+        dropped_passed_cells: list[dict[str, Any]] = []
+        reasoning_samples: list[dict[str, Any]] = []
+
+        for call in calls:
+            participant_id = str(call.get("participant_id", ""))
+            tool_name = str(call.get("tool_name", ""))
+            is_error = bool(call.get("is_error")) or call.get("status") == "error" or call.get("accepted") is False
+            if is_error:
+                key = str(call.get("error_type") or call.get("error") or "unknown_error")[:160]
+                errors[key] = errors.get(key, 0) + 1
+            if tool_name != "set_participant_plan":
+                continue
+            if participant_id in plan_counts:
+                plan_counts[participant_id] += 1
+            if is_error:
+                if participant_id in invalid_plan_counts:
+                    invalid_plan_counts[participant_id] += 1
+                key = str(call.get("error_type") or call.get("error") or "unknown_plan_error")[:160]
+                plan_errors[key] = plan_errors.get(key, 0) + 1
+            diagnostics = call.get("route_diagnostics") if isinstance(call.get("route_diagnostics"), dict) else {}
+            inserted = diagnostics.get("inserted_connector_cells") if isinstance(diagnostics, dict) else []
+            dropped = diagnostics.get("dropped_passed_cells") if isinstance(diagnostics, dict) else []
+            if isinstance(inserted, list) and inserted:
+                route_repair_count += len(inserted)
+                inserted_connector_cells.append(
+                    {
+                        "participant_id": participant_id,
+                        "sequence_number": call.get("sequence_number"),
+                        "inserted": inserted,
+                    }
+                )
+            if isinstance(dropped, list) and dropped:
+                route_rebase_count += 1
+                dropped_passed_cells.append(
+                    {
+                        "participant_id": participant_id,
+                        "sequence_number": call.get("sequence_number"),
+                        "dropped": dropped,
+                    }
+                )
+            if call.get("plan_objective") or call.get("plan_reasoning"):
+                reasoning_samples.append(
+                    {
+                        "participant_id": participant_id,
+                        "sequence_number": call.get("sequence_number"),
+                        "objective": call.get("plan_objective", ""),
+                        "route": call.get("plan_route_cells", ""),
+                        "engagement_policy": call.get("plan_engagement_policy", ""),
+                        "reasoning": call.get("plan_reasoning", ""),
+                        "plan_summary": call.get("plan_summary", ""),
+                    }
+                )
+
+        pickup_events = self.extract_pickup_metrics(events)
+        path_metrics = self.extract_path_metrics(events)
+        stale_count = sum(1 for item in lifecycles if item.get("expired_before_next_intent") or item.get("sticky_after_expiry"))
+        superseded_count = sum(1 for item in lifecycles if item.get("superseded_before_expiry"))
+
+        return {
+            "run_id": summary.get("run_id", self.server.run_id),
+            "round": summary.get("round", self.server.round),
+            "outcome": {
+                "winner": summary.get("winner", ""),
+                "terminal_reason": summary.get("terminal_reason", ""),
+                "elapsed_time_seconds": summary.get("elapsed_time_seconds"),
+                "timeout_seconds": summary.get("timeout_seconds", self.server.timeout_seconds),
+            },
+            "combat": {
+                "player_1": participant_combat("player_1"),
+                "player_2": participant_combat("player_2"),
+            },
+            "resources": pickup_events,
+            "routing": {
+                "plan_counts": plan_counts,
+                "invalid_plan_counts": invalid_plan_counts,
+                "plan_errors": plan_errors,
+                "route_repair_count": route_repair_count,
+                "route_rebase_count": route_rebase_count,
+                "inserted_connector_cells": inserted_connector_cells[:20],
+                "dropped_passed_cells": dropped_passed_cells[:20],
+                "path": path_metrics,
+            },
+            "latency": {
+                "decision_avg_ms": average(decision_latencies),
+                "decision_p95_ms": percentile(decision_latencies, 0.95),
+                "decision_max_ms": round(max(decision_latencies), 2) if decision_latencies else None,
+                "mcp_avg_ms": average(mcp_latencies),
+                "mcp_p95_ms": percentile(mcp_latencies, 0.95),
+                "mcp_max_ms": round(max(mcp_latencies), 2) if mcp_latencies else None,
+            },
+            "errors": errors,
+            "lifecycle": {
+                "stale_or_sticky_count": stale_count,
+                "superseded_count": superseded_count,
+            },
+            "fairness": {
+                "scenario_id": self.server.scenario_id,
+                "spawn_variant": self.server.scenario_id,
+                "player_1_model": self.server.player_1_model,
+                "player_2_model": self.server.player_2_model,
+                "fog_of_war_enabled": self.server.hide_enemy_position,
+                "weapon_pickups_enabled": self.server.enable_weapon_pickups,
+                "seed": self.server.seed,
+            },
+            "reasoning": reasoning_samples[-20:],
+        }
+
+    def read_json_artifact(self, path: Path) -> dict[str, Any]:
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            return payload if isinstance(payload, dict) else {}
+        except (OSError, json.JSONDecodeError):
+            return {}
+
+    def read_jsonl_artifact(self, path: Path) -> list[dict[str, Any]]:
+        rows: list[dict[str, Any]] = []
+        try:
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            return rows
+        for line in lines:
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                rows.append(payload)
+        return rows
+
+    def extract_pickup_metrics(self, events: list[dict[str, Any]]) -> dict[str, Any]:
+        pickup_rows: list[dict[str, Any]] = []
+        for event in events:
+            text = " ".join(str(value) for value in event.values())
+            lower = text.lower()
+            if "pickup" not in lower and "shotgun" not in lower and "health" not in lower and "medikit" not in lower:
+                continue
+            participant = "player_1" if "player_1" in lower else "player_2" if "player_2" in lower else ""
+            pickup_type = "shotgun" if "shotgun" in lower else "health" if "health" in lower or "medikit" in lower else "unknown"
+            pickup_rows.append(
+                {
+                    "participant_id": participant,
+                    "type": pickup_type,
+                    "tick": event.get("tick"),
+                    "elapsed_ms": event.get("elapsed_ms"),
+                    "event": text[:200],
+                }
+            )
+        first_shotgun = next((row for row in pickup_rows if row["type"] == "shotgun"), None)
+        first_health = next((row for row in pickup_rows if row["type"] == "health"), None)
+        counts = {
+            "player_1": {"shotgun": 0, "health": 0},
+            "player_2": {"shotgun": 0, "health": 0},
+        }
+        for row in pickup_rows:
+            participant = row.get("participant_id")
+            pickup_type = row.get("type")
+            if participant in counts and pickup_type in counts[participant]:
+                counts[participant][pickup_type] += 1
+        return {
+            "first_shotgun_pickup": first_shotgun,
+            "first_health_pickup": first_health,
+            "pickup_counts": counts,
+            "pickup_events": pickup_rows[:40],
+        }
+
+    def extract_path_metrics(self, events: list[dict[str, Any]]) -> dict[str, Any]:
+        by_participant: dict[str, dict[str, Any]] = {
+            "player_1": {"points": 0, "distance_traveled": 0.0, "unique_cells": set(), "revisited_cells": 0},
+            "player_2": {"points": 0, "distance_traveled": 0.0, "unique_cells": set(), "revisited_cells": 0},
+        }
+        previous: dict[str, tuple[float, float] | None] = {"player_1": None, "player_2": None}
+        for event in events:
+            text = " ".join(str(value) for value in event.values())
+            if "path_point:" not in text:
+                continue
+            participant = "player_1" if "player_1" in text else "player_2" if "player_2" in text else ""
+            if participant not in by_participant:
+                continue
+            x_value = self.extract_event_number(text, "x")
+            y_value = self.extract_event_number(text, "y")
+            if x_value is None or y_value is None:
+                continue
+            bucket = by_participant[participant]
+            bucket["points"] += 1
+            cell = self.analysis_xy_to_grid_cell(x_value, y_value)
+            if cell in bucket["unique_cells"]:
+                bucket["revisited_cells"] += 1
+            else:
+                bucket["unique_cells"].add(cell)
+            if previous[participant] is not None:
+                px, py = previous[participant] or (x_value, y_value)
+                bucket["distance_traveled"] += ((x_value - px) ** 2 + (y_value - py) ** 2) ** 0.5
+            previous[participant] = (x_value, y_value)
+        return {
+            participant: {
+                "path_points": int(values["points"]),
+                "distance_traveled": round(float(values["distance_traveled"]), 1),
+                "unique_cells_visited": len(values["unique_cells"]),
+                "revisited_cells": int(values["revisited_cells"]),
+            }
+            for participant, values in by_participant.items()
+        }
+
+    def extract_event_number(self, text: str, key: str) -> float | None:
+        marker = key + "="
+        if marker not in text:
+            return None
+        value = text.split(marker, 1)[1].split(" ", 1)[0].strip().strip(",")
+        try:
+            return float(value)
+        except ValueError:
+            return None
+
+    def analysis_xy_to_grid_cell(self, x: float, y: float) -> str:
+        cell_size = 64
+        x_min = -1056
+        y_max = 736
+        rows = 23
+        cols = 33
+        col = int((float(x) - x_min) // cell_size) + 1
+        row = int((y_max - float(y)) // cell_size) + 1
+        col = max(1, min(cols, col))
+        row = max(1, min(rows, row))
+        return f"{chr(ord('A') + row - 1)}{col:02d}"
 
     def write_run_events_artifact(self, events_text: str) -> None:
         rows = [
@@ -1593,6 +1884,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "player_1_shots_hit": score.get("player_1_shots_hit", 0),
             "player_2_shots_hit": score.get("player_2_shots_hit", 0),
             "stats": "stats.json",
+            "analysis_summary": "analysis_summary.json",
         }
         (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
         if ARENA_EVENTS_TSV.exists():
@@ -1611,8 +1903,22 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             )
             return
 
+        def safe_handle(message: dict[str, Any]) -> dict[str, Any] | None:
+            try:
+                return self.handle_mcp_message(message)
+            except Exception as exc:
+                self.log_error("MCP message failed: %s: %s", exc.__class__.__name__, exc)
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message.get("id") if isinstance(message, dict) else None,
+                    "error": {
+                        "code": -32603,
+                        "message": f"Internal MCP error: {exc.__class__.__name__}: {exc}",
+                    },
+                }
+
         if isinstance(payload, list):
-            responses = [response for message in payload if (response := self.handle_mcp_message(message)) is not None]
+            responses = [response for message in payload if (response := safe_handle(message)) is not None]
             self.write_json(HTTPStatus.OK, responses)
             return
 
@@ -1623,7 +1929,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             )
             return
 
-        response = self.handle_mcp_message(payload)
+        response = safe_handle(payload)
         if response is None:
             self.write_json(HTTPStatus.ACCEPTED, {"ok": True})
             return
@@ -1708,6 +2014,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             except (KeyError, TypeError, ValueError, DoomArenaError) as exc:
                 text = str(exc)
                 result = {"content": [{"type": "text", "text": text}], "isError": True}
+            except Exception as exc:
+                self.log_error("MCP tool call failed: %s: %s", exc.__class__.__name__, exc)
+                text = f"Internal MCP tool error: {exc.__class__.__name__}: {exc}"
+                result = {"content": [{"type": "text", "text": text}], "isError": True}
             self.complete_mcp_tool_call(call_record, bool(result["isError"]), text)
             return {"jsonrpc": "2.0", "id": message_id, "result": result}
 
@@ -1721,7 +2031,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         body = self.read_body()
         path.write_bytes(body)
         if path == ARENA_STATE_TSV:
-            self.maybe_write_finished_run_artifacts(body.decode("utf-8", errors="replace"))
+            state_text = body.decode("utf-8", errors="replace")
+            self.remember_arena_state_text(state_text)
+            self.maybe_write_finished_run_artifacts(state_text)
         elif path == ARENA_EVENTS_TSV:
             self.write_run_events_artifact(body.decode("utf-8", errors="replace"))
         self.write_json(HTTPStatus.OK, {"ok": True, "path": label, "bytes": len(body)})
@@ -1746,15 +2058,69 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         body = path.read_bytes()
         self.write_tsv_bytes(body)
 
-    def read_arena_state_with_config(self) -> None:
-        if not ARENA_STATE_TSV.exists():
-            self.write_json(
-                HTTPStatus.NOT_FOUND,
-                {"ok": False, "error": "arena_game_state.local.tsv has not been written yet."},
-            )
-            return
+    def arena_state_run_id_from_text(self, text: str) -> str:
+        rows = parse_tsv_rows(text)
+        match = next((row for row in rows if row.get("kind") == "match"), {})
+        if match.get("run_id"):
+            return str(match.get("run_id"))
+        for row in rows:
+            if row.get("run_id"):
+                return str(row.get("run_id"))
+        return ""
 
-        text = ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace")
+    def remember_arena_state_text(self, text: str) -> None:
+        run_id = self.arena_state_run_id_from_text(text)
+        if not run_id:
+            return
+        self.server.latest_arena_state_by_run_id[run_id] = text
+        self.server.latest_arena_state_at_ms_by_run_id[run_id] = now_ms()
+
+    def transition_arena_state_tsv(self) -> str:
+        header = [
+            "kind",
+            "run_id",
+            "scenario_id",
+            "mode",
+            "phase",
+            "winner",
+            "terminal_reason",
+            "elapsed_time_seconds",
+            "timeout_seconds",
+            "tick",
+            "state_status",
+        ]
+        row = [
+            "match",
+            self.server.run_id,
+            self.server.scenario_id,
+            self.server.arena_mode,
+            "waiting_for_agents" if self.server.arena_mode == "duel" else "booting",
+            "",
+            "state_not_ready",
+            "0",
+            str(self.server.timeout_seconds),
+            "0",
+            "transitioning",
+        ]
+        return "\t".join(header) + "\n" + "\t".join(row) + "\n"
+
+    def read_arena_state_with_config(self) -> None:
+        query = parse_qs(urlparse(self.path).query)
+        requested_run_id = str((query.get("run_id") or [""])[0] or "")
+        text = ""
+
+        if ARENA_STATE_TSV.exists():
+            text = ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace")
+            current_run_id = self.arena_state_run_id_from_text(text)
+            if requested_run_id and current_run_id and current_run_id != requested_run_id:
+                text = self.server.latest_arena_state_by_run_id.get(requested_run_id, "")
+
+        if not text and requested_run_id:
+            text = self.server.latest_arena_state_by_run_id.get(requested_run_id, "")
+
+        if not text:
+            text = self.transition_arena_state_tsv()
+
         text = inject_arena_config_row(text, self.server.hide_enemy_position, self.server.enable_weapon_pickups)
         self.write_tsv_bytes(text.encode("utf-8"))
 
@@ -1878,6 +2244,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             session_dir = run_dir.parent
         artifact_names = [
             "summary.json",
+            "analysis_summary.json",
             "stats.json",
             "config.json",
             "controller_tokens.json",
@@ -1887,6 +2254,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ]
         endpoint_by_name = {
             "summary.json": "/api/arena/run-summary",
+            "analysis_summary.json": "/api/arena/run-analysis",
             "stats.json": "/api/arena/run-stats",
         }
         rows = []
@@ -2595,6 +2963,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "plan_route": plan_route,
             "plan_engagement_policy": plan_engagement_policy,
             "plan_reasoning": " ".join(str(payload.get("plan_reasoning", "")).replace("\t", " ").split())[:160],
+            "plan_summary": " ".join(str(payload.get("plan_summary", "")).replace("\t", " ").split())[:180],
             "plan_route_cells": " ".join(str(payload.get("plan_route_cells", "")).replace("\t", " ").split())[:80],
         }
 
@@ -2609,6 +2978,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         if not lines:
             return []
         expected_header = PARTICIPANT_INTENT_HEADER.strip().split("\t")
+        plan_summary_previous_header = [key for key in expected_header if key != "plan_summary"]
         plan_previous_header = expected_header[:expected_header.index("plan_objective")]
         strategy_previous_header = expected_header[:expected_header.index("strategy_source")]
         strategy_metadata_previous_header = expected_header[:expected_header.index("strategy_objective")]
@@ -2624,6 +2994,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             parse_header = extended_previous_header
         elif header == expected_header:
             parse_header = expected_header
+        elif header == plan_summary_previous_header:
+            parse_header = plan_summary_previous_header
         elif header == plan_previous_header:
             parse_header = plan_previous_header
         elif header == strategy_previous_header:
@@ -2668,7 +3040,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                         "intent_raw": row.get("intent", ""),
                     }
                 )
-            if parse_header in (legacy_header, previous_header, extended_previous_header, plan_previous_header, strategy_previous_header, strategy_metadata_previous_header):
+            if parse_header in (legacy_header, previous_header, extended_previous_header, plan_summary_previous_header, plan_previous_header, strategy_previous_header, strategy_metadata_previous_header):
                 for key in PARTICIPANT_INTENT_EXTRA_FIELDS:
                     if key not in row:
                         row[key] = ""
@@ -2862,6 +3234,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def reset_arena_state(self, payload: dict[str, Any]) -> dict[str, Any]:
         self.apply_reset_config(payload)
+        if ARENA_STATE_TSV.exists():
+            self.remember_arena_state_text(ARENA_STATE_TSV.read_text(encoding="utf-8", errors="replace"))
         self.server.run_id = new_run_id()
         self.server.started_at_ms = now_ms()
         self.server.reset_requested = True
@@ -3385,7 +3759,7 @@ def score_from_state(rows: list[dict[str, str]]) -> dict[str, Any]:
             "winner": winner or ("running" if phase != "finished" else "draw"),
             "terminal_reason": match.get("terminal_reason") or player_1.get("terminal_reason") or "",
             "elapsed_time_seconds": float(match.get("elapsed_time_seconds") or player_1.get("elapsed_time_seconds") or 0),
-            "timeout_seconds": int(match.get("timeout_seconds") or player_1.get("timeout_seconds") or 120),
+            "timeout_seconds": int(match.get("timeout_seconds") or player_1.get("timeout_seconds") or 180),
             "player_1_health": int(player_1.get("health", "0") or 0),
             "player_2_health": int(player_2.get("health", "0") or 0),
             "player_1_alive": player_1.get("alive", "0") == "1",

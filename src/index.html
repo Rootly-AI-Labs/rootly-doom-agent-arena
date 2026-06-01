@@ -503,6 +503,8 @@
 
             .duel-pov-frame {
                 position: relative;
+                overflow: hidden;
+                background: #000;
                 outline: 4px solid rgba(255, 92, 92, 0.42);
                 outline-offset: 0;
                 transition: outline-color 120ms ease, box-shadow 120ms ease;
@@ -1765,7 +1767,7 @@
             var arenaParticipantCommandEndpoint = "/api/arena/participant-commands";
             var arenaParticipantIntentPath = "arena_participant_intents.local.tsv";
             var arenaParticipantIntentEndpoint = "/api/arena/participant-intents";
-            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\tplan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n";
+            var arenaParticipantIntentHeader = "run_id\tscenario_id\tintent_id\tissued_at_ms\texpires_at_ms\tparticipant_id\tintent\tstyle\ttarget_id\tpreferred_distance\taggression\tduration_ms\tstrafe_direction\tmovement_bias\tfire_policy\tdistance_policy\treplan_if\tsequence_number\tdecision_cadence_ms\taim_tolerance\tfire_burst_ms\tmin_fire_alignment\tmin_distance\tmax_distance\tretreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\tturn_policy\tnavigation_target\tfire_mode\tintent_raw\tstrategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\tplan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_summary\tplan_route_cells\n";
             var arenaParticipantReadyPath = "arena_participant_ready.local.tsv";
             var arenaParticipantReadyEndpoint = "/api/arena/participant-ready";
             var arenaParticipantReadyHeader = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n";
@@ -3534,7 +3536,7 @@
                     rounds: rounds,
                     round: 1,
                     seed: 42,
-                    timeout_seconds: selectedNumberValue("arena-timeout-seconds", 120),
+                    timeout_seconds: selectedNumberValue("arena-timeout-seconds", 180),
                     decision_cadence_ms: 750,
                     intent_duration_ms: selectedNumberValue("arena-intent-duration-ms", 25000),
                     hide_enemy_position: true,
@@ -4745,6 +4747,7 @@
                         plan_route: row.plan_route,
                         plan_engagement_policy: row.plan_engagement_policy,
                         plan_reasoning: row.plan_reasoning,
+                        plan_summary: row.plan_summary,
                         plan_route_cells: row.plan_route_cells
                     };
                 });
@@ -4934,6 +4937,7 @@
                             " | route=" + formatCompactValue(row.plan_route_cells || row.plan_route) +
                             " | engagement=" + formatCompactValue(row.plan_engagement_policy) +
                             (row.plan_reasoning ? " | reasoning=" + formatCompactValue(row.plan_reasoning) : "") +
+                            (row.plan_summary ? " | summary=" + formatCompactValue(row.plan_summary) : "") +
                             (droppedPassedCells.length ? " | rebased: dropped=" + formatCompactValue(droppedPassedCells.join(";")) : "") +
                             (insertedConnectorText ? " | repaired: inserted=" + formatCompactValue(insertedConnectorText) : "")
                         : " | Intent: intent=" + (row.intent || "unknown") +
@@ -5563,6 +5567,120 @@
                 return value !== null && typeof value === "object" && typeof value.then === "function";
             }
 
+            function povRowIsBlack(data, width, row, threshold) {
+                var offset = row * width * 4;
+                var col;
+
+                for (col = 0; col < width; col++) {
+                    if (
+                        data[offset + col * 4] > threshold ||
+                        data[offset + col * 4 + 1] > threshold ||
+                        data[offset + col * 4 + 2] > threshold
+                    ) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function povColumnIsBlack(data, width, height, col, top, bottom, threshold) {
+                var row;
+                var offset;
+
+                for (row = top; row <= bottom; row++) {
+                    offset = (row * width + col) * 4;
+                    if (
+                        data[offset] > threshold ||
+                        data[offset + 1] > threshold ||
+                        data[offset + 2] > threshold
+                    ) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function povContentCrop(imageData, width, height) {
+                var data = imageData.data;
+                var threshold = 8;
+                var top = 0;
+                var bottom = height - 1;
+                var left = 0;
+                var right = width - 1;
+                var cropWidth;
+                var cropHeight;
+
+                while (top < bottom && povRowIsBlack(data, width, top, threshold)) {
+                    top++;
+                }
+                while (bottom > top && povRowIsBlack(data, width, bottom, threshold)) {
+                    bottom--;
+                }
+                while (left < right && povColumnIsBlack(data, width, height, left, top, bottom, threshold)) {
+                    left++;
+                }
+                while (right > left && povColumnIsBlack(data, width, height, right, top, bottom, threshold)) {
+                    right--;
+                }
+
+                cropWidth = right - left + 1;
+                cropHeight = bottom - top + 1;
+                if (
+                    left <= 1 && top <= 1 && right >= width - 2 && bottom >= height - 2
+                    || cropWidth < width * 0.65
+                    || cropHeight < height * 0.65
+                ) {
+                    return null;
+                }
+
+                return {
+                    x: left,
+                    y: top,
+                    width: cropWidth,
+                    height: cropHeight,
+                };
+            }
+
+            function paintPovImageData(label, canvas, state, width, height) {
+                var crop;
+                var sourceContext;
+
+                state.context = state.context || canvas.getContext("2d");
+                if (String(label).toLowerCase().indexOf("automap") !== -1) {
+                    state.context.putImageData(state.imageData, 0, 0);
+                    return;
+                }
+
+                crop = povContentCrop(state.imageData, width, height);
+                if (!crop) {
+                    state.context.putImageData(state.imageData, 0, 0);
+                    return;
+                }
+
+                if (!state.cropCanvas) {
+                    state.cropCanvas = document.createElement("canvas");
+                }
+                if (state.cropCanvas.width !== width || state.cropCanvas.height !== height) {
+                    state.cropCanvas.width = width;
+                    state.cropCanvas.height = height;
+                }
+                sourceContext = state.cropCanvas.getContext("2d");
+                sourceContext.putImageData(state.imageData, 0, 0);
+                state.context.imageSmoothingEnabled = false;
+                state.context.clearRect(0, 0, width, height);
+                state.context.drawImage(
+                    state.cropCanvas,
+                    crop.x,
+                    crop.y,
+                    crop.width,
+                    crop.height,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+            }
+
             function renderPovToCanvas(label, canvas, statusEl, frameGetter, rgbaGetter, palettedGetter, widthGetter, heightGetter, nonzeroGetter, state) {
                 var frame, pointer, palettedPointer, palettePointer, width, height, nonzeroPixels;
                 var source, palettedSource, paletteSource, pixelIndex, colorIndex, renderMode, value, x, y, jsNonzeroPixels, paintedPixels, paintedData;
@@ -5645,7 +5763,7 @@
                 if (fastDuelPovRendering) {
                     source = (Module.HEAPU8 || HEAPU8).subarray(pointer, pointer + width * height * 4);
                     state.imageData.data.set(source);
-                    state.context.putImageData(state.imageData, 0, 0);
+                    paintPovImageData(label, canvas, state, width, height);
                     state.lastFrame = frame;
                     maybeHideDuelLauncherAfterFirstFrames();
                     if (statusEl !== null) { statusEl.textContent = ""; }
@@ -5738,10 +5856,10 @@
                 readbackError = "";
                 testError = "";
                 try {
-                    state.context.putImageData(state.imageData, 0, 0);
+                    paintPovImageData(label, canvas, state, width, height);
                 } catch (error) {
                     paintError = String(error);
-                    console.error("[" + label + "] putImageData failed:", error);
+                    console.error("[" + label + "] POV paint failed:", error);
                 }
                 paintedPixels = 0;
                 try {

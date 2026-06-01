@@ -35,9 +35,10 @@
 #endif
 
 #define ARENA_DUEL_MOVE_SPEED (0x32 * 2048)
-#define ARENA_DUEL_ROUTE_SPEED ((ARENA_DUEL_MOVE_SPEED * 7) / 2)
-#define ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE 160
-#define ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED ((ARENA_DUEL_MOVE_SPEED * 5) / 2)
+#define ARENA_DUEL_ROUTE_SPEED ((ARENA_DUEL_MOVE_SPEED * 9) / 2)
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE 96
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED (ARENA_DUEL_MOVE_SPEED * 3)
+#define ARENA_DUEL_ROUTE_COMBAT_FACE_DISTANCE 1024
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
@@ -1379,12 +1380,15 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
 
 static void ArenaDuel_ThrustTowardRouteWaypoint(
     mobj_t *mobj,
+    mobj_t *opponent,
     const arena_participant_autopilot_command_t *command)
 {
-    angle_t angle;
+    angle_t movement_angle;
+    angle_t facing_angle;
     int fine_angle;
     fixed_t speed;
     int distance;
+    int opponent_distance;
 
     if (mobj == NULL
         || command == NULL
@@ -1393,17 +1397,33 @@ static void ArenaDuel_ThrustTowardRouteWaypoint(
         return;
     }
 
-    angle = R_PointToAngle2(mobj->x,
-                            mobj->y,
-                            command->route_target_x * FRACUNIT,
-                            command->route_target_y * FRACUNIT);
+    movement_angle = R_PointToAngle2(mobj->x,
+                                     mobj->y,
+                                     command->route_target_x * FRACUNIT,
+                                     command->route_target_y * FRACUNIT);
+    facing_angle = movement_angle;
+    if (opponent != NULL
+        && opponent->health > 0
+        && P_CheckSight(mobj, opponent))
+    {
+        opponent_distance = P_AproxDistance(opponent->x - mobj->x,
+                                            opponent->y - mobj->y) >> FRACBITS;
+        if (command->attack
+            || opponent_distance <= ARENA_DUEL_ROUTE_COMBAT_FACE_DISTANCE)
+        {
+            facing_angle = R_PointToAngle2(mobj->x,
+                                           mobj->y,
+                                           opponent->x,
+                                           opponent->y);
+        }
+    }
     distance = P_AproxDistance(command->route_target_x * FRACUNIT - mobj->x,
                                command->route_target_y * FRACUNIT - mobj->y) >> FRACBITS;
     speed = distance <= ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE
         ? ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED
         : ARENA_DUEL_ROUTE_SPEED;
-    fine_angle = angle >> ANGLETOFINESHIFT;
-    mobj->angle = angle;
+    fine_angle = movement_angle >> ANGLETOFINESHIFT;
+    mobj->angle = facing_angle;
     mobj->momx = FixedMul(speed, finecosine[fine_angle]);
     mobj->momy = FixedMul(speed, finesine[fine_angle]);
 }
@@ -1668,6 +1688,10 @@ static boolean ArenaDuel_Player1ApplyPickup(mobj_t *special)
             P_RemoveMobj(special);
             return false;
         }
+        if (player->weaponowned[wp_shotgun])
+        {
+            return false;
+        }
         player->weaponowned[wp_shotgun] = true;
         player->readyweapon = wp_shotgun;
         player->pendingweapon = wp_shotgun;
@@ -1850,6 +1874,10 @@ static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
         if (!Arena_WeaponPickupsEnabled())
         {
             P_RemoveMobj(special);
+            return false;
+        }
+        if (arena_duel_player2_ready_weapon == wp_shotgun)
+        {
             return false;
         }
         arena_duel_player2_ready_weapon = wp_shotgun;
@@ -2164,7 +2192,7 @@ static void ArenaDuel_TickPlayer1CustomAutopilot(void)
 
     if (arena_duel_player1_last_autopilot_command.route_waypoint_active)
     {
-        ArenaDuel_ThrustTowardRouteWaypoint(player1, &arena_duel_player1_last_autopilot_command);
+        ArenaDuel_ThrustTowardRouteWaypoint(player1, arena_duel_player2, &arena_duel_player1_last_autopilot_command);
     }
     else if (command.forward != 0)
     {
@@ -2191,6 +2219,7 @@ static void ArenaDuel_TickPlayer1CustomAutopilot(void)
 static void ArenaDuel_TickPlayer2CustomAutopilot(void)
 {
     arena_participant_command_t command;
+    mobj_t *player1;
 
     if (arena_duel_player2 == NULL)
     {
@@ -2209,13 +2238,14 @@ static void ArenaDuel_TickPlayer2CustomAutopilot(void)
     }
 
     command = ArenaDuel_Player2Command();
+    player1 = ArenaDuel_Player1Mobj();
     ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_2);
 
     arena_duel_player2->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
 
     if (arena_duel_player2_last_autopilot_command.route_waypoint_active)
     {
-        ArenaDuel_ThrustTowardRouteWaypoint(arena_duel_player2, &arena_duel_player2_last_autopilot_command);
+        ArenaDuel_ThrustTowardRouteWaypoint(arena_duel_player2, player1, &arena_duel_player2_last_autopilot_command);
     }
     else if (command.forward != 0)
     {

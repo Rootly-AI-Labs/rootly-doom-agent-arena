@@ -34,6 +34,7 @@ from doom_arena_strategy import (
     PLAN_OBJECTIVE_MAX_CHARS,
     PLAN_REASONING_MAX_CHARS,
     PLAN_ROUTE_MAX_WAYPOINTS,
+    PLAN_SUMMARY_MAX_CHARS,
     blocked_grid_cells,
     expand_strategy,
     make_strategy_observation,
@@ -66,7 +67,7 @@ PARTICIPANT_INTENT_HEADER = (
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
     "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\t"
-    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n"
+    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_summary\tplan_route_cells\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -212,10 +213,12 @@ class DoomArenaClient:
         return self.client_name or "MCP agent"
 
     def get_arena_state(self, run_id: str | None = None) -> str:
-        rows = parse_state(self._request("GET", "/api/arena/state"))
+        state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
+        rows = parse_state(self._request("GET", state_path))
         state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
-        if run_id and state.get("run_id") not in {"", run_id}:
-            raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
+        if run_id:
+            state["requested_run_id"] = run_id
+            state["run_id_changed"] = bool(state.get("run_id") and state.get("run_id") != run_id)
         return json.dumps(state, indent=2)
 
     def get_player_observation(self) -> str:
@@ -227,27 +230,58 @@ class DoomArenaClient:
         return json.dumps(make_enemy_observation(state), indent=2)
 
     def get_match_result(self, run_id: str | None = None) -> str:
-        rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         duel_session = self._read_duel_session_status()
-        if run_id and state.get("run_id") not in {"", run_id}:
-            raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
+        active_run_id = str(duel_session.get("run_id") or self.run_id or "")
+        state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
+        state_error = ""
+        try:
+            rows = parse_state(self._request("GET", state_path))
+            state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
+        except DoomArenaError as exc:
+            state_error = str(exc)
+            state = {
+                "run_id": active_run_id,
+                "scenario_id": duel_session.get("scenario_id", self.scenario_id),
+                "mode": duel_session.get("arena_mode", "duel"),
+                "phase": "transitioning",
+                "winner": "",
+                "terminal_reason": "state_not_ready",
+                "elapsed_time_seconds": 0,
+                "timeout_seconds": duel_session.get("timeout_seconds", 180),
+                "player_1": {},
+                "player_2": {},
+            }
+        state_run_id = str(state.get("run_id", ""))
+        requested_run_id = str(run_id or "")
+        run_id_changed = bool(requested_run_id and active_run_id and active_run_id != requested_run_id)
         return json.dumps(
             {
-                "run_id": state.get("run_id", ""),
+                "run_id": active_run_id if run_id_changed else (state_run_id or active_run_id),
+                "active_run_id": active_run_id,
+                "state_run_id": state_run_id,
+                "result_run_id": state_run_id,
+                "requested_run_id": requested_run_id,
+                "run_id_changed": run_id_changed,
+                "state_available": not bool(state_error),
+                "state_error": state_error,
                 "scenario_id": state.get("scenario_id", ""),
                 "mode": state.get("mode", ""),
                 "phase": state.get("phase", ""),
                 "winner": state.get("winner", ""),
                 "terminal_reason": state.get("terminal_reason", ""),
                 "elapsed_time_seconds": state.get("elapsed_time_seconds", 0),
-                "timeout_seconds": state.get("timeout_seconds", 120),
+                "timeout_seconds": state.get("timeout_seconds", 180),
                 "duel_session_id": duel_session.get("duel_session_id", ""),
                 "current_round": duel_session.get("current_round", state.get("player_1", {}).get("round")),
                 "total_rounds": duel_session.get("total_rounds", 1),
                 "has_next_round": duel_session.get("has_next_round", False),
                 "player_1": state.get("player_1", {}),
                 "player_2": state.get("player_2", {}),
+                "transition_instruction": (
+                    "run_id changed; start the next match setup with set_participant_ready and sequence_number=1"
+                    if run_id_changed
+                    else ""
+                ),
             },
             indent=2,
         )
@@ -274,6 +308,30 @@ class DoomArenaClient:
         active_plan = self._active_plan_for_observation(participant_id, observation)
         if active_plan:
             observation["active_plan"] = active_plan
+            observation["last_plan"] = {
+                "accepted": bool(active_plan.get("accepted")),
+                "intent_id": active_plan.get("intent_id", ""),
+                "sequence_number": active_plan.get("sequence_number", ""),
+                "objective": active_plan.get("objective", ""),
+                "route_cells": active_plan.get("route_cells", []),
+                "route": active_plan.get("route", []),
+                "engagement_policy": active_plan.get("engagement_policy", ""),
+                "reasoning": active_plan.get("reasoning", ""),
+                "plan_summary": active_plan.get("plan_summary", ""),
+                "issued_at_ms": active_plan.get("issued_at_ms"),
+                "expires_at_ms": active_plan.get("expires_at_ms"),
+            }
+            observation["last_plan_result"] = {
+                "status": active_plan.get("status", ""),
+                "current_waypoint_index": active_plan.get("current_waypoint_index", 0),
+                "current_waypoint_count": active_plan.get("current_waypoint_count", 0),
+                "current_waypoint_cell": active_plan.get("current_waypoint_cell", ""),
+                "current_waypoint": active_plan.get("current_waypoint"),
+                "waypoints_reached": active_plan.get("waypoints_reached", 0),
+                "waypoints_remaining": active_plan.get("waypoints_remaining", 0),
+                "distance_to_waypoint": active_plan.get("distance_to_waypoint"),
+                "distance_to_final_waypoint": active_plan.get("distance_to_final_waypoint"),
+            }
         duel_session = self._read_duel_session_status()
         observation["duel_session_id"] = duel_session.get("duel_session_id", "")
         observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
@@ -386,6 +444,9 @@ class DoomArenaClient:
             "objective": row.get("plan_objective", ""),
             "engagement_policy": row.get("plan_engagement_policy", ""),
             "reasoning": row.get("plan_reasoning", ""),
+            "plan_summary": row.get("plan_summary", ""),
+            "issued_at_ms": int(row.get("issued_at_ms", "0") or 0),
+            "expires_at_ms": int(row.get("expires_at_ms", "0") or 0),
             "route_cells": route_cells,
             "route": [{"x": x, "y": y} for x, y in route_xy],
             "waypoints_reached": reached_count,
@@ -721,6 +782,7 @@ class DoomArenaClient:
         plan_route: str = "",
         plan_engagement_policy: str = "",
         plan_reasoning: str = "",
+        plan_summary: str = "",
         plan_route_cells: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -876,6 +938,7 @@ class DoomArenaClient:
         payload["plan_route"] = plan_route
         payload["plan_engagement_policy"] = plan_engagement_policy
         payload["plan_reasoning"] = plan_reasoning
+        payload["plan_summary"] = plan_summary
         payload["plan_route_cells"] = plan_route_cells
         rationale_text = str(rationale).strip() if rationale else ""
         if rationale_text:
@@ -935,6 +998,7 @@ class DoomArenaClient:
                     "plan_route": plan_route or None,
                     "plan_engagement_policy": plan_engagement_policy or None,
                     "plan_reasoning": plan_reasoning or None,
+                    "plan_summary": plan_summary or None,
                     "plan_route_cells": plan_route_cells or None,
                 },
                 "server_response": parse_optional_json(response_text),
@@ -949,6 +1013,7 @@ class DoomArenaClient:
         objective: str = "",
         engagement_policy: str = "engage_if_visible",
         reasoning: str = "",
+        plan_summary: str = "",
         controller_token: str | None = None,
         sequence_number: Any = None,
     ) -> str:
@@ -956,6 +1021,7 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         objective_text = normalize_plan_objective(objective)
         reasoning_text = normalize_plan_reasoning(reasoning)
+        summary_text = normalize_plan_summary(plan_summary)
         try:
             engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
             current_position = self.current_participant_position(participant_id, allow_spawn_fallback=True)
@@ -974,6 +1040,7 @@ class DoomArenaClient:
                     objective=objective_text,
                     engagement_policy=str(engagement_policy or "engage_if_visible"),
                     reasoning=reasoning_text,
+                    plan_summary=summary_text,
                     sequence_number=sequence_number,
                     error=exc,
                     start_cell=locals().get("start_cell", ""),
@@ -1037,6 +1104,7 @@ class DoomArenaClient:
                 plan_route=route_text,
                 plan_engagement_policy=engagement_policy_text,
                 plan_reasoning=reasoning_text,
+                plan_summary=summary_text,
                 plan_route_cells=";".join(route_cells),
             )
         )
@@ -1045,6 +1113,7 @@ class DoomArenaClient:
             "route": route_cells,
             "engagement_policy": engagement_policy_text,
             "reasoning": reasoning_text,
+            "plan_summary": summary_text,
             "sequence_number": sequence_number,
         }
         result["route_diagnostics"] = {
@@ -1067,6 +1136,7 @@ class DoomArenaClient:
         objective: str,
         engagement_policy: str,
         reasoning: str,
+        plan_summary: str,
         sequence_number: Any,
         error: Exception,
         start_cell: str = "",
@@ -1138,6 +1208,7 @@ class DoomArenaClient:
                 ],
                 "engagement_policy": engagement_policy,
                 "reasoning": reasoning,
+                "plan_summary": plan_summary,
                 "sequence_number": sequence_number,
             },
             "route_diagnostics": {
@@ -1378,7 +1449,7 @@ class DoomArenaClient:
         player_2_model: str = "",
         round_number: int = 1,
         seed: int = 42,
-        timeout_seconds: int = 120,
+        timeout_seconds: int = 180,
     ) -> str:
         payload = {
             "arena_mode": "duel",
@@ -1611,18 +1682,35 @@ class DoomArenaClient:
             headers=headers,
             method=method,
         )
+        base_path = path.split("?", 1)[0]
+        retryable_get = method == "GET" and base_path in {
+            "/api/arena/state",
+            "/api/arena/reset",
+            "/api/arena/participant-ready",
+            "/api/arena/participant-intents",
+        }
+        attempts = 3 if retryable_get else 1
 
-        try:
-            with urllib.request.urlopen(request, timeout=5) as response:
-                return response.read().decode("utf-8", errors="replace")
-        except urllib.error.HTTPError as exc:
-            body = exc.read().decode("utf-8", errors="replace")
-            raise DoomArenaError(f"{method} {path} failed with HTTP {exc.code}: {body}") from exc
-        except OSError as exc:
-            raise DoomArenaError(
-                f"Could not reach Doom Arena server at {self.server_url}. "
-                "Run: py scripts\\doom_arena_server.py --port 8001"
-            ) from exc
+        for attempt in range(attempts):
+            try:
+                with urllib.request.urlopen(request, timeout=5) as response:
+                    return response.read().decode("utf-8", errors="replace")
+            except urllib.error.HTTPError as exc:
+                body = exc.read().decode("utf-8", errors="replace")
+                if retryable_get and exc.code in {404, 409, 500, 502, 503} and attempt + 1 < attempts:
+                    time.sleep(0.15 * (attempt + 1))
+                    continue
+                raise DoomArenaError(f"{method} {path} failed with HTTP {exc.code}: {body}") from exc
+            except OSError as exc:
+                if retryable_get and attempt + 1 < attempts:
+                    time.sleep(0.15 * (attempt + 1))
+                    continue
+                raise DoomArenaError(
+                    f"Could not reach Doom Arena server at {self.server_url}. "
+                    "Run: py scripts\\doom_arena_server.py --port 8001"
+                ) from exc
+
+        raise DoomArenaError(f"{method} {path} failed after retry")
 
     def post_mcp_call_telemetry(self, payload: dict[str, Any]) -> None:
         try:
@@ -1789,6 +1877,10 @@ def normalize_plan_objective(value: Any) -> str:
 
 def normalize_plan_reasoning(value: Any) -> str:
     return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_REASONING_MAX_CHARS]
+
+
+def normalize_plan_summary(value: Any) -> str:
+    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_SUMMARY_MAX_CHARS]
 
 
 def normalize_plan_engagement_policy(value: Any) -> str:
@@ -2172,6 +2264,7 @@ def mcp_plan_telemetry_fields(tool_name: str, arguments: dict[str, Any]) -> dict
         "plan_route_cells": route_cells_text_for_telemetry(arguments.get("route", "")),
         "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
         "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+        "plan_summary": " ".join(str(arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
     }
 
 
@@ -2271,15 +2364,17 @@ def parse_participant_command_rows(body: str) -> list[dict[str, str]]:
 
 def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
+    parse_keys = PARTICIPANT_INTENT_KEYS
     for line_number, line in enumerate(body.splitlines(), 1):
         if not line.strip():
             continue
         parts = line.split("\t")
         if line_number == 1 and parts[0] == "run_id":
+            parse_keys = parts
             continue
         if len(parts) < len(PARTICIPANT_INTENT_LEGACY_KEYS):
             continue
-        row = dict(zip(PARTICIPANT_INTENT_KEYS, parts[:len(PARTICIPANT_INTENT_KEYS)]))
+        row = dict(zip(parse_keys, parts[:len(parse_keys)]))
         row.setdefault("strafe_direction", "auto")
         row.setdefault("movement_bias", "direct")
         row.setdefault("fire_policy", "only_when_aligned")
@@ -2694,7 +2789,7 @@ def make_shared_arena_state(rows: list[dict[str, str]], directional_visibility: 
         "scenario_id": scenario_id,
         "tick": as_int(match, "tick", as_int(player_1_row, "tick")),
         "elapsed_time_seconds": as_float(match, "elapsed_time_seconds", as_float(player_1_row, "elapsed_time_seconds")),
-        "timeout_seconds": as_int(match, "timeout_seconds", as_int(player_1_row, "timeout_seconds", 120)),
+        "timeout_seconds": as_int(match, "timeout_seconds", as_int(player_1_row, "timeout_seconds", 180)),
         "phase": match.get("phase", player_1_row.get("phase", "")),
         "winner": match.get("winner", player_1_row.get("winner", "")),
         "terminal_reason": match.get("terminal_reason", player_1_row.get("terminal_reason", "")),
@@ -2940,7 +3035,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "winner": match.get("winner", participant.get("winner", "")),
             "terminal_reason": match.get("terminal_reason", participant.get("terminal_reason", "")),
             "elapsed_time_seconds": match.get("elapsed_time_seconds", participant.get("elapsed_time_seconds", "")),
-            "timeout_seconds": as_int(match or participant, "timeout_seconds", 120),
+            "timeout_seconds": as_int(match or participant, "timeout_seconds", 180),
         },
         "allowed_intents": sorted(VALID_PARTICIPANT_INTENTS),
         "allowed_styles": sorted(VALID_PARTICIPANT_INTENT_STYLES),
@@ -3277,6 +3372,11 @@ def participant_plan_schema() -> dict[str, Any]:
             },
             "engagement_policy": {"type": "string", "enum": sorted(PLAN_ENGAGEMENT_POLICIES)},
             "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
+            "plan_summary": {
+                "type": "string",
+                "maxLength": PLAN_SUMMARY_MAX_CHARS,
+                "description": "Optional compact public reasoning summary for analysis.",
+            },
             "sequence_number": {"type": "integer", "minimum": 0},
         },
         "required": ["participant_id", "route"],
@@ -3310,7 +3410,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments.get("player_2_model", "")),
             int(arguments.get("round", 1)),
             int(arguments.get("seed", 42)),
-            int(arguments.get("timeout_seconds", 120)),
+            int(arguments.get("timeout_seconds", 180)),
         )
     if name == "get_player_observation":
         return client.get_player_observation()
@@ -3340,6 +3440,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments.get("objective", "")),
             str(arguments.get("engagement_policy", "engage_if_visible")),
             str(arguments.get("reasoning", "")),
+            str(arguments.get("plan_summary", "")),
             optional_string(arguments.get("controller_token")),
             arguments.get("sequence_number"),
         )
