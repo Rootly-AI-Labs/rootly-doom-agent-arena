@@ -7,10 +7,12 @@ This document explains what Doom Arena MCP agents receive, what they send back, 
 The default duel loop is coordinate-route control:
 
 ```text
-get_participant_observation -> choose objective/route/engagement_policy/reasoning -> set_participant_plan -> observe again
+get_participant_observation -> choose route/objective/reasoning -> set_participant_plan -> wait for next get_participant_observation result
 ```
 
 The model does not press movement keys every frame. It chooses a short route in Doom map coordinates. Doom validates hard route legality, writes accepted plans into the existing participant intent TSV path, and the Doom executor follows the submitted waypoints literally while handling frame-level movement, turning, collision, aiming, and firing.
+
+After an accepted plan, `get_participant_observation` is gated by the MCP wrapper. If the agent asks for game state immediately, the call waits until the prior route completes, stalls, expires, or the match leaves combat before returning the next snapshot. This avoids feeding the model mid-action state while a previous route is still executing.
 
 ## Recommended MCP tools for duel agents
 
@@ -45,11 +47,9 @@ Schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "your_goal",
   "route": ["A01", "A02"],
-  "engagement_policy": "engage_if_visible",
-  "reasoning": "short reason",
-  "plan_summary": "goal, risk, fallback in one short line",
+  "objective": "short goal",
+  "reasoning": "optional, max 12 words",
   "sequence_number": 1
 }
 ```
@@ -60,30 +60,19 @@ Fields:
 | --- | --- |
 | `participant_id` | `player_1` or `player_2`. |
 | `controller_token` | Per-player token from the generated prompt. |
-| `objective` | Short free-form goal chosen by the model. |
-| `route` | Up to 16 grid cells such as `M05`, `G05`, `G12`, `M17`. |
-| `engagement_policy` | How to behave while following the route. |
-| `reasoning` | One short sentence for logs/evaluation. |
-| `plan_summary` | Optional compact public reasoning summary for analysis. |
+| `route` | Up to 8 grid cells such as `M05`, `G05`, `G12`, `M17`. |
+| `objective` | Optional short free-form goal chosen by the model. |
+| `reasoning` | Optional public reasoning, capped to 12 words. |
 | `sequence_number` | Increment every decision. Higher values override older policies. |
 
-Allowed `engagement_policy` values:
-
-```text
-engage_if_visible
-avoid_until_target
-hold_fire
-force_fight
-```
-
-`avoid_until_target` prioritizes movement. Doom suppresses attack while the route is still in progress, then normal firing can resume after the route target is reached.
+The default behavior is to shoot when the opponent is visible while following the submitted route.
 
 Route constraints:
 
 ```text
 rows A-W
 columns 01-33
-maximum 16 cells
+maximum 8 cells
 every consecutive segment must be horizontal or vertical
 diagonal segments are rejected
 cells cannot be # wall cells
@@ -99,7 +88,6 @@ The server stores the accepted plan as:
 ```text
 plan_objective
 plan_route
-plan_engagement_policy
 plan_reasoning
 plan_route_cells
 ```
@@ -111,16 +99,11 @@ Those fields are appended to the participant intent TSV so Doom still consumes o
 In the default hierarchical mode, `get_participant_observation` returns compact route-planning state:
 
 ```text
-control_mode
-participant_id
-opponent_id
 match
 self
 opponent
-tactical
 map
 last_plan
-last_plan_result
 previous_rounds when enabled
 ```
 
@@ -131,8 +114,6 @@ phase
 time_left_seconds
 round
 total_rounds
-has_next_round
-winner
 ```
 
 Important `self` fields:
@@ -140,52 +121,23 @@ Important `self` fields:
 ```text
 health
 ammo
-alive
-x
-y
 cell
 angle
-zone
+weapon
 ```
 
 Important `opponent` fields:
 
 ```text
-alive
 visible
-health if visible
-x if visible
-y if visible
 cell if visible
-distance_bucket
-relative_angle_bucket
-last_seen.age_ms
-last_seen.zone
-last_seen.cell
-```
-
-Important `tactical` fields:
-
-```text
-pressure
-los
-damage_trend
-last_action_result
-stuck_detected
-spin_detected
-repeated_action_count
+last_seen_cell
 ```
 
 Important `map` fields:
 
 ```text
-current_zone
-grid bounds
-cell size
-row/column labels
-blocked cell count
-weapon_pickups_enabled
-pickups
+pickups with id, type, available, cell, distance
 ```
 
 Observations can include `last_plan` and `last_plan_result` after an accepted route command.
@@ -194,36 +146,18 @@ Observations can include `last_plan` and `last_plan_result` after an accepted ro
 
 ```json
 {
-  "accepted": true,
-  "sequence_number": 4,
-  "objective": "take lower shotgun",
-  "route_cells": ["W08", "W17", "R17"],
-  "engagement_policy": "avoid_until_target",
-  "reasoning": "upgrade weapon before forcing contact",
-  "plan_summary": "target lower shotgun, avoid center wall, fight if seen",
-  "issued_at_ms": 123456,
-  "expires_at_ms": 131456
-}
-```
-
-`last_plan_result` is Doom-side execution feedback for that plan:
-
-```json
-{
+  "route": ["W08", "W17", "R17"],
   "status": "active",
-  "current_waypoint_index": 2,
-  "current_waypoint_count": 3,
-  "current_waypoint_cell": "W17",
-  "waypoints_reached": 1,
-  "waypoints_remaining": 2,
-  "distance_to_waypoint": 96,
-  "distance_to_final_waypoint": 512
+  "current": "W17",
+  "result": "progressing"
 }
 ```
 
-These fields are public command/result memory, not hidden chain-of-thought. They expose what was submitted and what happened during execution without telling the model which strategy to choose next.
+This is public command/result memory, not hidden chain-of-thought. It exposes what was submitted and what happened during execution without telling the model which strategy to choose next.
 
-`active_plan` remains as a compatibility alias for older clients. It includes the objective, route cells, current waypoint, current waypoint index/count, distance to the current waypoint, waypoints reached, waypoints remaining, status, and distance to the final waypoint.
+The copied MCP prompt no longer embeds the full ASCII map. The UI exposes a separate `Map Reference` copy panel with the full static ASCII map, legend, blocked cells, and static resource cells for users who want to provide that context.
+
+Reasons include `plan_ready`, `plan_stalled`, `wait_timeout`, and `state_unavailable`.
 
 Example `map` block:
 

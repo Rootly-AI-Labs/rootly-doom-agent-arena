@@ -1172,6 +1172,25 @@
                 border-color: rgba(184, 233, 134, 0.42);
             }
 
+            .duel-map-reference-card {
+                margin-top: 8px;
+                min-height: 0;
+            }
+
+            .duel-map-reference-card summary {
+                cursor: pointer;
+                color: #93a87a;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+
+            .duel-map-reference-card textarea {
+                margin-top: 8px;
+                min-height: 160px;
+                height: 160px;
+            }
+
             .duel-player-log {
                 margin-top: 10px;
                 padding-top: 8px;
@@ -1531,6 +1550,14 @@
                                 <textarea id="duel-p2-prompt" readonly placeholder="Click Start Benchmark to generate the Player 2 prompt."></textarea>
                             </div>
                         </div>
+                        <details class="duel-prompt-card duel-map-reference-card" id="duel-map-reference-card">
+                            <summary>Map Reference</summary>
+                            <div class="duel-prompt-card-header">
+                                <div class="duel-prompt-title">Full ASCII map and blocked cells</div>
+                                <button type="button" id="duel-copy-map-reference">Copy Map Reference</button>
+                            </div>
+                            <textarea id="duel-map-reference" readonly placeholder="Click Start Benchmark to generate the map reference."></textarea>
+                        </details>
                     </div>
                     <div id="arena-launcher-status"></div>
                     <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
@@ -3668,7 +3695,12 @@
                     "patrol_upper",
                     "patrol_lower",
                     "flank_upper",
-                    "flank_lower"
+                    "flank_lower",
+                    "STATIC MAP FACTS",
+                    "STATIC RESOURCES",
+                    "ASCII MAP",
+                    "engagement_policy",
+                    "plan_summary"
                 ];
                 var text = String(prompt || "");
 
@@ -3705,6 +3737,9 @@
                 }
                 if (!merged.player_2_prompt && stored.player_2_prompt) {
                     merged.player_2_prompt = stored.player_2_prompt;
+                }
+                if (!merged.map_reference && stored.map_reference) {
+                    merged.map_reference = stored.map_reference;
                 }
                 if (!merged.results_dir && stored.results_dir) {
                     merged.results_dir = stored.results_dir;
@@ -3771,6 +3806,7 @@
 
                 setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
                 setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+                setPromptText("duel-map-reference", currentDuelSession.map_reference || "");
                 if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
                     markPromptSettingsSynced();
                 }
@@ -3843,6 +3879,7 @@
                 clearStoredDuelSessionForReload();
                 setPromptText("duel-p1-prompt", "");
                 setPromptText("duel-p2-prompt", "");
+                setPromptText("duel-map-reference", "");
                 renderLogLines("duel-p1-log", []);
                 renderLogLines("duel-p2-log", []);
                 clearDuelDeathOverlays();
@@ -5641,6 +5678,28 @@
                 };
             }
 
+            function stablePovContentCrop(state, imageData, width, height) {
+                var crop = povContentCrop(imageData, width, height) || {
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height,
+                };
+
+                if (!state.stableCrop || state.stableCrop.frameWidth !== width || state.stableCrop.frameHeight !== height) {
+                    state.stableCrop = {
+                        frameWidth: width,
+                        frameHeight: height,
+                        x: crop.x,
+                        y: crop.y,
+                        width: crop.width,
+                        height: crop.height,
+                    };
+                }
+
+                return state.stableCrop;
+            }
+
             function paintPovImageData(label, canvas, state, width, height) {
                 var crop;
                 var sourceContext;
@@ -5651,8 +5710,8 @@
                     return;
                 }
 
-                crop = povContentCrop(state.imageData, width, height);
-                if (!crop) {
+                crop = stablePovContentCrop(state, state.imageData, width, height);
+                if (crop.x === 0 && crop.y === 0 && crop.width === width && crop.height === height) {
                     state.context.putImageData(state.imageData, 0, 0);
                     return;
                 }
@@ -6445,6 +6504,11 @@
                     event.stopPropagation();
                     disableDoomPointerCapture();
                     copyPromptText("duel-p2-prompt", event.currentTarget);
+                });
+                document.getElementById("duel-copy-map-reference").addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    disableDoomPointerCapture();
+                    copyPromptText("duel-map-reference", event.currentTarget);
                 });
 
                 var schedulePromptPreview = (function () {

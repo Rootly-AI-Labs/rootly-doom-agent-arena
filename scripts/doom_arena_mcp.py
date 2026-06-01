@@ -99,6 +99,10 @@ PLAN_ROUTE_LEASE_MS = 16000
 PLAN_ROUTE_WALL_CLEARANCE_UNITS = 24
 PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
 PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
+OBSERVATION_WAIT_FOR_PLAN_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_FOR_PLAN_MS", "12000"))
+OBSERVATION_WAIT_POLL_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_POLL_MS", "250"))
+OBSERVATION_WAIT_STALLED_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_STALLED_MS", "1500"))
+OBSERVATION_WAIT_MIN_PROGRESS_UNITS = 8
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MAP_ASCII_PATH = REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_ascii.txt"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
@@ -300,12 +304,91 @@ class DoomArenaClient:
         limit = clamp_int(limit, 1, 5000, 25)
         return json.dumps({"events": rows[-limit:]}, indent=2)
 
-    def get_participant_observation(self, participant_id: str, controller_token: str | None = None) -> str:
-        participant_id = normalize_participant_id(participant_id)
-        self._verify_controller_token(participant_id, controller_token)
+    def _read_participant_observation_and_plan(self, participant_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
         state = parse_state(self._request("GET", "/api/arena/state"))
         observation = make_participant_observation(state, participant_id)
         active_plan = self._active_plan_for_observation(participant_id, observation)
+        return observation, active_plan
+
+    def _plan_observation_wait_done(self, observation: dict[str, Any], active_plan: dict[str, Any]) -> bool:
+        match_block = observation.get("match", {}) if isinstance(observation.get("match"), dict) else {}
+        phase = str(match_block.get("phase", ""))
+        if phase != "combat":
+            return True
+        if not active_plan:
+            return True
+        if str(active_plan.get("status", "")) == "complete":
+            return True
+        try:
+            expires_at_ms = int(active_plan.get("expires_at_ms") or 0)
+        except (TypeError, ValueError):
+            expires_at_ms = 0
+        return bool(expires_at_ms and expires_at_ms <= now_ms())
+
+    def _wait_for_previous_plan_before_observation(self, participant_id: str) -> dict[str, Any]:
+        deadline_ms = now_ms() + max(0, OBSERVATION_WAIT_FOR_PLAN_MS)
+        started_ms = now_ms()
+        last_signature: tuple[Any, ...] | None = None
+        last_distance: int | None = None
+        last_progress_ms = started_ms
+        active_plan_seen = False
+
+        while True:
+            try:
+                observation, active_plan = self._read_participant_observation_and_plan(participant_id)
+            except DoomArenaError:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "state_unavailable",
+                }
+
+            if self._plan_observation_wait_done(observation, active_plan):
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "plan_ready",
+                    "active_plan_seen": active_plan_seen,
+                }
+
+            active_plan_seen = True
+            signature = (
+                active_plan.get("intent_id"),
+                active_plan.get("current_waypoint_index"),
+                active_plan.get("current_waypoint_cell"),
+                active_plan.get("waypoints_reached"),
+            )
+            try:
+                distance = int(active_plan.get("distance_to_waypoint") or 0)
+            except (TypeError, ValueError):
+                distance = None
+
+            made_progress = signature != last_signature
+            if distance is not None and last_distance is not None:
+                made_progress = made_progress or distance <= last_distance - OBSERVATION_WAIT_MIN_PROGRESS_UNITS
+            if made_progress:
+                last_signature = signature
+                last_distance = distance
+                last_progress_ms = now_ms()
+
+            if now_ms() - last_progress_ms >= OBSERVATION_WAIT_STALLED_MS:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "plan_stalled",
+                    "active_plan_seen": active_plan_seen,
+                }
+            if now_ms() >= deadline_ms:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "wait_timeout",
+                    "active_plan_seen": active_plan_seen,
+                }
+
+            time.sleep(max(50, OBSERVATION_WAIT_POLL_MS) / 1000.0)
+
+    def get_participant_observation(self, participant_id: str, controller_token: str | None = None) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        wait_info = self._wait_for_previous_plan_before_observation(participant_id)
+        observation, active_plan = self._read_participant_observation_and_plan(participant_id)
         if active_plan:
             observation["active_plan"] = active_plan
             observation["last_plan"] = {
@@ -332,6 +415,8 @@ class DoomArenaClient:
                 "distance_to_waypoint": active_plan.get("distance_to_waypoint"),
                 "distance_to_final_waypoint": active_plan.get("distance_to_final_waypoint"),
             }
+        if wait_info.get("waited_ms"):
+            observation["observation_wait"] = wait_info
         duel_session = self._read_duel_session_status()
         observation["duel_session_id"] = duel_session.get("duel_session_id", "")
         observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
@@ -1111,9 +1196,7 @@ class DoomArenaClient:
         result["plan"] = {
             "objective": objective_text,
             "route": route_cells,
-            "engagement_policy": engagement_policy_text,
             "reasoning": reasoning_text,
-            "plan_summary": summary_text,
             "sequence_number": sequence_number,
         }
         result["route_diagnostics"] = {
@@ -1876,7 +1959,7 @@ def normalize_plan_objective(value: Any) -> str:
 
 
 def normalize_plan_reasoning(value: Any) -> str:
-    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_REASONING_MAX_CHARS]
+    return " ".join(str(value or "").replace("\t", " ").split()[:12])[:PLAN_REASONING_MAX_CHARS]
 
 
 def normalize_plan_summary(value: Any) -> str:
@@ -3353,13 +3436,7 @@ def participant_plan_schema() -> dict[str, Any]:
                     "description": "Grid cell label, e.g. M06. Rows A-W, columns 01-33.",
                 },
             },
-            "engagement_policy": {"type": "string", "enum": sorted(PLAN_ENGAGEMENT_POLICIES)},
             "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
-            "plan_summary": {
-                "type": "string",
-                "maxLength": PLAN_SUMMARY_MAX_CHARS,
-                "description": "Optional compact public reasoning summary for analysis.",
-            },
             "sequence_number": {"type": "integer", "minimum": 0},
         },
         "required": ["participant_id", "route"],

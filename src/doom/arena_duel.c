@@ -88,6 +88,9 @@ static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_AUTOMAP_HEIGHT 384
 #define ARENA_DUEL_VIEW_HALF_ANGLE_DEGREES 45
 #define ARENA_DUEL_HIT_REVEAL_TICKS 140
+#define ARENA_DUEL_PARTICIPANT_RADIUS (10 * FRACUNIT)
+#define ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR 0
+#define ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR 8
 
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
 // P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
@@ -197,6 +200,31 @@ static int ArenaDuel_NormalizedAngleDegrees(angle_t angle)
 
     return degrees;
 }
+
+static void ArenaDuel_ApplyParticipantCollisionProfile(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->radius = ARENA_DUEL_PARTICIPANT_RADIUS;
+    mobj->height = mobjinfo[MT_PLAYER].height;
+}
+
+static void ArenaDuel_DampRouteMomentum(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->momx = (mobj->momx * ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+    mobj->momy = (mobj->momy * ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+}
+
 
 static player_t *ArenaDuel_Player2ViewPlayer(void)
 {
@@ -1424,8 +1452,9 @@ static void ArenaDuel_ThrustTowardRouteWaypoint(
         : ARENA_DUEL_ROUTE_SPEED;
     fine_angle = movement_angle >> ANGLETOFINESHIFT;
     mobj->angle = facing_angle;
-    mobj->momx = FixedMul(speed, finecosine[fine_angle]);
-    mobj->momy = FixedMul(speed, finesine[fine_angle]);
+    ArenaDuel_DampRouteMomentum(mobj);
+    mobj->momx += FixedMul(speed, finecosine[fine_angle]);
+    mobj->momy += FixedMul(speed, finesine[fine_angle]);
 }
 
 static void ArenaDuel_SeparateParticipantsIfStuck(void)
@@ -1619,12 +1648,12 @@ static void ArenaDuel_Player1Attack(void)
 
     if (ready_weapon == wp_shotgun && player->ammo[am_shell] > 0)
     {
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 7; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = mobj->angle + (P_SubRandom() << 18);
-            damage = (P_Random() & 1) ? 10 : 6;
+            damage = 5 * (P_Random() % 3 + 1);
             P_LineAttack(mobj, pellet_angle, MISSILERANGE, slope, damage);
         }
         S_StartSound(mobj, sfx_shotgn);
@@ -1810,12 +1839,12 @@ static void ArenaDuel_Player2Attack(void)
     if (arena_duel_player2_ready_weapon == wp_shotgun
         && arena_duel_player2_ammo_shells > 0)
     {
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 7; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = arena_duel_player2->angle + (P_SubRandom() << 18);
-            damage = (P_Random() & 1) ? 10 : 6;
+            damage = 5 * (P_Random() % 3 + 1);
             P_LineAttack(arena_duel_player2,
                          pellet_angle,
                          MISSILERANGE,
@@ -2284,6 +2313,7 @@ void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
     if (mobj != NULL)
     {
         mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
+        ArenaDuel_ApplyParticipantCollisionProfile(mobj);
     }
     ArenaDuel_LogCollisionProfile("player_1", mobj);
 }
@@ -2418,8 +2448,7 @@ void ArenaDuel_SpawnPlayer2(void)
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
     mobj->angle = angle;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
-    mobj->radius = mobjinfo[MT_PLAYER].radius;
-    mobj->height = mobjinfo[MT_PLAYER].height;
+    ArenaDuel_ApplyParticipantCollisionProfile(mobj);
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;
     strncpy(mobj->arena_entity_id,

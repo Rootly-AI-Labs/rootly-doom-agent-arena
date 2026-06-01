@@ -39,7 +39,7 @@ STRATEGY_REASONING_MAX_CHARS = 120
 COMMIT_MS_MIN = 3000
 COMMIT_MS_MAX = 8000
 COMMIT_MS_DEFAULT = 8000
-PLAN_ROUTE_MAX_WAYPOINTS = 16
+PLAN_ROUTE_MAX_WAYPOINTS = 8
 PLAN_REASONING_MAX_CHARS = 160
 PLAN_SUMMARY_MAX_CHARS = 180
 PLAN_OBJECTIVE_MAX_CHARS = 64
@@ -562,16 +562,10 @@ def strategy_pickups_for_observation(
         item = {
             "id": pickup.get("id", ""),
             "type": pickup_type,
-            "name": pickup.get("name", ""),
             "available": True if live_cells_by_type is None else (pickup_type, pickup_cell) in live_cells_by_type,
             "cell": pickup_cell,
-            "x": pickup.get("x"),
-            "y": pickup.get("y"),
             "distance": pickup_distance(pickup, x, y),
         }
-        for key in ("heals", "max_health", "zone", "purpose"):
-            if key in pickup:
-                item[key] = pickup.get(key)
         pickups.append(item)
     return pickups
 
@@ -708,6 +702,11 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
 
     active_plan = full_observation.get("active_plan") if isinstance(full_observation.get("active_plan"), dict) else None
     last_plan = full_observation.get("last_plan") if isinstance(full_observation.get("last_plan"), dict) else None
+    observation_wait = (
+        full_observation.get("observation_wait")
+        if isinstance(full_observation.get("observation_wait"), dict)
+        else None
+    )
     last_plan_result = (
         full_observation.get("last_plan_result")
         if isinstance(full_observation.get("last_plan_result"), dict)
@@ -759,67 +758,44 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         "unavailable": sum(1 for pickup in pickups if pickup.get("available") is False),
     }
 
+    compact_last_plan = None
+    if last_plan or active_plan or last_plan_result:
+        route_cells = []
+        if isinstance(last_plan, dict):
+            route_cells = last_plan.get("route_cells") or last_plan.get("route") or []
+        if not route_cells and isinstance(active_plan, dict):
+            route_cells = active_plan.get("route_cells") or active_plan.get("route") or []
+        compact_last_plan = {
+            "route": route_cells,
+            "status": (last_plan_result or active_plan or {}).get("status") or "active",
+            "current": (last_plan_result or active_plan or {}).get("current_waypoint_cell")
+                or (last_plan_result or active_plan or {}).get("current_cell"),
+            "result": (last_plan_result or active_plan or {}).get("reason")
+                or tactical_raw.get("last_action_result")
+                or result,
+        }
+
     return {
-        "control_mode": normalize_control_mode(control_mode),
-        "participant_id": participant_id,
-        "opponent_id": opponent_id,
         "match": {
             "phase": match_raw.get("phase"),
             "time_left_seconds": max(0.0, float(match_raw.get("timeout_seconds") or 0) - float(match_raw.get("elapsed_time_seconds") or 0)),
             "round": full_observation.get("current_round", state.get("current_round", 1)),
             "total_rounds": full_observation.get("total_rounds", state.get("total_rounds", 1)),
-            "has_next_round": bool(full_observation.get("has_next_round", state.get("has_next_round", False))),
-            "winner": match_raw.get("winner") or None,
         },
         "self": {
             "health": self_raw.get("health"),
             "ammo": self_raw.get("ammo_bullets"),
-            "alive": bool(self_raw.get("alive")),
-            "x": self_raw.get("x"),
-            "y": self_raw.get("y"),
+            "weapon": self_raw.get("weapon") or self_raw.get("weapon_name") or self_raw.get("ready_weapon"),
             "angle": self_raw.get("angle"),
-            "zone": current_zone,
             "cell": xy_to_grid_cell(self_raw.get("x"), self_raw.get("y")),
         },
         "opponent": {
-            "alive": bool(opponent_raw.get("alive")),
             "visible": opponent_visible,
-            "health": opponent_raw.get("health") if opponent_visible and "health" in opponent_raw else None,
-            "x": opponent_raw.get("x") if opponent_visible and "x" in opponent_raw else None,
-            "y": opponent_raw.get("y") if opponent_visible and "y" in opponent_raw else None,
             "cell": opponent_raw.get("cell") if opponent_visible and "cell" in opponent_raw else None,
-            "distance_bucket": distance_bucket,
-            "relative_angle_bucket": relative_angle_bucket(opponent_raw.get("relative_angle") if opponent_visible else None),
-            "last_seen": {
-                "age_ms": last_seen_age,
-                "zone": bucket.get("last_seen_zone", "unknown"),
-                "cell": bucket.get("last_seen_cell") or None,
-            },
+            "last_seen_cell": bucket.get("last_seen_cell") or None,
         },
-        "tactical": {
-            "pressure": pressure,
-            "los": los,
-            "damage_trend": damage_trend(self_raw.get("last_damage_dealt_ms"), self_raw.get("last_damage_taken_ms"), current_ms),
-            "last_action_result": result,
-            "stuck_detected": stuck,
-            "spin_detected": spin,
-            "repeated_action_count": int(bucket.get("repeated_action_count") or 0),
-        },
-        "last_plan": last_plan,
-        "last_plan_result": last_plan_result,
-        "active_plan": active_plan,
-        "last_route_result": last_route_result,
+        "last_plan": compact_last_plan,
         "map": {
-            "bounds": dict(MAP_BOUNDS),
-            "cell_size": MAP_CELL_SIZE,
-            "rows": MAP_ROWS,
-            "cols": MAP_COLS,
-            "row_labels": f"A-{chr(ord('A') + MAP_ROWS - 1)}",
-            "col_labels": f"01-{MAP_COLS:02d}",
-            "blocked_cell_count": len(blocked_grid_cells()),
-            "current_zone": current_zone,
-            "weapon_pickups_enabled": map_block.get("weapon_pickups_enabled", True),
-            "pickup_summary": pickup_summary,
             "pickups": pickups,
         },
     }

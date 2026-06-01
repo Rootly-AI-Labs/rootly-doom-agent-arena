@@ -73,20 +73,7 @@ def write_controller_tokens(run_dir: Path, tokens: dict[str, Any]) -> None:
 
 
 def _map_blueprint_section(enabled: bool, scenario_id: str) -> str:
-    if not enabled:
-        return ""
-    blueprint = load_map_blueprint(scenario_id)
-    if not blueprint:
-        return ""
-    return f"""
-Map blueprint:
-Coordinates in your observations use the same frame as the blueprint below.
-North is +Y, East is +X. Movement is collision-pathed by the autopilot - use
-the blueprint for strategic reasoning, not for exact pathing.
-
-{blueprint}
-
-"""
+    return ""
 
 
 def _nearest_spawn_marker_cell(rows: list[list[str]], row: int, col: int) -> tuple[int, int]:
@@ -125,6 +112,25 @@ def _variant_ascii_map(blueprint: dict[str, Any]) -> str:
     return "\n".join(rows)
 
 
+def _map_reference_ascii_map(blueprint: dict[str, Any], enable_weapon_pickups: bool = True) -> str:
+    raw_ascii = str(blueprint.get("ascii_map", "")).strip()
+    if not raw_ascii:
+        return ""
+    rows = []
+    for raw_row in raw_ascii.splitlines():
+        if not raw_row:
+            continue
+        rows.append(
+            "".join(
+                "."
+                if char in {"1", "2"} or (char == "S" and not enable_weapon_pickups)
+                else char
+                for char in raw_row
+            )
+        )
+    return "\n".join(rows)
+
+
 def _blocked_cell_list(ascii_map: str) -> str:
     cells = []
     for row_index, row_text in enumerate(ascii_map.splitlines()):
@@ -148,7 +154,7 @@ def _static_pickup_context(enable_weapon_pickups: bool, blueprint: dict[str, Any
     return "\n".join(lines) if lines else "- none"
 
 
-def _static_map_context_section(
+def _static_map_summary_section(
     scenario_id: str,
     participant_id: str = "",
     enable_weapon_pickups: bool = True,
@@ -158,34 +164,46 @@ def _static_map_context_section(
     except Exception:
         return ""
     bounds = blueprint.get("bounds", {})
-    spawns = blueprint.get("spawns", {})
-    own_spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
-    own_spawn_line = ""
-    if own_spawn:
-        own_spawn_cell = _xy_to_grid_cell(own_spawn.get("x"), own_spawn.get("y"))
-        own_spawn_line = (
-            f"- Your selected spawn: x={own_spawn.get('x')} y={own_spawn.get('y')} "
-            f"cell={own_spawn_cell} angle={own_spawn.get('angle_deg')}. Opponent spawn is intentionally omitted.\n"
-        )
-    ascii_map = _variant_ascii_map(blueprint)
-    if not ascii_map:
-        return ""
-    blocked_cells = _blocked_cell_list(ascii_map)
+    resource_legend = "`H` health" + (", `S` shotgun" if enable_weapon_pickups else "")
     return f"""
-STATIC MAP FACTS
+MAP FACTS
 - Map: `{blueprint.get('map_id', 'duel_e1m8')}` / variant `{blueprint.get('scenario_id', scenario_id)}`.
 - Cell size: `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units.
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
-- Coordinate frame: +x east/right, -x west/left, +y north/up, -y south/down.
 - Grid frame: rows `A-W` north/top to south/bottom; columns `01-33` west/left to east/right.
-{own_spawn_line}- Legend: `.` walkable, `#` wall/collision/sight blocker.
-- Opponent spawn and player markers are omitted.
-- Blocked route cells: {blocked_cells}.
+- Legend: `.` walkable, `#` wall, {resource_legend}.
+- Full ASCII map reference is available separately in the UI.
+- Observations report live pickup `available`, `cell`, and `distance`.
 
-STATIC RESOURCES
+"""
+
+
+def build_map_reference(scenario_id: str, enable_weapon_pickups: bool = True) -> str:
+    try:
+        blueprint = load_geometry_blueprint(scenario_id)
+    except Exception:
+        return ""
+    bounds = blueprint.get("bounds", {})
+    ascii_map = _map_reference_ascii_map(blueprint, enable_weapon_pickups=enable_weapon_pickups)
+    if not ascii_map:
+        return ""
+    blocked_cells = _blocked_cell_list(ascii_map)
+    resource_legend = "`H` health" + (", `S` shotgun" if enable_weapon_pickups else "")
+    return f"""# Doom Arena Map Reference
+
+Map: `{blueprint.get('map_id', 'duel_e1m8')}` / variant `{blueprint.get('scenario_id', scenario_id)}`
+Cell size: `{blueprint.get('cell_size', 64)} x {blueprint.get('cell_size', 64)}` Doom units
+Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}
+Grid: rows `A-W` north/top to south/bottom; columns `01-33` west/left to east/right
+Legend: `.` walkable, `#` wall/collision/sight blocker, {resource_legend}
+
+Static resources:
 {_static_pickup_context(enable_weapon_pickups, blueprint)}
 
-ASCII MAP
+Blocked route cells:
+{blocked_cells}
+
+ASCII map:
 ```text
 {ascii_map}
 ```
@@ -256,16 +274,17 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {session_line}
 ROLE AND LOOP
 - Control only `{participant_id}`. Never control `{opponent_id}`.
-- Use `set_participant_plan` for normal play. Do not use `set_participant_strategy`, `set_participant_intent`, detailed tactical parameters, or low-level movement/input tools.
-- Tools: `set_participant_ready`, `get_participant_observation`, `set_participant_plan`, `wait_for_match_start`, `get_match_result`, `stop_participant_intent`, optional `get_duel_events`.
+- Use only `set_participant_plan` for normal play.
+- Required loop tools: `set_participant_ready`, `get_participant_observation`, `set_participant_plan`, `wait_for_match_start`, `get_match_result`, `stop_participant_intent`.
 - Start: call `set_participant_ready`, observe, send opening `set_participant_plan` with `sequence_number=1`, then call `wait_for_match_start`.
-- Combat loop: observe -> send one plan -> observe again. Increment `sequence_number` every plan. Do not sleep or wait for the lease.
+- Combat loop: observe -> send one plan -> call `get_participant_observation` once and wait for its result. The observation call is server-gated until the prior route completes, stalls, expires, or the match state changes. Increment `sequence_number` every plan.
+- Do not issue parallel or repeated observation calls while an observation call is pending.
 - Keep playing until `match.phase="finished"`; on the final match, `has_next_round=false` can appear before the match is finished.
 
 OBSERVATION
-- Use `match`, `self`, `opponent`, `tactical`, `map`, `last_plan`, `last_plan_result`, and `active_plan` when present.
-- `last_plan` is your last accepted public MCP plan. `last_plan_result` is neutral execution feedback for that plan.
-- Static map facts are given once below; observations provide live position, visibility, route status, and pickup availability.
+- Use only the compact fields: `match`, `self`, `opponent`, `map`, `last_plan`, and `previous_rounds` when present.
+- `last_plan` gives neutral execution feedback for your prior public route command.
+- Static map facts are summarized below; the full ASCII map is separate from this prompt.
 
 ACTION SCHEMA
 
@@ -273,27 +292,22 @@ ACTION SCHEMA
 {{
   "participant_id": "{participant_id}",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}",
-  "objective": "your_goal",
   "route": ["A01", "A02"],
-  "engagement_policy": "engage_if_visible",
-  "reasoning": "short reason",
-  "plan_summary": "goal, risk, fallback in one short line",
+  "objective": "short goal",
+  "reasoning": "optional, max 12 words",
   "sequence_number": 1
 }}
 ```
 
 ROUTE FACTS
-- `objective` and `reasoning` are free text for planning/logs.
-- `plan_summary` is optional; use one short public summary if useful for analysis.
-- `engagement_policy`: `engage_if_visible`, `avoid_until_target`, `hold_fire`, or `force_fight`.
-- `route` is up to 16 grid cells. Rows `A-W` run north/top to south/bottom; columns `01-33` run west/left to east/right.
-- Each cell is `64 x 64` Doom units; the server moves to each cell center.
-- Consecutive route cells must share a row or column. Diagonal segments are rejected.
-- Waypoints inside walls and segments crossing walls are rejected.
-- Accepted routes are executed literally. The Doom executor handles frame-level movement and firing only; it does not choose lanes, insert route cells, or repair your route.
-- If observations include `last_plan` or `last_plan_result`, treat them as public feedback about the previous route execution, not hidden chain-of-thought.
+- `route` is up to 8 grid cells like `A01`.
+- Consecutive cells must be horizontal or vertical; diagonals are rejected.
+- Do not route through `#` wall cells.
+- `objective` is free text. `reasoning` is optional and capped to 12 words.
+- Doom executes accepted routes literally and handles frame-level movement/firing.
+- The default behavior is to shoot if visible while following the route.
 
-{_static_map_context_section(scenario_id, participant_id, enable_weapon_pickups)}
+{_static_map_summary_section(scenario_id, participant_id, enable_weapon_pickups)}
 
 {stop_rules}
 

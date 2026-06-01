@@ -26,6 +26,7 @@ from urllib.parse import parse_qs, urlparse
 from doom_arena_duel_prompts import (
     RESULTS_ROOT,
     build_controller_tokens,
+    build_map_reference,
     instructions as render_participant_instructions,
     write_controller_tokens,
 )
@@ -3491,10 +3492,15 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             control_mode=self.server.control_mode,
             enable_weapon_pickups=self.server.enable_weapon_pickups,
         )
+        map_reference = build_map_reference(
+            self.server.scenario_id,
+            enable_weapon_pickups=self.server.enable_weapon_pickups,
+        )
         player_1_path = run_dir / "player_1_mcp_instructions.md"
         player_2_path = run_dir / "player_2_mcp_instructions.md"
         player_1_path.write_text(player_1_instructions, encoding="utf-8")
         player_2_path.write_text(player_2_instructions, encoding="utf-8")
+        (run_dir / "map_reference.md").write_text(map_reference, encoding="utf-8")
         self.server.duel_player_1_prompt = player_1_instructions
         self.server.duel_player_2_prompt = player_2_instructions
         self.server.duel_session_id = duel_session_id
@@ -3548,6 +3554,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "player_2_instructions": str(player_2_path),
                 "player_1_prompt": player_1_instructions,
                 "player_2_prompt": player_2_instructions,
+                "map_reference": map_reference,
                 "decision_cadence_ms": decision_cadence_ms,
                 "intent_duration_ms": intent_duration_ms,
                 "hide_enemy_position": self.server.hide_enemy_position,
@@ -3630,6 +3637,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             results_dir = round_results_dir
         player_1_prompt = self.duel_prompt_text("player_1")
         player_2_prompt = self.duel_prompt_text("player_2")
+        map_reference = build_map_reference(
+            self.server.scenario_id,
+            enable_weapon_pickups=self.server.enable_weapon_pickups,
+        )
         payload = {
             "ok": True,
             "run_id": self.server.run_id,
@@ -3648,6 +3659,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             "round_results_dir": str(round_results_dir),
             "player_1_prompt": player_1_prompt,
             "player_2_prompt": player_2_prompt,
+            "map_reference": map_reference,
             "hide_enemy_position": self.server.hide_enemy_position,
             "randomize_spawns": self.server.duel_randomize_spawns,
             "rotate_all_maps": len(self.server.duel_scenario_pool) > 1 and not self.server.duel_randomize_spawns,

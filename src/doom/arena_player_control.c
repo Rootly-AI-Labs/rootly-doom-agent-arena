@@ -27,6 +27,8 @@
 #define ARENA_PLAYER_ROUTE_TURN_DAMPING_DISTANCE 64
 #define ARENA_PLAYER_ROUTE_TURN_DAMPING_SPEED ((ARENA_PLAYER_FORWARD_SPEED * 2048) * 4)
 #define ARENA_PLAYER_ROUTE_COMBAT_FACE_DISTANCE 1024
+#define ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR 0
+#define ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR 8
 #define ARENA_PLAYER_TURN_SPEED 1280
 
 typedef struct
@@ -133,6 +135,19 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
     ticcmd_t *cmd,
     const arena_participant_autopilot_command_t *command);
 
+static void Arena_PlayerDampRouteMomentum(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->momx = (mobj->momx * ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+    mobj->momy = (mobj->momy * ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+}
+
 static void Arena_PlayerApplyRouteWaypointMovement(
     player_t *player,
     mobj_t *opponent,
@@ -180,8 +195,9 @@ static void Arena_PlayerApplyRouteWaypointMovement(
         : ARENA_PLAYER_ROUTE_SPEED;
     fine_angle = movement_angle >> ANGLETOFINESHIFT;
     player->mo->angle = facing_angle;
-    player->mo->momx = FixedMul(speed, finecosine[fine_angle]);
-    player->mo->momy = FixedMul(speed, finesine[fine_angle]);
+    Arena_PlayerDampRouteMomentum(player->mo);
+    player->mo->momx += FixedMul(speed, finecosine[fine_angle]);
+    player->mo->momy += FixedMul(speed, finesine[fine_angle]);
 }
 
 static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
