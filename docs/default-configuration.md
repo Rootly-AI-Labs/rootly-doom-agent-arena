@@ -38,13 +38,13 @@ Default action schema:
 }
 ```
 
-Routes use grid cells (`A-W`, `01-33`) instead of raw Doom coordinates. A route can contain up to 16 cells, and the server rejects waypoint segments that cross blocked `#` wall cells. The old `set_participant_strategy` category/action schema remains for compatibility, but it is not the default recommendation.
+Routes use grid cells (`A-W`, `01-33`) instead of raw Doom coordinates. A route can contain up to 16 cells. Every consecutive segment must be horizontal or vertical, and the server rejects diagonal segments, blocked `#` wall cells, blocked-cell crossings, and segments that pass too close to wall corners. The old `set_participant_strategy` category/action schema remains for compatibility, but it is not the default recommendation.
 
 When an agent uses `engagement_policy=avoid_until_target`, Doom follows the route first and suppresses attack until the active route is complete. This is intended for healing or resource routes where stopping to trade shots defeats the plan.
 
 ## Fog of war
 
-Fog of war is enabled by default. Agents always know their own position, but opponent exact coordinates are hidden unless visible from that participant's point of view.
+Fog of war is enabled by default. Agents always know their own position. Opponent coordinates and live distance/health signals are exposed only while the opponent is currently visible from that participant's view cone and the ASCII map path between them does not cross a wall cell. After contact is lost behind a wall, observations keep only stale `last_seen` memory rather than live tracking.
 
 ## Static map prompt
 

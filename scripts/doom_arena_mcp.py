@@ -33,6 +33,8 @@ from doom_arena_strategy import (
     PLAN_OBJECTIVE_MAX_CHARS,
     PLAN_REASONING_MAX_CHARS,
     PLAN_ROUTE_MAX_WAYPOINTS,
+    PLAN_SUMMARY_MAX_CHARS,
+    blocked_grid_cells,
     expand_strategy,
     make_strategy_observation,
     normalize_control_mode,
@@ -64,7 +66,7 @@ PARTICIPANT_INTENT_HEADER = (
     "retreat_if_closer_than\tpush_if_farther_than\tlos_lost_action\tstuck_recovery_strategy\tmovement_primitive\t"
     "turn_policy\tnavigation_target\tfire_mode\tintent_raw\t"
     "strategy_source\tstrategy_category\tstrategy_action\tstrategy_intensity\tstrategy_commit_ms\tstrategy_objective\tstrategy_target_zone\tstrategy_reasoning\t"
-    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_route_cells\n"
+    "plan_objective\tplan_route\tplan_engagement_policy\tplan_reasoning\tplan_summary\tplan_route_cells\n"
 )
 PARTICIPANT_READY_HEADER = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 PARTICIPANT_READY_KEYS = ["run_id", "scenario_id", "participant_id", "ready_at_ms", "status"]
@@ -93,6 +95,13 @@ VALID_FIRE_MODES = {"auto", "hold_fire", "fire_when_aligned", "single_shot", "bu
 PARTICIPANT_VIEW_HALF_ANGLE_DEGREES = 45
 PARTICIPANT_HIT_REVEAL_MS = 4000
 PLAN_ROUTE_LEASE_MS = 16000
+PLAN_ROUTE_WALL_CLEARANCE_UNITS = 24
+PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
+PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
+OBSERVATION_WAIT_FOR_PLAN_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_FOR_PLAN_MS", "12000"))
+OBSERVATION_WAIT_POLL_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_POLL_MS", "250"))
+OBSERVATION_WAIT_STALLED_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_STALLED_MS", "1500"))
+OBSERVATION_WAIT_MIN_PROGRESS_UNITS = 8
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MAP_ASCII_PATH = REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_ascii.txt"
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
@@ -167,10 +176,12 @@ class DoomArenaClient:
         return self.client_name or "MCP agent"
 
     def get_arena_state(self, run_id: str | None = None) -> str:
-        rows = parse_state(self._request("GET", "/api/arena/state"))
+        state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
+        rows = parse_state(self._request("GET", state_path))
         state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
-        if run_id and state.get("run_id") not in {"", run_id}:
-            raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
+        if run_id:
+            state["requested_run_id"] = run_id
+            state["run_id_changed"] = bool(state.get("run_id") and state.get("run_id") != run_id)
         return json.dumps(state, indent=2)
 
     def get_player_observation(self) -> str:
@@ -182,27 +193,58 @@ class DoomArenaClient:
         return json.dumps(make_enemy_observation(state), indent=2)
 
     def get_match_result(self, run_id: str | None = None) -> str:
-        rows = parse_state(self._request("GET", "/api/arena/state"))
-        state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         duel_session = self._read_duel_session_status()
-        if run_id and state.get("run_id") not in {"", run_id}:
-            raise DoomArenaError(f"latest state run_id {state.get('run_id')} does not match requested {run_id}")
+        active_run_id = str(duel_session.get("run_id") or self.run_id or "")
+        state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
+        state_error = ""
+        try:
+            rows = parse_state(self._request("GET", state_path))
+            state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
+        except DoomArenaError as exc:
+            state_error = str(exc)
+            state = {
+                "run_id": active_run_id,
+                "scenario_id": duel_session.get("scenario_id", self.scenario_id),
+                "mode": duel_session.get("arena_mode", "duel"),
+                "phase": "transitioning",
+                "winner": "",
+                "terminal_reason": "state_not_ready",
+                "elapsed_time_seconds": 0,
+                "timeout_seconds": duel_session.get("timeout_seconds", 180),
+                "player_1": {},
+                "player_2": {},
+            }
+        state_run_id = str(state.get("run_id", ""))
+        requested_run_id = str(run_id or "")
+        run_id_changed = bool(requested_run_id and active_run_id and active_run_id != requested_run_id)
         return json.dumps(
             {
-                "run_id": state.get("run_id", ""),
+                "run_id": active_run_id if run_id_changed else (state_run_id or active_run_id),
+                "active_run_id": active_run_id,
+                "state_run_id": state_run_id,
+                "result_run_id": state_run_id,
+                "requested_run_id": requested_run_id,
+                "run_id_changed": run_id_changed,
+                "state_available": not bool(state_error),
+                "state_error": state_error,
                 "scenario_id": state.get("scenario_id", ""),
                 "mode": state.get("mode", ""),
                 "phase": state.get("phase", ""),
                 "winner": state.get("winner", ""),
                 "terminal_reason": state.get("terminal_reason", ""),
                 "elapsed_time_seconds": state.get("elapsed_time_seconds", 0),
-                "timeout_seconds": state.get("timeout_seconds", 120),
+                "timeout_seconds": state.get("timeout_seconds", 180),
                 "duel_session_id": duel_session.get("duel_session_id", ""),
                 "current_round": duel_session.get("current_round", state.get("player_1", {}).get("round")),
                 "total_rounds": duel_session.get("total_rounds", 1),
                 "has_next_round": duel_session.get("has_next_round", False),
                 "player_1": state.get("player_1", {}),
                 "player_2": state.get("player_2", {}),
+                "transition_instruction": (
+                    "run_id changed; start the next match setup with set_participant_ready and sequence_number=1"
+                    if run_id_changed
+                    else ""
+                ),
             },
             indent=2,
         )
@@ -212,19 +254,128 @@ class DoomArenaClient:
             rows = parse_state(self._request("GET", "/api/arena/events"))
         except DoomArenaError:
             rows = []
+        rows = [
+            row for row in rows
+            if not str(row.get("event", "")).startswith("pickup:")
+        ]
         if run_id:
             rows = [row for row in rows if row.get("run_id", "") in {"", run_id}]
         limit = clamp_int(limit, 1, 5000, 25)
         return json.dumps({"events": rows[-limit:]}, indent=2)
 
-    def get_participant_observation(self, participant_id: str, controller_token: str | None = None) -> str:
-        participant_id = normalize_participant_id(participant_id)
-        self._verify_controller_token(participant_id, controller_token)
+    def _read_participant_observation_and_plan(self, participant_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
         state = parse_state(self._request("GET", "/api/arena/state"))
         observation = make_participant_observation(state, participant_id)
         active_plan = self._active_plan_for_observation(participant_id, observation)
+        return observation, active_plan
+
+    def _plan_observation_wait_done(self, observation: dict[str, Any], active_plan: dict[str, Any]) -> bool:
+        match_block = observation.get("match", {}) if isinstance(observation.get("match"), dict) else {}
+        phase = str(match_block.get("phase", ""))
+        if phase != "combat":
+            return True
+        if not active_plan:
+            return True
+        if str(active_plan.get("status", "")) == "complete":
+            return True
+        try:
+            expires_at_ms = int(active_plan.get("expires_at_ms") or 0)
+        except (TypeError, ValueError):
+            expires_at_ms = 0
+        return bool(expires_at_ms and expires_at_ms <= now_ms())
+
+    def _wait_for_previous_plan_before_observation(self, participant_id: str) -> dict[str, Any]:
+        deadline_ms = now_ms() + max(0, OBSERVATION_WAIT_FOR_PLAN_MS)
+        started_ms = now_ms()
+        last_signature: tuple[Any, ...] | None = None
+        last_distance: int | None = None
+        last_progress_ms = started_ms
+        active_plan_seen = False
+
+        while True:
+            try:
+                observation, active_plan = self._read_participant_observation_and_plan(participant_id)
+            except DoomArenaError:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "state_unavailable",
+                }
+
+            if self._plan_observation_wait_done(observation, active_plan):
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "plan_ready",
+                    "active_plan_seen": active_plan_seen,
+                }
+
+            active_plan_seen = True
+            signature = (
+                active_plan.get("intent_id"),
+                active_plan.get("current_waypoint_index"),
+                active_plan.get("current_waypoint_cell"),
+                active_plan.get("waypoints_reached"),
+            )
+            try:
+                distance = int(active_plan.get("distance_to_waypoint") or 0)
+            except (TypeError, ValueError):
+                distance = None
+
+            made_progress = signature != last_signature
+            if distance is not None and last_distance is not None:
+                made_progress = made_progress or distance <= last_distance - OBSERVATION_WAIT_MIN_PROGRESS_UNITS
+            if made_progress:
+                last_signature = signature
+                last_distance = distance
+                last_progress_ms = now_ms()
+
+            if now_ms() - last_progress_ms >= OBSERVATION_WAIT_STALLED_MS:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "plan_stalled",
+                    "active_plan_seen": active_plan_seen,
+                }
+            if now_ms() >= deadline_ms:
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "wait_timeout",
+                    "active_plan_seen": active_plan_seen,
+                }
+
+            time.sleep(max(50, OBSERVATION_WAIT_POLL_MS) / 1000.0)
+
+    def get_participant_observation(self, participant_id: str, controller_token: str | None = None) -> str:
+        participant_id = normalize_participant_id(participant_id)
+        self._verify_controller_token(participant_id, controller_token)
+        wait_info = self._wait_for_previous_plan_before_observation(participant_id)
+        observation, active_plan = self._read_participant_observation_and_plan(participant_id)
         if active_plan:
             observation["active_plan"] = active_plan
+            observation["last_plan"] = {
+                "accepted": bool(active_plan.get("accepted")),
+                "intent_id": active_plan.get("intent_id", ""),
+                "sequence_number": active_plan.get("sequence_number", ""),
+                "objective": active_plan.get("objective", ""),
+                "route_cells": active_plan.get("route_cells", []),
+                "route": active_plan.get("route", []),
+                "engagement_policy": active_plan.get("engagement_policy", ""),
+                "reasoning": active_plan.get("reasoning", ""),
+                "plan_summary": active_plan.get("plan_summary", ""),
+                "issued_at_ms": active_plan.get("issued_at_ms"),
+                "expires_at_ms": active_plan.get("expires_at_ms"),
+            }
+            observation["last_plan_result"] = {
+                "status": active_plan.get("status", ""),
+                "current_waypoint_index": active_plan.get("current_waypoint_index", 0),
+                "current_waypoint_count": active_plan.get("current_waypoint_count", 0),
+                "current_waypoint_cell": active_plan.get("current_waypoint_cell", ""),
+                "current_waypoint": active_plan.get("current_waypoint"),
+                "waypoints_reached": active_plan.get("waypoints_reached", 0),
+                "waypoints_remaining": active_plan.get("waypoints_remaining", 0),
+                "distance_to_waypoint": active_plan.get("distance_to_waypoint"),
+                "distance_to_final_waypoint": active_plan.get("distance_to_final_waypoint"),
+            }
+        if wait_info.get("waited_ms"):
+            observation["observation_wait"] = wait_info
         duel_session = self._read_duel_session_status()
         observation["duel_session_id"] = duel_session.get("duel_session_id", "")
         observation["current_round"] = duel_session.get("current_round", observation.get("state", {}).get(participant_id, {}).get("round"))
@@ -319,16 +470,31 @@ class DoomArenaClient:
 
         current_cell = route_cells[current_index] if current_index < len(route_cells) else ""
         current_xy = route_xy[current_index] if current_index < len(route_xy) else None
+        route_complete = bool(route_xy and distance_to_waypoint == 0)
+        reached_count = len(route_xy) if route_complete else current_index
+        remaining_count = max(0, len(route_xy) - reached_count)
+        final_distance = None
+        try:
+            if route_xy:
+                final_x, final_y = route_xy[-1]
+                final_distance = int(round(math.dist((float(self_x), float(self_y)), (float(final_x), float(final_y)))))
+        except (TypeError, ValueError):
+            final_distance = None
         return {
             "accepted": True,
-            "status": "active",
+            "status": "complete" if route_complete else "active",
             "intent_id": row.get("intent_id", ""),
             "sequence_number": row.get("sequence_number", ""),
             "objective": row.get("plan_objective", ""),
             "engagement_policy": row.get("plan_engagement_policy", ""),
             "reasoning": row.get("plan_reasoning", ""),
+            "plan_summary": row.get("plan_summary", ""),
+            "issued_at_ms": int(row.get("issued_at_ms", "0") or 0),
+            "expires_at_ms": int(row.get("expires_at_ms", "0") or 0),
             "route_cells": route_cells,
             "route": [{"x": x, "y": y} for x, y in route_xy],
+            "waypoints_reached": reached_count,
+            "waypoints_remaining": remaining_count,
             "current_waypoint_index": current_index + 1 if route_xy else 0,
             "current_waypoint_count": len(route_xy),
             "current_waypoint_cell": current_cell,
@@ -338,9 +504,16 @@ class DoomArenaClient:
                 else None
             ),
             "distance_to_waypoint": distance_to_waypoint,
+            "distance_to_final_waypoint": final_distance,
         }
 
     def participant_spawn_cell(self, participant_id: str) -> str:
+        spawn_position = self.participant_spawn_position(participant_id)
+        if spawn_position is None:
+            return ""
+        return xy_to_grid_cell(spawn_position[0], spawn_position[1])
+
+    def participant_spawn_position(self, participant_id: str) -> tuple[float, float] | None:
         scenario_id = self.scenario_id
         duel_session = self._read_duel_session_status()
         if duel_session.get("scenario_id"):
@@ -348,24 +521,40 @@ class DoomArenaClient:
         try:
             blueprint = load_geometry_blueprint(scenario_id)
         except Exception:
-            return ""
+            return None
         spawns = blueprint.get("spawns", {})
         spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
-        return xy_to_grid_cell(spawn.get("x"), spawn.get("y"))
+        try:
+            return float(spawn.get("x")), float(spawn.get("y"))
+        except (TypeError, ValueError):
+            return None
 
     def current_participant_cell(self, participant_id: str, allow_spawn_fallback: bool = False) -> str:
+        position = self.current_participant_position(participant_id, allow_spawn_fallback=allow_spawn_fallback)
+        if position is None:
+            return ""
+        return xy_to_grid_cell(position[0], position[1])
+
+    def current_participant_position(
+        self,
+        participant_id: str,
+        allow_spawn_fallback: bool = False,
+    ) -> tuple[float, float] | None:
         try:
             state = parse_state(self._request("GET", "/api/arena/state"))
         except DoomArenaError as exc:
             if allow_spawn_fallback and "has not been written yet" in str(exc):
-                return self.participant_spawn_cell(participant_id)
+                return self.participant_spawn_position(participant_id)
             raise
         for row in state:
             if row.get("kind") == "participant" and row.get("entity_id") == participant_id:
-                return xy_to_grid_cell(row.get("x"), row.get("y"))
+                try:
+                    return float(row.get("x")), float(row.get("y"))
+                except (TypeError, ValueError):
+                    break
         if allow_spawn_fallback:
-            return self.participant_spawn_cell(participant_id)
-        return ""
+            return self.participant_spawn_position(participant_id)
+        return None
 
     def _fetch_previous_rounds_recap(
         self,
@@ -433,47 +622,57 @@ class DoomArenaClient:
         latest_state: dict[str, Any] = {}
         ready_participants: set[str] = set()
         intent_participants: set[str] = set()
+        active_run_id = self.run_id
+        active_scenario_id = self.scenario_id
+        state_run_id = ""
+        state_stale = False
         while now_ms() - started_at <= timeout_ms:
+            session_status = self._read_duel_session_status()
+            active_run_id = str(session_status.get("run_id") or self.run_id or "")
+            active_scenario_id = str(session_status.get("scenario_id") or self.scenario_id or "")
             try:
                 rows = parse_state(self._request("GET", "/api/arena/state"))
                 latest_state = make_shared_arena_state(rows)
             except DoomArenaError as exc:
                 latest_state = {"phase": "unavailable", "error": str(exc)}
-            phase = str(latest_state.get("phase", ""))
-            participant_state = latest_state.get(participant_id, {})
-            state_run_id = str(latest_state.get("run_id", self.run_id or ""))
-            state_scenario_id = str(latest_state.get("scenario_id", self.scenario_id or ""))
+            state_run_id = str(latest_state.get("run_id", ""))
+            state_scenario_id = str(latest_state.get("scenario_id", ""))
+            state_stale = bool(
+                active_run_id
+                and state_run_id
+                and state_run_id != active_run_id
+            )
+            phase = "unavailable" if state_stale else str(latest_state.get("phase", ""))
+            participant_state = {} if state_stale else latest_state.get(participant_id, {})
             ready_participants = {
                 row.get("participant_id", "")
                 for row in self._read_participant_ready_rows()
-                if row.get("run_id", "") == state_run_id
-                and row.get("scenario_id", "") == state_scenario_id
+                if row.get("run_id", "") == active_run_id
+                and row.get("scenario_id", "") == active_scenario_id
                 and row.get("participant_id", "") in PARTICIPANTS
                 and row.get("status", "") == "ready"
             }
             try:
                 intent_rows = self._read_participant_intent_rows()
                 current_ms = now_ms()
+                precombat_barrier = phase in {"", "unavailable", "waiting_for_agents", "waiting_for_first_intents"}
                 intent_participants = {
                     row.get("participant_id", "")
                     for row in intent_rows
-                    if row.get("run_id", "") == state_run_id
-                    and row.get("scenario_id", "") == state_scenario_id
+                    if row.get("run_id", "") == active_run_id
+                    and row.get("scenario_id", "") == active_scenario_id
                     and row.get("participant_id", "") in PARTICIPANTS
                     and row.get("intent", "") not in {"", "none"}
-                    and int(row.get("expires_at_ms", "0") or 0) > current_ms
+                    and (precombat_barrier or int(row.get("expires_at_ms", "0") or 0) > current_ms)
                 }
             except DoomArenaError:
                 intent_participants = set()
             if (
-                phase == "waiting_for_agents"
-                and isinstance(participant_state, dict)
-                and str(participant_state.get("intent", "none")) in {"", "none"}
-                and str(participant_state.get("intent_status", "inactive")) == "inactive"
+                phase in {"waiting_for_agents", "waiting_for_first_intents", "unavailable"}
                 and participant_id not in intent_participants
             ):
                 opening_tool = "set_participant_plan" if normalize_control_mode(
-                    self._read_duel_session_status().get("control_mode", CONTROL_MODE_HIERARCHICAL)
+                    session_status.get("control_mode", CONTROL_MODE_HIERARCHICAL)
                 ) == CONTROL_MODE_HIERARCHICAL else "set_participant_intent"
                 return json.dumps(
                     {
@@ -487,7 +686,9 @@ class DoomArenaClient:
                             "also has an opening intent."
                         ),
                         "elapsed_wait_ms": now_ms() - started_at,
-                        "run_id": latest_state.get("run_id", ""),
+                        "run_id": active_run_id,
+                        "state_run_id": latest_state.get("run_id", ""),
+                        "state_stale": state_stale,
                     },
                     indent=2,
                 )
@@ -498,7 +699,9 @@ class DoomArenaClient:
                         "phase": phase,
                         "participant_id": participant_id,
                         "elapsed_wait_ms": now_ms() - started_at,
-                        "run_id": latest_state.get("run_id", ""),
+                        "run_id": active_run_id,
+                        "state_run_id": latest_state.get("run_id", ""),
+                        "state_stale": state_stale,
                     },
                     indent=2,
                 )
@@ -511,7 +714,9 @@ class DoomArenaClient:
                 "participant_id": participant_id,
                 "elapsed_wait_ms": now_ms() - started_at,
                 "timeout_ms": timeout_ms,
-                "run_id": latest_state.get("run_id", ""),
+                "run_id": active_run_id,
+                "state_run_id": latest_state.get("run_id", ""),
+                "state_stale": state_stale,
                 "ready_participants": sorted(ready_participants),
                 "intent_participants": sorted(intent_participants),
                 "missing_ready_participants": sorted(PARTICIPANTS - ready_participants),
@@ -621,6 +826,7 @@ class DoomArenaClient:
         plan_route: str = "",
         plan_engagement_policy: str = "",
         plan_reasoning: str = "",
+        plan_summary: str = "",
         plan_route_cells: str = "",
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
@@ -776,6 +982,7 @@ class DoomArenaClient:
         payload["plan_route"] = plan_route
         payload["plan_engagement_policy"] = plan_engagement_policy
         payload["plan_reasoning"] = plan_reasoning
+        payload["plan_summary"] = plan_summary
         payload["plan_route_cells"] = plan_route_cells
         rationale_text = str(rationale).strip() if rationale else ""
         if rationale_text:
@@ -835,6 +1042,7 @@ class DoomArenaClient:
                     "plan_route": plan_route or None,
                     "plan_engagement_policy": plan_engagement_policy or None,
                     "plan_reasoning": plan_reasoning or None,
+                    "plan_summary": plan_summary or None,
                     "plan_route_cells": plan_route_cells or None,
                 },
                 "server_response": parse_optional_json(response_text),
@@ -849,16 +1057,40 @@ class DoomArenaClient:
         objective: str = "",
         engagement_policy: str = "engage_if_visible",
         reasoning: str = "",
+        plan_summary: str = "",
         controller_token: str | None = None,
         sequence_number: Any = None,
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
-        start_cell = self.current_participant_cell(participant_id, allow_spawn_fallback=True)
-        route_text, route_cells = normalize_plan_route(route, start_cell=start_cell)
         objective_text = normalize_plan_objective(objective)
-        engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
         reasoning_text = normalize_plan_reasoning(reasoning)
+        summary_text = normalize_plan_summary(plan_summary)
+        try:
+            engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
+            current_position = self.current_participant_position(participant_id, allow_spawn_fallback=True)
+            start_cell = xy_to_grid_cell(current_position[0], current_position[1]) if current_position else ""
+            route_text, route_cells, route_rebase = normalize_plan_route(
+                route,
+                start_cell=start_cell,
+                rebase_position=current_position,
+                return_diagnostics=True,
+            )
+        except DoomArenaError as exc:
+            return json.dumps(
+                self.plan_rejection_payload(
+                    participant_id=participant_id,
+                    route=route,
+                    objective=objective_text,
+                    engagement_policy=str(engagement_policy or "engage_if_visible"),
+                    reasoning=reasoning_text,
+                    plan_summary=summary_text,
+                    sequence_number=sequence_number,
+                    error=exc,
+                    start_cell=locals().get("start_cell", ""),
+                ),
+                indent=2,
+            )
 
         intent = "search"
         style = "balanced"
@@ -916,17 +1148,120 @@ class DoomArenaClient:
                 plan_route=route_text,
                 plan_engagement_policy=engagement_policy_text,
                 plan_reasoning=reasoning_text,
+                plan_summary=summary_text,
                 plan_route_cells=";".join(route_cells),
             )
         )
         result["plan"] = {
             "objective": objective_text,
             "route": route_cells,
-            "engagement_policy": engagement_policy_text,
             "reasoning": reasoning_text,
             "sequence_number": sequence_number,
         }
+        result["route_diagnostics"] = {
+            "start_cell": start_cell,
+            "route_cells": route_cells,
+            "waypoint_count": len(route_cells),
+            "validation": "accepted",
+            "rebased": bool(route_rebase.get("dropped_passed_cells")),
+            "dropped_passed_cells": route_rebase.get("dropped_passed_cells", []),
+            "inserted_connector_cells": route_rebase.get("inserted_connector_cells", []),
+            "skip_distance_units": PLAN_ROUTE_SKIP_DISTANCE_UNITS,
+            "passed_distance_margin_units": PLAN_ROUTE_PASSED_MARGIN_UNITS,
+        }
         return json.dumps(result, indent=2)
+
+    def plan_rejection_payload(
+        self,
+        participant_id: str,
+        route: Any,
+        objective: str,
+        engagement_policy: str,
+        reasoning: str,
+        plan_summary: str,
+        sequence_number: Any,
+        error: Exception,
+        start_cell: str = "",
+    ) -> dict[str, Any]:
+        message = str(error)
+        error_type = "invalid_route"
+        from_cell = ""
+        to_cell = ""
+        blocked_cells: list[str] = []
+        clearance_cells: list[str] = []
+
+        if "crosses blocked cell(s)" in message:
+            error_type = "route_crosses_blocked_cell"
+            if "route segment " in message and " crosses " in message:
+                segment = message.split("route segment ", 1)[1].split(" crosses ", 1)[0]
+                if "->" in segment:
+                    from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+            if "blocked cell(s):" in message:
+                blocked_text = message.split("blocked cell(s):", 1)[1].split(".", 1)[0]
+                blocked_cells = [
+                    part.strip()
+                    for part in blocked_text.split(",")
+                    if part.strip() and not part.strip().startswith("plus ")
+                ]
+        elif "passes too close to wall cell(s)" in message:
+            error_type = "route_too_close_to_wall"
+            if "route segment " in message and " passes " in message:
+                segment = message.split("route segment ", 1)[1].split(" passes ", 1)[0]
+                if "->" in segment:
+                    from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+            if "wall cell(s):" in message:
+                clearance_text = message.split("wall cell(s):", 1)[1].split(".", 1)[0]
+                clearance_cells = [
+                    part.strip()
+                    for part in clearance_text.split(",")
+                    if part.strip() and not part.strip().startswith("plus ")
+                ]
+        elif "is diagonal" in message:
+            error_type = "route_diagonal_segment"
+            if "route segment " in message and " is diagonal" in message:
+                segment = message.split("route segment ", 1)[1].split(" is diagonal", 1)[0]
+                if "->" in segment:
+                    from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+        elif "blocked wall cell" in message or "wall cell" in message:
+            error_type = "waypoint_in_wall_cell"
+        elif "outside map bounds" in message or "route row must" in message or "route column must" in message:
+            error_type = "route_out_of_bounds"
+        elif "at least one waypoint" in message:
+            error_type = "route_empty"
+        elif "at most" in message:
+            error_type = "route_too_long"
+        elif "engagement_policy" in message:
+            error_type = "invalid_engagement_policy"
+
+        return {
+            "accepted": False,
+            "participant_id": participant_id,
+            "run_id": self.run_id,
+            "scenario_id": self.scenario_id,
+            "rejected_at_ms": now_ms(),
+            "error_type": error_type,
+            "error": message,
+            "plan": {
+                "objective": objective,
+                "route": [
+                    part
+                    for part in route_cells_text_for_telemetry(route).split(";")
+                    if part
+                ],
+                "engagement_policy": engagement_policy,
+                "reasoning": reasoning,
+                "plan_summary": plan_summary,
+                "sequence_number": sequence_number,
+            },
+            "route_diagnostics": {
+                "start_cell": start_cell,
+                "from_cell": from_cell,
+                "to_cell": to_cell,
+                "blocked_cells_crossed": blocked_cells,
+                "wall_clearance_cells": clearance_cells,
+                "validation": "rejected",
+            },
+        }
 
     def set_participant_strategy(
         self,
@@ -1035,6 +1370,28 @@ class DoomArenaClient:
     def stop_participant_intent(self, participant_id: str, controller_token: str | None = None) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
+        phase = ""
+        try:
+            rows = parse_state(self._request("GET", "/api/arena/state"))
+            observation = make_participant_observation(rows, participant_id)
+            state = observation.get("state", {}) if isinstance(observation, dict) else {}
+            match = observation.get("match", {}) if isinstance(observation, dict) else {}
+            phase = str(state.get("phase") or match.get("phase") or "")
+        except Exception:
+            phase = ""
+        if phase == "waiting_for_agents":
+            return json.dumps(
+                {
+                    "accepted": True,
+                    "participant_id": participant_id,
+                    "cleared": False,
+                    "ignored": True,
+                    "reason": "opening plans are preserved while waiting_for_agents",
+                    "run_id": self.run_id,
+                    "scenario_id": self.scenario_id,
+                },
+                indent=2,
+            )
         current_ms = now_ms()
         rows = [
             row for row in self._read_participant_intent_rows()
@@ -1134,7 +1491,7 @@ class DoomArenaClient:
         player_2_model: str = "",
         round_number: int = 1,
         seed: int = 42,
-        timeout_seconds: int = 120,
+        timeout_seconds: int = 180,
     ) -> str:
         payload = {
             "arena_mode": "duel",
@@ -1367,18 +1724,35 @@ class DoomArenaClient:
             headers=headers,
             method=method,
         )
+        base_path = path.split("?", 1)[0]
+        retryable_get = method == "GET" and base_path in {
+            "/api/arena/state",
+            "/api/arena/reset",
+            "/api/arena/participant-ready",
+            "/api/arena/participant-intents",
+        }
+        attempts = 3 if retryable_get else 1
 
-        try:
-            with urllib.request.urlopen(request, timeout=5) as response:
-                return response.read().decode("utf-8", errors="replace")
-        except urllib.error.HTTPError as exc:
-            body = exc.read().decode("utf-8", errors="replace")
-            raise DoomArenaError(f"{method} {path} failed with HTTP {exc.code}: {body}") from exc
-        except OSError as exc:
-            raise DoomArenaError(
-                f"Could not reach Doom Arena server at {self.server_url}. "
-                "Run: py scripts\\doom_arena_server.py --port 8001"
-            ) from exc
+        for attempt in range(attempts):
+            try:
+                with urllib.request.urlopen(request, timeout=5) as response:
+                    return response.read().decode("utf-8", errors="replace")
+            except urllib.error.HTTPError as exc:
+                body = exc.read().decode("utf-8", errors="replace")
+                if retryable_get and exc.code in {404, 409, 500, 502, 503} and attempt + 1 < attempts:
+                    time.sleep(0.15 * (attempt + 1))
+                    continue
+                raise DoomArenaError(f"{method} {path} failed with HTTP {exc.code}: {body}") from exc
+            except OSError as exc:
+                if retryable_get and attempt + 1 < attempts:
+                    time.sleep(0.15 * (attempt + 1))
+                    continue
+                raise DoomArenaError(
+                    f"Could not reach Doom Arena server at {self.server_url}. "
+                    "Run: py scripts\\doom_arena_server.py --port 8001"
+                ) from exc
+
+        raise DoomArenaError(f"{method} {path} failed after retry")
 
     def post_mcp_call_telemetry(self, payload: dict[str, Any]) -> None:
         try:
@@ -1544,7 +1918,11 @@ def normalize_plan_objective(value: Any) -> str:
 
 
 def normalize_plan_reasoning(value: Any) -> str:
-    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_REASONING_MAX_CHARS]
+    return " ".join(str(value or "").replace("\t", " ").split()[:12])[:PLAN_REASONING_MAX_CHARS]
+
+
+def normalize_plan_summary(value: Any) -> str:
+    return " ".join(str(value or "").replace("\t", " ").split())[:PLAN_SUMMARY_MAX_CHARS]
 
 
 def normalize_plan_engagement_policy(value: Any) -> str:
@@ -1645,6 +2023,65 @@ def cell_hits_static_wall(cell: str) -> bool:
     return rows[row][col] == "#"
 
 
+def static_wall_cell_rect(row: int, col: int) -> tuple[int, int, int, int]:
+    left = int(MAP_BOUNDS["x_min"] + col * MAP_CELL_SIZE)
+    right = left + MAP_CELL_SIZE
+    top = int(MAP_BOUNDS["y_max"] - row * MAP_CELL_SIZE)
+    bottom = top - MAP_CELL_SIZE
+    return left, bottom, right, top
+
+
+def point_near_static_wall_cells(x: float, y: float, clearance: int) -> list[str]:
+    try:
+        rows = [
+            line.rstrip("\n")
+            for line in MAP_ASCII_PATH.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+    except OSError:
+        return []
+    if not rows:
+        return []
+
+    center_col = int((x - MAP_BOUNDS["x_min"]) // MAP_CELL_SIZE)
+    center_row = int((MAP_BOUNDS["y_max"] - y) // MAP_CELL_SIZE)
+    near: list[str] = []
+    for row in range(center_row - 2, center_row + 3):
+        if row < 0 or row >= len(rows):
+            continue
+        for col in range(center_col - 2, center_col + 3):
+            if col < 0 or col >= len(rows[row]) or rows[row][col] != "#":
+                continue
+            left, bottom, right, top = static_wall_cell_rect(row, col)
+            if (
+                left - clearance <= x <= right + clearance
+                and bottom - clearance <= y <= top + clearance
+            ):
+                near.append(row_col_to_grid_cell(row, col))
+    return near
+
+
+def wall_clearance_cells_near_segment(start_cell: str, end_cell: str) -> list[str]:
+    if not start_cell or not end_cell or start_cell == end_cell:
+        return []
+    start_x, start_y = grid_cell_to_xy(start_cell)
+    end_x, end_y = grid_cell_to_xy(end_cell)
+    start_row, start_col = grid_cell_to_row_col(start_cell)
+    end_row, end_col = grid_cell_to_row_col(end_cell)
+    steps = max(abs(end_row - start_row), abs(end_col - start_col)) * 16 + 1
+    near: list[str] = []
+    seen: set[str] = set()
+    for step in range(steps + 1):
+        ratio = step / steps
+        x = start_x + (end_x - start_x) * ratio
+        y = start_y + (end_y - start_y) * ratio
+        for cell in point_near_static_wall_cells(x, y, PLAN_ROUTE_WALL_CLEARANCE_UNITS):
+            if cell not in seen:
+                seen.add(cell)
+                near.append(cell)
+    return near
+
+
 def blocked_cells_crossed_by_segment(start_cell: str, end_cell: str) -> list[str]:
     if not start_cell or not end_cell or start_cell == end_cell:
         return []
@@ -1669,17 +2106,130 @@ def blocked_cells_crossed_by_segment(start_cell: str, end_cell: str) -> list[str
 def validate_route_segments(cells: list[str], start_cell: str = "") -> None:
     route_cells = ([start_cell] if start_cell else []) + cells
     for from_cell, to_cell in zip(route_cells, route_cells[1:]):
+        from_row, from_col = grid_cell_to_row_col(from_cell)
+        to_row, to_col = grid_cell_to_row_col(to_cell)
+        if from_row != to_row and from_col != to_col:
+            raise DoomArenaError(
+                f"route segment {from_cell}->{to_cell} is diagonal; "
+                "each consecutive route cell must share the same row or the same column."
+            )
         blocked = blocked_cells_crossed_by_segment(from_cell, to_cell)
         if blocked:
             shown = ", ".join(blocked[:8])
             suffix = "" if len(blocked) <= 8 else f", plus {len(blocked) - 8} more"
             raise DoomArenaError(
                 f"route segment {from_cell}->{to_cell} crosses blocked cell(s): "
-                f"{shown}{suffix}. Add intermediate waypoints around the wall."
+                f"{shown}{suffix}."
             )
 
 
-def normalize_plan_route(route: Any, start_cell: str = "") -> tuple[str, list[str]]:
+def route_segment_is_diagonal(start_cell: str, end_cell: str) -> bool:
+    start_row, start_col = grid_cell_to_row_col(start_cell)
+    end_row, end_col = grid_cell_to_row_col(end_cell)
+    return start_row != end_row and start_col != end_col
+
+
+def valid_connector_cell(start_cell: str, connector_cell: str, end_cell: str) -> bool:
+    if connector_cell in {start_cell, end_cell}:
+        return False
+    if cell_hits_static_wall(connector_cell):
+        return False
+    try:
+        validate_route_segments([connector_cell, end_cell], start_cell=start_cell)
+    except DoomArenaError:
+        return False
+    return True
+
+
+def route_connector_for_diagonal_segment(start_cell: str, end_cell: str) -> str:
+    start_row, start_col = grid_cell_to_row_col(start_cell)
+    end_row, end_col = grid_cell_to_row_col(end_cell)
+    candidates = [
+        row_col_to_grid_cell(start_row, end_col),
+        row_col_to_grid_cell(end_row, start_col),
+    ]
+    for candidate in candidates:
+        if valid_connector_cell(start_cell, candidate, end_cell):
+            return candidate
+    return ""
+
+
+def repair_diagonal_route_segments(
+    cells: list[str],
+    start_cell: str = "",
+) -> tuple[list[str], list[dict[str, str]]]:
+    if not cells:
+        return cells, []
+
+    repaired: list[str] = []
+    inserted: list[dict[str, str]] = []
+    previous_cell = start_cell
+
+    for cell in cells:
+        if previous_cell and route_segment_is_diagonal(previous_cell, cell):
+            connector = route_connector_for_diagonal_segment(previous_cell, cell)
+            if connector:
+                if not repaired or repaired[-1] != connector:
+                    repaired.append(connector)
+                inserted.append(
+                    {
+                        "from": previous_cell,
+                        "to": cell,
+                        "inserted": connector,
+                    }
+                )
+                previous_cell = connector
+        if not repaired or repaired[-1] != cell:
+            repaired.append(cell)
+        previous_cell = cell
+
+    return repaired, inserted
+
+
+def trim_passed_route_cells(
+    cells: list[str],
+    start_cell: str = "",
+    rebase_position: tuple[float, float] | None = None,
+) -> tuple[list[str], list[str]]:
+    if not cells or len(cells) <= 1 or not start_cell or rebase_position is None:
+        return cells, []
+
+    try:
+        current_x, current_y = float(rebase_position[0]), float(rebase_position[1])
+    except (TypeError, ValueError):
+        return cells, []
+
+    remaining = list(cells)
+    dropped: list[str] = []
+    while len(remaining) > 1:
+        first_x, first_y = grid_cell_to_xy(remaining[0])
+        second_x, second_y = grid_cell_to_xy(remaining[1])
+        distance_to_first = math.dist((current_x, current_y), (float(first_x), float(first_y)))
+        distance_to_second = math.dist((current_x, current_y), (float(second_x), float(second_y)))
+        should_drop = (
+            distance_to_first <= PLAN_ROUTE_SKIP_DISTANCE_UNITS
+            or distance_to_second + PLAN_ROUTE_PASSED_MARGIN_UNITS < distance_to_first
+        )
+        if not should_drop:
+            break
+
+        candidate = remaining[1:]
+        try:
+            validate_route_segments(candidate, start_cell=start_cell)
+        except DoomArenaError:
+            break
+
+        dropped.append(remaining.pop(0))
+
+    return remaining, dropped
+
+
+def normalize_plan_route(
+    route: Any,
+    start_cell: str = "",
+    rebase_position: tuple[float, float] | None = None,
+    return_diagnostics: bool = False,
+) -> tuple[str, list[str]] | tuple[str, list[str], dict[str, Any]]:
     cells: list[str] = []
     raw_points: list[Any]
 
@@ -1698,12 +2248,20 @@ def normalize_plan_route(route: Any, start_cell: str = "") -> tuple[str, list[st
     for item in raw_points:
         cell = normalize_grid_cell(item)
         if cell_hits_static_wall(cell):
-            raise DoomArenaError("route cell cannot be a wall cell")
+            raise DoomArenaError(f"route cell {cell} is a blocked wall cell")
         cells.append(cell)
 
+    dropped_passed_cells: list[str] = []
+    inserted_connector_cells: list[dict[str, str]] = []
     validate_route_segments(cells, start_cell=start_cell)
     xy_points = [grid_cell_to_xy(cell) for cell in cells]
-    return ";".join(f"{x},{y}" for x, y in xy_points), cells
+    route_text = ";".join(f"{x},{y}" for x, y in xy_points)
+    if return_diagnostics:
+        return route_text, cells, {
+            "dropped_passed_cells": dropped_passed_cells,
+            "inserted_connector_cells": inserted_connector_cells,
+        }
+    return route_text, cells
 
 
 def route_cells_text_for_telemetry(route: Any) -> str:
@@ -1731,6 +2289,7 @@ def mcp_plan_telemetry_fields(tool_name: str, arguments: dict[str, Any]) -> dict
         "plan_route_cells": route_cells_text_for_telemetry(arguments.get("route", "")),
         "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
         "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+        "plan_summary": " ".join(str(arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
     }
 
 
@@ -1830,15 +2389,17 @@ def parse_participant_command_rows(body: str) -> list[dict[str, str]]:
 
 def parse_participant_intent_rows(body: str) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
+    parse_keys = PARTICIPANT_INTENT_KEYS
     for line_number, line in enumerate(body.splitlines(), 1):
         if not line.strip():
             continue
         parts = line.split("\t")
         if line_number == 1 and parts[0] == "run_id":
+            parse_keys = parts
             continue
         if len(parts) < len(PARTICIPANT_INTENT_LEGACY_KEYS):
             continue
-        row = dict(zip(PARTICIPANT_INTENT_KEYS, parts[:len(PARTICIPANT_INTENT_KEYS)]))
+        row = dict(zip(parse_keys, parts[:len(parse_keys)]))
         row.setdefault("strafe_direction", "auto")
         row.setdefault("movement_bias", "direct")
         row.setdefault("fire_policy", "only_when_aligned")
@@ -2120,6 +2681,14 @@ def participant_geometry_los(row: dict[str, str]) -> bool:
     return row.get("line_of_sight", "0") == "1"
 
 
+def participant_static_map_los(source: dict[str, str], target: dict[str, str]) -> bool:
+    source_cell = xy_to_grid_cell(source.get("x"), source.get("y"))
+    target_cell = xy_to_grid_cell(target.get("x"), target.get("y"))
+    if not source_cell or not target_cell:
+        return True
+    return not blocked_cells_crossed_by_segment(source_cell, target_cell)
+
+
 def hit_reveal_active(participant: dict[str, Any]) -> bool:
     last_taken_ms = participant.get("last_damage_taken_ms")
     if last_taken_ms is None:
@@ -2227,6 +2796,15 @@ def make_shared_arena_state(rows: list[dict[str, str]], directional_visibility: 
     if player_1_row or player_2_row:
         enrich_participant_state(player_1, player_2, run_id)
         enrich_participant_state(player_2, player_1, run_id)
+        if player_1_row and player_2_row:
+            player_1["doom_line_of_sight"] = player_1.get("geometric_line_of_sight")
+            player_2["doom_line_of_sight"] = player_2.get("geometric_line_of_sight")
+            player_1_static_los = participant_static_map_los(player_1_row, player_2_row)
+            player_2_static_los = participant_static_map_los(player_2_row, player_1_row)
+            player_1["static_map_line_of_sight"] = player_1_static_los
+            player_2["static_map_line_of_sight"] = player_2_static_los
+            player_1["geometric_line_of_sight"] = bool(player_1.get("geometric_line_of_sight")) and player_1_static_los
+            player_2["geometric_line_of_sight"] = bool(player_2.get("geometric_line_of_sight")) and player_2_static_los
         if directional_visibility:
             apply_directional_visibility(player_1)
             apply_directional_visibility(player_2)
@@ -2236,7 +2814,7 @@ def make_shared_arena_state(rows: list[dict[str, str]], directional_visibility: 
         "scenario_id": scenario_id,
         "tick": as_int(match, "tick", as_int(player_1_row, "tick")),
         "elapsed_time_seconds": as_float(match, "elapsed_time_seconds", as_float(player_1_row, "elapsed_time_seconds")),
-        "timeout_seconds": as_int(match, "timeout_seconds", as_int(player_1_row, "timeout_seconds", 120)),
+        "timeout_seconds": as_int(match, "timeout_seconds", as_int(player_1_row, "timeout_seconds", 180)),
         "phase": match.get("phase", player_1_row.get("phase", "")),
         "winner": match.get("winner", player_1_row.get("winner", "")),
         "terminal_reason": match.get("terminal_reason", player_1_row.get("terminal_reason", "")),
@@ -2335,6 +2913,8 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
     self_state = state.get(participant_id, {})
     opponent_state = state.get(opponent_id, {})
     opponent_visible = bool(self_state.get("opponent_visible", participant.get("line_of_sight", "0") == "1"))
+    fog_hidden = hide_enemy_position and not opponent_visible
+    live_pickup_rows = [row for row in rows if row.get("kind") == "pickup"]
 
     if hide_enemy_position:
         opponent_block: dict[str, Any] = {
@@ -2345,10 +2925,17 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
         if opponent_visible:
             opponent_block.update(
                 {
+                    "health": as_int(opponent, "health"),
+                    "x": as_int(opponent, "x"),
+                    "y": as_int(opponent, "y"),
+                    "cell": xy_to_grid_cell(opponent.get("x"), opponent.get("y")),
+                    "angle": as_int(opponent, "angle"),
                     "distance": as_int(participant, "distance_to_player"),
                     "relative_angle": as_int(participant, "relative_angle_to_player"),
                     "distance_bucket": self_state.get("distance_bucket"),
                     "los_status": self_state.get("los_status"),
+                    "in_view_cone": bool(self_state.get("opponent_in_view_cone")),
+                    "revealed_by_hit": bool(self_state.get("opponent_revealed_by_hit")),
                 }
             )
     else:
@@ -2392,6 +2979,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "alive": participant.get("alive", "0") == "1",
             "x": as_int(participant, "x"),
             "y": as_int(participant, "y"),
+            "cell": xy_to_grid_cell(participant.get("x"), participant.get("y")),
             "angle": as_int(participant, "angle"),
             "ammo_bullets": as_int(participant, "ammo_bullets"),
             "command_status": participant.get("command_status", ""),
@@ -2400,10 +2988,10 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "shots_fired": as_int(participant, "shots_fired"),
             "shots_hit": as_int(participant, "shots_hit"),
             "invalid_actions": as_int(participant, "invalid_actions"),
-            "health_delta": self_state.get("health_delta"),
-            "distance_bucket": self_state.get("distance_bucket"),
+            "health_delta": None if fog_hidden else self_state.get("health_delta"),
+            "distance_bucket": None if fog_hidden else self_state.get("distance_bucket"),
             "los_status": self_state.get("los_status"),
-            "pressure_state": self_state.get("pressure_state"),
+            "pressure_state": None if fog_hidden else self_state.get("pressure_state"),
             "last_damage_taken_ms": self_state.get("last_damage_taken_ms"),
             "last_damage_dealt_ms": self_state.get("last_damage_dealt_ms"),
             "requested_fire_policy": self_state.get("requested_fire_policy"),
@@ -2425,10 +3013,10 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
         },
         "opponent": opponent_block,
         "tactical_context": {
-            "health_delta": self_state.get("health_delta"),
-            "distance_bucket": self_state.get("distance_bucket"),
+            "health_delta": None if fog_hidden else self_state.get("health_delta"),
+            "distance_bucket": None if fog_hidden else self_state.get("distance_bucket"),
             "los_status": self_state.get("los_status"),
-            "pressure_state": self_state.get("pressure_state"),
+            "pressure_state": None if fog_hidden else self_state.get("pressure_state"),
             "last_damage_taken_ms": self_state.get("last_damage_taken_ms"),
             "last_damage_dealt_ms": self_state.get("last_damage_dealt_ms"),
             "replan_recommended": self_state.get("replan_recommended"),
@@ -2451,11 +3039,20 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "policy_compliance_reason": self_state.get("policy_compliance_reason"),
         },
         "map": {
+            "bounds": dict(MAP_BOUNDS),
+            "cell_size": MAP_CELL_SIZE,
+            "rows": MAP_ROWS,
+            "cols": MAP_COLS,
+            "row_labels": f"A-{chr(ord('A') + MAP_ROWS - 1)}",
+            "col_labels": f"01-{MAP_COLS:02d}",
+            "blocked_cells": blocked_grid_cells(),
+            "blocked_cell_count": len(blocked_grid_cells()),
             "weapon_pickups_enabled": enable_weapon_pickups,
             "pickups": strategy_pickups_for_observation(
                 participant.get("x"),
                 participant.get("y"),
                 include_weapons=enable_weapon_pickups,
+                live_pickups=live_pickup_rows,
             ),
         },
         "match": {
@@ -2463,7 +3060,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "winner": match.get("winner", participant.get("winner", "")),
             "terminal_reason": match.get("terminal_reason", participant.get("terminal_reason", "")),
             "elapsed_time_seconds": match.get("elapsed_time_seconds", participant.get("elapsed_time_seconds", "")),
-            "timeout_seconds": as_int(match or participant, "timeout_seconds", 120),
+            "timeout_seconds": as_int(match or participant, "timeout_seconds", 180),
         },
         "allowed_intents": sorted(VALID_PARTICIPANT_INTENTS),
         "allowed_styles": sorted(VALID_PARTICIPANT_INTENT_STYLES),
@@ -2798,7 +3395,6 @@ def participant_plan_schema() -> dict[str, Any]:
                     "description": "Grid cell label, e.g. M06. Rows A-W, columns 01-33.",
                 },
             },
-            "engagement_policy": {"type": "string", "enum": sorted(PLAN_ENGAGEMENT_POLICIES)},
             "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
             "sequence_number": {"type": "integer", "minimum": 0},
         },
@@ -2833,7 +3429,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments.get("player_2_model", "")),
             int(arguments.get("round", 1)),
             int(arguments.get("seed", 42)),
-            int(arguments.get("timeout_seconds", 120)),
+            int(arguments.get("timeout_seconds", 180)),
         )
     if name == "get_player_observation":
         return client.get_player_observation()
@@ -2863,6 +3459,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments.get("objective", "")),
             str(arguments.get("engagement_policy", "engage_if_visible")),
             str(arguments.get("reasoning", "")),
+            str(arguments.get("plan_summary", "")),
             optional_string(arguments.get("controller_token")),
             arguments.get("sequence_number"),
         )

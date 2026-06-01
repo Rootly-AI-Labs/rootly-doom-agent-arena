@@ -23,7 +23,12 @@
 #define ARENA_PLAYER_COMMAND_PATH "arena_player_command.local.tsv"
 #define ARENA_PLAYER_FORWARD_SPEED 0x32
 #define ARENA_PLAYER_SIDE_SPEED 0x28
-#define ARENA_PLAYER_ROUTE_SPEED (ARENA_PLAYER_FORWARD_SPEED * 2048)
+#define ARENA_PLAYER_ROUTE_SPEED ((ARENA_PLAYER_FORWARD_SPEED * 2048) * 6)
+#define ARENA_PLAYER_ROUTE_TURN_DAMPING_DISTANCE 64
+#define ARENA_PLAYER_ROUTE_TURN_DAMPING_SPEED ((ARENA_PLAYER_FORWARD_SPEED * 2048) * 4)
+#define ARENA_PLAYER_ROUTE_COMBAT_FACE_DISTANCE 1024
+#define ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR 0
+#define ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR 8
 #define ARENA_PLAYER_TURN_SPEED 1280
 
 typedef struct
@@ -130,12 +135,30 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
     ticcmd_t *cmd,
     const arena_participant_autopilot_command_t *command);
 
+static void Arena_PlayerDampRouteMomentum(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->momx = (mobj->momx * ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+    mobj->momy = (mobj->momy * ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_PLAYER_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+}
+
 static void Arena_PlayerApplyRouteWaypointMovement(
     player_t *player,
+    mobj_t *opponent,
     const arena_participant_autopilot_command_t *command)
 {
-    angle_t angle;
+    angle_t movement_angle;
+    angle_t facing_angle;
     int fine_angle;
+    fixed_t speed;
+    int distance;
+    int opponent_distance;
 
     if (player == NULL
         || player->mo == NULL
@@ -145,13 +168,36 @@ static void Arena_PlayerApplyRouteWaypointMovement(
         return;
     }
 
-    angle = R_PointToAngle2(player->mo->x,
-                            player->mo->y,
-                            command->route_target_x * FRACUNIT,
-                            command->route_target_y * FRACUNIT);
-    fine_angle = angle >> ANGLETOFINESHIFT;
-    player->mo->momx += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finecosine[fine_angle]);
-    player->mo->momy += FixedMul(ARENA_PLAYER_ROUTE_SPEED, finesine[fine_angle]);
+    movement_angle = R_PointToAngle2(player->mo->x,
+                                     player->mo->y,
+                                     command->route_target_x * FRACUNIT,
+                                     command->route_target_y * FRACUNIT);
+    facing_angle = movement_angle;
+    if (opponent != NULL
+        && opponent->health > 0
+        && P_CheckSight(player->mo, opponent))
+    {
+        opponent_distance = P_AproxDistance(opponent->x - player->mo->x,
+                                            opponent->y - player->mo->y) >> FRACBITS;
+        if (command->attack
+            || opponent_distance <= ARENA_PLAYER_ROUTE_COMBAT_FACE_DISTANCE)
+        {
+            facing_angle = R_PointToAngle2(player->mo->x,
+                                           player->mo->y,
+                                           opponent->x,
+                                           opponent->y);
+        }
+    }
+    distance = P_AproxDistance(command->route_target_x * FRACUNIT - player->mo->x,
+                               command->route_target_y * FRACUNIT - player->mo->y) >> FRACBITS;
+    speed = distance <= ARENA_PLAYER_ROUTE_TURN_DAMPING_DISTANCE
+        ? ARENA_PLAYER_ROUTE_TURN_DAMPING_SPEED
+        : ARENA_PLAYER_ROUTE_SPEED;
+    fine_angle = movement_angle >> ANGLETOFINESHIFT;
+    player->mo->angle = facing_angle;
+    Arena_PlayerDampRouteMomentum(player->mo);
+    player->mo->momx += FixedMul(speed, finecosine[fine_angle]);
+    player->mo->momy += FixedMul(speed, finesine[fine_angle]);
 }
 
 static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
@@ -242,7 +288,7 @@ static boolean Arena_PlayerApplyAutopilotCommand(ticcmd_t *cmd)
 
     if (command.route_waypoint_active)
     {
-        Arena_PlayerApplyRouteWaypointMovement(player, &command);
+        Arena_PlayerApplyRouteWaypointMovement(player, player2, &command);
     }
     Arena_PlayerApplyAutopilotCommandToTiccmd(cmd, &command);
 
@@ -255,7 +301,9 @@ static void Arena_PlayerApplyAutopilotCommandToTiccmd(
 {
     cmd->forwardmove = command->route_waypoint_active ? 0 : command->forward * ARENA_PLAYER_FORWARD_SPEED;
     cmd->sidemove = command->route_waypoint_active ? 0 : command->strafe * ARENA_PLAYER_SIDE_SPEED;
-    cmd->angleturn = -command->turn * ARENA_PLAYER_TURN_SPEED;
+    cmd->angleturn = command->route_waypoint_active
+        ? 0
+        : -command->turn * ARENA_PLAYER_TURN_SPEED;
 
     if (command->attack)
     {

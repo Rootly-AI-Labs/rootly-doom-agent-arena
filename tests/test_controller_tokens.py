@@ -196,6 +196,14 @@ def test_wait_for_match_start_does_not_false_positive_when_opening_intent_alread
     ready_tsv = "run_id\tscenario_id\tparticipant_id\tready_at_ms\tstatus\n"
 
     def fake_request(method: str, path: str, body=None, content_type=None):
+        if method == "GET" and path == "/api/arena/reset":
+            return json.dumps(
+                {
+                    "run_id": "run_current",
+                    "scenario_id": "duel_e1m8",
+                    "control_mode": "hierarchical",
+                }
+            )
         if method == "GET" and path == "/api/arena/state":
             return state_tsv
         if method == "GET" and path == "/api/arena/participant-intents":

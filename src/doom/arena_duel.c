@@ -35,6 +35,10 @@
 #endif
 
 #define ARENA_DUEL_MOVE_SPEED (0x32 * 2048)
+#define ARENA_DUEL_ROUTE_SPEED (ARENA_DUEL_MOVE_SPEED * 6)
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE 64
+#define ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED (ARENA_DUEL_MOVE_SPEED * 4)
+#define ARENA_DUEL_ROUTE_COMBAT_FACE_DISTANCE 1024
 #define ARENA_DUEL_SIDE_SPEED (0x28 * 2048)
 #define ARENA_DUEL_TURN_SPEED 1280
 #define ARENA_DUEL_ATTACK_COOLDOWN_TICS 12
@@ -84,6 +88,9 @@ static mobj_t *arena_duel_player1_cached_mo;
 #define ARENA_DUEL_AUTOMAP_HEIGHT 384
 #define ARENA_DUEL_VIEW_HALF_ANGLE_DEGREES 45
 #define ARENA_DUEL_HIT_REVEAL_TICKS 140
+#define ARENA_DUEL_PARTICIPANT_RADIUS (10 * FRACUNIT)
+#define ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR 0
+#define ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR 8
 
 // players[consoleplayer].mo gets nulled by Doom's deathmatch init flow after
 // P_SpawnPlayer runs (the exact null-out path isn't pinned down), which breaks
@@ -193,6 +200,31 @@ static int ArenaDuel_NormalizedAngleDegrees(angle_t angle)
 
     return degrees;
 }
+
+static void ArenaDuel_ApplyParticipantCollisionProfile(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->radius = ARENA_DUEL_PARTICIPANT_RADIUS;
+    mobj->height = mobjinfo[MT_PLAYER].height;
+}
+
+static void ArenaDuel_DampRouteMomentum(mobj_t *mobj)
+{
+    if (mobj == NULL)
+    {
+        return;
+    }
+
+    mobj->momx = (mobj->momx * ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+    mobj->momy = (mobj->momy * ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_NUMERATOR)
+        / ARENA_DUEL_ROUTE_MOMENTUM_DAMPING_DENOMINATOR;
+}
+
 
 static player_t *ArenaDuel_Player2ViewPlayer(void)
 {
@@ -1376,9 +1408,15 @@ static void ArenaDuel_Thrust(mobj_t *mobj, angle_t angle, fixed_t move)
 
 static void ArenaDuel_ThrustTowardRouteWaypoint(
     mobj_t *mobj,
+    mobj_t *opponent,
     const arena_participant_autopilot_command_t *command)
 {
-    angle_t angle;
+    angle_t movement_angle;
+    angle_t facing_angle;
+    int fine_angle;
+    fixed_t speed;
+    int distance;
+    int opponent_distance;
 
     if (mobj == NULL
         || command == NULL
@@ -1387,11 +1425,36 @@ static void ArenaDuel_ThrustTowardRouteWaypoint(
         return;
     }
 
-    angle = R_PointToAngle2(mobj->x,
-                            mobj->y,
-                            command->route_target_x * FRACUNIT,
-                            command->route_target_y * FRACUNIT);
-    ArenaDuel_Thrust(mobj, angle, ARENA_DUEL_MOVE_SPEED);
+    movement_angle = R_PointToAngle2(mobj->x,
+                                     mobj->y,
+                                     command->route_target_x * FRACUNIT,
+                                     command->route_target_y * FRACUNIT);
+    facing_angle = movement_angle;
+    if (opponent != NULL
+        && opponent->health > 0
+        && P_CheckSight(mobj, opponent))
+    {
+        opponent_distance = P_AproxDistance(opponent->x - mobj->x,
+                                            opponent->y - mobj->y) >> FRACBITS;
+        if (command->attack
+            || opponent_distance <= ARENA_DUEL_ROUTE_COMBAT_FACE_DISTANCE)
+        {
+            facing_angle = R_PointToAngle2(mobj->x,
+                                           mobj->y,
+                                           opponent->x,
+                                           opponent->y);
+        }
+    }
+    distance = P_AproxDistance(command->route_target_x * FRACUNIT - mobj->x,
+                               command->route_target_y * FRACUNIT - mobj->y) >> FRACBITS;
+    speed = distance <= ARENA_DUEL_ROUTE_TURN_DAMPING_DISTANCE
+        ? ARENA_DUEL_ROUTE_TURN_DAMPING_SPEED
+        : ARENA_DUEL_ROUTE_SPEED;
+    fine_angle = movement_angle >> ANGLETOFINESHIFT;
+    mobj->angle = facing_angle;
+    ArenaDuel_DampRouteMomentum(mobj);
+    mobj->momx += FixedMul(speed, finecosine[fine_angle]);
+    mobj->momy += FixedMul(speed, finesine[fine_angle]);
 }
 
 static void ArenaDuel_SeparateParticipantsIfStuck(void)
@@ -1585,12 +1648,12 @@ static void ArenaDuel_Player1Attack(void)
 
     if (ready_weapon == wp_shotgun && player->ammo[am_shell] > 0)
     {
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 7; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = mobj->angle + (P_SubRandom() << 18);
-            damage = (P_Random() & 1) ? 10 : 6;
+            damage = 5 * (P_Random() % 3 + 1);
             P_LineAttack(mobj, pellet_angle, MISSILERANGE, slope, damage);
         }
         S_StartSound(mobj, sfx_shotgn);
@@ -1652,6 +1715,10 @@ static boolean ArenaDuel_Player1ApplyPickup(mobj_t *special)
         if (!Arena_WeaponPickupsEnabled())
         {
             P_RemoveMobj(special);
+            return false;
+        }
+        if (player->weaponowned[wp_shotgun])
+        {
             return false;
         }
         player->weaponowned[wp_shotgun] = true;
@@ -1772,12 +1839,12 @@ static void ArenaDuel_Player2Attack(void)
     if (arena_duel_player2_ready_weapon == wp_shotgun
         && arena_duel_player2_ammo_shells > 0)
     {
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 7; i++)
         {
             angle_t pellet_angle;
 
             pellet_angle = arena_duel_player2->angle + (P_SubRandom() << 18);
-            damage = (P_Random() & 1) ? 10 : 6;
+            damage = 5 * (P_Random() % 3 + 1);
             P_LineAttack(arena_duel_player2,
                          pellet_angle,
                          MISSILERANGE,
@@ -1836,6 +1903,10 @@ static boolean ArenaDuel_Player2ApplyPickup(mobj_t *special)
         if (!Arena_WeaponPickupsEnabled())
         {
             P_RemoveMobj(special);
+            return false;
+        }
+        if (arena_duel_player2_ready_weapon == wp_shotgun)
+        {
             return false;
         }
         arena_duel_player2_ready_weapon = wp_shotgun;
@@ -2150,7 +2221,7 @@ static void ArenaDuel_TickPlayer1CustomAutopilot(void)
 
     if (arena_duel_player1_last_autopilot_command.route_waypoint_active)
     {
-        ArenaDuel_ThrustTowardRouteWaypoint(player1, &arena_duel_player1_last_autopilot_command);
+        ArenaDuel_ThrustTowardRouteWaypoint(player1, arena_duel_player2, &arena_duel_player1_last_autopilot_command);
     }
     else if (command.forward != 0)
     {
@@ -2177,6 +2248,7 @@ static void ArenaDuel_TickPlayer1CustomAutopilot(void)
 static void ArenaDuel_TickPlayer2CustomAutopilot(void)
 {
     arena_participant_command_t command;
+    mobj_t *player1;
 
     if (arena_duel_player2 == NULL)
     {
@@ -2195,13 +2267,14 @@ static void ArenaDuel_TickPlayer2CustomAutopilot(void)
     }
 
     command = ArenaDuel_Player2Command();
+    player1 = ArenaDuel_Player1Mobj();
     ArenaDuel_LogAutopilotEvent(ARENA_PARTICIPANT_PLAYER_2);
 
     arena_duel_player2->angle += (angle_t) (-command.turn * ARENA_DUEL_TURN_SPEED) << FRACBITS;
 
     if (arena_duel_player2_last_autopilot_command.route_waypoint_active)
     {
-        ArenaDuel_ThrustTowardRouteWaypoint(arena_duel_player2, &arena_duel_player2_last_autopilot_command);
+        ArenaDuel_ThrustTowardRouteWaypoint(arena_duel_player2, player1, &arena_duel_player2_last_autopilot_command);
     }
     else if (command.forward != 0)
     {
@@ -2240,6 +2313,7 @@ void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
     if (mobj != NULL)
     {
         mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
+        ArenaDuel_ApplyParticipantCollisionProfile(mobj);
     }
     ArenaDuel_LogCollisionProfile("player_1", mobj);
 }
@@ -2374,8 +2448,7 @@ void ArenaDuel_SpawnPlayer2(void)
     mobj = P_SpawnMobj(x << FRACBITS, y << FRACBITS, ONFLOORZ, MT_PLAYER);
     mobj->angle = angle;
     mobj->health = ARENA_DUEL_PARTICIPANT_HEALTH;
-    mobj->radius = mobjinfo[MT_PLAYER].radius;
-    mobj->height = mobjinfo[MT_PLAYER].height;
+    ArenaDuel_ApplyParticipantCollisionProfile(mobj);
     mobj->flags &= ~(MF_PICKUP | MF_NOTDMATCH);
     mobj->arena_entity_index = ARENA_MAX_ENEMIES;
     strncpy(mobj->arena_entity_id,
@@ -2943,6 +3016,14 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player1WorldY(void)
     return mobj != NULL ? mobj->y >> FRACBITS : 0;
 }
 
+ARENA_DUEL_EXPORT int ArenaDuel_Player1AngleDegrees(void)
+{
+    mobj_t *mobj;
+
+    mobj = ArenaDuel_Player1Mobj();
+    return mobj != NULL ? ArenaDuel_AngleDegrees(mobj->angle) : 0;
+}
+
 ARENA_DUEL_EXPORT int ArenaDuel_Player2PositionValid(void)
 {
     return arena_duel_player2 != NULL;
@@ -2956,6 +3037,11 @@ ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldX(void)
 ARENA_DUEL_EXPORT int ArenaDuel_Player2WorldY(void)
 {
     return arena_duel_player2 != NULL ? arena_duel_player2->y >> FRACBITS : 0;
+}
+
+ARENA_DUEL_EXPORT int ArenaDuel_Player2AngleDegrees(void)
+{
+    return arena_duel_player2 != NULL ? ArenaDuel_AngleDegrees(arena_duel_player2->angle) : 0;
 }
 
 ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)

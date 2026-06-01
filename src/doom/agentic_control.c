@@ -419,6 +419,60 @@ static void Agentic_WriteTsvField(FILE *file, const char *value)
     }
 }
 
+static boolean Agentic_WritePickupStateRow(FILE *file, mobj_t *mobj, int tick)
+{
+    const char *pickup_type;
+    const char *label;
+    char entity_id[64];
+    int x;
+    int y;
+    int z;
+
+    if (file == NULL || mobj == NULL || !(mobj->flags & MF_SPECIAL))
+    {
+        return false;
+    }
+
+    switch (mobj->type)
+    {
+    case MT_SHOTGUN:
+        if (!Arena_WeaponPickupsEnabled())
+        {
+            return false;
+        }
+        pickup_type = "weapon";
+        label = "shotgun";
+        break;
+    case MT_MISC10:
+        pickup_type = "health";
+        label = "stimpack";
+        break;
+    case MT_MISC11:
+        pickup_type = "health";
+        label = "medikit";
+        break;
+    default:
+        return false;
+    }
+
+    x = mobj->x >> FRACBITS;
+    y = mobj->y >> FRACBITS;
+    z = mobj->z >> FRACBITS;
+    snprintf(entity_id, sizeof(entity_id), "pickup_%s_%d_%d", label, x, y);
+    fprintf(file,
+            "%s\t%s\t%d\tpickup\t%s\tpickup\t%s\t%s\t%d\t%d\t%d\t0\t0\t1\n",
+            Arena_RunId(),
+            Arena_ScenarioId(),
+            tick,
+            entity_id,
+            pickup_type,
+            label,
+            x,
+            y,
+            z);
+    return true;
+}
+
 void Agentic_ExportState(void)
 {
     FILE *file;
@@ -622,6 +676,11 @@ void Agentic_ExportState(void)
         }
 
         mobj = (mobj_t *) thinker;
+        if (ArenaDuel_IsEnabled()
+            && Agentic_WritePickupStateRow(file, mobj, leveltime))
+        {
+            continue;
+        }
         if (mobj->arena_entity_index < 0)
         {
             continue;

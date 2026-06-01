@@ -19,7 +19,14 @@
 #define ARENA_AUTOPILOT_STUCK_BURST_WINDOW_TICKS 42
 #define ARENA_AUTOPILOT_STUCK_BURST_THRESHOLD 4
 #define ARENA_AUTOPILOT_STUCK_COOLDOWN_TICKS 84
-#define ARENA_AUTOPILOT_ROUTE_REACHED_DISTANCE 32
+#define ARENA_AUTOPILOT_ROUTE_REACHED_DISTANCE 12
+#define ARENA_AUTOPILOT_ROUTE_CELL_CENTER_TOLERANCE 32
+#define ARENA_AUTOPILOT_ROUTE_FINAL_CELL_TOLERANCE 42
+#define ARENA_AUTOPILOT_MAP_X_MIN -1056
+#define ARENA_AUTOPILOT_MAP_Y_MAX 736
+#define ARENA_AUTOPILOT_MAP_CELL_SIZE 64
+#define ARENA_AUTOPILOT_MAP_ROWS 23
+#define ARENA_AUTOPILOT_MAP_COLS 33
 
 static arena_participant_autopilot_debug_t arena_autopilot_debug[ARENA_PARTICIPANT_COUNT];
 static char arena_route_cursor_intent_id[ARENA_PARTICIPANT_COUNT][64];
@@ -92,6 +99,122 @@ static int SquaredDistance(int x1, int y1, int x2, int y2)
     dx = x2 - x1;
     dy = y2 - y1;
     return dx * dx + dy * dy;
+}
+
+static int ClampInt(int value, int min_value, int max_value)
+{
+    if (value < min_value)
+    {
+        return min_value;
+    }
+    if (value > max_value)
+    {
+        return max_value;
+    }
+    return value;
+}
+
+static int RouteGridCol(int x)
+{
+    return ClampInt((x - ARENA_AUTOPILOT_MAP_X_MIN) / ARENA_AUTOPILOT_MAP_CELL_SIZE,
+                    0,
+                    ARENA_AUTOPILOT_MAP_COLS - 1);
+}
+
+static int RouteGridRow(int y)
+{
+    return ClampInt((ARENA_AUTOPILOT_MAP_Y_MAX - y) / ARENA_AUTOPILOT_MAP_CELL_SIZE,
+                    0,
+                    ARENA_AUTOPILOT_MAP_ROWS - 1);
+}
+
+static int RouteSameGridCell(int x1, int y1, int x2, int y2)
+{
+    return RouteGridCol(x1) == RouteGridCol(x2)
+        && RouteGridRow(y1) == RouteGridRow(y2);
+}
+
+static int RouteReachedTargetCellCenterBandWithTolerance(int x, int y, int target_x, int target_y, int tolerance)
+{
+    return RouteSameGridCell(x, y, target_x, target_y)
+        && AbsInt(x - target_x) <= tolerance
+        && AbsInt(y - target_y) <= tolerance;
+}
+
+static int RouteReachedTargetCellCenterBand(int x, int y, int target_x, int target_y)
+{
+    return RouteReachedTargetCellCenterBandWithTolerance(x,
+                                                        y,
+                                                        target_x,
+                                                        target_y,
+                                                        ARENA_AUTOPILOT_ROUTE_CELL_CENTER_TOLERANCE);
+}
+
+static int RouteWaypointReached(int x, int y, int target_x, int target_y, int reached_distance_sq)
+{
+    return SquaredDistance(x, y, target_x, target_y) <= reached_distance_sq;
+}
+
+static int RouteSegmentDirection(int from_x, int from_y, int to_x, int to_y)
+{
+    int dx;
+    int dy;
+
+    dx = to_x - from_x;
+    dy = to_y - from_y;
+    if (AbsInt(dx) >= AbsInt(dy))
+    {
+        return dx >= 0 ? 1 : -1;
+    }
+    return dy >= 0 ? 2 : -2;
+}
+
+static int RouteWaypointNeedsStrictTurn(int previous_x,
+                                        int previous_y,
+                                        int target_x,
+                                        int target_y,
+                                        int next_x,
+                                        int next_y)
+{
+    return RouteSegmentDirection(previous_x, previous_y, target_x, target_y)
+        != RouteSegmentDirection(target_x, target_y, next_x, next_y);
+}
+
+static int RouteWaypointReachedForCursor(const arena_participant_autopilot_input_t *input,
+                                         int waypoint_index,
+                                         int target_x,
+                                         int target_y,
+                                         int reached_distance_sq)
+{
+    int previous_x;
+    int previous_y;
+    int next_x;
+    int next_y;
+
+    if (SquaredDistance(input->self_x, input->self_y, target_x, target_y) <= reached_distance_sq)
+    {
+        return true;
+    }
+    if (waypoint_index + 1 >= input->intent.route_waypoint_count)
+    {
+        return RouteReachedTargetCellCenterBandWithTolerance(input->self_x,
+                                                            input->self_y,
+                                                            target_x,
+                                                            target_y,
+                                                            ARENA_AUTOPILOT_ROUTE_FINAL_CELL_TOLERANCE);
+    }
+
+    previous_x = waypoint_index > 0 ? input->intent.route_x[waypoint_index - 1] : input->self_x;
+    previous_y = waypoint_index > 0 ? input->intent.route_y[waypoint_index - 1] : input->self_y;
+    next_x = input->intent.route_x[waypoint_index + 1];
+    next_y = input->intent.route_y[waypoint_index + 1];
+
+    if (RouteWaypointNeedsStrictTurn(previous_x, previous_y, target_x, target_y, next_x, next_y))
+    {
+        return false;
+    }
+
+    return RouteReachedTargetCellCenterBand(input->self_x, input->self_y, target_x, target_y);
 }
 
 static void CopyField(char *dest, size_t dest_size, const char *value)
@@ -746,7 +869,11 @@ static int ApplyRoutePlan(const arena_participant_autopilot_input_t *input,
     {
         target_x = input->intent.route_x[i];
         target_y = input->intent.route_y[i];
-        if (SquaredDistance(input->self_x, input->self_y, target_x, target_y) > reached_distance_sq)
+        if (!RouteWaypointReachedForCursor(input,
+                                           i,
+                                           target_x,
+                                           target_y,
+                                           reached_distance_sq))
         {
             break;
         }

@@ -7,10 +7,12 @@ This document explains what Doom Arena MCP agents receive, what they send back, 
 The default duel loop is coordinate-route control:
 
 ```text
-get_participant_observation -> choose objective/route/engagement_policy/reasoning -> set_participant_plan -> observe again
+get_participant_observation -> choose route/objective/reasoning -> set_participant_plan -> wait for next get_participant_observation result
 ```
 
-The model does not press movement keys every frame. It chooses a short route in Doom map coordinates. Doom validates the route, writes it into the existing participant intent TSV path, and the Doom autopilot follows the waypoints while handling frame-level movement, turning, collision, aiming, firing, and stuck recovery.
+The model does not press movement keys every frame. It chooses a short route in Doom map coordinates. Doom validates hard route legality, writes accepted plans into the existing participant intent TSV path, and the Doom executor follows the submitted waypoints literally while handling frame-level movement, turning, collision, aiming, and firing.
+
+After an accepted plan, `get_participant_observation` is gated by the MCP wrapper. If the agent asks for game state immediately, the call waits until the prior route completes, stalls, expires, or the match leaves combat before returning the next snapshot. This avoids feeding the model mid-action state while a previous route is still executing.
 
 ## Recommended MCP tools for duel agents
 
@@ -45,10 +47,9 @@ Schema:
 {
   "participant_id": "player_1",
   "controller_token": "...",
-  "objective": "your_goal",
   "route": ["A01", "A02"],
-  "engagement_policy": "engage_if_visible",
-  "reasoning": "short reason",
+  "objective": "short goal",
+  "reasoning": "optional, max 12 words",
   "sequence_number": 1
 }
 ```
@@ -59,41 +60,34 @@ Fields:
 | --- | --- |
 | `participant_id` | `player_1` or `player_2`. |
 | `controller_token` | Per-player token from the generated prompt. |
-| `objective` | Short free-form goal chosen by the model. |
-| `route` | Up to 16 grid cells such as `M05`, `G05`, `G12`, `M17`. |
-| `engagement_policy` | How to behave while following the route. |
-| `reasoning` | One short sentence for logs/evaluation. |
+| `route` | Up to 8 grid cells such as `M05`, `G05`, `G12`, `M17`. |
+| `objective` | Optional short free-form goal chosen by the model. |
+| `reasoning` | Optional public reasoning, capped to 12 words. |
 | `sequence_number` | Increment every decision. Higher values override older policies. |
 
-Allowed `engagement_policy` values:
-
-```text
-engage_if_visible
-avoid_until_target
-hold_fire
-force_fight
-```
-
-`avoid_until_target` prioritizes movement. Doom suppresses attack while the route is still in progress, then normal firing can resume after the route target is reached.
+The default behavior is to shoot when the opponent is visible while following the submitted route.
 
 Route constraints:
 
 ```text
 rows A-W
 columns 01-33
-maximum 16 cells
+maximum 8 cells
+every consecutive segment must be horizontal or vertical
+diagonal segments are rejected
 cells cannot be # wall cells
 straight route segments cannot cross # wall cells
 ```
 
-The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. If any segment crosses a blocked cell, the plan is rejected and the model must add intermediate cells to route around the wall.
+The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. Every consecutive segment must share the same row or the same column. If any segment is diagonal, enters a wall cell, or crosses a blocked cell, the plan is rejected. The server does not insert connector cells, repair diagonals, trim already-passed cells, or choose alternate lanes for the model.
+
+Near-wall routes are accepted if they are otherwise legal. If the Doom actor clips a wall corner or fails to progress during execution, that is reported back through route execution feedback instead of silently changing the route.
 
 The server stores the accepted plan as:
 
 ```text
 plan_objective
 plan_route
-plan_engagement_policy
 plan_reasoning
 plan_route_cells
 ```
@@ -105,14 +99,11 @@ Those fields are appended to the participant intent TSV so Doom still consumes o
 In the default hierarchical mode, `get_participant_observation` returns compact route-planning state:
 
 ```text
-control_mode
-participant_id
-opponent_id
 match
 self
 opponent
-tactical
 map
+last_plan
 previous_rounds when enabled
 ```
 
@@ -123,8 +114,6 @@ phase
 time_left_seconds
 round
 total_rounds
-has_next_round
-winner
 ```
 
 Important `self` fields:
@@ -132,56 +121,58 @@ Important `self` fields:
 ```text
 health
 ammo
-alive
-x
-y
+cell
 angle
-zone
+weapon
 ```
 
 Important `opponent` fields:
 
 ```text
-alive
 visible
-health if visible
-distance_bucket
-relative_angle_bucket
-last_seen.age_ms
-last_seen.zone
-```
-
-Important `tactical` fields:
-
-```text
-pressure
-los
-damage_trend
-last_action_result
-stuck_detected
-spin_detected
-repeated_action_count
+cell if visible
+last_seen_cell
 ```
 
 Important `map` fields:
 
 ```text
-current_zone
-weapon_pickups_enabled
-pickups
+pickups with id, type, available, cell, distance
 ```
 
-Observations can also include `active_plan` when an accepted route plan is currently active. It includes the objective, route cells, current waypoint, current waypoint index/count, and distance to the current waypoint.
+Observations can include `last_plan` and `last_plan_result` after an accepted route command.
+
+`last_plan` is the last public MCP command submitted by the model:
+
+```json
+{
+  "route": ["W08", "W17", "R17"],
+  "status": "active",
+  "current": "W17",
+  "result": "progressing"
+}
+```
+
+This is public command/result memory, not hidden chain-of-thought. It exposes what was submitted and what happened during execution without telling the model which strategy to choose next.
+
+The copied MCP prompt no longer embeds the full ASCII map. The UI exposes a separate `Map Reference` copy panel with the full static ASCII map, legend, blocked cells, and static resource cells for users who want to provide that context.
+
+Reasons include `plan_ready`, `plan_stalled`, `wait_timeout`, and `state_unavailable`.
 
 Example `map` block:
 
 ```json
 {
   "current_zone": "left_side",
+  "bounds": {"x_min": -1056, "x_max": 1056, "y_min": -736, "y_max": 736},
+  "cell_size": 64,
+  "row_labels": "A-W",
+  "col_labels": "01-33",
+  "blocked_cell_count": 42,
   "weapon_pickups_enabled": true,
   "pickups": [
-    {"id": "health_d06", "available": true, "cell": "D06", "distance": 900},
-    {"id": "shotgun_i12", "available": true, "cell": "I12", "distance": 900}
+    {"id": "health_d06", "type": "health", "name": "medikit", "available": true, "cell": "D06", "x": -672, "y": 544, "distance": 900},
+    {"id": "shotgun_i12", "type": "weapon", "name": "shotgun", "available": true, "cell": "I12", "x": -608, "y": 544, "distance": 900}
   ]
 }
 ```
@@ -257,7 +248,7 @@ LLM agent
 
 ## Doom-side autopilot responsibilities
 
-The LLM chooses the route. Doom handles mechanics:
+The LLM chooses the route. Doom handles mechanics only:
 
 ```text
 waypoint following
@@ -267,8 +258,7 @@ aiming
 line-of-sight checks
 fire gating
 engagement policy expansion
-stuck detection
-stuck recovery
+stuck/no-progress detection
 stale-policy continuation
 ```
 
@@ -315,9 +305,9 @@ If the lease expires before a replacement arrives, Doom may mark the policy `sta
 
 ## Fog of war
 
-Fog of war is enabled by default. In fog mode, the agent always sees its own position and state, but opponent exact coordinates are restricted unless the opponent is visible from that participant's perspective.
+Fog of war is enabled by default. In fog mode, the agent always sees its own position and state, but opponent exact coordinates are restricted unless the opponent is currently visible from that participant's perspective.
 
-Visibility is directional. Player 1 seeing Player 2 does not automatically mean Player 2 sees Player 1. If a player is shot or damaged, the observation can reveal enough recent-contact context for recovery and response.
+Visibility is directional and wall-gated. A participant sees the opponent only when Doom reports line of sight, the static ASCII map segment between them does not cross a `#` wall cell, and the opponent is inside the participant's view cone. If a participant is hit while looking away, the hit can briefly reveal the opponent only while geometric line of sight is still open. If the opponent moves behind a wall, live `x`, `y`, `cell`, health delta, pressure, and distance bucket disappear; only stale `last_seen` memory remains.
 
 ## Pickups
 
@@ -325,7 +315,8 @@ The generated prompt gives static pickup locations once. Pickup locations are de
 
 Each medikit restores `+100` health, capped at the duel max health of `150`.
 
-Repeated observations keep pickup data compact: `id`, `available`, `cell`, and `distance`.
+Repeated observations keep pickup data structured: `id`, `type`, `name`, `available`, `cell`, `x`, `y`, and `distance`.
+`available` is derived from live Doom pickup objects. When a pickup is no longer present, observations expose only `available=false`; they do not expose who took it or when.
 
 `weapon_pickups_enabled=false` means the shotgun is disabled for the session. In that mode, the Doom runtime removes shotgun objects, the UI hides the shotgun marker, and `map.pickups` only includes non-weapon resources such as health packs.
 
@@ -341,6 +332,7 @@ route
 route cells
 engagement_policy
 reasoning
+plan_summary
 sequence_number
 decision latency
 MCP latency
@@ -354,7 +346,22 @@ next set_participant_plan started_at_ms - previous get_participant_observation c
 
 MCP latency measures local tool/server round-trip time after the request is sent.
 
-Run stats persist `plan_objective`, `plan_route_cells`, `plan_engagement_policy`, and `plan_reasoning` on `set_participant_plan` calls so failed or stuck runs can be diagnosed from the submitted route.
+Run stats persist `plan_objective`, `plan_route_cells`, `plan_engagement_policy`, `plan_reasoning`, and optional `plan_summary` on `set_participant_plan` calls so failed or stuck runs can be diagnosed from the submitted route.
+
+Invalid route plans return structured rejection payloads instead of only surfacing a generic tool failure. The response includes:
+
+```text
+accepted=false
+error_type
+error
+plan
+route_diagnostics.start_cell
+route_diagnostics.from_cell
+route_diagnostics.to_cell
+route_diagnostics.blocked_cells_crossed
+```
+
+Each round also writes `decision_trace.jsonl`. It records model-facing observations and plan submissions, including accepted/rejected status, objective, route cells, engagement policy, reasoning, route diagnostics, latency, and active-plan execution state. This file is intended to separate model planning errors from MCP/server/Doom execution issues.
 
 Total MCP commands count all tool calls, not only action calls:
 
@@ -419,3 +426,33 @@ reset sequence_number to 1
 send a new opening set_participant_plan
 if phase=finished and has_next_round=false, stop
 ```
+
+## Match logging outputs
+
+Each match writes raw debug artifacts plus a compact derived summary under:
+
+```text
+benchmarks/results/session_.../round_XX_run_.../
+```
+
+Important artifacts:
+
+- `summary.json`: final outcome, winner, terminal reason, elapsed time, final health, damage, and shots.
+- `analysis_summary.json`: compact benchmark metrics intended for comparison.
+- `stats.json`: full MCP call, latency, lifecycle, and command telemetry.
+- `decision_trace.jsonl`: observation and plan trace.
+- `events.jsonl`: raw runtime/game events such as path points, pickups, damage, and match finish.
+
+`analysis_summary.json` keeps the high-signal fields:
+
+- `outcome`: winner, terminal reason, elapsed time, timeout.
+- `combat`: damage dealt/taken, shots fired/hit, accuracy, final health.
+- `resources`: first shotgun pickup, first health pickup, pickup counts, and compact pickup events.
+- `routing`: plan counts, invalid plan counts, route errors, route repairs, dropped passed cells, inserted connector cells, and path summaries.
+- `latency`: decision and MCP average, p95, and max latency.
+- `errors`: compact error counts.
+- `lifecycle`: stale/sticky and superseded plan counts.
+- `fairness`: scenario, spawn variant, player models, fog-of-war, weapon-spawn, and seed.
+- `reasoning`: recent objective/route/engagement/reasoning/plan-summary samples.
+
+Repeated compact observations intentionally omit the full `blocked_cells` list. The static ASCII map and blocked geometry are provided in the initial MCP prompt; repeated observations keep only compact map metadata and live state.
