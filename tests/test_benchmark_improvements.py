@@ -368,7 +368,7 @@ def test_load_map_blueprint_returns_empty_for_unknown_scenario():
     assert blueprint == ""
 
 
-def test_map_blueprint_section_injected_in_prompt():
+def test_map_blueprint_section_not_injected_in_prompt():
     from doom_arena_duel_prompts import instructions
     prompt = instructions(
         participant_id="player_1",
@@ -379,8 +379,8 @@ def test_map_blueprint_section_injected_in_prompt():
         enable_map_blueprint=True,
         scenario_id="duel_e1m8",
     )
-    assert "Map blueprint" in prompt
-    assert "bounds" in prompt.lower() or "grid" in prompt.lower()
+    assert "Map blueprint" not in prompt
+    assert "ASCII map" not in prompt
 
 
 def test_map_blueprint_absent_when_flag_off():

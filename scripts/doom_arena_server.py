@@ -2708,6 +2708,11 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def update_participant_intent_row(self, intent_row: dict[str, str]) -> str:
         rows = self.current_run_participant_intent_rows()
+        current_ms = now_ms()
+        rows = [
+            row for row in rows
+            if int(row.get("expires_at_ms", "0") or 0) > current_ms
+        ]
         existing_row = next(
             (
                 row for row in rows
