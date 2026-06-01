@@ -2079,14 +2079,6 @@ def validate_route_segments(cells: list[str], start_cell: str = "") -> None:
                 f"route segment {from_cell}->{to_cell} crosses blocked cell(s): "
                 f"{shown}{suffix}."
             )
-        near_walls = wall_clearance_cells_near_segment(from_cell, to_cell)
-        if near_walls:
-            shown = ", ".join(near_walls[:8])
-            suffix = "" if len(near_walls) <= 8 else f", plus {len(near_walls) - 8} more"
-            raise DoomArenaError(
-                f"route segment {from_cell}->{to_cell} passes too close to wall cell(s): "
-                f"{shown}{suffix}. Add wider intermediate waypoints around corners."
-            )
 
 
 def route_segment_is_diagonal(start_cell: str, end_cell: str) -> bool:
@@ -2217,17 +2209,8 @@ def normalize_plan_route(
             raise DoomArenaError(f"route cell {cell} is a blocked wall cell")
         cells.append(cell)
 
-    cells, dropped_passed_cells = trim_passed_route_cells(
-        cells,
-        start_cell=start_cell,
-        rebase_position=rebase_position,
-    )
-    cells, inserted_connector_cells = repair_diagonal_route_segments(cells, start_cell=start_cell)
-    if len(cells) > PLAN_ROUTE_MAX_WAYPOINTS:
-        raise DoomArenaError(
-            "route repair inserted connector cells and exceeded the maximum "
-            f"{PLAN_ROUTE_MAX_WAYPOINTS} waypoints"
-        )
+    dropped_passed_cells: list[str] = []
+    inserted_connector_cells: list[dict[str, str]] = []
     validate_route_segments(cells, start_cell=start_cell)
     xy_points = [grid_cell_to_xy(cell) for cell in cells]
     route_text = ";".join(f"{x},{y}" for x, y in xy_points)

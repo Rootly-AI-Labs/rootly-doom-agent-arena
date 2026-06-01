@@ -10,7 +10,7 @@ The default duel loop is coordinate-route control:
 get_participant_observation -> choose objective/route/engagement_policy/reasoning -> set_participant_plan -> observe again
 ```
 
-The model does not press movement keys every frame. It chooses a short route in Doom map coordinates. Doom validates the route, writes it into the existing participant intent TSV path, and the Doom autopilot follows the waypoints while handling frame-level movement, turning, collision, aiming, firing, and stuck recovery.
+The model does not press movement keys every frame. It chooses a short route in Doom map coordinates. Doom validates hard route legality, writes accepted plans into the existing participant intent TSV path, and the Doom executor follows the submitted waypoints literally while handling frame-level movement, turning, collision, aiming, and firing.
 
 ## Recommended MCP tools for duel agents
 
@@ -88,10 +88,11 @@ every consecutive segment must be horizontal or vertical
 diagonal segments are rejected
 cells cannot be # wall cells
 straight route segments cannot cross # wall cells
-straight route segments cannot pass too close to wall corners
 ```
 
-The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. Every consecutive segment must share the same row or the same column. If any segment is diagonal, crosses a blocked cell, or comes within the wall-clearance margin of a blocked cell, the plan is rejected and the model must add wider intermediate cells to route around the wall corner.
+The server validates the segment from the player's current cell to the first submitted waypoint, then every segment between submitted waypoints. Every consecutive segment must share the same row or the same column. If any segment is diagonal, enters a wall cell, or crosses a blocked cell, the plan is rejected. The server does not insert connector cells, repair diagonals, trim already-passed cells, or choose alternate lanes for the model.
+
+Near-wall routes are accepted if they are otherwise legal. If the Doom actor clips a wall corner or fails to progress during execution, that is reported back through route execution feedback instead of silently changing the route.
 
 The server stores the accepted plan as:
 
@@ -220,7 +221,7 @@ Observations can include `last_plan` and `last_plan_result` after an accepted ro
 }
 ```
 
-These fields are public command/result memory, not hidden chain-of-thought. They let the model compare intent against execution and adjust the next plan.
+These fields are public command/result memory, not hidden chain-of-thought. They expose what was submitted and what happened during execution without telling the model which strategy to choose next.
 
 `active_plan` remains as a compatibility alias for older clients. It includes the objective, route cells, current waypoint, current waypoint index/count, distance to the current waypoint, waypoints reached, waypoints remaining, status, and distance to the final waypoint.
 
@@ -313,7 +314,7 @@ LLM agent
 
 ## Doom-side autopilot responsibilities
 
-The LLM chooses the route. Doom handles mechanics:
+The LLM chooses the route. Doom handles mechanics only:
 
 ```text
 waypoint following
@@ -323,8 +324,7 @@ aiming
 line-of-sight checks
 fire gating
 engagement policy expansion
-stuck detection
-stuck recovery
+stuck/no-progress detection
 stale-policy continuation
 ```
 
@@ -425,7 +425,6 @@ route_diagnostics.start_cell
 route_diagnostics.from_cell
 route_diagnostics.to_cell
 route_diagnostics.blocked_cells_crossed
-route_diagnostics.wall_clearance_cells
 ```
 
 Each round also writes `decision_trace.jsonl`. It records model-facing observations and plan submissions, including accepted/rejected status, objective, route cells, engagement policy, reasoning, route diagnostics, latency, and active-plan execution state. This file is intended to separate model planning errors from MCP/server/Doom execution issues.

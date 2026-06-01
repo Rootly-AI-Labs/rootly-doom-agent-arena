@@ -264,7 +264,7 @@ ROLE AND LOOP
 
 OBSERVATION
 - Use `match`, `self`, `opponent`, `tactical`, `map`, `last_plan`, `last_plan_result`, and `active_plan` when present.
-- `last_plan` is your last accepted public MCP plan. `last_plan_result` is execution feedback for that plan. Use them to continue, repair, or replace your route.
+- `last_plan` is your last accepted public MCP plan. `last_plan_result` is neutral execution feedback for that plan.
 - Static map facts are given once below; observations provide live position, visibility, route status, and pickup availability.
 
 ACTION SCHEMA
@@ -289,8 +289,8 @@ ROUTE FACTS
 - `route` is up to 16 grid cells. Rows `A-W` run north/top to south/bottom; columns `01-33` run west/left to east/right.
 - Each cell is `64 x 64` Doom units; the server moves to each cell center.
 - Consecutive route cells must share a row or column. Diagonal segments are rejected.
-- Valid: `["W33", "W23", "Q23"]`. Invalid: `["W33", "Q23"]`.
-- Waypoints inside walls, segments crossing walls, and segments too close to wall corners are rejected.
+- Waypoints inside walls and segments crossing walls are rejected.
+- Accepted routes are executed literally. The Doom executor handles frame-level movement and firing only; it does not choose lanes, insert route cells, or repair your route.
 - If observations include `last_plan` or `last_plan_result`, treat them as public feedback about the previous route execution, not hidden chain-of-thought.
 
 {_static_map_context_section(scenario_id, participant_id, enable_weapon_pickups)}

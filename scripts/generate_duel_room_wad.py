@@ -11,7 +11,12 @@ from doom_arena_map_blueprints import ascii_cell_rect, load_geometry_blueprint
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_IWAD = REPO_ROOT / "src" / "doom1.wad"
 OUTPUT_IWAD = Path(os.environ.get("DOOM_ARENA_OUTPUT_IWAD", str(REPO_ROOT / "src" / "doom1-arena.wad")))
-OUTPUT_TACTICAL_MAP = REPO_ROOT / "src" / "assets" / "duel_room_layout.svg"
+OUTPUT_TACTICAL_MAP = Path(
+    os.environ.get(
+        "DOOM_ARENA_OUTPUT_TACTICAL_MAP",
+        str(REPO_ROOT / "src" / "assets" / "duel_room_layout.svg"),
+    )
+)
 
 SVG_ROOM_X = 40
 SVG_ROOM_Y = 30
