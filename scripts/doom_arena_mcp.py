@@ -178,6 +178,8 @@ class DoomArenaClient:
     def get_arena_state(self, run_id: str | None = None) -> str:
         state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
         rows = parse_state(self._request("GET", state_path))
+        config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
+        hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
         state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         if run_id:
             state["requested_run_id"] = run_id
@@ -199,6 +201,8 @@ class DoomArenaClient:
         state_error = ""
         try:
             rows = parse_state(self._request("GET", state_path))
+            config_row = next((row for row in rows if row.get("kind") == "arena_config"), {})
+            hide_enemy_position = config_row.get("hide_enemy_position", "0") == "1"
             state = make_shared_arena_state(rows, directional_visibility=hide_enemy_position)
         except DoomArenaError as exc:
             state_error = str(exc)
