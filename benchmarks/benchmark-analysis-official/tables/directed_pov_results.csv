@@ -1,0 +1,13 @@
+folder,player_1_model,player_2_model,player_1_wins,player_2_wins,draws,player_1_avg_damage,player_2_avg_damage,player_1_avg_decision_latency,player_2_avg_decision_latency,player_1_mcp_errors,player_2_mcp_errors
+player1-gpt-5-5__player2-gpt-5-4,gpt-5-5,gpt-5-4,5,2,3,76.5,61.0,6459.434,10348.98,4,0
+player1-gpt-5-4__player2-gpt-5-5,gpt-5-4,gpt-5-5,4,6,0,126.5,144.0,8129.614,5176.86,3,2
+player1-gpt-5-5__player2-gpt-5-4-mini,gpt-5-5,gpt-5-4-mini,7,3,0,132.5,76.0,6576.172,8001.966,3,5
+player1-gpt-5-4-mini__player2-gpt-5-5,gpt-5-4-mini,gpt-5-5,1,9,0,113.0,153.0,9220.185,5886.941,3,3
+player1-gpt-5-5__player2-gpt-5-3-codex-spark,gpt-5-5,gpt-5-3-codex-spark,6,4,0,120.5,101.5,8210.759,7120.55,4,3
+player1-gpt-5-3-codex-spark__player2-gpt-5-5,gpt-5-3-codex-spark,gpt-5-5,4,5,1,119.5,106.0,7377.32,8999.639,8,3
+player1-gpt-5-4__player2-gpt-5-4-mini,gpt-5-4,gpt-5-4-mini,8,0,2,143.0,36.0,6986.753,15797.938,1,0
+player1-gpt-5-4-mini__player2-gpt-5-4,gpt-5-4-mini,gpt-5-4,3,7,0,94.0,106.0,19168.507,6969.327,6,2
+player1-gpt-5-4__player2-gpt-5-3-codex-spark,gpt-5-4,gpt-5-3-codex-spark,4,5,1,112.0,128.5,6359.431,3465.085,3,8
+player1-gpt-5-3-codex-spark__player2-gpt-5-4,gpt-5-3-codex-spark,gpt-5-4,3,0,7,5.5,19.5,6836.862,9585.542,5,1
+player1-gpt-5-4-mini__player2-gpt-5-3-codex-spark,gpt-5-4-mini,gpt-5-3-codex-spark,9,1,0,173.0,72.0,11834.598,9101.567,7,1
+player1-gpt-5-3-codex-spark__player2-gpt-5-4-mini,gpt-5-3-codex-spark,gpt-5-4-mini,0,3,7,20.0,11.5,5708.83,6633.982,1,0

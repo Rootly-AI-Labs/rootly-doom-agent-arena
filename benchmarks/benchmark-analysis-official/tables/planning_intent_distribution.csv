@@ -1,0 +1,5 @@
+model,total_plans,resource control,resource control_pct,engagement/combat,engagement/combat_pct,evasion/recovery,evasion/recovery_pct,map control/exploration,map control/exploration_pct
+gpt-5-3-codex-spark,730,233,31.918,161,22.055,78,10.685,258,35.342
+gpt-5-4,526,260,49.43,113,21.483,26,4.943,127,24.144
+gpt-5-4-mini,378,162,42.857,117,30.952,22,5.82,77,20.37
+gpt-5-5,589,379,64.346,115,19.525,32,5.433,63,10.696

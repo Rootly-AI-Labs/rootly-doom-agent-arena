@@ -1,0 +1,5 @@
+model,label,total_matches,wins,losses,draws,win_rate_excluding_draws,score_draw_half,score_pct,avg_damage_dealt,avg_damage_taken,avg_damage_diff,avg_final_health,avg_match_time,avg_decision_latency_ms,avg_mcp_latency_ms,mcp_error_rate,total_mcp_errors
+gpt-5-5,gpt-5.5,60,38,18,4,67.857,40.0,66.667,122.083,99.583,22.5,68.0,93.002,6884.967,1370.772,0.01451,19
+gpt-5-4,gpt-5.4,60,25,22,13,53.191,31.5,52.5,94.667,80.75,13.917,75.583,116.057,8063.274,1191.49,0.00838,10
+gpt-5-3-codex-spark,gpt-5.3-codex-spark,60,17,27,16,38.636,25.0,41.667,74.5,90.417,-15.917,67.583,122.173,6601.702,1056.103,0.00633,26
+gpt-5-4-mini,gpt-5.4-mini,60,19,32,9,37.255,23.5,39.167,83.917,104.417,-20.5,53.5,107.612,11776.196,609.74,0.0231,21
