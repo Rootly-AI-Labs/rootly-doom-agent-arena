@@ -8,22 +8,21 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 ## Leaderboard
 
-| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
-|---|---|---:|---:|---|---|---:|
-| 1 | gpt-5.5 | 58.3% | 35-25 | vs gpt-5.3-codex (85%) | vs gpt-5.4-mini (35%) | 0.15× |
-| 2 | gpt-5.4-mini | 56.7% | 34-26 | vs gpt-5.5 (65%) | vs gpt-5.3-codex-spark (45%) | **1.00× 💰** |
-| 3 | gpt-5.3-codex | 46.7% | 28-32 | vs gpt-5.3-codex-spark (85%) | vs gpt-5.5 (15%) | 0.27× |
-| 4 | gpt-5.3-codex-spark | 38.3% | 23-37 | vs gpt-5.4-mini (55%) | vs gpt-5.3-codex (15%) | n/a |
+| Rank | Model | Win rate | Record | Best matchup | Worst matchup |
+|---|---|---:|---:|---|---|
+| 1 | gpt-5.5 | 66.7% | 38-18-4 | vs gpt-5.4-mini (80.0%) | vs gpt-5.3-codex-spark (57.5%) |
+| 2 | gpt-5.4 | 52.5% | 25-22-13 | vs gpt-5.4-mini (80.0%) | vs gpt-5.5 (37.5%) |
+| 3 | gpt-5.3-codex-spark | 41.7% | 17-27-16 | vs gpt-5.4 (60.0%) | vs gpt-5.4-mini (22.5%) |
+| 4 | gpt-5.4-mini | 39.2% | 19-32-9 | vs gpt-5.3-codex-spark (77.5%) | vs gpt-5.4 / gpt-5.5 (20.0%) |
 
-Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`.
+Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`. Win rate uses draw-adjusted score, where a draw counts as half a win. Record is shown as wins-losses-draws.
 
 `Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: $30, $4.50, $14, n/a), normalized so the best model = 1.00×.
-
 ## Methodology
 
 Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
 
-The key design choice is the control split. Models do not drive frame-level inputs directly. Instead, they choose short-lived policies such as `engage_opponent`, `strafe_attack`, `hold`, or `search`, optionally with tactical parameters for spacing, fire policy, navigation target, LOS-loss behavior, and stuck recovery. A Doom-side autopilot handles low-level movement, aim, firing, and recovery every tick. This keeps the benchmark focused on tactical decision-making instead of testing which model can micro-manage a shooter at frame rate.
+The key design choice is the control split. Models do not drive frame-level inputs directly. Instead, they submit high-level MCP intents such as `engage_opponent`, `strafe_attack`, `hold`, or `search`, along with tactical parameters like spacing, fire policy, navigation target, LOS-loss behavior, and stuck recovery. The Doom-side autopilot converts the latest valid intent into low-level movement, aiming, firing, distance management, and recovery every tick. This keeps the benchmark focused on tactical decision-making and tool use rather than testing whether a model can micromanage a shooter at frame rate.
 
 Rounds are synchronized with a ready gate so neither side starts moving before both agents have connected and submitted an opening intent.
 
