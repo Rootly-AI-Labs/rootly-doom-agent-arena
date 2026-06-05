@@ -42,3 +42,4 @@ src/*.log
 benchmarks/results/
 __pycache__/
 *.py[cod]
+benchmarks/
