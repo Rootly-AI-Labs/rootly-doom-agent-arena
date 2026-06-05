@@ -1,0 +1,5 @@
+model,first_shotgun_pickups,first_health_pickups,total_shotgun_pickups,total_health_pickups,win_rate_when_getting_first_shotgun,win_rate_when_opponent_gets_first_shotgun
+gpt-5-3-codex-spark,5,12,21,170,0.0,30.909
+gpt-5-4,26,17,852,259,50.0,35.294
+gpt-5-4-mini,10,10,21,44,100.0,18.0
+gpt-5-5,15,34,330,973,80.0,57.778

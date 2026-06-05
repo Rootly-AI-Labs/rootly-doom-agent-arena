@@ -1,0 +1,5 @@
+model,plans,avg_plan_quality,alignment_rate,avg_route_objective_alignment,avg_map_awareness,avg_resource_awareness,avg_opponent_awareness,avg_adaptation
+gpt-5-3-codex-spark,730,3.089,69.315,4.079,3.6,2.859,2.678,2.23
+gpt-5-4,526,3.332,65.589,3.968,3.962,3.443,2.918,2.371
+gpt-5-4-mini,378,3.413,70.106,4.103,4.095,3.19,3.341,2.333
+gpt-5-5,589,3.433,57.216,3.716,3.881,3.9,3.217,2.448

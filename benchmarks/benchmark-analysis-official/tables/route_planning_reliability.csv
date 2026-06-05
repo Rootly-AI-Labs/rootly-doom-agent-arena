@@ -1,0 +1,5 @@
+model,valid_plans,rejected_plans,invalid_route_rate,waypoint_in_wall_cell,route_diagonal_segment,route_rebase_count,route_repair_count,stuck_recovery_count,avg_unique_cells_visited,avg_distance_traveled,revisited_cell_rate
+gpt-5-3-codex-spark,532,198,0.27123,117,49,0,0,550,0.0,0.0,0
+gpt-5-4,416,110,0.20913,80,21,0,0,416,0.0,0.0,0
+gpt-5-4-mini,304,74,0.19577,33,28,0,0,304,0.0,0.0,0
+gpt-5-5,456,133,0.22581,99,21,0,0,456,0.0,0.0,0

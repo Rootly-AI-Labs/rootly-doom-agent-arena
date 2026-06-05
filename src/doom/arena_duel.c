@@ -1002,13 +1002,13 @@ static void ArenaDuel_Player1Spawn(int *x, int *y, angle_t *angle)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        *x = -1024;
-        *y = 704;
+        *x = -960;
+        *y = 640;
         *angle = ANG270 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
-        *x = -1024;
-        *y = 704;
+        *x = -960;
+        *y = 640;
         *angle = ANG270 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CENTER:
@@ -1018,8 +1018,8 @@ static void ArenaDuel_Player1Spawn(int *x, int *y, angle_t *angle)
         break;
     case ARENA_DUEL_SPAWN_OPEN:
     default:
-        *x = -1024;
-        *y = 704;
+        *x = -960;
+        *y = 640;
         *angle = ANG270 + ANG45;
         break;
     }
@@ -2423,13 +2423,13 @@ void ArenaDuel_SpawnPlayer2(void)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        x = 1024;
-        y = -704;
+        x = 960;
+        y = -640;
         angle = ANG90 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
-        x = 1024;
-        y = -704;
+        x = 960;
+        y = -640;
         angle = ANG90 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CENTER:
@@ -2439,8 +2439,8 @@ void ArenaDuel_SpawnPlayer2(void)
         break;
     case ARENA_DUEL_SPAWN_OPEN:
     default:
-        x = 1024;
-        y = -704;
+        x = 960;
+        y = -640;
         angle = ANG90 + ANG45;
         break;
     }

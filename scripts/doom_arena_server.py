@@ -240,7 +240,7 @@ def mcp_plan_argument_fields(tool_name: str, arguments: dict[str, Any]) -> dict[
         "plan_route_cells": route_cells_text_for_stats(arguments.get("route", "")),
         "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
         "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
-        "plan_summary": " ".join(str(arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
+        "plan_summary": " ".join(str(arguments.get("plan_note") or arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
     }
 
 
@@ -873,7 +873,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 record[key] = payload[key]
         plan = payload.get("plan")
         if isinstance(plan, dict):
-            for key in ("objective", "route", "engagement_policy", "reasoning", "plan_summary", "sequence_number"):
+            for key in ("objective", "route", "engagement_policy", "reasoning", "plan_note", "plan_summary", "sequence_number"):
                 if key in plan:
                     record[f"plan_{key}" if key != "route" else "plan_route_cells"] = plan[key]
         diagnostics = payload.get("route_diagnostics")

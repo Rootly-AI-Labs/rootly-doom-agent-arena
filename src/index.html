@@ -4976,7 +4976,7 @@
                             " | route=" + formatCompactValue(row.plan_route_cells || row.plan_route) +
                             " | engagement=" + formatCompactValue(row.plan_engagement_policy) +
                             (row.plan_reasoning ? " | reasoning=" + formatCompactValue(row.plan_reasoning) : "") +
-                            (row.plan_summary ? " | summary=" + formatCompactValue(row.plan_summary) : "") +
+                            (row.plan_summary ? " | plan_note=" + formatCompactValue(row.plan_summary) : "") +
                             (droppedPassedCells.length ? " | rebased: dropped=" + formatCompactValue(droppedPassedCells.join(";")) : "") +
                             (insertedConnectorText ? " | repaired: inserted=" + formatCompactValue(insertedConnectorText) : "")
                         : " | Intent: intent=" + (row.intent || "unknown") +

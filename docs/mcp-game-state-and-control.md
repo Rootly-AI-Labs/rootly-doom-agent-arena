@@ -50,6 +50,7 @@ Schema:
   "route": ["A01", "A02"],
   "objective": "short goal",
   "reasoning": "optional, max 12 words",
+  "plan_note": "optional public plan, max 180 chars",
   "sequence_number": 1
 }
 ```
@@ -63,6 +64,7 @@ Fields:
 | `route` | Up to 8 grid cells such as `M05`, `G05`, `G12`, `M17`. |
 | `objective` | Optional short free-form goal chosen by the model. |
 | `reasoning` | Optional public reasoning, capped to 12 words. |
+| `plan_note` | Optional public planning note for richer post-match analysis. Ignored by Doom movement. |
 | `sequence_number` | Increment every decision. Higher values override older policies. |
 
 The default behavior is to shoot when the opponent is visible while following the submitted route.

@@ -1,0 +1,111 @@
+{
+  "output_folder": "C:\\Users\\muhha\\OneDrive\\Desktop\\doom test\\doom-agent-arena\\benchmarks\\benchmark-analysis-official",
+  "official_folders_requested": [
+    "player1-gpt-5-5__player2-gpt-5-4",
+    "player1-gpt-5-4__player2-gpt-5-5",
+    "player1-gpt-5-5__player2-gpt-5-4-mini",
+    "player1-gpt-5-4-mini__player2-gpt-5-5",
+    "player1-gpt-5-5__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-5",
+    "player1-gpt-5-4__player2-gpt-5-4-mini",
+    "player1-gpt-5-4-mini__player2-gpt-5-4",
+    "player1-gpt-5-4__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-4",
+    "player1-gpt-5-4-mini__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-4-mini"
+  ],
+  "official_folders_found": [
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-4",
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-4-mini",
+    "player1-gpt-5-3-codex-spark__player2-gpt-5-5",
+    "player1-gpt-5-4-mini__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-4-mini__player2-gpt-5-4",
+    "player1-gpt-5-4-mini__player2-gpt-5-5",
+    "player1-gpt-5-4__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-4__player2-gpt-5-4-mini",
+    "player1-gpt-5-4__player2-gpt-5-5",
+    "player1-gpt-5-5__player2-gpt-5-3-codex-spark",
+    "player1-gpt-5-5__player2-gpt-5-4",
+    "player1-gpt-5-5__player2-gpt-5-4-mini"
+  ],
+  "models": [
+    "gpt-5-3-codex-spark",
+    "gpt-5-4",
+    "gpt-5-4-mini",
+    "gpt-5-5"
+  ],
+  "matches": 120,
+  "round_participant_rows": 240,
+  "plans": 2223,
+  "tables": [
+    "tables/directed_pov_results.csv",
+    "tables/head_to_head_matrix.csv",
+    "tables/leaderboard.csv",
+    "tables/per_plan_decision_timing.csv",
+    "tables/plan_quality_by_model.csv",
+    "tables/planning_intent_distribution.csv",
+    "tables/reasoning_plan_note_examples.csv",
+    "tables/resource_control_summary.csv",
+    "tables/route_planning_reliability.csv"
+  ],
+  "figures": [
+    "figures/fig01_overall_win_rate.png",
+    "figures/fig02_head_to_head_heatmap.png",
+    "figures/fig03_side_bias.png",
+    "figures/fig04_match_time_over_rounds.png",
+    "figures/fig05_mcp_errors_over_rounds.png",
+    "figures/fig06_decision_latency_over_rounds.png",
+    "figures/fig07_mcp_latency_over_rounds.png",
+    "figures/fig07b_plan_thinking_time_distribution.png",
+    "figures/fig07c_decision_vs_mcp_latency.png",
+    "figures/fig08_damage_differential.png",
+    "figures/fig09_accuracy_combat_efficiency.png",
+    "figures/fig10_resource_advantage_outcomes.png",
+    "figures/fig11_route_error_distribution.png",
+    "figures/fig12_route_cell_heatmap.png",
+    "figures/fig13_opening_route_diversity.png",
+    "figures/fig14_plan_note_examples.png",
+    "figures/fig15_planning_intent_distribution.png",
+    "figures/fig16_planning_intent_over_rounds.png",
+    "figures/fig17_outcome_by_planning_intent.png",
+    "figures/fig18_plan_quality_score_by_model.png",
+    "figures/fig19_reasoning_action_alignment.png",
+    "figures/fig20_thought_process_embedding_map.png",
+    "figures/fig21_thinking_time_vs_plan_quality.png",
+    "figures/fig22_opening_strategy_flow.png",
+    "figures/fig23_model_personality_radar.png",
+    "figures/fig24_strategy_trajectory_over_rounds.png"
+  ],
+  "data_quality": {
+    "missing_folders": [],
+    "folder_round_counts": {
+      "player1-gpt-5-5__player2-gpt-5-4": 10,
+      "player1-gpt-5-4__player2-gpt-5-5": 10,
+      "player1-gpt-5-5__player2-gpt-5-4-mini": 10,
+      "player1-gpt-5-4-mini__player2-gpt-5-5": 10,
+      "player1-gpt-5-5__player2-gpt-5-3-codex-spark": 10,
+      "player1-gpt-5-3-codex-spark__player2-gpt-5-5": 10,
+      "player1-gpt-5-4__player2-gpt-5-4-mini": 10,
+      "player1-gpt-5-4-mini__player2-gpt-5-4": 10,
+      "player1-gpt-5-4__player2-gpt-5-3-codex-spark": 10,
+      "player1-gpt-5-3-codex-spark__player2-gpt-5-4": 10,
+      "player1-gpt-5-4-mini__player2-gpt-5-3-codex-spark": 10,
+      "player1-gpt-5-3-codex-spark__player2-gpt-5-4-mini": 10
+    },
+    "missing_analysis_summary": [],
+    "missing_stats": [],
+    "legacy_excluded": true,
+    "health_cells": [
+      "G08",
+      "G26",
+      "L10",
+      "L24",
+      "Q08",
+      "Q26"
+    ],
+    "shotgun_cells": [
+      "F17",
+      "R17"
+    ]
+  }
+}
