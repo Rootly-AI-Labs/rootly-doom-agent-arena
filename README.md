@@ -8,16 +8,18 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 ## Leaderboard
 
-| Rank | Model | Win rate | Record | Best matchup | Worst matchup |
-|---|---|---:|---:|---|---|
-| 1 | gpt-5.5 | 66.7% | 38-18-4 | vs gpt-5.4-mini (80.0%) | vs gpt-5.3-codex-spark (57.5%) |
-| 2 | gpt-5.4 | 52.5% | 25-22-13 | vs gpt-5.4-mini (80.0%) | vs gpt-5.5 (37.5%) |
-| 3 | gpt-5.3-codex-spark | 41.7% | 17-27-16 | vs gpt-5.4 (60.0%) | vs gpt-5.4-mini (22.5%) |
-| 4 | gpt-5.4-mini | 39.2% | 19-32-9 | vs gpt-5.3-codex-spark (77.5%) | vs gpt-5.4 / gpt-5.5 (20.0%) |
+| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
+|---|---|---:|---:|---|---|---:|
+| 1 | gpt-5.5 | 66.7% | 38-18 | vs gpt-5.4-mini (80.0%) | vs gpt-5.3-codex-spark (57.5%) | 0.26× |
+| 2 | gpt-5.4 | 52.5% | 25-22 | vs gpt-5.4-mini (80.0%) | vs gpt-5.5 (37.5%) | 0.43× |
+| 3 | gpt-5.3-codex-spark | 41.7% | 17-27 | vs gpt-5.4 (60.0%) | vs gpt-5.4-mini (22.5%) | n/a |
+| 4 | gpt-5.4-mini | 39.2% | 19-32 | vs gpt-5.3-codex-spark (77.5%) | vs gpt-5.4 / gpt-5.5 (20.0%) | **1.00× 💰** |
 
-Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`. Win rate uses draw-adjusted score, where a draw counts as half a win. Record is shown as wins-losses-draws.
+Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`. Win rate uses draw-adjusted score, where a draw counts as half a win.
 
-`Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: $30, $4.50, $14, n/a), normalized so the best model = 1.00×.
+`Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: gpt-5.5 $30, gpt-5.4 $14, gpt-5.4-mini $4.50, gpt-5.3-codex-spark n/a), normalized so the best model = 1.00×.
+
+Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
 ## Methodology
 
 Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
