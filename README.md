@@ -24,7 +24,23 @@ Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
 
 Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
 
-The key design choice is the control split. Models do not drive frame-level inputs directly. Instead, they submit high-level MCP intents such as `engage_opponent`, `strafe_attack`, `hold`, or `search`, along with tactical parameters like spacing, fire policy, navigation target, LOS-loss behavior, and stuck recovery. The Doom-side autopilot converts the latest valid intent into low-level movement, aiming, firing, distance management, and recovery every tick. This keeps the benchmark focused on tactical decision-making and tool use rather than testing whether a model can micromanage a shooter at frame rate.
+The key design choice is the control split. Models do not drive frame-level inputs directly, instead each model submits one high-level route plan at a time through MCP: an `objective`, a short `reasoning` field, an ordered route of map cells, and an optional public `plan_note`.
+
+Example plan submission:
+
+```json
+{
+  "participant_id": "player_1",
+  "objective": "kite shotgun user from long range",
+  "route": ["Q26", "Q22"],
+  "reasoning": "Opponent likely has shotgun; avoid close range.",
+  "plan_note": "Back away through Q-lane, keep distance, and shoot only in line of sight."
+}
+```
+
+The same route format can express  kiting, baiting, health retreats, shotgun pushes, flanks, and resets. Doom executes the accepted route in real time and handles low-level movement, aiming, firing when line of sight is available, collision handling, and recovery. 
+
+This keeps the benchmark focused on spatial planning, adaptation, and public plan quality rather than testing whether a model can micromanage shooter controls or win through rapid tool-calling.
 
 Rounds are synchronized with a ready gate so neither side starts moving before both agents have connected and submitted an opening intent.
 
