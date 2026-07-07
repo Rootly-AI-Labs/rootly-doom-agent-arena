@@ -629,10 +629,13 @@
                 gap: 12px;
                 min-height: 100%;
                 padding: 18px;
-                background: rgba(20, 0, 0, 0.9);
-                color: #f7f5d8;
+                background:
+                    radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.46) 72%, rgba(0, 0, 0, 0.72) 100%),
+                    rgba(120, 0, 0, 0.12);
+                color: #ead9c1;
                 text-align: center;
                 z-index: 5;
+                pointer-events: auto;
             }
 
             .duel-death-overlay[hidden] {
@@ -640,29 +643,66 @@
             }
 
             .duel-death-title {
-                color: #ff4d3d;
-                font: 900 30px/1 "Trebuchet MS", Verdana, sans-serif;
-                letter-spacing: 0.08em;
+                color: #8f1414;
+                font: 400 clamp(28px, 5vw, 54px)/0.95 Georgia, "Times New Roman", serif;
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
-                text-shadow: 0 2px 0 #000;
+                white-space: nowrap;
+                text-shadow:
+                    0 0 22px rgba(80, 0, 0, 0.86),
+                    0 2px 0 #050000,
+                    0 0 4px rgba(255, 205, 170, 0.18);
+                animation: duelDeathTitleFadeIn 2.2s ease-out both;
             }
 
             .duel-death-subtitle {
                 max-width: 260px;
-                color: #ffce6b;
+                color: rgba(234, 217, 193, 0.82);
                 font: 700 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
                 text-transform: uppercase;
+                letter-spacing: 0.08em;
+                animation: duelDeathSubtitleFadeIn 2.8s ease-out both;
             }
 
             .duel-death-overlay button {
                 cursor: pointer;
                 border: 1px solid rgba(255, 255, 255, 0.32);
-                background: #401717;
-                color: #f7f5d8;
+                background: rgba(15, 4, 4, 0.72);
+                color: #ead9c1;
                 padding: 10px 12px;
                 font: 900 12px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
+                animation: duelDeathSubtitleFadeIn 3s ease-out both;
+            }
+
+            @keyframes duelDeathTitleFadeIn {
+                0% {
+                    opacity: 0;
+                    transform: scale(1.035);
+                    filter: blur(5px);
+                }
+                42% {
+                    opacity: 0;
+                    transform: scale(1.018);
+                    filter: blur(3px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                    filter: blur(0);
+                }
+            }
+
+            @keyframes duelDeathSubtitleFadeIn {
+                0%, 55% {
+                    opacity: 0;
+                    transform: translateY(6px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .duel-command-waiting-overlay {
@@ -1695,7 +1735,7 @@
                                 Waiting for agent to send command...
                             </div>
                             <div class="duel-death-overlay" id="player-1-death-overlay" hidden>
-                                <div class="duel-death-title">You Died</div>
+                                <div class="duel-death-title">YOU DIED</div>
                                 <div class="duel-death-subtitle" id="player-1-death-detail">Player 1 eliminated</div>
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
@@ -1731,7 +1771,7 @@
                                 Waiting for agent to send command...
                             </div>
                             <div class="duel-death-overlay" id="player-2-death-overlay" hidden>
-                                <div class="duel-death-title">You Died</div>
+                                <div class="duel-death-title">YOU DIED</div>
                                 <div class="duel-death-subtitle" id="player-2-death-detail">Player 2 eliminated</div>
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
@@ -1880,6 +1920,22 @@
             var currentArenaSeed = 0;
             var currentArenaTimeoutSeconds = 300;
             var DUEL_MAX_HEALTH = 150;
+            var DUEL_DEATH_AUDIO_SRC = "assets/audio/death.mp3";
+            var DUEL_DEATH_AUDIO_MAX_SECONDS = 4;
+            var DUEL_DEATH_AUDIO_FADE_START_SECONDS = 3;
+            var DUEL_DEATH_ANIMATION_HOLD_MS = 4500;
+            var DUEL_DAMAGE_RED_FLASH_MS = 520;
+            var DUEL_DAMAGE_RED_FLASH_ALPHA = 0.56;
+            var DUEL_FOOTSTEP_AUDIO_SRC = "assets/audio/footstep.mp3";
+            var DUEL_FOOTSTEP_PLAYBACK_RATE = 1.75;
+            var DUEL_FOOTSTEP_VOLUME = 0.5;
+            var duelDeathAudioPlayedByParticipant = { player_1: false, player_2: false };
+            var duelDeathAudioByParticipant = { player_1: null, player_2: null };
+            var duelDamageRedFlashStartedByLabel = {};
+            var duelDamageFlashUntilByParticipant = { player_1: 0, player_2: 0 };
+            var duelLastHealthByParticipant = { player_1: null, player_2: null };
+            var duelFootstepAudioByParticipant = { player_1: null, player_2: null };
+            var duelFootstepPlayingByParticipant = { player_1: false, player_2: false };
             var selectedArenaDataMode = "mock";
             var selectedArenaDataSourcePath = arenaDataMockPath;
             var doomScriptLoaded = false;
@@ -1908,9 +1964,11 @@
             var duelAutoStartAfterReloadPending = false;
             var benchmarkResultsShownForRunId = "";
             var duelAutoAdvanceTimer = 0;
+            var duelNextRoundEnableTimer = 0;
             var duelAutoAdvanceInFlight = false;
             var duelLastAutoAdvancedRunId = "";
             var duelFinishedElapsedByRun = {};
+            var duelFinishedSeenAtByRun = {};
             var forceArenaMenuMode = false;
             var forceArenaMenuStorageKey = "doomArenaForceMenuOnReload";
             var currentMapBlueprint = null;
@@ -3094,7 +3152,174 @@
                     window.clearTimeout(duelAutoAdvanceTimer);
                     duelAutoAdvanceTimer = 0;
                 }
+                if (duelNextRoundEnableTimer) {
+                    window.clearTimeout(duelNextRoundEnableTimer);
+                    duelNextRoundEnableTimer = 0;
+                }
                 duelAutoAdvanceInFlight = false;
+                duelFinishedSeenAtByRun = {};
+            }
+
+            function getDuelFootstepAudio(participantId) {
+                var audio = duelFootstepAudioByParticipant[participantId];
+
+                if (!audio) {
+                    audio = new Audio(DUEL_FOOTSTEP_AUDIO_SRC);
+                    audio.loop = true;
+                    audio.preload = "auto";
+                    audio.volume = DUEL_FOOTSTEP_VOLUME;
+                    audio.playbackRate = DUEL_FOOTSTEP_PLAYBACK_RATE;
+                    duelFootstepAudioByParticipant[participantId] = audio;
+                }
+
+                return audio;
+            }
+
+            function resetDuelMotionAudioState() {
+                stopAllDuelFootstepAudio();
+                duelLastHealthByParticipant = { player_1: null, player_2: null };
+                duelDamageFlashUntilByParticipant = { player_1: 0, player_2: 0 };
+            }
+
+            function unlockDuelFootstepAudio() {
+                ["player_1", "player_2"].forEach(function (participantId) {
+                    var audio = getDuelFootstepAudio(participantId);
+                    var wasMuted = audio.muted;
+
+                    audio.muted = true;
+                    audio.volume = 0;
+                    audio.play().then(function () {
+                        audio.pause();
+                        try {
+                            audio.currentTime = 0;
+                        } catch (error) {}
+                        audio.muted = wasMuted;
+                        audio.volume = DUEL_FOOTSTEP_VOLUME;
+                    }).catch(function () {
+                        audio.muted = wasMuted;
+                        audio.volume = DUEL_FOOTSTEP_VOLUME;
+                    });
+                });
+            }
+
+            function stopDuelFootstepAudio(participantId) {
+                var audio = duelFootstepAudioByParticipant[participantId];
+
+                duelFootstepPlayingByParticipant[participantId] = false;
+                if (!audio) {
+                    return;
+                }
+                audio.pause();
+                try {
+                    audio.currentTime = 0;
+                } catch (error) {}
+            }
+
+            function stopAllDuelFootstepAudio() {
+                stopDuelFootstepAudio("player_1");
+                stopDuelFootstepAudio("player_2");
+            }
+
+            function participantAppearsToBeExecutingRoute(participant) {
+                var text;
+                var routeKeys = [
+                    "route",
+                    "current_route",
+                    "active_route",
+                    "remaining_route",
+                    "planned_route",
+                    "waypoints",
+                    "path"
+                ];
+                var index;
+                var value;
+
+                if (!participant) {
+                    return false;
+                }
+
+                text = [
+                    participant.last_action,
+                    participant.action,
+                    participant.current_action,
+                    participant.intent,
+                    participant.current_intent,
+                    participant.objective,
+                    participant.status,
+                    participant.state,
+                    participant.route_status,
+                    participant.command
+                ].map(function (part) {
+                    return String(part || "");
+                }).join(" ").toLowerCase();
+
+                if (/(dead|death|killed|finished|waiting|idle|hold position|holding|adjust|turn|aim|look|strafe left|strafe right)/.test(text)) {
+                    return false;
+                }
+                if (/(executing route|execute route|route executing|following route|active route|current route|route active|navigating route)/.test(text)) {
+                    return true;
+                }
+
+                for (index = 0; index < routeKeys.length; index++) {
+                    value = participant[routeKeys[index]];
+                    if (Array.isArray(value) && value.length > 0) {
+                        return true;
+                    }
+                    if (typeof value === "string" && value.trim().length > 0) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            function updateParticipantHitFlash(participantId, participant, phase) {
+                var health = participant && participant.health !== undefined ? Number(participant.health) : NaN;
+                var previousHealth = duelLastHealthByParticipant[participantId];
+
+                if (!Number.isFinite(health)) {
+                    return;
+                }
+
+                if (phase === "finished") {
+                    duelLastHealthByParticipant[participantId] = health;
+                    return;
+                }
+
+                if (Number.isFinite(previousHealth) && health < previousHealth) {
+                    duelDamageFlashUntilByParticipant[participantId] = Date.now() + DUEL_DAMAGE_RED_FLASH_MS;
+                }
+
+                duelLastHealthByParticipant[participantId] = health;
+            }
+
+            function updateParticipantFootstepAudio(participantId, participant, phase, matchOver) {
+                var shouldPlay;
+                var audio;
+
+                shouldPlay = currentArenaMode === "duel" &&
+                    phase !== "finished" &&
+                    !matchOver &&
+                    !participantIsDead(participant) &&
+                    participantAppearsToBeExecutingRoute(participant);
+
+                if (!shouldPlay) {
+                    stopDuelFootstepAudio(participantId);
+                    return;
+                }
+
+                if (duelFootstepPlayingByParticipant[participantId]) {
+                    return;
+                }
+
+                audio = getDuelFootstepAudio(participantId);
+                audio.muted = false;
+                audio.playbackRate = DUEL_FOOTSTEP_PLAYBACK_RATE;
+                audio.volume = DUEL_FOOTSTEP_VOLUME;
+                duelFootstepPlayingByParticipant[participantId] = true;
+                audio.play().catch(function () {
+                    duelFootstepPlayingByParticipant[participantId] = false;
+                });
             }
 
             function duelSessionHasNextRound() {
@@ -4143,6 +4368,8 @@
                 updateLauncherStatus("");
                 if (!prepareOnly) {
                     setArenaLauncherButtonsDisabled(true);
+                    resetDuelMotionAudioState();
+                    unlockDuelFootstepAudio();
                     clearDuelDeathOverlays();
                     resetParticipantReadyState();
                     resetDuelPovFrameState();
@@ -5068,6 +5295,9 @@
             }
 
             function maybeAutoAdvanceDuelRound(phase) {
+                var finishedSeenAt;
+                var delayMs;
+
                 if (
                     currentArenaMode !== "duel" ||
                     phase !== "finished" ||
@@ -5082,11 +5312,13 @@
                 }
 
                 duelLastAutoAdvancedRunId = currentArenaRunId;
+                finishedSeenAt = duelFinishedSeenAtByRun[currentArenaRunId] || Date.now();
+                delayMs = Math.max(0, DUEL_DEATH_ANIMATION_HOLD_MS - (Date.now() - finishedSeenAt));
                 duelAutoAdvanceTimer = window.setTimeout(function () {
                     duelAutoAdvanceTimer = 0;
                     duelAutoAdvanceInFlight = true;
                     startDuel({ continueSession: true, autoAdvance: true });
-                }, 1250);
+                }, delayMs);
             }
 
             function closeBenchmarkResultsModal() {
@@ -5226,6 +5458,7 @@
                 var currentRound;
                 var hasNextRound;
                 var nextRoundNumber;
+                var remainingDeathHoldMs = 0;
 
                 if (button === null) {
                     return;
@@ -5254,8 +5487,21 @@
                     : currentRound < totalRounds;
                 nextRoundNumber = Math.min(totalRounds, currentRound + 1);
 
+                if (
+                    currentArenaRunId &&
+                    duelFinishedSeenAtByRun[currentArenaRunId] !== undefined
+                ) {
+                    remainingDeathHoldMs = Math.max(0, DUEL_DEATH_ANIMATION_HOLD_MS - (Date.now() - duelFinishedSeenAtByRun[currentArenaRunId]));
+                    if (remainingDeathHoldMs > 0 && !duelNextRoundEnableTimer) {
+                        duelNextRoundEnableTimer = window.setTimeout(function () {
+                            duelNextRoundEnableTimer = 0;
+                            updateNextRoundButton("finished");
+                        }, remainingDeathHoldMs + 50);
+                    }
+                }
+
                 button.hidden = !hasNextRound;
-                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight;
+                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight || remainingDeathHoldMs > 0;
                 button.textContent = "Next Match (" + nextRoundNumber + "/" + totalRounds + ")";
             }
 
@@ -5425,6 +5671,55 @@
                 return Number.isFinite(health) && health <= 0;
             }
 
+            function stopDuelDeathAudio(participantId) {
+                var audio = duelDeathAudioByParticipant[participantId];
+
+                if (!audio) {
+                    return;
+                }
+
+                audio.pause();
+                audio.currentTime = 0;
+                audio.volume = 1;
+            }
+
+            function playDuelDeathAudio(participantId) {
+                var audio;
+                var fadeStart = DUEL_DEATH_AUDIO_FADE_START_SECONDS;
+                var maxSeconds = DUEL_DEATH_AUDIO_MAX_SECONDS;
+
+                if (duelDeathAudioPlayedByParticipant[participantId]) {
+                    return;
+                }
+
+                duelDeathAudioPlayedByParticipant[participantId] = true;
+                stopDuelDeathAudio(participantId);
+
+                audio = new Audio(DUEL_DEATH_AUDIO_SRC);
+                audio.volume = 1;
+                duelDeathAudioByParticipant[participantId] = audio;
+
+                audio.addEventListener("timeupdate", function () {
+                    var fadeProgress;
+
+                    if (audio.currentTime >= maxSeconds) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        audio.volume = 1;
+                        return;
+                    }
+
+                    if (audio.currentTime >= fadeStart) {
+                        fadeProgress = (audio.currentTime - fadeStart) / Math.max(0.1, maxSeconds - fadeStart);
+                        audio.volume = Math.max(0, Math.min(1, 1 - fadeProgress));
+                    }
+                });
+
+                audio.play().catch(function () {
+                    duelDeathAudioPlayedByParticipant[participantId] = false;
+                });
+            }
+
             function updateParticipantDeathOverlay(participantId, player, opponentLabel, phase, winner, terminalReason) {
                 var overlay = document.getElementById(participantId.replace("_", "-") + "-death-overlay");
                 var detail = document.getElementById(participantId.replace("_", "-") + "-death-detail");
@@ -5438,8 +5733,12 @@
 
                 overlay.hidden = !dead;
                 if (!dead) {
+                    duelDeathAudioPlayedByParticipant[participantId] = false;
+                    stopDuelDeathAudio(participantId);
                     return;
                 }
+
+                playDuelDeathAudio(participantId);
 
                 if (detail !== null) {
                     reason = terminalReason || (phase === "finished" ? "match finished" : "eliminated");
@@ -5742,6 +6041,111 @@
                 );
             }
 
+            function softenDuelDamageRedFrame(label, imageData) {
+                var data, pixelIndex, sampleStep, sampledPixels, redHeavyPixels;
+                var red, green, blue, maxOther, dominance, redFrameRatio;
+                var frameLabel, startedAt, elapsedMs, redKeep, greenLift, blueLift, redBoost;
+
+                if (
+                    String(label).toLowerCase().indexOf("automap") !== -1 ||
+                    !imageData ||
+                    !imageData.data
+                ) {
+                    return;
+                }
+
+                frameLabel = String(label || "pov");
+                data = imageData.data;
+                sampleStep = 64 * 4;
+                sampledPixels = 0;
+                redHeavyPixels = 0;
+
+                for (pixelIndex = 0; pixelIndex < data.length; pixelIndex += sampleStep) {
+                    red = data[pixelIndex];
+                    green = data[pixelIndex + 1];
+                    blue = data[pixelIndex + 2];
+                    maxOther = Math.max(green, blue);
+                    if (red > 92 && red - maxOther > 28) {
+                        redHeavyPixels++;
+                    }
+                    sampledPixels++;
+                }
+
+                if (!sampledPixels) {
+                    return;
+                }
+
+                redFrameRatio = redHeavyPixels / sampledPixels;
+                if (redFrameRatio < 0.22) {
+                    delete duelDamageRedFlashStartedByLabel[frameLabel];
+                    return;
+                }
+
+                startedAt = duelDamageRedFlashStartedByLabel[frameLabel];
+                if (!startedAt) {
+                    startedAt = Date.now();
+                    duelDamageRedFlashStartedByLabel[frameLabel] = startedAt;
+                }
+                elapsedMs = Date.now() - startedAt;
+                redKeep = elapsedMs <= DUEL_DAMAGE_RED_FLASH_MS ? 1.08 : 0.12;
+                greenLift = elapsedMs <= DUEL_DAMAGE_RED_FLASH_MS ? 0.02 : 0.0;
+                blueLift = elapsedMs <= DUEL_DAMAGE_RED_FLASH_MS ? 0.01 : 0.0;
+                redBoost = elapsedMs <= DUEL_DAMAGE_RED_FLASH_MS ? 24 : 0;
+
+                for (pixelIndex = 0; pixelIndex < data.length; pixelIndex += 4) {
+                    red = data[pixelIndex];
+                    green = data[pixelIndex + 1];
+                    blue = data[pixelIndex + 2];
+                    maxOther = Math.max(green, blue);
+                    dominance = red - maxOther;
+                    if (red > 80 && dominance > 18) {
+                        data[pixelIndex] = Math.min(255, Math.round(maxOther + dominance * redKeep + redBoost));
+                        data[pixelIndex + 1] = Math.min(255, Math.round(green + dominance * greenLift));
+                        data[pixelIndex + 2] = Math.min(255, Math.round(blue + dominance * blueLift));
+                        maxOther = Math.max(data[pixelIndex + 1], data[pixelIndex + 2]);
+                        if (data[pixelIndex] <= maxOther) {
+                            data[pixelIndex] = Math.min(255, maxOther + 10);
+                        }
+                    }
+                }
+            }
+
+            function participantIdFromPovLabel(label) {
+                var normalized = String(label || "").toLowerCase();
+
+                if (normalized.indexOf("player 2") !== -1 || normalized.indexOf("p2") !== -1) {
+                    return "player_2";
+                }
+                return "player_1";
+            }
+
+            function applyDuelDamageFlashTint(label, imageData) {
+                var participantId = participantIdFromPovLabel(label);
+                var until = duelDamageFlashUntilByParticipant[participantId] || 0;
+                var remainingMs = until - Date.now();
+                var alpha;
+                var data;
+                var pixelIndex;
+
+                if (
+                    String(label).toLowerCase().indexOf("automap") !== -1 ||
+                    remainingMs <= 0 ||
+                    !imageData ||
+                    !imageData.data
+                ) {
+                    return;
+                }
+
+                alpha = DUEL_DAMAGE_RED_FLASH_ALPHA * Math.max(0.18, Math.min(1, remainingMs / DUEL_DAMAGE_RED_FLASH_MS));
+                data = imageData.data;
+
+                for (pixelIndex = 0; pixelIndex < data.length; pixelIndex += 4) {
+                    data[pixelIndex] = Math.min(255, Math.round(data[pixelIndex] * (1 - alpha * 0.25) + 255 * alpha));
+                    data[pixelIndex + 1] = Math.round(data[pixelIndex + 1] * (1 - alpha * 0.72));
+                    data[pixelIndex + 2] = Math.round(data[pixelIndex + 2] * (1 - alpha * 0.72));
+                }
+            }
+
             function renderPovToCanvas(label, canvas, statusEl, frameGetter, rgbaGetter, palettedGetter, widthGetter, heightGetter, nonzeroGetter, state) {
                 var frame, pointer, palettedPointer, palettePointer, width, height, nonzeroPixels;
                 var source, palettedSource, paletteSource, pixelIndex, colorIndex, renderMode, value, x, y, jsNonzeroPixels, paintedPixels, paintedData;
@@ -5824,6 +6228,8 @@
                 if (fastDuelPovRendering) {
                     source = (Module.HEAPU8 || HEAPU8).subarray(pointer, pointer + width * height * 4);
                     state.imageData.data.set(source);
+                    softenDuelDamageRedFrame(label, state.imageData);
+                    applyDuelDamageFlashTint(label, state.imageData);
                     paintPovImageData(label, canvas, state, width, height);
                     state.lastFrame = frame;
                     maybeHideDuelLauncherAfterFirstFrames();
@@ -5896,6 +6302,9 @@
                     }
                     renderMode = "rgba";
                 }
+
+                softenDuelDamageRedFrame(label, state.imageData);
+                applyDuelDamageFlashTint(label, state.imageData);
 
                 imageDataPixels = 0;
                 firstImageDataPixel = "none";
@@ -6107,8 +6516,12 @@
                 }
                 if (phase === "finished" && runId) {
                     duelFinishedElapsedByRun[runId] = elapsed;
+                    if (duelFinishedSeenAtByRun[runId] === undefined) {
+                        duelFinishedSeenAtByRun[runId] = Date.now();
+                    }
                 } else if (runId && duelFinishedElapsedByRun[runId] !== undefined) {
                     delete duelFinishedElapsedByRun[runId];
+                    delete duelFinishedSeenAtByRun[runId];
                 }
                 if (phase === "finished" && runId && duelFinishedElapsedByRun[runId] !== undefined) {
                     elapsed = duelFinishedElapsedByRun[runId];
@@ -6140,13 +6553,17 @@
                 setText("duel-p2-xy", player2XY);
                 setText("duel-p2-angle", player2Angle);
                 var matchOver = participantIsDead(player1) || participantIsDead(player2);
+                updateParticipantHitFlash("player_1", player1, phase);
+                updateParticipantHitFlash("player_2", player2, phase);
                 updateCommandWaitingOverlay("player-1-command-waiting", player1, matchOver);
                 updateCommandWaitingOverlay("player-2-command-waiting", player2, matchOver);
                 renderTacticalMap(player1, player2);
                 updateTacticalPickupAvailabilityFromRows(rows);
                 refreshRunStatsForDashboard(match, player1, player2, phase);
                 updateParticipantDeathOverlay("player_1", player1, "Player 2", phase, winner, terminalReason);
+                updateParticipantFootstepAudio("player_1", player1, phase, matchOver);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
+                updateParticipantFootstepAudio("player_2", player2, phase, matchOver);
                 updateNextRoundButton(phase);
                 maybeAutoAdvanceDuelRound(phase);
                 maybeShowBenchmarkResultsPopup(phase);
