@@ -8,6 +8,7 @@ import json
 import threading
 from types import SimpleNamespace
 
+import doom_arena_mcp as mcp
 import doom_arena_server as server
 
 
@@ -140,6 +141,102 @@ def test_record_token_chars_updates_per_participant_bucket():
     assert p2["request_tokens_estimated"] == 200
     assert p2["response_tokens_estimated"] == 300
     assert p2["total_tokens_estimated"] == 500
+
+
+# ---------- LLM token-usage logging ----------
+
+
+def _sample_usage():
+    return {
+        "reasoning_tokens": 1200,
+        "completion_tokens": 1500,
+        "prompt_tokens": 800,
+        "total_tokens": 2300,
+        "model": "gpt-5.4-mini",
+    }
+
+
+def test_turn_schemas_expose_optional_usage_property():
+    for schema in (
+        mcp.participant_intent_schema(),
+        mcp.participant_strategy_schema(),
+        mcp.participant_plan_schema(),
+    ):
+        assert "usage" in schema["properties"]
+        # Optional: never in the required list.
+        assert "usage" not in schema["required"]
+        # Strict object so a stray/misspelled field is rejected.
+        assert schema["additionalProperties"] is False
+        usage = schema["properties"]["usage"]
+        assert usage["additionalProperties"] is False
+        assert "reasoning_tokens" in usage["properties"]
+
+
+def test_mcp_usage_fields_flattens_payload():
+    fields = server.mcp_usage_fields({"usage": _sample_usage()})
+    assert fields["usage_reasoning_tokens"] == 1200
+    assert fields["usage_completion_tokens"] == 1500
+    assert fields["usage_prompt_tokens"] == 800
+    assert fields["usage_total_tokens"] == 2300
+    assert fields["usage_model"] == "gpt-5.4-mini"
+
+
+def test_mcp_usage_fields_absent_when_no_usage():
+    assert server.mcp_usage_fields({}) == {}
+    assert server.mcp_usage_fields({"usage": None}) == {}
+
+
+def test_mcp_usage_fields_rejects_bad_values():
+    # bool must not pass as an int count; negatives and non-ints are dropped.
+    fields = server.mcp_usage_fields(
+        {"usage": {"reasoning_tokens": True, "completion_tokens": -5, "prompt_tokens": "9"}}
+    )
+    assert fields == {}
+
+
+def test_mcp_plan_argument_fields_attaches_usage_to_turn_tools():
+    plan = server.mcp_plan_argument_fields(
+        "set_participant_plan", {"route": ["M06"], "usage": _sample_usage()}
+    )
+    # Plan-specific fields still emitted alongside usage.
+    assert plan["plan_route_cells"] == "M06"
+    assert plan["usage_reasoning_tokens"] == 1200
+
+    intent = server.mcp_plan_argument_fields(
+        "set_participant_intent", {"intent": "hunt", "usage": _sample_usage()}
+    )
+    assert intent["usage_reasoning_tokens"] == 1200
+    # Non-turn tools carry nothing.
+    assert server.mcp_plan_argument_fields("get_arena_state", {"usage": _sample_usage()}) == {}
+
+
+def test_start_mcp_tool_call_records_usage_and_accumulates_per_participant():
+    handler = make_handler_with_state()
+    record = handler.start_mcp_tool_call(
+        "set_participant_plan",
+        {"participant_id": "player_1", "route": ["M06"], "usage": _sample_usage()},
+        message_id=1,
+    )
+    # Per-call row carries the flattened usage, joinable by call_id to decision turns.
+    assert record["usage_reasoning_tokens"] == 1200
+    assert record["call_id"].startswith("mcp_call_")
+
+    # Per-participant bucket accumulates real counts without touching the estimate.
+    bucket = handler.server.token_usage["player_1"]
+    assert bucket["reasoning_tokens_actual"] == 1200
+    assert bucket["usage_turns_actual"] == 1
+    assert "request_tokens_estimated" in bucket  # estimate preserved
+
+
+def test_start_mcp_tool_call_without_usage_is_unchanged():
+    handler = make_handler_with_state()
+    record = handler.start_mcp_tool_call(
+        "set_participant_plan",
+        {"participant_id": "player_1", "route": ["M06"]},
+        message_id=1,
+    )
+    assert "usage_reasoning_tokens" not in record
+    assert "reasoning_tokens_actual" not in handler.server.token_usage["player_1"]
 
 
 # ---------- Scenario pool / spawn randomization ----------

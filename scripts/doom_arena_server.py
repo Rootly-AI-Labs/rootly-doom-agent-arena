@@ -232,16 +232,54 @@ def route_cells_text_for_stats(route: Any) -> str:
     return str(route or "").replace("\t", " ").strip()[:80]
 
 
-def mcp_plan_argument_fields(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-    if tool_name != "set_participant_plan":
+# Turn-level tools that may carry an optional LLM ``usage`` payload.
+TURN_TOOLS_WITH_USAGE = frozenset(
+    {"set_participant_plan", "set_participant_intent", "set_participant_strategy"}
+)
+
+
+def mcp_usage_fields(arguments: dict[str, Any]) -> dict[str, Any]:
+    """Flatten an optional LLM ``usage`` payload into analysis-friendly columns.
+
+    Returns an empty dict when no usage was supplied (the common case for
+    human-driven runs), so records keep their existing shape unless a
+    programmatic caller forwards real model token counts. The flattened
+    ``usage_reasoning_tokens`` lands on the same ``call_id`` used to build
+    ``inferred_decision_turns``, giving a per-turn join of thinking effort to
+    wall-clock decision latency.
+    """
+    usage = arguments.get("usage")
+    if not isinstance(usage, dict):
         return {}
-    return {
-        "plan_objective": str(arguments.get("objective", "")).replace("\t", " ").strip()[:64],
-        "plan_route_cells": route_cells_text_for_stats(arguments.get("route", "")),
-        "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
-        "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
-        "plan_summary": " ".join(str(arguments.get("plan_note") or arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
-    }
+    fields: dict[str, Any] = {}
+    for key in ("reasoning_tokens", "completion_tokens", "prompt_tokens", "total_tokens"):
+        value = usage.get(key)
+        # bool is an int subclass; reject it so True/False can't pose as a count.
+        if isinstance(value, bool) or not isinstance(value, int):
+            continue
+        if value >= 0:
+            fields[f"usage_{key}"] = value
+    model = usage.get("model")
+    if isinstance(model, str) and model.strip():
+        fields["usage_model"] = model.strip()[:64]
+    return fields
+
+
+def mcp_plan_argument_fields(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    fields: dict[str, Any] = {}
+    if tool_name == "set_participant_plan":
+        fields.update(
+            {
+                "plan_objective": str(arguments.get("objective", "")).replace("\t", " ").strip()[:64],
+                "plan_route_cells": route_cells_text_for_stats(arguments.get("route", "")),
+                "plan_engagement_policy": str(arguments.get("engagement_policy", "")).replace("\t", " ").strip()[:32],
+                "plan_reasoning": " ".join(str(arguments.get("reasoning", "")).replace("\t", " ").split())[:160],
+                "plan_summary": " ".join(str(arguments.get("plan_note") or arguments.get("plan_summary", "")).replace("\t", " ").split())[:180],
+            }
+        )
+    if tool_name in TURN_TOOLS_WITH_USAGE:
+        fields.update(mcp_usage_fields(arguments))
+    return fields
 
 
 def now_ms() -> int:
@@ -787,6 +825,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             record.update(mcp_plan_argument_fields(tool_name, arguments))
             if participant_id:
                 self.record_token_chars_locked(participant_id, request_chars, 0)
+                self.record_actual_token_usage_locked(participant_id, arguments)
             for active in self.server.active_mcp_calls.values():
                 same_participant = (
                     participant_id
@@ -844,6 +883,35 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         )
         if request_chars > 0:
             bucket["tool_calls"] += 1
+
+    def record_actual_token_usage_locked(self, participant_id: str, arguments: dict[str, Any]) -> None:
+        """Accumulate real model-reported token counts per participant.
+
+        Only runs when a caller forwards a ``usage`` payload; the char-based
+        ``*_estimated`` fields are left untouched for backward compatibility, so
+        this adds ground truth alongside the estimate rather than replacing it.
+        """
+        fields = mcp_usage_fields(arguments)
+        if not fields:
+            return
+        bucket = self.server.token_usage.setdefault(
+            participant_id,
+            {
+                "request_chars": 0,
+                "response_chars": 0,
+                "request_tokens_estimated": 0,
+                "response_tokens_estimated": 0,
+                "total_tokens_estimated": 0,
+                "tool_calls": 0,
+            },
+        )
+        for key in ("reasoning_tokens", "completion_tokens", "prompt_tokens", "total_tokens"):
+            value = fields.get(f"usage_{key}")
+            if value is not None:
+                bucket[f"{key}_actual"] = bucket.get(f"{key}_actual", 0) + int(value)
+        bucket["usage_turns_actual"] = bucket.get("usage_turns_actual", 0) + 1
+        if "usage_model" in fields:
+            bucket["model_actual"] = fields["usage_model"]
 
     def attach_mcp_result_summary_locked(self, record: dict[str, Any], text: str) -> None:
         try:

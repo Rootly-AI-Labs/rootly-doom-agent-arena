@@ -3318,6 +3318,27 @@ def participant_input_schema(required_participant: bool) -> dict[str, Any]:
     }
 
 
+def participant_usage_schema() -> dict[str, Any]:
+    """Optional LLM token-usage payload a caller may attach to a turn.
+
+    Lets a programmatic agent forward the model's real OpenAI ``response.usage``
+    (notably ``reasoning_tokens``) so post-match analysis can separate model
+    thinking effort from wall-clock decision latency. It is optional and absent
+    for human-driven interactive-chat runs, which have no hook to ``usage``.
+    """
+    return {
+        "type": "object",
+        "properties": {
+            "reasoning_tokens": {"type": "integer", "minimum": 0},
+            "completion_tokens": {"type": "integer", "minimum": 0},
+            "prompt_tokens": {"type": "integer", "minimum": 0},
+            "total_tokens": {"type": "integer", "minimum": 0},
+            "model": {"type": "string", "maxLength": 64},
+        },
+        "additionalProperties": False,
+    }
+
+
 def participant_intent_schema() -> dict[str, Any]:
     return {
         "type": "object",
@@ -3358,6 +3379,7 @@ def participant_intent_schema() -> dict[str, Any]:
                 "maxLength": 1024,
                 "description": "Optional short reasoning string for this intent. Logged for post-match analysis; not enforced.",
             },
+            "usage": participant_usage_schema(),
         },
         "required": ["participant_id", "intent"],
         "additionalProperties": False,
@@ -3377,6 +3399,7 @@ def participant_strategy_schema() -> dict[str, Any]:
             "objective": {"type": "string", "enum": [""] + sorted(STRATEGY_OBJECTIVES)},
             "target_zone": {"type": "string", "enum": [""] + sorted(STRATEGY_TARGET_ZONES)},
             "reasoning": {"type": "string", "maxLength": STRATEGY_REASONING_MAX_CHARS},
+            "usage": participant_usage_schema(),
         },
         "required": ["participant_id", "category", "action"],
         "additionalProperties": False,
@@ -3411,6 +3434,7 @@ def participant_plan_schema() -> dict[str, Any]:
                 "description": "Optional public planning note for analysis. Stored as plan_summary and ignored by Doom movement.",
             },
             "sequence_number": {"type": "integer", "minimum": 0},
+            "usage": participant_usage_schema(),
         },
         "required": ["participant_id", "route"],
         "additionalProperties": False,
