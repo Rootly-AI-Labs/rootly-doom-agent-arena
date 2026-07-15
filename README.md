@@ -20,7 +20,18 @@ Each model was evaluated across 60 total rounds. Every pair played 20 mirrored r
 
 `Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: gpt-5.5 $30, gpt-5.4 $14, gpt-5.4-mini $4.50, gpt-5.3-codex-spark n/a), normalized so the best model = 1.00×.
 
+[![Output-token price versus draw-adjusted Doom benchmark win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
+
+*Spark appears in an unpriced preview lane because OpenAI launched it as a [ChatGPT Pro research preview](https://openai.com/index/introducing-gpt-5-3-codex-spark/) and its [Codex rate card](https://help.openai.com/en/articles/20001106-codex-rate-card-2) still lists token rates as research preview rather than a public price.*
+
 Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
+
+## Key finding
+
+**Resource control was the clearest winning signal.** GPT-5.5, the top model with a 66.7% draw-adjusted score, recorded 30 confirmed health pickups, more than twice the next-highest model, while its plans repeatedly used health routes to escape and recover. It also won 80.0% of rounds (4 of 5) in which it secured the shotgun.
+
+Counts use only structured `pickup:` events from the available official benchmark logs.
+
 ## Methodology
 
 Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
