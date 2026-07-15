@@ -9,16 +9,23 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 ## Leaderboard
 
-| Rank | Model | Win rate | Wins-Losses | Best matchup | Worst matchup | Win rate / cost |
-|---|---|---:|---:|---|---|---:|
-| 1 | gpt-5.5 | 66.7% | 38-18 | vs gpt-5.4-mini (80.0%) | vs gpt-5.3-codex-spark (57.5%) | 0.26× |
-| 2 | gpt-5.4 | 52.5% | 25-22 | vs gpt-5.4-mini (80.0%) | vs gpt-5.5 (37.5%) | 0.43× |
-| 3 | gpt-5.3-codex-spark | 41.7% | 17-27 | vs gpt-5.4 (60.0%) | vs gpt-5.4-mini (22.5%) | n/a |
-| 4 | gpt-5.4-mini | 39.2% | 19-32 | vs gpt-5.3-codex-spark (77.5%) | vs gpt-5.4 / gpt-5.5 (20.0%) | **1.00× 💰** |
+| Rank | Model | Win rate | Wins-Losses | Decision speed | Accuracy | Damage diff | Win rate / cost |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 1 | gpt-5.5 | **66.7% 🏆** | 38-18 | 6.9s | **51% 🎯** | **+22.5 💥** | 0.26× |
+| 2 | gpt-5.4 | 52.5% | 25-22 | 8.1s | 45% | +13.9 | 0.43× |
+| 3 | gpt-5.3-codex-spark | 41.7% | 17-27 | **6.6s ⚡** | 38% | −15.9 | n/a |
+| 4 | gpt-5.4-mini | 39.2% | 19-32 | 11.8s | 40% | −20.5 | **1.00× 💰** |
+
+Badges mark the category leader: 🏆 win rate · ⚡ fastest decisions · 🎯 accuracy · 💥 damage differential · 💰 cost efficiency.
 
 Each model was evaluated across 60 total rounds. Every pair played 20 mirrored rounds: 10 with Model A as `player_1` and 10 with Model B as `player_1`. Win rate uses draw-adjusted score, where a draw counts as half a win.
 
-`Win rate / cost` = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: gpt-5.5 $30, gpt-5.4 $14, gpt-5.4-mini $4.50, gpt-5.3-codex-spark n/a), normalized so the best model = 1.00×.
+- **Decision speed** = average time to commit a plan (lower is faster).
+- **Accuracy** = shots hit ÷ shots fired.
+- **Damage diff** = average damage dealt minus damage taken per round.
+- **Win rate / cost** = win rate ÷ output-token price (USD per 1M output tokens, May 2026 OpenAI: gpt-5.5 $30, gpt-5.4 $14, gpt-5.4-mini $4.50, gpt-5.3-codex-spark n/a), normalized so the best model = 1.00×.
+
+Head-to-head matchup detail is in [`fig02_head_to_head_heatmap.png`](benchmarks/benchmark-analysis-official/figures/fig02_head_to_head_heatmap.png).
 
 [![Output-token price versus draw-adjusted Doom benchmark win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
 
