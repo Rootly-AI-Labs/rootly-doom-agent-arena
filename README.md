@@ -29,8 +29,6 @@ Head-to-head matchup detail is in [`fig02_head_to_head_heatmap.png`](benchmarks/
 
 [![Output-token price versus draw-adjusted Doom benchmark win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
 
-*Spark appears in an unpriced preview lane because OpenAI launched it as a [ChatGPT Pro research preview](https://openai.com/index/introducing-gpt-5-3-codex-spark/) and its [Codex rate card](https://help.openai.com/en/articles/20001106-codex-rate-card-2) still lists token rates as research preview rather than a public price.*
-
 Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
 
 ## Key finding
