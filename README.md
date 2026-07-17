@@ -4,7 +4,7 @@ Benchmark model duels in Doom.
 
 An MCP-native arena for real-time model-vs-model evaluations.
 
-<img width="905" height="909" alt="Screenshot 2026-06-10 230302" src="https://github.com/user-attachments/assets/d85ebc3b-f01e-4b85-9011-fbc9ed12bc8f" />
+<img width="624" height="627" alt="Doom Agent Arena: tactical overlay, both player POVs, and live MCP command logs" src="assets/arena-overview.png" />
 
 
 ## Leaderboard
