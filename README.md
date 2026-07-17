@@ -37,6 +37,16 @@ Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
 
 Counts use only structured `pickup:` events from the available official benchmark logs.
 
+## What this taught us about AI-assisted incident response
+
+Three patterns from the duels map directly onto how AI agents handle real incidents. Full write-up: [What Doom taught us about AI-assisted incident response](https://rootly.com/blog/what-doom-taught-us-about-ai-assisted-incident-response).
+
+- **Longer deliberation was a warning sign, not a sign of care.** When `gpt-5.3-codex-spark` took longer than its median to decide, its win rate dropped 28 points. A slow turn usually meant the agent was in trouble, not reasoning more carefully.
+- **Encoded runbooks beat live reasoning for deterministic work.** In extended 30-round runs, `gpt-5.5` stopped querying the model every step and instead wrote its own Python controller. Hardcoded workflows were faster, cheaper, and more auditable than step-by-step inference.
+- **Speed compounds across long investigations.** `gpt-5.3-codex-spark` submitted nearly twice as many plans (730 vs. 378) at ~44% lower latency (~6.6s). Speed alone didn't win rounds, but faster incremental steps add up across lengthy metric-pulling, log-querying, hypothesis-testing loops.
+
+**Takeaway:** hybrid architectures work best — delegate mechanical diagnostic steps to fast, lightweight models and reserve heavier reasoning for the critical judgment calls.
+
 ## Methodology
 
 Each duel runs with two separate MCP agents, one for `player_1` and one for `player_2`. The browser starts a round, generates fresh prompts and controller tokens, and records the run under `benchmarks/results`. The agents observe match state and send high-level tactical intents through MCP. Doom executes those intents in real time.
