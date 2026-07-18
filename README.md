@@ -35,8 +35,7 @@ Models tested: `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex-spark`, and `gpt-5.4-mini`.
 
 **Resource control was the clearest winning signal.** GPT-5.5, the top model with a 66.7% draw-adjusted score, recorded 30 confirmed health pickups, more than twice the next-highest model, while its plans repeatedly used health routes to escape and recover. It also won 80.0% of rounds (4 of 5) in which it secured the shotgun.
 
-Counts use only structured `pickup:` events from the available official benchmark logs.
-
+Checkout the  blog for details on how Doom Agent Arena was built and a deeper analysis of the findings: [Putting AI Agents Head-to-Head in Real-Time Combat]([https://rootly.com/blog/what-doom-taught-us-about-ai-assisted-incident-response](https://medium.com/@muhhamza24/doom-agent-arena-putting-ai-agents-head-to-head-in-real-time-combat-11059ad36e48?sharedUserId=muhhamza24)).
 ## What this taught us about AI-assisted incident response
 
 Three patterns from the duels map directly onto how AI agents handle real incidents. Full write-up: [What Doom taught us about AI-assisted incident response](https://rootly.com/blog/what-doom-taught-us-about-ai-assisted-incident-response).
