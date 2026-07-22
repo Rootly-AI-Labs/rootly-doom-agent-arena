@@ -308,63 +308,101 @@
             .arena-mcp-status-panel {
                 margin-top: 12px;
                 border: 1px solid rgba(173, 186, 145, 0.14);
+                border-radius: 6px;
                 background: #181c18;
-                padding: 10px;
+                padding: 12px 14px;
             }
 
             .arena-mcp-status-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 12px;
-                margin-top: 8px;
                 color: #f7f5d8;
-                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                font: 12px/1.4 "Trebuchet MS", Verdana, sans-serif;
             }
 
-            .arena-mcp-status-row + .arena-mcp-status-row {
-                border-top: 1px solid rgba(255, 255, 255, 0.14);
-                padding-top: 8px;
-            }
-
-            .arena-mcp-status-row.stacked .arena-mcp-status-value {
+            .arena-mcp-status-row.stacked {
                 display: block;
-                text-align: right;
-                overflow-wrap: anywhere;
             }
 
-            .arena-mcp-client-list {
+            .arena-mcp-status-row.stacked > span:first-child {
                 display: block;
-                max-width: 58%;
-                text-align: right;
+                margin-bottom: 10px;
+                font-weight: 700;
+                font-size: 11px;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                color: rgba(247, 245, 216, 0.7);
             }
 
+            #arena-mcp-connected-clients {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                max-width: none;
+                text-align: left;
+                font-weight: 400;
+            }
+
+            .arena-mcp-client-line,
             .arena-mcp-client-placeholder {
                 display: flex;
-                justify-content: space-between;
-                gap: 12px;
-                margin-top: 4px;
+                align-items: center;
+                gap: 10px;
+                margin: 0;
                 text-align: left;
             }
 
             .arena-mcp-client-placeholder-label {
+                flex: 0 0 auto;
+                min-width: 30px;
+                padding: 2px 8px;
+                border-radius: 4px;
+                background: rgba(255, 255, 255, 0.08);
                 color: #f7f5d8;
                 font-weight: 700;
+                text-align: center;
             }
 
             .arena-mcp-client-placeholder-value {
-                color: #d8c07a;
-                text-align: right;
+                color: rgba(247, 245, 216, 0.55);
+                font-style: italic;
+                text-align: left;
             }
 
-            .arena-mcp-client-line {
-                display: block;
-                margin-top: 4px;
-                text-align: right;
+            .arena-mcp-client-line .arena-mcp-client-placeholder-label {
+                background: rgba(184, 233, 134, 0.16);
+                color: #d7f5b3;
+            }
+
+            .arena-mcp-client-line .arena-mcp-client-placeholder-value {
+                color: #b8e986;
+                font-weight: 700;
+                font-style: normal;
             }
 
             .arena-mcp-client-line-warning {
                 color: #ff8a3d;
+            }
+
+            .arena-mcp-install-banner {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 0 0 14px;
+                padding: 11px 14px;
+                border: 1px solid #ff5b52;
+                border-left: 4px solid #ff3b30;
+                border-radius: 6px;
+                background: rgba(120, 12, 8, 0.85);
+                color: #ffe3df;
+                font: 13px/1.45 "Trebuchet MS", Verdana, sans-serif;
+                text-align: left;
+            }
+
+            .arena-mcp-install-banner[hidden] {
+                display: none;
+            }
+
+            .arena-mcp-install-banner strong {
+                color: #fff;
             }
 
             .arena-mcp-client-hint {
@@ -373,13 +411,12 @@
                 font-size: 11px;
                 font-weight: 400;
                 color: rgba(247, 245, 216, 0.55);
-                text-align: right;
+                text-align: left;
             }
 
             .arena-mcp-status-value {
                 color: #d8c07a;
                 font-weight: 700;
-                text-align: right;
             }
 
             .arena-launcher-footer {
@@ -539,6 +576,28 @@
                 outline: 4px solid rgba(255, 92, 92, 0.42);
                 outline-offset: 0;
                 transition: outline-color 120ms ease, box-shadow 120ms ease;
+            }
+
+            .duel-pov-model-overlay {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                z-index: 3;
+                max-width: calc(100% - 16px);
+                padding: 3px 8px;
+                border-radius: 4px;
+                background: rgba(0, 0, 0, 0.62);
+                color: #b8e986;
+                font: 700 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.03em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                pointer-events: none;
+            }
+
+            .duel-pov-model-overlay[hidden] {
+                display: none;
             }
 
             #duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-pov-frame {
@@ -1614,6 +1673,23 @@
                                 <label for="arena-round">Matches in session</label>
                                 <input id="arena-round" type="number" min="1" value="1" />
                             </div>
+                            <div class="arena-model-field">
+                                <label for="arena-player-1-model">Player 1 model</label>
+                                <input id="arena-player-1-model" type="text" placeholder="e.g. claude-opus-4.8" />
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-player-2-model">Player 2 model</label>
+                                <input id="arena-player-2-model" type="text" placeholder="e.g. gpt-5.4" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
+                        <div class="arena-mcp-install-banner" id="arena-mcp-install-banner" role="alert" hidden>
+                            <span>⚠️ You must install the <strong>Doom Arena Agent MCP</strong> on your agent harness before playing. No MCP client is connected yet.</span>
+                        </div>
+                        <div class="arena-mcp-status-row stacked">
+                            <span>Connected MCP clients</span>
+                            <span class="arena-mcp-status-value arena-mcp-client-list" id="arena-mcp-connected-clients">No MCP clients detected</span>
                         </div>
                     </div>
                     <div class="duel-prompt-panel" id="arena-launcher-prompts">
@@ -1647,12 +1723,6 @@
                         </details>
                     </div>
                     <div id="arena-launcher-status"></div>
-                    <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
-                        <div class="arena-mcp-status-row stacked">
-                            <span>Connected MCP clients</span>
-                            <span class="arena-mcp-status-value arena-mcp-client-list" id="arena-mcp-connected-clients">No MCP clients detected</span>
-                        </div>
-                    </div>
                     <div class="arena-start-actions">
                         <button id="arena-start-game" type="button">Start Benchmark</button>
                         <button id="arena-refresh-arena" type="button">Refresh Arena</button>
@@ -1731,6 +1801,7 @@
                         </div>
                         <div class="duel-pov-frame">
                             <canvas class="frame" id="player-1-canvas" width="320" height="200"></canvas>
+                            <div class="duel-pov-model-overlay" id="player-1-model-overlay" hidden></div>
                             <div class="duel-command-waiting-overlay" id="player-1-command-waiting" hidden>
                                 Waiting for agent to send command...
                             </div>
@@ -1767,6 +1838,7 @@
                         </div>
                         <div class="duel-pov-frame">
                             <canvas class="frame" id="player-2-canvas" width="320" height="200"></canvas>
+                            <div class="duel-pov-model-overlay" id="player-2-model-overlay" hidden></div>
                             <div class="duel-command-waiting-overlay" id="player-2-command-waiting" hidden>
                                 Waiting for agent to send command...
                             </div>
@@ -3098,6 +3170,24 @@
                 }
             }
 
+            function setPovModelOverlay(id, model) {
+                var node = document.getElementById(id);
+                if (node === null) {
+                    return;
+                }
+                node.textContent = model || "";
+                node.hidden = !model;
+            }
+
+            function setPovModelNames() {
+                var p1 = currentPlayer1Model || participantReadyAgentById.player_1 || "";
+                var p2 = currentPlayer2Model || participantReadyAgentById.player_2 || "";
+                setText("player-1-pov-title", p1 ? ("Player 1 · " + p1) : "Player 1 POV");
+                setText("player-2-pov-title", p2 ? ("Player 2 · " + p2) : "Player 2 POV");
+                setPovModelOverlay("player-1-model-overlay", p1);
+                setPovModelOverlay("player-2-model-overlay", p2);
+            }
+
             function updateArenaBanner() {
                 var label = document.getElementById("arena-data-label");
 
@@ -3111,6 +3201,8 @@
                         label.textContent = "Scenario: " + (selectedArenaDataMode === "local" ? "local" : "default");
                     }
                 }
+
+                setPovModelNames();
             }
 
             function updateLauncherStatus(message) {
@@ -3830,8 +3922,8 @@
                     arena_mode: "duel",
                     control_mode: "hierarchical",
                     scenario_id: selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn"),
-                    player_1_model: "",
-                    player_2_model: "",
+                    player_1_model: selectedStringValue("arena-player-1-model", ""),
+                    player_2_model: selectedStringValue("arena-player-2-model", ""),
                     rounds: rounds,
                     round: 1,
                     seed: 42,
@@ -4658,6 +4750,18 @@
                     player2Ready ? player2Label + " connected" : "Assigned after Start Benchmark",
                     player2Ready ? "ready" : ""
                 );
+
+                setPovModelNames();
+            }
+
+            function setMcpInstallBanner(connected) {
+                var banner = document.getElementById("arena-mcp-install-banner");
+
+                if (banner === null) {
+                    return;
+                }
+
+                banner.hidden = connected;
             }
 
             function updateMcpSetupStatus() {
@@ -4682,7 +4786,13 @@
                 ])
                     .then(function (results) {
                         var presence = results[1] || {};
+                        var connectedClients = (presence && presence.clients) || [];
+                        var readyAgents = (presence && presence.ready_agents) || {};
+                        var hasConnectedAgent = connectedClients.length > 0 || Object.keys(readyAgents).some(function (key) {
+                            return !!readyAgents[key];
+                        });
                         setMcpStatusValue("arena-mcp-reachability", "Reachable", "reachable");
+                        setMcpInstallBanner(hasConnectedAgent);
                         if (presence.ready_agents) {
                             participantReadyAgentById.player_1 = presence.ready_agents.player_1 || participantReadyAgentById.player_1 || "";
                             participantReadyAgentById.player_2 = presence.ready_agents.player_2 || participantReadyAgentById.player_2 || "";
@@ -4691,6 +4801,7 @@
                     })
                     .catch(function () {
                         setMcpStatusValue("arena-mcp-reachability", "Not reachable", "unreachable");
+                        setMcpInstallBanner(false);
                         updateMcpSetupModels();
                     });
             }
