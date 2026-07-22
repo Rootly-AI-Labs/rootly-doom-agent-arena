@@ -9,6 +9,18 @@ PORT="${DOOM_ARENA_PORT:-8001}"
 DEV=0
 NO_OPEN_BROWSER=0
 TIMEOUT_SECONDS=60
+COMMAND=start
+
+# Optional leading command. Defaults to "start" so existing invocations
+# (e.g. `start-docker.sh --dev`) keep working unchanged.
+if [ "$#" -gt 0 ]; then
+  case "$1" in
+    start|stop|restart)
+      COMMAND="$1"
+      shift
+      ;;
+  esac
+fi
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -29,7 +41,12 @@ while [ "$#" -gt 0 ]; do
       shift 2
       ;;
     -h|--help)
-      echo "Usage: scripts/start-docker.sh [--port PORT] [--dev] [--no-open-browser] [--timeout-seconds SECONDS]"
+      echo "Usage: scripts/start-docker.sh [start|stop|restart] [--port PORT] [--dev] [--no-open-browser] [--timeout-seconds SECONDS]"
+      echo ""
+      echo "Commands:"
+      echo "  start    Build and start the Doom Arena Docker backend (default)."
+      echo "  stop     Stop and remove the Doom Arena Docker backend."
+      echo "  restart  Stop, then start again."
       exit 0
       ;;
     *)
@@ -49,6 +66,14 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
+COMPOSE_FILES=(-f docker/docker-compose.yml)
+if [ "$DEV" -eq 1 ]; then
+  COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
+fi
+
+BASE_URL="http://127.0.0.1:$PORT"
+HEALTH_URL="$BASE_URL/api/arena/health"
+
 ensure_file() {
   local path="$1"
   local default_content="$2"
@@ -66,50 +91,6 @@ ensure_file() {
   fi
 }
 
-COMPOSE_FILES=(-f docker/docker-compose.yml)
-if [ "$DEV" -eq 1 ]; then
-  COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
-fi
-
-BASE_URL="http://127.0.0.1:$PORT"
-HEALTH_URL="$BASE_URL/api/arena/health"
-REQUIRED_ASSETS=(
-  "$REPO_ROOT/src/websockets-doom.html"
-  "$REPO_ROOT/src/websockets-doom.js"
-  "$REPO_ROOT/src/websockets-doom.wasm"
-  "$REPO_ROOT/src/default.cfg"
-)
-
-missing_assets=()
-for asset in "${REQUIRED_ASSETS[@]}"; do
-  if [ ! -f "$asset" ]; then
-    missing_assets+=("${asset#$REPO_ROOT/}")
-  fi
-done
-
-if [ "${#missing_assets[@]}" -gt 0 ]; then
-  echo "ERROR: Missing prebuilt Doom WASM assets:" >&2
-  for asset in "${missing_assets[@]}"; do
-    echo "  - $asset" >&2
-  done
-  echo "" >&2
-  echo "This Docker runtime does not build Emscripten assets for you." >&2
-  echo "Rebuild the browser bundle first, then rerun this command." >&2
-  echo "See docs/build.md for the documented rebuild flow." >&2
-  exit 1
-fi
-
-if [ ! -f "$REPO_ROOT/src/doom1.wad" ] && [ ! -f "$REPO_ROOT/src/freedoom1.wad" ]; then
-  echo "ERROR: Missing IWAD file." >&2
-  echo "  Put either src/doom1.wad or src/freedoom1.wad in the repo before starting Doom Arena." >&2
-  exit 1
-fi
-
-ensure_file "$REPO_ROOT/src/arena_controller_tokens.local.json" "{}"
-
-echo "Starting Doom Arena Docker backend on $BASE_URL ..."
-DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" up -d --build
-
 request_ok() {
   if command -v curl >/dev/null 2>&1; then
     curl -fsS --max-time 2 "$HEALTH_URL" >/dev/null 2>&1
@@ -123,28 +104,7 @@ request_ok() {
   return 2
 }
 
-DEADLINE=$((SECONDS + TIMEOUT_SECONDS))
-READY=0
-while [ "$SECONDS" -lt "$DEADLINE" ]; do
-  if request_ok; then
-    READY=1
-    break
-  fi
-  sleep 0.5
-done
-
-if [ "$READY" -ne 1 ]; then
-  echo "ERROR: Doom Arena did not become ready at $HEALTH_URL within $TIMEOUT_SECONDS seconds." >&2
-  echo "" >&2
-  echo "Recent arena logs:" >&2
-  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" logs --tail=80 arena >&2
-  exit 1
-fi
-
-echo "Doom Arena is ready: $BASE_URL/"
-echo "Host-side MCP env: DOOM_ARENA_BASE_URL=$BASE_URL"
-
-if [ "$NO_OPEN_BROWSER" -ne 1 ]; then
+open_browser() {
   case "$(uname -s)" in
     Darwin)
       open "$BASE_URL/" >/dev/null 2>&1 || echo "Could not open browser automatically. Open $BASE_URL/ manually." >&2
@@ -163,4 +123,91 @@ if [ "$NO_OPEN_BROWSER" -ne 1 ]; then
       echo "Open $BASE_URL/ in your browser." >&2
       ;;
   esac
-fi
+}
+
+do_stop() {
+  echo "Stopping Doom Arena Docker backend ..."
+  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" down --remove-orphans
+  echo "Doom Arena Docker backend stopped."
+}
+
+do_start() {
+  local REQUIRED_ASSETS=(
+    "$REPO_ROOT/src/websockets-doom.html"
+    "$REPO_ROOT/src/websockets-doom.js"
+    "$REPO_ROOT/src/websockets-doom.wasm"
+    "$REPO_ROOT/src/default.cfg"
+  )
+
+  local missing_assets=()
+  for asset in "${REQUIRED_ASSETS[@]}"; do
+    if [ ! -f "$asset" ]; then
+      missing_assets+=("${asset#$REPO_ROOT/}")
+    fi
+  done
+
+  if [ "${#missing_assets[@]}" -gt 0 ]; then
+    echo "ERROR: Missing prebuilt Doom WASM assets:" >&2
+    for asset in "${missing_assets[@]}"; do
+      echo "  - $asset" >&2
+    done
+    echo "" >&2
+    echo "This Docker runtime does not build Emscripten assets for you." >&2
+    echo "Rebuild the browser bundle first, then rerun this command." >&2
+    echo "See docs/build.md for the documented rebuild flow." >&2
+    exit 1
+  fi
+
+  if [ ! -f "$REPO_ROOT/src/doom1.wad" ] && [ ! -f "$REPO_ROOT/src/freedoom1.wad" ]; then
+    echo "ERROR: Missing IWAD file." >&2
+    echo "  Put either src/doom1.wad or src/freedoom1.wad in the repo before starting Doom Arena." >&2
+    exit 1
+  fi
+
+  ensure_file "$REPO_ROOT/src/arena_controller_tokens.local.json" "{}"
+
+  echo "Starting Doom Arena Docker backend on $BASE_URL ..."
+  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" up -d --build
+
+  local DEADLINE=$((SECONDS + TIMEOUT_SECONDS))
+  local READY=0
+  while [ "$SECONDS" -lt "$DEADLINE" ]; do
+    if request_ok; then
+      READY=1
+      break
+    fi
+    sleep 0.5
+  done
+
+  if [ "$READY" -ne 1 ]; then
+    echo "ERROR: Doom Arena did not become ready at $HEALTH_URL within $TIMEOUT_SECONDS seconds." >&2
+    echo "" >&2
+    echo "Recent arena logs:" >&2
+    DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" logs --tail=80 arena >&2
+    exit 1
+  fi
+
+  echo "Doom Arena is ready: $BASE_URL/"
+  echo "Host-side MCP env: DOOM_ARENA_BASE_URL=$BASE_URL"
+
+  if [ "$NO_OPEN_BROWSER" -ne 1 ]; then
+    open_browser
+  fi
+}
+
+case "$COMMAND" in
+  start)
+    do_start
+    ;;
+  stop)
+    do_stop
+    ;;
+  restart)
+    do_stop
+    do_start
+    ;;
+  *)
+    echo "ERROR: unknown command: $COMMAND" >&2
+    exit 1
+    ;;
+esac
