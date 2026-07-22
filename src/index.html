@@ -551,6 +551,28 @@
                 box-shadow: 0 0 0 2px rgba(105, 220, 120, 0.22);
             }
 
+            .duel-pov-model-name {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 3;
+                padding: 5px 8px;
+                background: rgba(0, 0, 0, 0.68);
+                color: #f7f5d8;
+                font: 700 12px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .duel-pov-model-name[hidden] {
+                display: none;
+            }
+
             .duel-readiness-panel {
                 margin: 0 0 12px;
                 border: 1px solid rgba(255, 255, 255, 0.18);
@@ -1739,6 +1761,7 @@
                                 <div class="duel-death-subtitle" id="player-1-death-detail">Player 1 eliminated</div>
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
+                            <div class="duel-pov-model-name" id="player-1-model-name" hidden></div>
                         </div>
                         <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
                         <div id="player-1-pov-status">Waiting for Player 1 camera</div>
@@ -1775,6 +1798,7 @@
                                 <div class="duel-death-subtitle" id="player-2-death-detail">Player 2 eliminated</div>
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
+                            <div class="duel-pov-model-name" id="player-2-model-name" hidden></div>
                         </div>
                         <div id="player-2-pov-status">Waiting for Player 2 camera</div>
                         <details class="duel-player-log" open>
@@ -3111,6 +3135,41 @@
                         label.textContent = "Scenario: " + (selectedArenaDataMode === "local" ? "local" : "default");
                     }
                 }
+
+                updateDuelModelNameplates();
+            }
+
+            function setDuelModelNameplate(elementId, modelName) {
+                var nameplate = document.getElementById(elementId);
+
+                if (nameplate === null) {
+                    return;
+                }
+
+                var label = (modelName || "").trim();
+
+                if (label === "") {
+                    nameplate.textContent = "";
+                    nameplate.hidden = true;
+                    return;
+                }
+
+                nameplate.textContent = label;
+                nameplate.title = label;
+                nameplate.hidden = false;
+            }
+
+            function updateDuelModelNameplates() {
+                var showNames = currentArenaMode === "duel";
+
+                setDuelModelNameplate(
+                    "player-1-model-name",
+                    showNames ? (participantReadyAgentById.player_1 || currentPlayer1Model) : ""
+                );
+                setDuelModelNameplate(
+                    "player-2-model-name",
+                    showNames ? (participantReadyAgentById.player_2 || currentPlayer2Model) : ""
+                );
             }
 
             function updateLauncherStatus(message) {
