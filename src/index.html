@@ -382,6 +382,17 @@
                 color: #ff8a3d;
             }
 
+            .arena-ready-dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin-right: 5px;
+                border-radius: 50%;
+                background: #69dc78;
+                box-shadow: 0 0 4px rgba(105, 220, 120, 0.8);
+                vertical-align: middle;
+            }
+
             .arena-mcp-install-banner {
                 display: flex;
                 align-items: center;
@@ -1135,6 +1146,20 @@
                 background: #191b16;
                 padding: 10px;
                 margin-bottom: 8px;
+                max-height: 2000px;
+                overflow: hidden;
+                opacity: 1;
+                transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease, margin 0.25s ease, border-color 0.25s ease;
+            }
+
+            .duel-prompt-panel.collapsed {
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                border-color: transparent;
+                pointer-events: none;
             }
 
             .duel-prompt-grid {
@@ -4726,7 +4751,17 @@
                     label.className = "arena-mcp-client-placeholder-label";
                     value.className = "arena-mcp-client-placeholder-value";
                     label.textContent = slot.label;
-                    value.textContent = slot.agent ? slot.agent + " · ready" : "waiting for benchmark prompt";
+                    value.textContent = "";
+                    if (slot.agent) {
+                        value.appendChild(document.createTextNode(slot.agent + " "));
+                        var dot = document.createElement("span");
+                        dot.className = "arena-ready-dot";
+                        dot.setAttribute("aria-hidden", "true");
+                        value.appendChild(dot);
+                        value.appendChild(document.createTextNode("ready"));
+                    } else {
+                        value.textContent = "waiting for benchmark prompt";
+                    }
                     line.appendChild(label);
                     line.appendChild(value);
                     node.appendChild(line);
@@ -4752,6 +4787,17 @@
                 );
 
                 setPovModelNames();
+                updatePromptPanelFold(player1Ready, player2Ready);
+            }
+
+            function updatePromptPanelFold(player1Ready, player2Ready) {
+                var panel = document.getElementById("arena-launcher-prompts");
+
+                if (panel === null) {
+                    return;
+                }
+
+                panel.classList.toggle("collapsed", !!player1Ready && !!player2Ready);
             }
 
             function setMcpInstallBanner(connected) {
