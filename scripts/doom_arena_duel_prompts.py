@@ -241,6 +241,43 @@ def instructions(
         if total_rounds > 1
         else "This benchmark session has a single match.\n"
     )
+    if current_round <= 1:
+        agent_name_section = f"""ARENA NAME (FIRST MATCH ONLY)
+- Before your first `set_participant_ready` call, invent your own funny arena name.
+- Make the joke understandable in one second to a broad audience with no Doom or gaming knowledge.
+- Prefer playful everyday word combinations about work, food, awkward confidence, or bad decisions.
+- Create an original name; do not copy a sample, stock phrase, or name from these instructions.
+- The name must suggest a concrete ridiculous character, animal, food, or object with a job, human flaw, or threatening attitude. It should create a clear mental image or tiny story.
+- Avoid bland alliteration, two abstract nouns joined together, and generic labels that merely sound dramatic.
+- To encourage different names, player_1 should draw from workplace chaos or misplaced confidence, while player_2 should draw from food, social awkwardness, or bad decisions.
+- Avoid obscure lore, unexplained acronyms, niche references, and puns that need context.
+- Keep it distinctive and memorable: one or two words only, between 2 and 32 characters, and no comma.
+- Pass that alias as `agent_name` on the first match only. Keep the same alias for this entire benchmark session.
+- If readiness reports that the name is already claimed, invent a completely different name and retry `set_participant_ready`.
+- On later matches, omit `agent_name`; the arena remembers and reuses your original alias.
+
+"""
+        ready_example_agent_name = f'\n  "agent_name": "chosen alias",'
+    else:
+        agent_name_section = """ARENA NAME (ALREADY CHOSEN)
+- Do not choose or submit a new alias. The arena reuses the name you picked in match 1.
+
+"""
+        ready_example_agent_name = ""
+    identity_section = f"""{agent_name_section}IDENTITY (AUTOMATIC)
+- Call `set_participant_ready` without guessing or asking the user for model details.
+- For Codex, the Doom Arena MCP reads the current session metadata or matching parent Codex process metadata and reports the coding assistant, model slug, reasoning level, and speed tier automatically.
+- Never submit an MCP transport package name or version such as `codex-mcp-client 0.145.0`.
+- `agent_name` is only your creative alias; coding-assistant and model identity remain automatic. If detection fails, reconnect the Doom Arena MCP and retry `set_participant_ready`; do not guess identity or declare the match blocked while the opening plan is accepted.
+
+```json
+{{
+  "participant_id": "{participant_id}",{ready_example_agent_name}
+  "controller_token": "{controller_token if enforce_tokens else '<disabled>'}"
+}}
+```
+
+"""
     if str(control_mode).strip().lower() == "hierarchical":
         strategy_token_line = (
             f"Your controller_token is: `{controller_token}`\n\n"
@@ -272,6 +309,7 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 
 {strategy_token_line}
 {session_line}
+{identity_section}
 ROLE AND LOOP
 - Control only `{participant_id}`. Never control `{opponent_id}`.
 - Use only `set_participant_plan` for normal play.
@@ -295,7 +333,7 @@ ACTION SCHEMA
   "route": ["A01", "A02"],
   "objective": "short goal",
   "reasoning": "optional, max 12 words",
-  "plan_note": "optional public plan, max 180 chars",
+  "plan_note": "short funny first-person battle quip, max 80 chars",
   "sequence_number": 1
 }}
 ```
@@ -304,8 +342,10 @@ ROUTE FACTS
 - `route` is up to 8 grid cells like `A01`.
 - Consecutive cells must be horizontal or vertical; diagonals are rejected.
 - Do not route through `#` wall cells.
-- `objective` is free text. `reasoning` is optional and capped to 12 words.
-- `plan_note` is optional public planning context for analysis; keep it concise.
+- Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `get the shotgun`.
+- Write `reasoning` as a causal phrase that fits after `because`, such as `a stronger close-range weapon could turn the fight`. Do not begin it with `because`; it is optional and capped to 12 words.
+- `plan_note` is required on every decision. Write a short, funny, first-person battle quip that matches your actual intent.
+- Keep it under 80 characters. Examples: `I need to find this bastard!` or `Ouch, medkit time.`
 - Doom executes accepted routes literally and handles frame-level movement/firing.
 - The default behavior is to shoot if visible while following the route.
 
@@ -323,6 +363,7 @@ You control only `{participant_id}`.
 
 {token_line}
 {session_line}
+{identity_section}
 Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.
@@ -337,7 +378,7 @@ Core rule:
 - Watch `run_id`, `current_round`, `total_rounds`, and `has_next_round` in observations and match results.
 
 Loop template:
-1. Call MCP tool `set_participant_ready` once with `participant_id="{participant_id}"` and your controller token.
+1. Call MCP tool `set_participant_ready` with `participant_id="{participant_id}"`, your controller token, and your first-match arena name as instructed above. Coding-assistant and model identity are detected automatically. Retry only if the arena rejects a duplicate name.
 2. Call MCP tool `get_participant_observation` while phase may still be `waiting_for_agents`.
 3. Choose a synchronized opening intent, set `sequence_number=1`, use `duration_ms=60000`, and call `set_participant_intent`. This arms your first policy but Doom will not execute movement until both agents have submitted opening intents. Your opening intent can be `engage_opponent`, `strafe_attack`, `search`, or `hold`; pick the best action from the current observation.
 4. Call MCP tool `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
@@ -545,12 +586,3 @@ Deprecated frame-level control guidance:
 - Do not call low-level participant input tools or follow old instructions that tell you to continuously choose `forward`, `strafe`, `turn`, or `attack`.
 - The Doom-side autopilot converts your high-level intent into normal gameplay controls.
 """
-
-
-
-
-
-
-
-
-

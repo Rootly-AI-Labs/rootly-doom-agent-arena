@@ -24,6 +24,8 @@ from doom_arena_mcp import CONTROLLER_TOKENS_PATH, DoomArenaClient, DoomArenaErr
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TIMEOUT_SECONDS = 60
+os.environ.setdefault("DOOM_ARENA_CODING_ASSISTANT", "Doom Arena smoke test")
+os.environ.setdefault("DOOM_ARENA_MODEL_IDENTITY", "deterministic autopilot")
 
 
 def parse_args() -> argparse.Namespace:
@@ -378,7 +380,11 @@ def main() -> int:
             )
         log_ok("duel waits for participant readiness and opening intents before combat")
 
-        client.set_participant_ready("player_1", controller_token=p1_token)
+        client.set_participant_ready(
+            "player_1",
+            controller_token=p1_token,
+            agent_name="Autopilot Hell",
+        )
         single_ready_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
         if single_ready_state.get("phase") != "waiting_for_agents":
             raise RuntimeError(
@@ -430,7 +436,11 @@ def main() -> int:
             decision_cadence_ms=750,
         )
         log_ok("set player_1 intent")
-        client.set_participant_ready("player_2", controller_token=p2_token)
+        client.set_participant_ready(
+            "player_2",
+            controller_token=p2_token,
+            agent_name="Cruise Carnage",
+        )
         both_ready_one_intent_state = wait_for_state(client, run_id, min(args.timeout_seconds, 10))
         if both_ready_one_intent_state.get("phase") != "waiting_for_agents":
             raise RuntimeError(

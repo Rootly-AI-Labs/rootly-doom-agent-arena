@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import secrets
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,8 @@ from doom_arena_mcp import DoomArenaClient, DoomArenaError, tool_definitions
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONTROLLER_TOKENS_PATH = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
+os.environ.setdefault("DOOM_ARENA_CODING_ASSISTANT", "Doom Arena smoke test")
+os.environ.setdefault("DOOM_ARENA_MODEL_IDENTITY", "MCP tool smoke")
 
 FORBIDDEN_TOOL_NAMES = {
     "kill_enemy",
@@ -72,11 +75,19 @@ def main() -> int:
 
     p1_ready = parse_json_object(
         "set_participant_ready(player_1)",
-        client.set_participant_ready("player_1", controller_token=p1_token),
+        client.set_participant_ready(
+            "player_1",
+            controller_token=p1_token,
+            agent_name="Smoke Reaper",
+        ),
     )
     p2_ready = parse_json_object(
         "set_participant_ready(player_2)",
-        client.set_participant_ready("player_2", controller_token=p2_token),
+        client.set_participant_ready(
+            "player_2",
+            controller_token=p2_token,
+            agent_name="Violence Testament",
+        ),
     )
     if not p1_ready.get("ready") or not p2_ready.get("ready"):
         raise AssertionError("participant ready signals were not accepted")

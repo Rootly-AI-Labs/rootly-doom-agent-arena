@@ -32,6 +32,13 @@ def test_read_duel_session_results(tmp_path, monkeypatch):
         "player_2_shots_fired": 8,
         "player_2_shots_hit": 1,
     }), encoding="utf-8")
+    (r1_dir / "stats.json").write_text(json.dumps({
+        "inferred_decision_turns": [
+            {"participant_id": "player_1", "inferred_decision_latency_ms": 1000},
+            {"participant_id": "player_1", "inferred_decision_latency_ms": 3000},
+            {"participant_id": "player_2", "inferred_decision_latency_ms": 2500},
+        ],
+    }), encoding="utf-8")
     
     r2_dir = session_dir / "round_02_runB"
     r2_dir.mkdir()
@@ -60,6 +67,10 @@ def test_read_duel_session_results(tmp_path, monkeypatch):
     handler.server.duel_total_rounds = 2
     handler.server.player_1_model = "test_p1_model"
     handler.server.player_2_model = "test_p2_model"
+    handler.server.participant_ready_agents = {
+        "player_1": "Codex",
+        "player_2": "Claude Code",
+    }
     
     response_meta = {}
     headers = []
@@ -76,6 +87,8 @@ def test_read_duel_session_results(tmp_path, monkeypatch):
     assert body["ok"] is True
     assert body["duel_session_id"] == session_id
     assert body["total_rounds"] == 2
+    assert body["coding_assistant_1"] == "Codex"
+    assert body["coding_assistant_2"] == "Claude Code"
     assert body["player_1_model"] == "test_p1_model"
     assert body["player_2_model"] == "test_p2_model"
     
@@ -83,5 +96,45 @@ def test_read_duel_session_results(tmp_path, monkeypatch):
     assert len(rounds) == 2
     assert rounds[0]["round"] == 1
     assert rounds[0]["winner"] == "player_1"
+    assert rounds[0]["player_1_decision_count"] == 2
+    assert rounds[0]["player_1_decision_avg_ms"] == 2000
+    assert rounds[0]["player_2_decision_count"] == 1
+    assert rounds[0]["player_2_decision_avg_ms"] == 2500
     assert rounds[1]["round"] == 2
     assert rounds[1]["winner"] == "player_2"
+
+
+def test_read_duel_session_results_recovers_identity_from_saved_round(tmp_path, monkeypatch):
+    monkeypatch.setattr(server, "RESULTS_ROOT", tmp_path)
+    session_id = "session_saved_identity"
+    round_dir = tmp_path / session_id / "round_01_runA"
+    round_dir.mkdir(parents=True)
+    (round_dir / "summary.json").write_text(
+        json.dumps(
+            {
+                "round": 1,
+                "winner": "player_1",
+                "coding_assistant_1": "Codex gpt-5.6-sol low fast",
+                "coding_assistant_2": "Codex gpt-5.6-sol high fast",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    handler = make_handler()
+    handler.path = f"/api/arena/duel-session-results?duel_session_id={session_id}"
+    handler.wfile = BytesIO()
+    handler.server.duel_session_id = ""
+    handler.server.duel_total_rounds = 1
+    handler.server.player_1_model = ""
+    handler.server.player_2_model = ""
+    handler.server.participant_ready_agents = {}
+    handler.send_response = lambda _status: None
+    handler.send_header = lambda _name, _value: None
+    handler.end_headers = lambda: None
+
+    handler.do_GET()
+
+    body = json.loads(handler.wfile.getvalue().decode("utf-8"))
+    assert body["coding_assistant_1"] == "Codex gpt-5.6-sol low fast"
+    assert body["coding_assistant_2"] == "Codex gpt-5.6-sol high fast"
