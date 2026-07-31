@@ -294,14 +294,6 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (thing == tmthing)
 	return true;
 
-    // The duel deathmatch bootstrap can leave an unlabeled superseded player
-    // actor at Player 1's replacement spawn. Ignore that stale MT_PLAYER but
-    // continue colliding normally with the explicitly labeled opponent.
-    if (!strcmp(tmthing->arena_entity_id, "player_1")
-        && thing->type == MT_PLAYER
-        && strcmp(thing->arena_entity_id, "player_2"))
-        return true;
-
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
@@ -1454,4 +1446,3 @@ static void SpechitOverrun(line_t *ld)
             break;
     }
 }
-

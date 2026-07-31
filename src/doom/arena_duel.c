@@ -116,6 +116,7 @@ static int arena_duel_start_tick;
 static int arena_duel_timeout_seconds;
 static boolean arena_duel_started;
 static int arena_duel_finished;
+static boolean arena_duel_superseded_players_removed;
 static char arena_duel_winner[16];
 static char arena_duel_terminal_reason[32];
 static int arena_duel_last_player1_health;
@@ -2310,10 +2311,17 @@ boolean ArenaDuel_IsEnabled(void)
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
 {
     // Doom's deathmatch setup can replace players[consoleplayer].mo after the
-    // first duel initialization pass. Make the replacement repeat spawn and
-    // health initialization instead of inheriting the old object's latch.
+    // first duel initialization pass. Remove the superseded actor so it does
+    // not remain visible or participate in collision, then make the replacement
+    // repeat spawn and health initialization instead of inheriting the old
+    // object's latch.
     if (arena_duel_player1_cached_mo != mobj)
     {
+        if (arena_duel_player1_cached_mo != NULL)
+        {
+            arena_duel_player1_cached_mo->player = NULL;
+            P_RemoveMobj(arena_duel_player1_cached_mo);
+        }
         arena_duel_player1_health_initialized = false;
     }
     arena_duel_player1_cached_mo = mobj;
@@ -2376,6 +2384,7 @@ void ArenaDuel_InitLevel(void)
     arena_duel_timeout_seconds = Arena_TimeoutSeconds();
     arena_duel_started = false;
     arena_duel_finished = false;
+    arena_duel_superseded_players_removed = false;
     arena_duel_winner[0] = '\0';
     arena_duel_terminal_reason[0] = '\0';
     arena_duel_last_player1_health = ARENA_DUEL_PARTICIPANT_HEALTH;
@@ -2500,6 +2509,40 @@ static void ArenaDuel_RemoveDisabledWeaponPickups(void)
     }
 }
 
+static void ArenaDuel_RemoveSupersededPlayerActors(void)
+{
+    thinker_t *thinker;
+    thinker_t *next;
+    mobj_t *player1 = ArenaDuel_Player1Mobj();
+
+    if (arena_duel_superseded_players_removed
+        || player1 == NULL
+        || arena_duel_player2 == NULL)
+    {
+        return;
+    }
+
+    for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next)
+    {
+        mobj_t *mobj;
+        next = thinker->next;
+        if (thinker->function.acp1 != (actionf_p1) P_MobjThinker)
+        {
+            continue;
+        }
+        mobj = (mobj_t *) thinker;
+        if (mobj->type != MT_PLAYER
+            || mobj == player1
+            || mobj == arena_duel_player2)
+        {
+            continue;
+        }
+        mobj->player = NULL;
+        P_RemoveMobj(mobj);
+    }
+    arena_duel_superseded_players_removed = true;
+}
+
 void ArenaDuel_Ticker(void)
 {
     int player1_health;
@@ -2521,6 +2564,7 @@ void ArenaDuel_Ticker(void)
         return;
     }
 
+    ArenaDuel_RemoveSupersededPlayerActors();
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
     ArenaDuel_EnsurePlayer1CombatState();
@@ -3055,5 +3099,3 @@ ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)
 {
     return I_GetPaletteData();
 }
-
-
