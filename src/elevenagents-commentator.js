@@ -423,7 +423,12 @@
         this.pendingCueTimer = 0;
         this.readyWaiters = [];
         this.introduction = null;
+        this.introductionPromise = null;
+        this.introducingRunId = "";
         this.introducedRunId = "";
+        this.enablePromise = null;
+        this.audioOwnershipPromise = null;
+        this.audioOwnershipRelease = null;
         this.audioGeneration = 0;
         this.audioIdleTimer = 0;
         this.cooldownMs = this.options.cooldownMs || DEFAULT_COOLDOWN_MS;
@@ -458,14 +463,94 @@
         return this.audioContext.resume();
     };
 
+    Commentator.prototype.acquireAudioOwnership = function () {
+        var self = this;
+        var pending;
+        var tracked;
+
+        if (this.audioOwnershipRelease) {
+            return Promise.resolve();
+        }
+        if (this.audioOwnershipPromise) {
+            return this.audioOwnershipPromise;
+        }
+        if (
+            typeof navigator === "undefined" ||
+            !navigator.locks ||
+            typeof navigator.locks.request !== "function"
+        ) {
+            return Promise.resolve();
+        }
+
+        pending = new Promise(function (resolve, reject) {
+            navigator.locks.request(
+                "rootly-doom-arena-shoutcaster",
+                { mode: "exclusive", ifAvailable: true },
+                function (lock) {
+                    if (!lock) {
+                        reject(new Error("Shoutcaster is already active in another arena tab"));
+                        return;
+                    }
+                    return new Promise(function (release) {
+                        self.audioOwnershipRelease = release;
+                        resolve();
+                    });
+                }
+            ).catch(reject);
+        });
+        tracked = pending.then(
+            function () {
+                if (self.audioOwnershipPromise === tracked) {
+                    self.audioOwnershipPromise = null;
+                }
+            },
+            function (error) {
+                if (self.audioOwnershipPromise === tracked) {
+                    self.audioOwnershipPromise = null;
+                }
+                throw error;
+            }
+        );
+        this.audioOwnershipPromise = tracked;
+        return this.audioOwnershipPromise;
+    };
+
+    Commentator.prototype.releaseAudioOwnership = function () {
+        if (this.audioOwnershipRelease) {
+            this.audioOwnershipRelease();
+            this.audioOwnershipRelease = null;
+        }
+        this.audioOwnershipPromise = null;
+    };
+
+    Commentator.prototype.expectIntroduction = function (runId) {
+        runId = compactText(runId, 80);
+        if (!runId || this.introducedRunId === runId) {
+            return;
+        }
+        this.introducingRunId = runId;
+        if (
+            this.pendingCue &&
+            (this.pendingCue.event.type === "match_start" || this.pendingCue.event.type === "broadcast_join")
+        ) {
+            this.pendingCue = null;
+        }
+    };
+
     Commentator.prototype.enable = function () {
         var self = this;
         if (this.enabled && this.socket) {
             return this.waitUntilReady(15000);
         }
+        if (this.enablePromise) {
+            return this.enablePromise;
+        }
         this.enabled = true;
         this.status("Connecting shoutcaster…", "connecting");
-        return this.prepareAudio()
+        this.enablePromise = this.acquireAudioOwnership()
+            .then(function () {
+                return self.prepareAudio();
+            })
             .then(function () {
                 return fetch(self.options.signedUrlEndpoint || "/api/arena/commentator/signed-url", { cache: "no-store" });
             })
@@ -481,11 +566,17 @@
                 self.openSocket(signedUrl);
                 return self.waitUntilReady(15000);
             })
+            .then(function () {
+                self.enablePromise = null;
+            })
             .catch(function (error) {
+                self.enablePromise = null;
                 self.enabled = false;
+                self.releaseAudioOwnership();
                 self.status(error.message || "Unable to connect shoutcaster", "error");
                 throw error;
             });
+        return this.enablePromise;
     };
 
     Commentator.prototype.disable = function () {
@@ -507,6 +598,9 @@
             this.socket.close();
             this.socket = null;
         }
+        this.enablePromise = null;
+        this.introducingRunId = "";
+        this.releaseAudioOwnership();
         this.status("Shoutcaster off", "idle");
     };
 
@@ -623,7 +717,10 @@
             if (this.lastSnapshot) {
                 this.send("contextual_update", publicSnapshot(this.lastSnapshot));
                 this.lastContextAt = Date.now();
-                if (this.lastSnapshot.match.phase === "combat") {
+                if (
+                    this.lastSnapshot.match.phase === "combat" &&
+                    this.introducingRunId !== this.lastSnapshot.run_id
+                ) {
                     this.pendingCue = {
                         event: broadcastJoinCue(this.lastSnapshot),
                         snapshot: this.lastSnapshot,
@@ -758,12 +855,17 @@
         var self = this;
         var snapshot;
         var event;
+        var trackedPromise;
         var runId = compactText(input && input.runId, 80);
 
         if (runId && this.introducedRunId === runId) {
             return Promise.resolve();
         }
-        return this.waitUntilReady(15000).then(function () {
+        if (this.introductionPromise) {
+            return this.introductionPromise;
+        }
+        this.expectIntroduction(runId);
+        trackedPromise = this.waitUntilReady(15000).then(function () {
             snapshot = buildSnapshot({
                 runId: runId,
                 phase: "introducing",
@@ -777,7 +879,6 @@
             }, Date.now());
             event = matchIntroductionCue(snapshot);
             return new Promise(function (resolve, reject) {
-                self.rejectIntroduction(new Error("A newer match introduction replaced this one"));
                 self.introduction = {
                     runId: runId,
                     resolve: resolve,
@@ -794,7 +895,21 @@
                 }
                 self.lastCueAt = Date.now();
             });
+        }).then(function (value) {
+            if (self.introductionPromise === trackedPromise) {
+                self.introductionPromise = null;
+                self.introducingRunId = "";
+            }
+            return value;
+        }, function (error) {
+            if (self.introductionPromise === trackedPromise) {
+                self.introductionPromise = null;
+                self.introducingRunId = "";
+            }
+            throw error;
         });
+        this.introductionPromise = trackedPromise;
+        return trackedPromise;
     };
 
     Commentator.prototype.flushPendingCue = function () {
@@ -840,7 +955,11 @@
         if (!this.enabled || !this.ready) {
             return snapshot;
         }
-        if (event && event.type === "match_start" && this.introducedRunId === snapshot.run_id) {
+        if (
+            event &&
+            event.type === "match_start" &&
+            (this.introducedRunId === snapshot.run_id || this.introducingRunId === snapshot.run_id)
+        ) {
             event = null;
         }
         if (shouldSendContext && this.send("contextual_update", publicSnapshot(snapshot))) {
