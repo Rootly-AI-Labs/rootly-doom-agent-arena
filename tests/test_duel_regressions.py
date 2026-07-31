@@ -270,6 +270,31 @@ def test_duel_player_1_remains_in_real_player_tick_path() -> None:
     assert "Arena_LoadRunMetadata();" in arena_duel
 
 
+def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> None:
+    arena_duel = (REPO_ROOT / "src" / "doom" / "arena_duel.c").read_text(encoding="utf-8")
+    arena_header = (REPO_ROOT / "src" / "doom" / "arena_duel.h").read_text(encoding="utf-8")
+    p_mobj = (REPO_ROOT / "src" / "doom" / "p_mobj.c").read_text(encoding="utf-8-sig")
+    blueprints = json.loads(
+        (REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_variants.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    blind_spawn = blueprints["variants"]["duel_e1m8_blind_spawn"]["spawns"]["player_1"]
+
+    assert (blind_spawn["x"], blind_spawn["y"], blind_spawn["angle_deg"]) == (-960, 640, 315)
+    assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees);" in arena_header
+    assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees)" in arena_duel
+    assert "ArenaDuel_Player1SpawnCoordinates(&arena_start_x," in p_mobj
+    assert "arena_start.x = arena_start_x;" in p_mobj
+    assert "arena_start.x = -900;" not in p_mobj
+    assert "static arena_duel_spawn_variant_t ArenaDuel_SpawnVariant" not in p_mobj
+    assert "if (arena_duel_player1_cached_mo != mobj)" in arena_duel
+    replacement_reset = arena_duel.split(
+        "if (arena_duel_player1_cached_mo != mobj)", 1
+    )[1].split("arena_duel_player1_cached_mo = mobj;", 1)[0]
+    assert "arena_duel_player1_health_initialized = false;" in replacement_reset
+
+
 def test_duel_player_1_retains_last_autopilot_command_briefly() -> None:
     player_control = (REPO_ROOT / "src" / "doom" / "arena_player_control.c").read_text(encoding="utf-8")
 

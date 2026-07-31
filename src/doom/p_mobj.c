@@ -40,36 +40,6 @@
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
 
-typedef enum
-{
-    ARENA_DUEL_SPAWN_OPEN = 0,
-    ARENA_DUEL_SPAWN_BLIND = 1,
-    ARENA_DUEL_SPAWN_CORNER = 2,
-    ARENA_DUEL_SPAWN_CENTER = 3,
-} arena_duel_spawn_variant_t;
-
-static arena_duel_spawn_variant_t ArenaDuel_SpawnVariant(void)
-{
-    const char *scenario_id = Arena_ScenarioId();
-    if (scenario_id == NULL)
-    {
-        return ARENA_DUEL_SPAWN_OPEN;
-    }
-    if (!strcmp(scenario_id, "duel_e1m8_blind_spawn"))
-    {
-        return ARENA_DUEL_SPAWN_BLIND;
-    }
-    if (!strcmp(scenario_id, "duel_e1m8_corner_spawn"))
-    {
-        return ARENA_DUEL_SPAWN_CORNER;
-    }
-    if (!strcmp(scenario_id, "duel_e1m8_center_spawn"))
-    {
-        return ARENA_DUEL_SPAWN_CENTER;
-    }
-    return ARENA_DUEL_SPAWN_OPEN;
-}
-
 //
 // P_SetMobjState
 // Returns true if the mobj is still present.
@@ -726,6 +696,9 @@ void P_SpawnPlayer (mapthing_t* mthing)
 
     mobj_t*		mobj;
     mapthing_t		arena_start;
+    int                 arena_start_x;
+    int                 arena_start_y;
+    int                 arena_start_angle;
 
     int			i;
 
@@ -744,33 +717,13 @@ void P_SpawnPlayer (mapthing_t* mthing)
         // Emscripten builds even though we booted with -warp 1 8, so
         // gating on it would skip the arena-designated spawn. We only
         // spawn the duel on E1M8, so gamemap == 8 is sufficient.
-        arena_duel_spawn_variant_t variant = ArenaDuel_SpawnVariant();
         arena_start = *mthing;
-        switch (variant)
-        {
-        case ARENA_DUEL_SPAWN_BLIND:
-            // Left side of the room divider with no opening line of sight.
-            arena_start.x = -900;
-            arena_start.y = 0;
-            arena_start.angle = 0;
-            break;
-        case ARENA_DUEL_SPAWN_CORNER:
-            arena_start.x = -768;
-            arena_start.y = -512;
-            arena_start.angle = 45;
-            break;
-        case ARENA_DUEL_SPAWN_CENTER:
-            arena_start.x = -320;
-            arena_start.y = -520;
-            arena_start.angle = 0;
-            break;
-        case ARENA_DUEL_SPAWN_OPEN:
-        default:
-            arena_start.x = -640;
-            arena_start.y = 520;
-            arena_start.angle = 0;
-            break;
-        }
+        ArenaDuel_Player1SpawnCoordinates(&arena_start_x,
+                                          &arena_start_y,
+                                          &arena_start_angle);
+        arena_start.x = arena_start_x;
+        arena_start.y = arena_start_y;
+        arena_start.angle = arena_start_angle;
         mthing = &arena_start;
     }
 		
@@ -1159,6 +1112,4 @@ P_SpawnPlayerMissile
 
     P_CheckMissileSpawn (th);
 }
-
-
 
