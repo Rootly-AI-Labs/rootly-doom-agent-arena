@@ -41,6 +41,49 @@ def test_participant_intent_parser_smoke_regressions() -> None:
     run_script("smoke_participant_intents_parser.py")
 
 
+def test_duel_weapon_fire_is_mixed_below_commentary_without_lowering_all_sfx() -> None:
+    sound_source = (REPO_ROOT / "src" / "doom" / "s_sound.c").read_text(
+        encoding="utf-8"
+    )
+
+    assert "#define ARENA_DUEL_GUN_VOLUME_PERCENT 40" in sound_source
+    assert "static int S_ApplyArenaDuelGunMix" in sound_source
+    assert "if (!ArenaDuel_IsEnabled())" in sound_source
+    assert "sfx == &S_sfx[sfx_pistol]" in sound_source
+    assert "sfx == &S_sfx[sfx_shotgn]" in sound_source
+    assert "volume = S_ApplyArenaDuelGunMix(sfx, volume);" in sound_source
+
+
+def test_duel_health_never_leaks_doom_overkill_as_a_negative_value() -> None:
+    state_source = (REPO_ROOT / "src" / "doom" / "agentic_control.c").read_text(
+        encoding="utf-8"
+    )
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    score = server.score_from_state(
+        [
+            {"kind": "match", "phase": "finished", "winner": "player_2"},
+            {
+                "kind": "participant",
+                "entity_id": "player_1",
+                "health": "-35",
+                "alive": "0",
+            },
+            {
+                "kind": "participant",
+                "entity_id": "player_2",
+                "health": "70",
+                "alive": "1",
+            },
+        ]
+    )
+
+    assert "static int Agentic_DisplayHealth(int health)" in state_source
+    assert state_source.count("Agentic_DisplayHealth(") >= 4
+    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
+    assert score["player_1_health"] == 0
+    assert score["player_2_health"] == 70
+
+
 def test_participant_autopilot_smoke_regressions() -> None:
     run_script("smoke_participant_autopilot.py")
 
@@ -227,6 +270,44 @@ def test_duel_player_1_remains_in_real_player_tick_path() -> None:
     assert "Arena_LoadRunMetadata();" in arena_duel
 
 
+def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> None:
+    arena_duel = (REPO_ROOT / "src" / "doom" / "arena_duel.c").read_text(encoding="utf-8")
+    arena_header = (REPO_ROOT / "src" / "doom" / "arena_duel.h").read_text(encoding="utf-8")
+    p_mobj = (REPO_ROOT / "src" / "doom" / "p_mobj.c").read_text(encoding="utf-8-sig")
+    blueprints = json.loads(
+        (REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_variants.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    blind_spawns = blueprints["variants"]["duel_e1m8_blind_spawn"]["spawns"]
+    blind_spawn = blind_spawns["player_1"]
+    blind_spawn_p2 = blind_spawns["player_2"]
+
+    assert (blind_spawn["x"], blind_spawn["y"], blind_spawn["angle_deg"]) == (-960, 640, 315)
+    assert (blind_spawn_p2["x"], blind_spawn_p2["y"], blind_spawn_p2["angle_deg"]) == (960, -640, 135)
+    assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees);" in arena_header
+    assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees)" in arena_duel
+    assert "ArenaDuel_Player1SpawnCoordinates(&arena_start_x," in p_mobj
+    assert "arena_start.x = arena_start_x;" in p_mobj
+    assert "arena_start.x = -900;" not in p_mobj
+    assert "static arena_duel_spawn_variant_t ArenaDuel_SpawnVariant" not in p_mobj
+    assert "if (arena_duel_player1_cached_mo != mobj)" in arena_duel
+    replacement_reset = arena_duel.split(
+        "if (arena_duel_player1_cached_mo != mobj)", 1
+    )[1].split("arena_duel_player1_cached_mo = mobj;", 1)[0]
+    assert "P_RemoveMobj(arena_duel_player1_cached_mo);" not in replacement_reset
+    assert "arena_duel_player1_health_initialized = false;" in replacement_reset
+    stale_actor_cleanup = arena_duel.split(
+        "static void ArenaDuel_RemoveSupersededPlayerActors(void)", 1
+    )[1].split("void ArenaDuel_Ticker(void)", 1)[0]
+    assert "mobj->type != MT_PLAYER" in stale_actor_cleanup
+    assert "mobj == player1" in stale_actor_cleanup
+    assert "mobj == arena_duel_player2" in stale_actor_cleanup
+    assert "P_RemoveMobj(mobj);" in stale_actor_cleanup
+    assert "arena_duel_superseded_players_removed = true;" in stale_actor_cleanup
+    assert "ArenaDuel_RemoveSupersededPlayerActors();" in arena_duel
+
+
 def test_duel_player_1_retains_last_autopilot_command_briefly() -> None:
     player_control = (REPO_ROOT / "src" / "doom" / "arena_player_control.c").read_text(encoding="utf-8")
 
@@ -258,7 +339,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'id="duel-p2-health"' not in index
     assert 'id="duel-p1-health-label">❤️ 150 / 150</div>' in index
     assert 'id="duel-p2-health-label">❤️ 150 / 150</div>' in index
-    assert 'label.textContent = "❤️ " + health + " / " + DUEL_MAX_HEALTH' in index
+    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
     assert 'label.textContent = "HP "' not in index
     assert 'id="duel-p1-damage"' not in index
     assert 'id="duel-p2-damage"' not in index

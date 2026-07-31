@@ -71,6 +71,11 @@ if [ "$DEV" -eq 1 ]; then
   COMPOSE_FILES+=(-f docker/docker-compose.dev.yml)
 fi
 
+COMPOSE_ENV_ARGS=()
+if [ -f "$REPO_ROOT/.env" ]; then
+  COMPOSE_ENV_ARGS+=(--env-file "$REPO_ROOT/.env")
+fi
+
 BASE_URL="http://127.0.0.1:$PORT"
 HEALTH_URL="$BASE_URL/api/arena/health"
 
@@ -127,7 +132,7 @@ open_browser() {
 
 do_stop() {
   echo "Stopping Doom Arena Docker backend ..."
-  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" down --remove-orphans
+  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_ENV_ARGS[@]}" "${COMPOSE_FILES[@]}" down --remove-orphans
   echo "Doom Arena Docker backend stopped."
 }
 
@@ -167,7 +172,7 @@ do_start() {
   ensure_file "$REPO_ROOT/src/arena_controller_tokens.local.json" "{}"
 
   echo "Starting Doom Arena Docker backend on $BASE_URL ..."
-  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" up -d --build
+  DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_ENV_ARGS[@]}" "${COMPOSE_FILES[@]}" up -d --build
 
   local DEADLINE=$((SECONDS + TIMEOUT_SECONDS))
   local READY=0
@@ -183,7 +188,7 @@ do_start() {
     echo "ERROR: Doom Arena did not become ready at $HEALTH_URL within $TIMEOUT_SECONDS seconds." >&2
     echo "" >&2
     echo "Recent arena logs:" >&2
-    DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_FILES[@]}" logs --tail=80 arena >&2
+    DOOM_ARENA_PORT="$PORT" docker compose "${COMPOSE_ENV_ARGS[@]}" "${COMPOSE_FILES[@]}" logs --tail=80 arena >&2
     exit 1
   fi
 

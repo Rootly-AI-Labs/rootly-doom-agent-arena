@@ -29,6 +29,11 @@ static fixed_t agentic_last_player_y;
 static int agentic_player_stuck_ticks;
 static boolean agentic_have_last_player_position;
 
+static int Agentic_DisplayHealth(int health)
+{
+    return health < 0 ? 0 : health;
+}
+
 static void Agentic_ResetCommands(void)
 {
     int i;
@@ -589,7 +594,7 @@ void Agentic_ExportState(void)
                 player->mo->y >> FRACBITS,
                 player->mo->z >> FRACBITS,
                 Agentic_AngleDegrees(player->mo->angle),
-                player->mo->health,
+                Agentic_DisplayHealth(player->mo->health),
                 alive ? 1 : 0,
                 participant_distance,
                 participant_relative_angle,
@@ -720,7 +725,7 @@ void Agentic_ExportState(void)
                     mobj->y >> FRACBITS,
                     mobj->z >> FRACBITS,
                     Agentic_AngleDegrees(mobj->angle),
-                    mobj->health,
+                    Agentic_DisplayHealth(mobj->health),
                     alive ? 1 : 0,
                     distance_to_player,
                     relative_angle_to_player,
@@ -823,7 +828,7 @@ void Agentic_ExportState(void)
                 mobj->y >> FRACBITS,
                 mobj->z >> FRACBITS,
                 Agentic_AngleDegrees(mobj->angle),
-                mobj->health,
+                Agentic_DisplayHealth(mobj->health),
                 alive ? 1 : 0,
                 distance_to_player,
                 relative_angle_to_player,

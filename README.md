@@ -172,6 +172,15 @@ The committed `.mcp.json` in this repo uses `python`. If your system needs `pyth
 
 The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens. After `Reset` or a new `Start Duel`, use the newly displayed prompts.
 
+### Optional ElevenAgents shoutcaster
+
+The spectator view can send curated match events and both models' active plans
+to an ElevenAgent, then play its live boxing-style comedic commentary. Set a
+restricted `ELEVENLABS_API_KEY` and `ELEVENLABS_AGENT_ID` before starting the
+arena; the API key remains server-side. See
+[ElevenAgents live shoutcaster](docs/elevenagents-commentator.md) for the exact
+agent prompt, minimum API-key permission, and diagnostics.
+
 ## Docs
 
 - [MCP Duel Runbook](docs/mcp-duel-runbook.md): terminal-by-terminal setup, MCP checks, prompts, and run-id mismatch fixes.
@@ -179,6 +188,7 @@ The duel waits until both agents are ready and both have submitted an opening in
 - [Control Architecture](docs/control-architecture.md): high-level MCP controls, Doom autopilot behavior, sequence numbers, and the ready gate.
 - [Build](docs/build.md): WSL/Emscripten rebuild commands and browser cache notes.
 - [Smoke Tests](docs/smoke-tests.md): API, MCP, and browser-backed smoke commands.
+- [ElevenAgents live shoutcaster](docs/elevenagents-commentator.md): configure live comedic voice commentary.
 
 ## About Rootly AI Labs
 

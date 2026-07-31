@@ -726,6 +726,7 @@
                 margin-top: 12px;
                 color: rgba(184, 233, 134, 0.45);
                 font: 600 16px/1.2 "Trebuchet MS", Verdana, sans-serif;
+
                 text-align: center;
             }
 
@@ -1646,6 +1647,79 @@
                 line-height: 0.95;
                 letter-spacing: -0.04em;
                 font-variant-numeric: tabular-nums;
+            }
+
+            .duel-commentator-panel {
+                margin-top: 10px;
+                border: 1px solid rgba(255, 206, 107, 0.28);
+                background: linear-gradient(135deg, rgba(54, 38, 14, 0.82), rgba(14, 17, 13, 0.98));
+                padding: 11px 12px;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-commentator-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .duel-commentator-toggle {
+                cursor: pointer;
+                border: 1px solid rgba(255, 206, 107, 0.56);
+                background: #4b3212;
+                color: #fff1bd;
+                padding: 8px 10px;
+                font: 900 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+            }
+
+            .duel-commentator-toggle[aria-pressed="true"] {
+                border-color: rgba(105, 220, 120, 0.72);
+                background: #214123;
+                color: #c8f8ce;
+            }
+
+            .duel-commentator-volume {
+                min-width: 0;
+                flex: 1;
+                accent-color: #ffce6b;
+            }
+
+            .duel-commentator-status {
+                margin-top: 8px;
+                color: #a9a997;
+                font: 700 10px/1.25 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .duel-commentator-status.ready {
+                color: #69dc78;
+            }
+
+            .duel-commentator-status.error {
+                color: #ff7a6b;
+            }
+
+            .duel-commentator-caption {
+                margin-top: 9px;
+                border-left: 3px solid #ffce6b;
+                color: #f7f5d8;
+                padding: 2px 0 2px 9px;
+                font: 800 13px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-commentator-caption[hidden] {
+                display: none;
+            }
+
+            .duel-commentator-test-link {
+                color: #ffce6b;
+                font: 800 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                white-space: nowrap;
             }
 
             .duel-panels {
@@ -2865,6 +2939,15 @@
                                     <input id="arena-round" type="number" min="1" value="1" />
                                 </div>
                             </div>
+                            <div class="duel-commentator-panel arena-commentator-setup">
+                                <div class="arena-config-section-title">Live shoutcaster</div>
+                                <div class="duel-commentator-controls">
+                                    <button type="button" class="duel-commentator-toggle" id="arena-commentator-toggle" data-commentator-toggle aria-pressed="false">Enable shoutcaster</button>
+                                    <input class="duel-commentator-volume" id="arena-commentator-volume" data-commentator-volume type="range" min="0" max="1" step="0.05" value="0.8" aria-label="Shoutcaster volume" />
+                                    <a class="duel-commentator-test-link" href="elevenagents-test.html" target="_blank" rel="noopener">Test voice</a>
+                                </div>
+                                <div class="duel-commentator-status" id="arena-commentator-status">Checking ElevenAgents…</div>
+                            </div>
                         </div>
                     </details>
                     <div class="arena-mcp-status-panel" id="arena-mcp-status-panel">
@@ -2959,6 +3042,7 @@
                                 <div class="duel-tactical-meta-value" id="duel-tactical-match-progress">1/1</div>
                             </div>
                         </div>
+                        <div class="duel-commentator-caption" id="duel-commentator-caption" aria-live="polite" hidden></div>
                     </div>
                 </div>
             </div>
@@ -3186,8 +3270,9 @@
             </div>
         </div>
 
+        <script src="elevenagents-commentator.js?v=20260731-team-colors"></script>
         <script>
-            var doomAssetCacheBust = "cache-bust-20260730-rootly-title-heart-health";
+            var doomAssetCacheBust = "cache-bust-20260731-lifecycle-safe-player-cache";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
@@ -3209,6 +3294,8 @@
             var arenaHealthEndpoint = "/api/arena/health";
             var arenaMcpPresenceEndpoint = "/api/arena/mcp-presence";
             var arenaMcpStatusPollMs = 2000;
+            var arenaDuelStatePollMs = 1000;
+            var arenaCommentatorStatePollMs = 500;
             var arenaRunMetadataPath = "arena_run_metadata.local.tsv";
             var arenaRunMetadataEndpoint = "/api/arena/run-metadata";
             var arenaResetEndpoint = "/api/arena/reset";
@@ -3220,6 +3307,19 @@
             var arenaEventsPath = "arena_duel_events.local.tsv";
             var arenaEventsEndpoint = "/api/arena/events";
             var duelPreviewRequestedState = new URLSearchParams(window.location.search).get("duelPreview") || "";
+            var arenaCommentatorConfigEndpoint = "/api/arena/commentator/config";
+            var arenaCommentatorSignedUrlEndpoint = "/api/arena/commentator/signed-url";
+            var elevenAgentsCommentator = null;
+            var elevenAgentsCommentatorEnabled = false;
+            var elevenAgentsCommentatorRequested = false;
+            var elevenAgentsCommentatorAvailable = false;
+            var elevenAgentsCommentatorDesired = false;
+            var elevenAgentsCommentatorError = false;
+            var elevenAgentsCommentatorConfigPromise = null;
+            var elevenAgentsCommentatorConfigResolved = false;
+            var elevenAgentsCommentatorAudioPreparedByUser = false;
+            var elevenAgentsCommentatorAudioPreparationPromise = null;
+            var duelIntroductionBlockedRunId = "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
             var duelPickupCountsRunId = "";
@@ -4682,6 +4782,255 @@
                     harness: label ? "—" : "Detecting…",
                     model: String(fallbackModel || "").trim() || (label ? "—" : "Detecting…")
                 };
+            }
+
+            function setElevenAgentsCommentatorStatus(message, state) {
+                document.querySelectorAll(".duel-commentator-status").forEach(function (node) {
+                    node.textContent = message || "";
+                    node.classList.remove("ready", "error", "connecting");
+                    if (state) {
+                        node.classList.add(state);
+                    }
+                });
+            }
+
+            function setElevenAgentsCommentatorCaption(message) {
+                var node = document.getElementById("duel-commentator-caption");
+                if (node === null) {
+                    return;
+                }
+                node.textContent = message || "";
+                node.hidden = !message;
+            }
+
+            function syncElevenAgentsCommentatorControls(label, pressed, disabled) {
+                document.querySelectorAll("[data-commentator-toggle]").forEach(function (toggle) {
+                    toggle.textContent = label;
+                    toggle.setAttribute("aria-pressed", pressed ? "true" : "false");
+                    toggle.disabled = !!disabled;
+                });
+            }
+
+            function duelPlayViewIsDisplayed() {
+                var grid = document.getElementById("duel-pov-grid");
+                var launcher = document.getElementById("arena-launcher");
+                return !!(
+                    grid &&
+                    grid.classList.contains("duel-active") &&
+                    (!launcher || window.getComputedStyle(launcher).display === "none")
+                );
+            }
+
+            function prepareElevenAgentsCommentatorAudio() {
+                if (!elevenAgentsCommentator || typeof elevenAgentsCommentator.prepareAudio !== "function") {
+                    return Promise.resolve();
+                }
+                return elevenAgentsCommentator.prepareAudio();
+            }
+
+            function promiseWithTimeout(promise, timeoutMs, message) {
+                return new Promise(function (resolve, reject) {
+                    var settled = false;
+                    var timer = window.setTimeout(function () {
+                        if (!settled) {
+                            settled = true;
+                            reject(new Error(message));
+                        }
+                    }, timeoutMs);
+
+                    Promise.resolve(promise).then(function (value) {
+                        if (!settled) {
+                            settled = true;
+                            window.clearTimeout(timer);
+                            resolve(value);
+                        }
+                    }, function (error) {
+                        if (!settled) {
+                            settled = true;
+                            window.clearTimeout(timer);
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            function prepareElevenAgentsCommentatorFromUserGesture() {
+                if (elevenAgentsCommentatorAudioPreparationPromise) {
+                    return elevenAgentsCommentatorAudioPreparationPromise;
+                }
+                elevenAgentsCommentatorAudioPreparationPromise = promiseWithTimeout(
+                    prepareElevenAgentsCommentatorAudio(),
+                    3000,
+                    "Browser audio did not unlock in time"
+                ).then(function () {
+                    elevenAgentsCommentatorAudioPreparedByUser = true;
+                    return true;
+                }).catch(function (error) {
+                    elevenAgentsCommentatorAudioPreparedByUser = false;
+                    throw error;
+                }).finally(function () {
+                    elevenAgentsCommentatorAudioPreparationPromise = null;
+                });
+                return elevenAgentsCommentatorAudioPreparationPromise;
+            }
+
+            function requestElevenAgentsCommentator() {
+                if (!elevenAgentsCommentator) {
+                    return Promise.reject(new Error("Shoutcaster is not initialized"));
+                }
+                if (!duelPlayViewIsDisplayed()) {
+                    return Promise.reject(new Error("Shoutcaster waits until the arena is visible"));
+                }
+                elevenAgentsCommentatorDesired = true;
+                elevenAgentsCommentatorError = false;
+                elevenAgentsCommentatorRequested = true;
+                duelIntroductionBlockedRunId = "";
+                syncElevenAgentsCommentatorControls("Connecting…", false, true);
+                return elevenAgentsCommentator.enable()
+                    .then(function () {
+                        elevenAgentsCommentatorEnabled = true;
+                        syncElevenAgentsCommentatorControls("Disable shoutcaster", true, false);
+                        maybeAutoStartReadyDuel();
+                    })
+                    .catch(function (error) {
+                        elevenAgentsCommentatorEnabled = false;
+                        elevenAgentsCommentatorRequested = false;
+                        elevenAgentsCommentatorError = true;
+                        syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                        throw error;
+                    });
+            }
+
+            function initializeElevenAgentsCommentator() {
+                var toggles = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-toggle]"));
+                var volumes = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-volume]"));
+                var api = window.DoomArenaElevenAgents;
+                var initialVolume = volumes.length ? Number(volumes[0].value) : 0.8;
+
+                if (!toggles.length || !volumes.length || !api || typeof api.Commentator !== "function") {
+                    return;
+                }
+                elevenAgentsCommentator = new api.Commentator({
+                    signedUrlEndpoint: arenaCommentatorSignedUrlEndpoint,
+                    volume: initialVolume,
+                    onStatus: setElevenAgentsCommentatorStatus,
+                    onCaption: setElevenAgentsCommentatorCaption
+                });
+                toggles.forEach(function (toggle) {
+                    toggle.addEventListener("click", function () {
+                        if (elevenAgentsCommentatorDesired && !elevenAgentsCommentatorError) {
+                            elevenAgentsCommentatorDesired = false;
+                            elevenAgentsCommentatorRequested = false;
+                            elevenAgentsCommentatorEnabled = false;
+                            elevenAgentsCommentator.disable();
+                            syncElevenAgentsCommentatorControls("Enable shoutcaster", false, false);
+                            return;
+                        }
+                        elevenAgentsCommentatorDesired = true;
+                        elevenAgentsCommentatorError = false;
+                        if (duelPlayViewIsDisplayed()) {
+                            requestElevenAgentsCommentator().catch(function () {});
+                            return;
+                        }
+                        prepareElevenAgentsCommentatorFromUserGesture()
+                            .then(function () {
+                                duelIntroductionBlockedRunId = "";
+                                syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                                setElevenAgentsCommentatorStatus("Ready — starts when the arena opens", "ready");
+                                maybeAutoStartReadyDuel();
+                            })
+                            .catch(function (error) {
+                                elevenAgentsCommentatorError = true;
+                                syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                                setElevenAgentsCommentatorStatus(error.message || "Unable to prepare audio", "error");
+                            });
+                    });
+                });
+                volumes.forEach(function (volume) {
+                    volume.addEventListener("input", function () {
+                        var nextVolume = Number(volume.value);
+                        volumes.forEach(function (peer) {
+                            if (peer !== volume) {
+                                peer.value = volume.value;
+                            }
+                        });
+                        elevenAgentsCommentator.setVolume(nextVolume);
+                    });
+                });
+                elevenAgentsCommentatorConfigPromise = fetch(arenaCommentatorConfigEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then(function (config) {
+                        if (!config || !config.configured) {
+                            elevenAgentsCommentatorAvailable = false;
+                            elevenAgentsCommentatorDesired = false;
+                            setElevenAgentsCommentatorStatus(
+                                "Set ELEVENLABS_API_KEY and ELEVENLABS_AGENT_ID to enable",
+                                "error"
+                            );
+                            return;
+                        }
+                        elevenAgentsCommentatorAvailable = true;
+                        elevenAgentsCommentatorDesired = true;
+                        elevenAgentsCommentatorError = false;
+                        syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                        setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                    })
+                    .catch(function () {
+                        elevenAgentsCommentatorAvailable = false;
+                        setElevenAgentsCommentatorStatus("Unable to check ElevenAgents configuration", "error");
+                    })
+                    .finally(function () {
+                        elevenAgentsCommentatorConfigResolved = true;
+                    });
+            }
+
+            function currentCommentaryScore(livePhase, liveRunId) {
+                var rounds = tacticalMatchSummary && Array.isArray(tacticalMatchSummary.rounds)
+                    ? tacticalMatchSummary.rounds
+                    : [];
+                var totals;
+                if (livePhase && livePhase !== "finished" && liveRunId) {
+                    rounds = rounds.filter(function (round) {
+                        return round.run_id !== liveRunId;
+                    });
+                }
+                totals = roundProgressTotals(rounds);
+                return { player_1: totals.wins1, player_2: totals.wins2 };
+            }
+
+            function updateElevenAgentsCommentator(
+                runId,
+                phase,
+                elapsed,
+                winner,
+                terminalReason,
+                roundNumber,
+                totalRounds,
+                player1,
+                player2
+            ) {
+                if (!elevenAgentsCommentator) {
+                    return;
+                }
+                elevenAgentsCommentator.update({
+                    runId: runId,
+                    phase: phase,
+                    elapsedSeconds: elapsed,
+                    winner: winner,
+                    terminalReason: terminalReason,
+                    round: roundNumber,
+                    totalRounds: totalRounds,
+                    scenario: scenarioDisplayName(currentArenaScenarioId),
+                    score: currentCommentaryScore(phase, runId),
+                    player1: player1,
+                    player2: player2,
+                    player1Name: funAgentName(participantReadyAgentById.player_1, "Player 1"),
+                    player2Name: funAgentName(participantReadyAgentById.player_2, "Player 2"),
+                    pickups: duelPickupCountsByParticipant,
+                    intentRows: latestParticipantIntentRows
+                });
             }
 
             function renderPovAgentIdentity(prefix, identityLabel, fallbackName, fallbackModel, participantId) {
@@ -6381,6 +6730,94 @@
                 setPovModelNames();
             }
 
+            function presentDuelParticipantsBeforeStart() {
+                if (!elevenAgentsCommentatorConfigResolved && elevenAgentsCommentatorConfigPromise) {
+                    return elevenAgentsCommentatorConfigPromise.then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
+                }
+                if (!elevenAgentsCommentatorAvailable || !elevenAgentsCommentatorDesired) {
+                    return Promise.resolve();
+                }
+                if (
+                    elevenAgentsCommentator &&
+                    typeof elevenAgentsCommentator.expectIntroduction === "function"
+                ) {
+                    elevenAgentsCommentator.expectIntroduction(
+                        currentDuelSession.run_id,
+                        currentDuelSession.current_round || currentArenaRound
+                    );
+                }
+                if (!elevenAgentsCommentatorRequested) {
+                    return requestElevenAgentsCommentator().then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
+                }
+                if (!elevenAgentsCommentator || typeof elevenAgentsCommentator.introduceMatch !== "function") {
+                    return Promise.reject(new Error("Shoutcaster introduction is unavailable"));
+                }
+                updateLauncherStatus("Presenting both competitors before the arena opens...");
+                return elevenAgentsCommentator.introduceMatch({
+                    runId: currentDuelSession.run_id,
+                    round: currentDuelSession.current_round || currentArenaRound,
+                    totalRounds: currentDuelSession.total_rounds || currentArenaTotalRounds,
+                    scenario: scenarioDisplayName(currentArenaScenarioId),
+                    player1Name: funAgentName(participantReadyAgentById.player_1, "Player 1"),
+                    player2Name: funAgentName(participantReadyAgentById.player_2, "Player 2")
+                });
+            }
+
+            function showDuelPlayViewBeforeIntroduction() {
+                var launcher = document.getElementById("arena-launcher");
+
+                currentArenaMode = "duel";
+                setDuelPovActive(true);
+                setDuelTacticalPanelVisible(true);
+                if (launcher !== null) {
+                    launcher.style.display = "none";
+                }
+                duelLauncherHidePending = false;
+
+                // Wait for two animation frames so the browser paints the
+                // spectator layout before ElevenAgents can emit any audio.
+                return new Promise(function (resolve) {
+                    window.requestAnimationFrame(function () {
+                        window.requestAnimationFrame(resolve);
+                    });
+                });
+            }
+
+            function restoreDuelLauncherAfterIntroductionFailure() {
+                var launcher = document.getElementById("arena-launcher");
+
+                setDuelPovActive(false);
+                setDuelTacticalPanelVisible(false);
+                duelLauncherHidePending = false;
+                if (launcher !== null) {
+                    launcher.style.display = "flex";
+                }
+                setArenaLauncherButtonsDisabled(false);
+            }
+
+            function commentaryCanBlockDuelStart() {
+                if (!elevenAgentsCommentatorAvailable || !elevenAgentsCommentatorDesired) {
+                    return Promise.resolve(false);
+                }
+                if (elevenAgentsCommentatorAudioPreparedByUser) {
+                    return Promise.resolve(true);
+                }
+                if (elevenAgentsCommentatorAudioPreparationPromise) {
+                    return elevenAgentsCommentatorAudioPreparationPromise.then(function () {
+                        return elevenAgentsCommentatorAudioPreparedByUser;
+                    }).catch(function () {
+                        return false;
+                    });
+                }
+                // Automatic reloads have no browser user activation. Start the
+                // duel normally instead of waiting forever on AudioContext.resume().
+                return Promise.resolve(false);
+            }
+
             function maybeAutoStartReadyDuel() {
                 if (
                     duelReadyAutoStartInFlight ||
@@ -6388,6 +6825,7 @@
                     currentArenaMode !== "duel" ||
                     !currentDuelSession ||
                     !currentDuelSession.run_id ||
+                    duelIntroductionBlockedRunId === currentDuelSession.run_id ||
                     !participantReadyById.player_1 ||
                     !participantReadyById.player_2
                 ) {
@@ -6395,8 +6833,36 @@
                 }
 
                 duelReadyAutoStartInFlight = true;
-                updateLauncherStatus("Both agents are ready. Starting benchmark...");
-                startDuel({ reuseExistingSession: true })
+                updateLauncherStatus("Both agents are ready. Preparing the introduction...");
+                commentaryCanBlockDuelStart()
+                    .then(function (canBlockForIntroduction) {
+                        return showDuelPlayViewBeforeIntroduction().then(function () {
+                            if (!canBlockForIntroduction) {
+                                return;
+                            }
+                            return presentDuelParticipantsBeforeStart();
+                        });
+                    })
+                    .then(function () {
+                        updateLauncherStatus("Introduction complete. Starting benchmark...");
+                        return startDuel({ reuseExistingSession: true });
+                    })
+                    .catch(function (error) {
+                        duelIntroductionBlockedRunId = currentDuelSession ? currentDuelSession.run_id : "";
+                        elevenAgentsCommentatorEnabled = false;
+                        elevenAgentsCommentatorRequested = false;
+                        elevenAgentsCommentatorError = true;
+                        if (elevenAgentsCommentator) {
+                            elevenAgentsCommentator.disable();
+                        }
+                        restoreDuelLauncherAfterIntroductionFailure();
+                        syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                        updateLauncherStatus(
+                            "The benchmark is paused: " + (error.message || "the shoutcaster introduction failed") +
+                            ". Retry the shoutcaster to continue."
+                        );
+                        setElevenAgentsCommentatorStatus(error.message || "Introduction failed", "error");
+                    })
                     .finally(function () {
                         duelReadyAutoStartInFlight = false;
                     });
@@ -6488,7 +6954,7 @@
                     fill.style.width = percent.toFixed(1) + "%";
                 }
                 if (label !== null) {
-                    label.textContent = "❤️ " + health + " / " + DUEL_MAX_HEALTH;
+                    label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH;
                 }
                 if (bar !== null) {
                     bar.classList.toggle("health-critical", clamped > 0 && clamped <= DUEL_MAX_HEALTH * 0.25);
@@ -9091,6 +9557,17 @@
                 updateParticipantFootstepAudio("player_1", player1, phase, matchOver);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
                 updateParticipantFootstepAudio("player_2", player2, phase, matchOver);
+                updateElevenAgentsCommentator(
+                    runId,
+                    phase,
+                    elapsed,
+                    winner,
+                    terminalReason,
+                    roundNumber,
+                    totalRounds,
+                    player1,
+                    player2
+                );
                 updateNextRoundButton(phase);
                 maybeShowRoundProgressPopup(phase);
                 maybeAutoAdvanceDuelRound(phase);
@@ -9117,6 +9594,16 @@
                     .then(function (text) {
                         updateDuelDashboard(parseTsv(text));
                     });
+            }
+
+            function scheduleDuelStateRefresh() {
+                var delay = elevenAgentsCommentatorAvailable && elevenAgentsCommentatorDesired
+                    ? arenaCommentatorStatePollMs
+                    : arenaDuelStatePollMs;
+                window.setTimeout(function () {
+                    refreshDuelState();
+                    scheduleDuelStateRefresh();
+                }, delay);
             }
 
             function postPlayerDebugCommand(command) {
@@ -9741,6 +10228,16 @@
                 });
 
                 document.getElementById("arena-start-game").addEventListener("click", function () {
+                    // Unlock browser audio while this direct user gesture is
+                    // active, but do not connect or speak over the setup view.
+                    if (
+                        elevenAgentsCommentatorAvailable &&
+                        elevenAgentsCommentatorDesired
+                    ) {
+                        prepareElevenAgentsCommentatorFromUserGesture().catch(function (error) {
+                            updateLauncherStatus(error.message || "Unable to prepare the shoutcaster");
+                        });
+                    }
                     var sessionMatchesSettings = currentDuelSession &&
                         currentDuelSession.run_id &&
                         currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn") &&
@@ -9860,6 +10357,7 @@
                 setLauncherMode("choose");
                 installPointerCaptureGuards();
                 disableDoomPointerCapture();
+                initializeElevenAgentsCommentator();
 
                 if (duelPreviewRequestedState) {
                     initializeDuelPreview(duelPreviewRequestedState);
@@ -9935,7 +10433,7 @@
                     updateMcpSetupStatus();
                     window.setInterval(updateMcpSetupStatus, arenaMcpStatusPollMs);
                     window.setInterval(refreshArenaScore, 1000);
-                    window.setInterval(refreshDuelState, 1000);
+                    scheduleDuelStateRefresh();
                     startDuelPovRefreshLoop();
                     window.setInterval(pollArenaReset, 1000);
                     window.setInterval(disableDoomPointerCapture, 1000);

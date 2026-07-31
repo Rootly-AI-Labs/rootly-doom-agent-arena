@@ -13,6 +13,8 @@ Makefile.in
 *.js
 *.html
 !src/index.html
+!src/elevenagents-test.html
+!src/elevenagents-commentator.js
 *.html.symbols
 config.h
 !src/config.h

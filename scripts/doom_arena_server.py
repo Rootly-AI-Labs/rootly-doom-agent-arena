@@ -11,6 +11,7 @@ import argparse
 import copy
 import html
 import json
+import os
 import random
 import shutil
 import sys
@@ -21,7 +22,9 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, urlparse
+from urllib.error import HTTPError, URLError
+from urllib.parse import parse_qs, urlencode, urlparse
+from urllib.request import Request, urlopen
 
 from doom_arena_duel_prompts import (
     RESULTS_ROOT,
@@ -61,6 +64,11 @@ ARENA_PARTICIPANT_READY_TSV = SRC_DIR / "arena_participant_ready.local.tsv"
 ARENA_ENEMY_COMMAND_TSV = SRC_DIR / "arena_enemy_commands.local.tsv"
 ARENA_RUN_METADATA_TSV = SRC_DIR / "arena_run_metadata.local.tsv"
 MCP_PRESENCE_STALE_AFTER_MS = 25000
+ELEVENLABS_SIGNED_URL_ENDPOINT = (
+    "https://api.elevenlabs.io/v1/convai/conversation/get-signed-url"
+)
+ELEVENLABS_REQUEST_TIMEOUT_SECONDS = 10
+ELEVENLABS_SIGNED_URL_MIN_INTERVAL_SECONDS = 2.0
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
 DEFAULT_DUEL_SCENARIO_ID = "duel_e1m8_blind_spawn"
@@ -338,6 +346,23 @@ def normalize_optional_int(
     return str(parsed)
 
 
+def fetch_elevenlabs_signed_url(api_key: str, agent_id: str) -> str:
+    """Exchange the server-side API key for a short-lived ElevenAgents URL."""
+    query = urlencode({"agent_id": agent_id})
+    request = Request(
+        f"{ELEVENLABS_SIGNED_URL_ENDPOINT}?{query}",
+        headers={"xi-api-key": api_key, "Accept": "application/json"},
+        method="GET",
+    )
+    with urlopen(request, timeout=ELEVENLABS_REQUEST_TIMEOUT_SECONDS) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    signed_url = str(payload.get("signed_url", "")).strip()
+    parsed = urlparse(signed_url)
+    if parsed.scheme != "wss" or parsed.hostname != "api.elevenlabs.io":
+        raise ValueError("ElevenLabs returned an invalid signed WebSocket URL.")
+    return signed_url
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve Doom Agent Arena locally.")
     parser.add_argument("--host", default="127.0.0.1")
@@ -371,6 +396,7 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.started_at_ms = now_ms()
         self.reset_requested = False
         self.stats_lock = threading.Lock()
+        self.commentator_signed_url_last_request_at = 0.0
         self.mcp_call_counter = 0
         self.mcp_calls: list[dict[str, Any]] = []
         self.active_mcp_calls: dict[str, dict[str, Any]] = {}
@@ -510,6 +536,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.read_health()
             return
 
+        if path == "/api/arena/commentator/config":
+            self.read_commentator_config()
+            return
+
+        if path == "/api/arena/commentator/signed-url":
+            self.read_commentator_signed_url()
+            return
+
         if path == "/api/arena/player-command":
             self.read_file(ARENA_PLAYER_COMMAND_TSV, "arena_player_command.local.tsv")
             return
@@ -603,6 +637,90 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "scenario_id": self.server.scenario_id,
                 "arena_mode": self.server.arena_mode,
                 "started_at_ms": self.server.started_at_ms,
+            },
+        )
+
+    def commentator_environment(self) -> tuple[str, str]:
+        return (
+            os.environ.get("ELEVENLABS_API_KEY", "").strip(),
+            os.environ.get("ELEVENLABS_AGENT_ID", "").strip(),
+        )
+
+    def read_commentator_config(self) -> None:
+        api_key, agent_id = self.commentator_environment()
+        missing = []
+        if not api_key:
+            missing.append("ELEVENLABS_API_KEY")
+        if not agent_id:
+            missing.append("ELEVENLABS_AGENT_ID")
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "configured": not missing,
+                "missing": missing,
+                "provider": "ElevenLabs",
+                "product": "ElevenAgents",
+                "mode": "live_shoutcaster",
+            },
+        )
+
+    def read_commentator_signed_url(self) -> None:
+        api_key, agent_id = self.commentator_environment()
+        missing = []
+        if not api_key:
+            missing.append("ELEVENLABS_API_KEY")
+        if not agent_id:
+            missing.append("ELEVENLABS_AGENT_ID")
+        if missing:
+            self.write_json(
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                {
+                    "ok": False,
+                    "error": "ElevenAgents commentator is not configured.",
+                    "missing": missing,
+                },
+            )
+            return
+
+        now = time.monotonic()
+        with self.server.stats_lock:
+            last_request_at = getattr(
+                self.server, "commentator_signed_url_last_request_at", 0.0
+            )
+            if now - last_request_at < ELEVENLABS_SIGNED_URL_MIN_INTERVAL_SECONDS:
+                rate_limited = True
+            else:
+                rate_limited = False
+                self.server.commentator_signed_url_last_request_at = now
+        if rate_limited:
+            self.write_json(
+                HTTPStatus.TOO_MANY_REQUESTS,
+                {
+                    "ok": False,
+                    "error": "Please wait before reconnecting the ElevenAgents commentator.",
+                },
+            )
+            return
+
+        try:
+            signed_url = fetch_elevenlabs_signed_url(api_key, agent_id)
+        except (HTTPError, URLError, TimeoutError, ValueError, json.JSONDecodeError) as exc:
+            self.log_error("ElevenAgents signed URL request failed: %s", exc.__class__.__name__)
+            self.write_json(
+                HTTPStatus.BAD_GATEWAY,
+                {
+                    "ok": False,
+                    "error": "Unable to connect the ElevenAgents commentator.",
+                },
+            )
+            return
+
+        self.write_json(
+            HTTPStatus.OK,
+            {
+                "ok": True,
+                "signed_url": signed_url,
             },
         )
 
@@ -3905,8 +4023,8 @@ def score_from_state(rows: list[dict[str, str]]) -> dict[str, Any]:
             "terminal_reason": match.get("terminal_reason") or player_1.get("terminal_reason") or "",
             "elapsed_time_seconds": float(match.get("elapsed_time_seconds") or player_1.get("elapsed_time_seconds") or 0),
             "timeout_seconds": int(match.get("timeout_seconds") or player_1.get("timeout_seconds") or 180),
-            "player_1_health": int(player_1.get("health", "0") or 0),
-            "player_2_health": int(player_2.get("health", "0") or 0),
+            "player_1_health": max(0, int(player_1.get("health", "0") or 0)),
+            "player_2_health": max(0, int(player_2.get("health", "0") or 0)),
             "player_1_alive": player_1.get("alive", "0") == "1",
             "player_2_alive": player_2.get("alive", "0") == "1",
             "player_1_damage_dealt": int(player_1.get("damage_dealt", "0") or 0),
