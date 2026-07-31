@@ -2794,7 +2794,7 @@
             </div>
         </div>
 
-        <script src="elevenagents-commentator.js?v=20260731-low-latency-cadence"></script>
+        <script src="elevenagents-commentator.js?v=20260731-pr20-review-fixes"></script>
         <script>
             var doomAssetCacheBust = "cache-bust-20260731-nonnegative-health";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
@@ -2837,6 +2837,8 @@
             var elevenAgentsCommentatorAvailable = false;
             var elevenAgentsCommentatorDesired = false;
             var elevenAgentsCommentatorError = false;
+            var elevenAgentsCommentatorConfigPromise = null;
+            var elevenAgentsCommentatorConfigResolved = false;
             var duelIntroductionBlockedRunId = "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
@@ -4342,6 +4344,7 @@
                     .then(function () {
                         elevenAgentsCommentatorEnabled = true;
                         syncElevenAgentsCommentatorControls("Disable shoutcaster", true, false);
+                        maybeAutoStartReadyDuel();
                     })
                     .catch(function (error) {
                         elevenAgentsCommentatorEnabled = false;
@@ -4393,7 +4396,7 @@
                         elevenAgentsCommentator.setVolume(nextVolume);
                     });
                 });
-                fetch(arenaCommentatorConfigEndpoint, { cache: "no-store" })
+                elevenAgentsCommentatorConfigPromise = fetch(arenaCommentatorConfigEndpoint, { cache: "no-store" })
                     .then(function (response) {
                         return response.ok ? response.json() : null;
                     })
@@ -4416,6 +4419,9 @@
                     .catch(function () {
                         elevenAgentsCommentatorAvailable = false;
                         setElevenAgentsCommentatorStatus("Unable to check ElevenAgents configuration", "error");
+                    })
+                    .finally(function () {
+                        elevenAgentsCommentatorConfigResolved = true;
                     });
             }
 
@@ -6110,8 +6116,18 @@
             }
 
             function presentDuelParticipantsBeforeStart() {
-                if (!elevenAgentsCommentatorRequested) {
+                if (!elevenAgentsCommentatorConfigResolved && elevenAgentsCommentatorConfigPromise) {
+                    return elevenAgentsCommentatorConfigPromise.then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
+                }
+                if (!elevenAgentsCommentatorAvailable || !elevenAgentsCommentatorDesired) {
                     return Promise.resolve();
+                }
+                if (!elevenAgentsCommentatorRequested) {
+                    return requestElevenAgentsCommentator().then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
                 }
                 if (!elevenAgentsCommentator || typeof elevenAgentsCommentator.introduceMatch !== "function") {
                     return Promise.reject(new Error("Shoutcaster introduction is unavailable"));
@@ -6150,6 +6166,13 @@
                     })
                     .catch(function (error) {
                         duelIntroductionBlockedRunId = currentDuelSession ? currentDuelSession.run_id : "";
+                        elevenAgentsCommentatorEnabled = false;
+                        elevenAgentsCommentatorRequested = false;
+                        elevenAgentsCommentatorError = true;
+                        if (elevenAgentsCommentator) {
+                            elevenAgentsCommentator.disable();
+                        }
+                        syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
                         updateLauncherStatus(
                             "The benchmark is paused: " + (error.message || "the shoutcaster introduction failed") +
                             ". Retry the shoutcaster to continue."

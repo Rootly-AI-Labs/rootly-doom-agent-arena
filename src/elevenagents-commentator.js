@@ -20,6 +20,15 @@
         return Number.isFinite(parsed) ? parsed : fallback;
     }
 
+    function optionalNonnegativeNumber(value) {
+        var parsed;
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+        parsed = Number(value);
+        return Number.isFinite(parsed) ? Math.max(0, parsed) : null;
+    }
+
     function truthy(value) {
         return value === true || value === 1 || value === "1" || value === "true";
     }
@@ -97,9 +106,9 @@
         return {
             id: participantId,
             name: compactText(name, 48),
-            health: Math.max(0, numberValue(player && player.health, 0)),
-            alive: !player || player.alive === undefined ? true : truthy(player.alive),
-            damage_dealt: Math.max(0, numberValue(player && player.damage_dealt, 0)),
+            health: optionalNonnegativeNumber(player && player.health),
+            alive: !player || player.alive === undefined ? null : truthy(player.alive),
+            damage_dealt: optionalNonnegativeNumber(player && player.damage_dealt),
             equipment: hasShotgun ? ["shotgun"] : [],
             health_packs_collected: Math.max(0, numberValue(counts.health, 0)),
             opponent_visible: truthy(player && player.line_of_sight),
@@ -249,6 +258,20 @@
         ]);
     }
 
+    function healthLabel(value) {
+        return value === null ? "unknown" : String(value);
+    }
+
+    function broadcastJoinCue(snapshot) {
+        var p1 = snapshot.players.player_1;
+        var p2 = snapshot.players.player_2;
+        return cue("broadcast_join", "", "medium", [
+            "Join the match already in progress",
+            p1.name + " has " + healthLabel(p1.health) + " health",
+            p2.name + " has " + healthLabel(p2.health) + " health"
+        ]);
+    }
+
     function chooseCue(previous, current) {
         var p1 = current.players.player_1;
         var p2 = current.players.player_2;
@@ -286,8 +309,21 @@
                         : "The round is complete";
             return cue("round_end", winnerName, "critical", [
                 "Winner: " + winnerName,
-                "Final health: " + p1.name + " " + p1.health + ", " + p2.name + " " + p2.health,
+                "Final health: " + p1.name + " " + healthLabel(p1.health) + ", " + p2.name + " " + healthLabel(p2.health),
                 resultFact
+            ]);
+        }
+
+        if (old1.health !== null && p1.health !== null && old1.health > CRITICAL_HEALTH && p1.health <= CRITICAL_HEALTH) {
+            return cue("critical_health", p1.name, "major", [
+                p1.name + " has " + p1.health + " health remaining",
+                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
+            ]);
+        }
+        if (old2.health !== null && p2.health !== null && old2.health > CRITICAL_HEALTH && p2.health <= CRITICAL_HEALTH) {
+            return cue("critical_health", p2.name, "major", [
+                p2.name + " has " + p2.health + " health remaining",
+                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
             ]);
         }
 
@@ -297,34 +333,9 @@
         if (p2.equipment.indexOf("shotgun") !== -1 && old2.equipment.indexOf("shotgun") === -1) {
             return cue("weapon_pickup", p2.name, "major", [p2.name + " acquired the shotgun"]);
         }
-        if (p1.health_packs_collected > old1.health_packs_collected) {
-            return cue("health_pickup", p1.name, "medium", [
-                p1.name + " collected a health pack",
-                "Current health: " + p1.health
-            ]);
-        }
-        if (p2.health_packs_collected > old2.health_packs_collected) {
-            return cue("health_pickup", p2.name, "medium", [
-                p2.name + " collected a health pack",
-                "Current health: " + p2.health
-            ]);
-        }
 
-        if (old1.health > CRITICAL_HEALTH && p1.health <= CRITICAL_HEALTH) {
-            return cue("critical_health", p1.name, "major", [
-                p1.name + " has " + p1.health + " health remaining",
-                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
-            ]);
-        }
-        if (old2.health > CRITICAL_HEALTH && p2.health <= CRITICAL_HEALTH) {
-            return cue("critical_health", p2.name, "major", [
-                p2.name + " has " + p2.health + " health remaining",
-                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
-            ]);
-        }
-
-        damageTaken1 = Math.max(0, old1.health - p1.health);
-        damageTaken2 = Math.max(0, old2.health - p2.health);
+        damageTaken1 = old1.health === null || p1.health === null ? 0 : Math.max(0, old1.health - p1.health);
+        damageTaken2 = old2.health === null || p2.health === null ? 0 : Math.max(0, old2.health - p2.health);
         if (damageTaken1 >= HEAVY_DAMAGE_THRESHOLD || damageTaken2 >= HEAVY_DAMAGE_THRESHOLD) {
             return cue("heavy_damage", damageTaken1 >= damageTaken2 ? p1.name : p2.name, "major", [
                 p1.name + " has " + p1.health + " health",
@@ -338,6 +349,19 @@
             return cue("first_contact", "", "major", [
                 p1.name + " and " + p2.name + " can now see each other",
                 "They are at " + current.match.distance + " range"
+            ]);
+        }
+
+        if (p1.health_packs_collected > old1.health_packs_collected) {
+            return cue("health_pickup", p1.name, "medium", [
+                p1.name + " collected a health pack",
+                p1.health === null ? "" : "Current health: " + p1.health
+            ]);
+        }
+        if (p2.health_packs_collected > old2.health_packs_collected) {
+            return cue("health_pickup", p2.name, "medium", [
+                p2.name + " collected a health pack",
+                p2.health === null ? "" : "Current health: " + p2.health
             ]);
         }
 
@@ -515,17 +539,32 @@
 
     Commentator.prototype.openSocket = function (signedUrl) {
         var self = this;
-        this.socket = new WebSocket(signedUrl);
-        this.socket.addEventListener("open", function () {
+        var previousSocket = this.socket;
+        var socket = new WebSocket(signedUrl);
+        this.socket = socket;
+        if (previousSocket) {
+            previousSocket.close();
+        }
+        socket.addEventListener("open", function () {
+            if (self.socket !== socket) {
+                return;
+            }
             self.status("Warming up the shoutcaster…", "connecting");
-            self.socket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 type: "conversation_initiation_client_data"
             }));
         });
-        this.socket.addEventListener("message", function (event) {
+        socket.addEventListener("message", function (event) {
+            if (self.socket !== socket) {
+                return;
+            }
             self.handleMessage(event.data);
         });
-        this.socket.addEventListener("close", function () {
+        socket.addEventListener("close", function () {
+            if (self.socket !== socket) {
+                return;
+            }
+            self.socket = null;
             self.ready = false;
             self.rejectReadyWaiters(new Error("Shoutcaster disconnected"));
             self.rejectIntroduction(new Error("Shoutcaster disconnected during the introduction"));
@@ -533,7 +572,10 @@
                 self.status("Shoutcaster disconnected", "error");
             }
         });
-        this.socket.addEventListener("error", function () {
+        socket.addEventListener("error", function () {
+            if (self.socket !== socket) {
+                return;
+            }
             self.rejectReadyWaiters(new Error("Shoutcaster connection failed"));
             self.status("Shoutcaster connection failed", "error");
         });
@@ -577,7 +619,7 @@
                 this.lastContextAt = Date.now();
                 if (this.lastSnapshot.match.phase === "combat") {
                     this.pendingCue = {
-                        event: matchIntroductionCue(this.lastSnapshot),
+                        event: broadcastJoinCue(this.lastSnapshot),
                         snapshot: this.lastSnapshot,
                         queuedAt: Date.now()
                     };

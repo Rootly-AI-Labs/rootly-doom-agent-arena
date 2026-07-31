@@ -180,7 +180,7 @@ def test_spectator_loads_commentator_controls_and_external_director():
         encoding="utf-8"
     )
 
-    assert 'src="elevenagents-commentator.js?v=20260731-low-latency-cadence"' in index
+    assert 'src="elevenagents-commentator.js?v=20260731-pr20-review-fixes"' in index
     assert 'id="arena-commentator-toggle"' in index
     assert 'id="arena-commentator-volume"' in index
     assert 'id="duel-commentator-toggle"' in index
@@ -198,6 +198,10 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert 'syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);' in index
     assert 'setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");' in index
     assert "elevenAgentsCommentatorDesired &&" in index
+    assert "elevenAgentsCommentatorConfigPromise = fetch(" in index
+    assert "!elevenAgentsCommentatorConfigResolved && elevenAgentsCommentatorConfigPromise" in index
+    assert "return requestElevenAgentsCommentator().then(function ()" in index
+    assert 'syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);' in index
     gate_call = index.index("presentDuelParticipantsBeforeStart()")
     runtime_start = index.index(
         'return startDuel({ reuseExistingSession: true });', gate_call
@@ -218,7 +222,7 @@ def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
     assert "/api/arena/commentator/config" in page
     assert "/api/arena/commentator/signed-url" in page
     assert "Shoutcaster audio test successful" in page
-    assert "elevenagents-commentator.js?v=20260731-low-latency-cadence" in page
+    assert "elevenagents-commentator.js?v=20260731-pr20-review-fixes" in page
     assert "browser autoplay policies" in page
     assert "Timed out after 15 seconds" in page
     assert "updateDuelDashboard" not in page
@@ -325,5 +329,85 @@ const api = require({json.dumps(str(module_path))});
   }});
   assert(!sent.some(message => message.type === 'user_message'));
 }})().catch(error => {{ console.error(error); process.exit(1); }});
+"""
+    subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
+
+
+def test_commentary_prioritizes_combat_edges_and_treats_missing_health_as_unknown():
+    if not shutil.which("node"):
+        return
+    module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
+    script = f"""
+const assert = require('assert');
+const api = require({json.dumps(str(module_path))});
+function snapshot(player1, pickups, visible) {{
+  return api.buildSnapshot({{
+    runId: 'run_priority', phase: 'combat', player1Name: 'Invoice Badger',
+    player2Name: 'Nacho Regrets', player1: Object.assign({{line_of_sight: visible ? '1' : '0'}}, player1),
+    player2: {{health: '150', alive: '1', damage_dealt: '0', line_of_sight: visible ? '1' : '0'}},
+    pickups: {{player_1: {{health: pickups || 0, shotgun: 0}}, player_2: {{health: 0, shotgun: 0}}}}
+  }}, 1000);
+}}
+const before = snapshot({{health: '100', alive: '1', damage_dealt: '0'}}, 0, false);
+const criticalAndPickup = snapshot({{health: '30', alive: '1', damage_dealt: '0'}}, 1, true);
+assert.equal(api.chooseCue(before, criticalAndPickup).type, 'critical_health');
+const contactAndPickup = snapshot({{health: '90', alive: '1', damage_dealt: '0'}}, 1, true);
+assert.equal(api.chooseCue(before, contactAndPickup).type, 'first_contact');
+const incomplete = snapshot({{}}, 0, false);
+assert.equal(incomplete.players.player_1.health, null);
+assert.equal(incomplete.players.player_1.alive, null);
+assert.equal(incomplete.players.player_1.damage_dealt, null);
+assert.equal(api.chooseCue(before, incomplete), null);
+"""
+    subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
+
+
+def test_commentator_ignores_stale_socket_events_and_rejoins_without_full_intro():
+    if not shutil.which("node"):
+        return
+    module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
+    script = f"""
+const assert = require('assert');
+global.window = {{setTimeout, clearTimeout}};
+class FakeSocket {{
+  constructor(url) {{ this.url = url; this.readyState = 1; this.listeners = {{}}; this.sent = []; this.closed = false; }}
+  addEventListener(type, handler) {{ this.listeners[type] = handler; }}
+  send(value) {{ this.sent.push(JSON.parse(value)); }}
+  close() {{ this.closed = true; if (this.listeners.close) this.listeners.close(); }}
+  emit(type, payload) {{ if (this.listeners[type]) this.listeners[type](payload || {{}}); }}
+}}
+global.WebSocket = FakeSocket;
+global.WebSocket.OPEN = 1;
+const api = require({json.dumps(str(module_path))});
+const commentator = new api.Commentator({{}});
+commentator.enabled = true;
+commentator.openSocket('wss://first');
+const first = commentator.socket;
+commentator.openSocket('wss://second');
+const second = commentator.socket;
+assert.equal(first.closed, true);
+commentator.ready = true;
+first.emit('close');
+assert.equal(commentator.ready, true);
+assert.equal(commentator.socket, second);
+
+commentator.lastSnapshot = api.buildSnapshot({{
+  runId: 'run_live', phase: 'combat', player1Name: 'Invoice Badger', player2Name: 'Nacho Regrets',
+  player1: {{health: '75', alive: '1'}}, player2: {{health: '100', alive: '1'}}
+}}, 1000);
+commentator.introducedRunId = 'run_live';
+second.emit('message', {{data: JSON.stringify({{
+  type: 'conversation_initiation_metadata',
+  conversation_initiation_metadata_event: {{agent_output_audio_format: 'pcm_16000'}}
+}})}});
+const cueMessages = second.sent.filter(message => message.type === 'user_message');
+assert.equal(cueMessages.length, 1);
+assert.equal(JSON.parse(cueMessages[0].text).event.type, 'broadcast_join');
+assert(!second.sent.some(message => message.text && message.text.includes('Areeennaaaa')));
+first.emit('error');
+assert.equal(commentator.ready, true);
+second.emit('close');
+assert.equal(commentator.ready, false);
+assert.equal(commentator.socket, null);
 """
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
