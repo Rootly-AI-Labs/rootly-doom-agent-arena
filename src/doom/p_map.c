@@ -113,7 +113,7 @@ boolean PIT_StompThing (mobj_t* thing)
     // don't clip against self
     if (thing == tmthing)
 	return true;
-    
+
     // monsters don't stomp things except on boss level
     if ( !tmthing->player && gamemap != 30)
 	return false;	
@@ -293,7 +293,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     // don't clip against self
     if (thing == tmthing)
 	return true;
-    
+
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
@@ -1446,4 +1446,3 @@ static void SpechitOverrun(line_t *ld)
             break;
     }
 }
-

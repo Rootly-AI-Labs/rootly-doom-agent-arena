@@ -14,6 +14,8 @@ services:
       - ${DOOM_ARENA_PORT:-8001}
     environment:
       DOOM_ARENA_PORT: ${DOOM_ARENA_PORT:-8001}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
+      ELEVENLABS_AGENT_ID: ${ELEVENLABS_AGENT_ID:-}
     ports:
       - "127.0.0.1:${DOOM_ARENA_PORT:-8001}:${DOOM_ARENA_PORT:-8001}"
     volumes:

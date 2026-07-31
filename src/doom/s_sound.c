@@ -25,6 +25,7 @@
 
 #include "doomstat.h"
 #include "doomtype.h"
+#include "arena_duel.h"
 
 #include "sounds.h"
 #include "s_sound.h"
@@ -60,6 +61,7 @@
 
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
+#define ARENA_DUEL_GUN_VOLUME_PERCENT 40
 
 typedef struct
 {
@@ -426,6 +428,37 @@ static int Clamp(int x)
     return x;
 }
 
+// Keep weapon reports underneath the live presenter without flattening the
+// rest of Doom's soundscape. This is deliberately duel-only: normal Doom
+// retains its original mix, while pickups, pain, doors, and other arena cues
+// remain untouched.
+static int S_ApplyArenaDuelGunMix(sfxinfo_t *sfx, int volume)
+{
+    boolean gun_sound;
+
+    if (!ArenaDuel_IsEnabled())
+    {
+        return volume;
+    }
+
+    gun_sound =
+        sfx == &S_sfx[sfx_pistol]
+     || sfx == &S_sfx[sfx_shotgn]
+     || sfx == &S_sfx[sfx_dshtgn]
+     || sfx == &S_sfx[sfx_plasma]
+     || sfx == &S_sfx[sfx_bfg]
+     || sfx == &S_sfx[sfx_rlaunc]
+     || sfx == &S_sfx[sfx_firsht];
+
+    if (!gun_sound)
+    {
+        return volume;
+    }
+
+    volume = (volume * ARENA_DUEL_GUN_VOLUME_PERCENT) / 100;
+    return volume < 1 ? 1 : volume;
+}
+
 void S_StartSound(void *origin_p, int sfx_id)
 {
     sfxinfo_t *sfx;
@@ -490,6 +523,8 @@ void S_StartSound(void *origin_p, int sfx_id)
     {
         sep = NORM_SEP;
     }
+
+    volume = S_ApplyArenaDuelGunMix(sfx, volume);
 
     // hacks to vary the sfx pitches
     if (sfx_id >= sfx_sawup && sfx_id <= sfx_sawhit)
@@ -607,6 +642,7 @@ void S_UpdateSounds(mobj_t *listener)
                     }
                     else
                     {
+                        volume = S_ApplyArenaDuelGunMix(sfx, volume);
                         I_UpdateSoundParams(c->handle, volume, sep);
                     }
                 }
@@ -721,4 +757,3 @@ void S_StopMusic(void)
         mus_playing = NULL;
     }
 }
-

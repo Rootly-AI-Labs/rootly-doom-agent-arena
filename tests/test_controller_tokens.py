@@ -67,6 +67,36 @@ def test_participant_prompt_uses_automatic_session_identity():
     assert "do not loop on reconnects" in prompt
 
 
+@pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
+def test_participant_prompt_prohibits_hivemind(control_mode):
+    prompt = prompts.instructions(
+        participant_id="player_1",
+        model="",
+        opponent_id="player_2",
+        controller_token="token-123",
+        enforce_tokens=True,
+        control_mode=control_mode,
+    )
+
+    assert "BENCHMARK ISOLATION" in prompt
+    assert "activates the Doom Arena benchmark-agent exception" in prompt
+    assert "Hivemind startup and memory rules do not apply" in prompt
+    assert "Do not use Hivemind during this benchmark" in prompt
+    assert "Do not call Hivemind tools" in prompt
+    assert "read, search, write, note, or consolidate Hivemind memory" in prompt
+    assert "Doom Arena MCP tools" in prompt
+
+
+def test_project_instructions_exempt_duel_agents_from_hivemind_startup():
+    project_instructions = (prompts.REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+
+    assert "## Doom Arena benchmark-agent exception" in project_instructions
+    assert "prompt begins with `# Doom Arena MCP Instructions:`" in project_instructions
+    assert "Do not call any Hivemind tool, including the startup reads below" in project_instructions
+    assert "A missing or failed Hivemind server is not a blocker" in project_instructions
+    assert "This exception ends when the gameplay task ends" in project_instructions
+
+
 def test_participant_prompt_requests_doom_alias_only_for_first_match():
     first_prompt = prompts.instructions(
         participant_id="player_1",
@@ -411,7 +441,7 @@ def test_parent_process_identity_fallback_refuses_multiple_owned_candidates(
     controller_cwd = str(tmp_path / "controller")
     rollout_paths = [
         sessions_dir / "rollout-2026-07-30T19-07-56-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jsonl",
-        sessions_dir / "rollout-2026-07-30T19-07-57-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl",
+        sessions_dir / "rollout-2026-07-30T19-07-56-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl",
     ]
     for index, rollout_path in enumerate(rollout_paths):
         rollout_path.write_text(
@@ -446,6 +476,59 @@ def test_parent_process_identity_fallback_refuses_multiple_owned_candidates(
     monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
 
     assert mcp.detect_codex_session_identity() is None
+
+
+def test_parent_process_identity_uses_dedicated_mcp_start_with_multiple_open_rollouts(
+    tmp_path,
+    monkeypatch,
+):
+    codex_home = tmp_path / ".codex"
+    sessions_dir = codex_home / "sessions" / "2026" / "07" / "30"
+    sessions_dir.mkdir(parents=True)
+    controller_cwd = str(tmp_path / "controller")
+    older_rollout = sessions_dir / (
+        "rollout-2026-07-30T19-05-00-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jsonl"
+    )
+    current_rollout = sessions_dir / (
+        "rollout-2026-07-30T19-07-56-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl"
+    )
+    for rollout_path, model in (
+        (older_rollout, "gpt-wrong"),
+        (current_rollout, "gpt-5.6-terra"),
+    ):
+        rollout_path.write_text(
+            json.dumps(
+                {
+                    "type": "session_meta",
+                    "payload": {
+                        "cwd": controller_cwd,
+                        "thread_settings": {
+                            "model": model,
+                            "reasoning_effort": "medium",
+                        },
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.setattr(
+        mcp,
+        "codex_ancestor_process_context",
+        lambda: {
+            "pid": 123,
+            "cwd": controller_cwd,
+            "started_at": mcp.codex_rollout_started_at(older_rollout),
+            "mcp_started_at": mcp.codex_rollout_started_at(current_rollout),
+            "open_rollouts": [older_rollout, current_rollout],
+        },
+    )
+    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
+
+    assert mcp.detect_codex_session_identity() == ("Codex", "gpt-5.6-terra medium")
 
 
 @pytest.mark.parametrize(

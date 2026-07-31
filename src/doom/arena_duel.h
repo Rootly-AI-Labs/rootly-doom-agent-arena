@@ -12,6 +12,7 @@
 
 void ArenaDuel_InitLevel(void);
 void ArenaDuel_SpawnPlayer2(void);
+void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees);
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj);
 void ArenaDuel_RestorePlayer1Mobj(void);
 void ArenaDuel_RecordPlayer1WeaponFired(void);
@@ -74,5 +75,4 @@ uintptr_t ArenaDuel_Player2ViewRGBA(void);
 uintptr_t ArenaDuel_PalettePointer(void);
 
 #endif
-
 
