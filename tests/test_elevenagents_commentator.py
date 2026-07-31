@@ -183,9 +183,10 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert 'src="elevenagents-commentator.js?v=20260731-single-voice-owner"' in index
     assert 'id="arena-commentator-toggle"' in index
     assert 'id="arena-commentator-volume"' in index
-    assert 'id="duel-commentator-toggle"' in index
     assert 'id="duel-commentator-caption"' in index
-    assert 'id="duel-commentator-volume"' in index
+    assert 'id="duel-commentator-toggle"' not in index
+    assert 'id="duel-commentator-volume"' not in index
+    assert 'id="duel-commentator-status"' not in index
     assert "updateElevenAgentsCommentator(" in index
     assert "/api/arena/commentator/signed-url" in index
     assert 'document.querySelectorAll("[data-commentator-toggle]")' in index
