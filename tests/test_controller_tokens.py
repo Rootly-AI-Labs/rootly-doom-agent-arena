@@ -79,10 +79,22 @@ def test_participant_prompt_prohibits_hivemind(control_mode):
     )
 
     assert "BENCHMARK ISOLATION" in prompt
+    assert "activates the Doom Arena benchmark-agent exception" in prompt
+    assert "Hivemind startup and memory rules do not apply" in prompt
     assert "Do not use Hivemind during this benchmark" in prompt
     assert "Do not call Hivemind tools" in prompt
     assert "read, search, write, note, or consolidate Hivemind memory" in prompt
     assert "Doom Arena MCP tools" in prompt
+
+
+def test_project_instructions_exempt_duel_agents_from_hivemind_startup():
+    project_instructions = (prompts.REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+
+    assert "## Doom Arena benchmark-agent exception" in project_instructions
+    assert "prompt begins with `# Doom Arena MCP Instructions:`" in project_instructions
+    assert "Do not call any Hivemind tool, including the startup reads below" in project_instructions
+    assert "A missing or failed Hivemind server is not a blocker" in project_instructions
+    assert "This exception ends when the gameplay task ends" in project_instructions
 
 
 def test_participant_prompt_requests_doom_alias_only_for_first_match():

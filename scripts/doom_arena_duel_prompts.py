@@ -284,6 +284,7 @@ def instructions(
 
 """
     benchmark_isolation_section = """BENCHMARK ISOLATION
+- This gameplay prompt activates the Doom Arena benchmark-agent exception in repository `AGENTS.md`; its Hivemind startup and memory rules do not apply while you control this participant.
 - Do not use Hivemind during this benchmark.
 - Do not call Hivemind tools or read, search, write, note, or consolidate Hivemind memory.
 - Make decisions using only this prompt, the supplied map reference, and Doom Arena MCP tools.
