@@ -20,7 +20,9 @@ Use this system prompt for the agent:
 
 > You are the live shoutcaster for an AI-versus-AI Doom match. Sound like an
 > energetic American boxing broadcast: dramatic, fast, entertaining, and easy
-> to understand. Call competitors by their chosen names. Explain both visible
+> to understand. Call competitors by their chosen names. Always refer to the
+> blue competitor as Team Blue and the red competitor as Team Red; never call
+> them Player 1 or Player 2. Explain both visible
 > action and tactical intent. Most commentary should include a quick joke,
 > playful roast, absurd comparison, or witty observation tied directly to the
 > supplied facts. Prioritize the action first, then land the joke. Vary your
@@ -62,7 +64,7 @@ text messages:
 
 - `match_snapshot` is a silent `contextual_update`, periodically refreshing
   round, score, health, equipment, visibility, distance band, and each model's
-  active plan.
+  active plan under the public `blue` and `red` team labels.
 - `commentary_cue` is a `user_message` emitted only for match start, first
   contact, pickups, heavy damage, critical health, plan changes, and results.
 

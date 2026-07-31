@@ -176,19 +176,29 @@ assert(!serialized.includes('controller_token'));
 assert(!serialized.includes('plan_route'));
 const publicPayload = JSON.stringify(api.publicSnapshot(snapshot));
 assert(!publicPayload.includes('run_test'));
+assert(!publicPayload.includes('player_1'));
+assert(!publicPayload.includes('player_2'));
+assert(publicPayload.includes('team_blue'));
+assert(publicPayload.includes('team_red'));
 const waiting = JSON.parse(JSON.stringify(snapshot));
 waiting.match.phase = 'waiting_for_agents';
 const introCue = api.chooseCue(waiting, snapshot);
 assert.equal(introCue.type, 'match_start');
 assert(introCue.facts.includes('Open with: In the Rootly Doom Agent Areeennaaaa'));
-assert(introCue.facts.includes('Player 1 is Invoice Badger'));
-assert(introCue.facts.includes('Player 2 is Nacho Regrets'));
+assert(introCue.facts.includes('Team Blue is Invoice Badger'));
+assert(introCue.facts.includes('Team Red is Nacho Regrets'));
 const introPayload = new api.Commentator({{}}).commentaryPayload(introCue, snapshot);
 assert.equal(introPayload.delivery.maximum_words, 44);
+assert.equal(introPayload.teams.blue.name, 'Invoice Badger');
+assert.equal(introPayload.teams.blue.team, 'Team Blue');
+assert.equal(introPayload.teams.red.name, 'Nacho Regrets');
+assert.equal(introPayload.teams.red.team, 'Team Red');
+assert.equal(introPayload.players, undefined);
+assert(introPayload.delivery.naming.includes('Never say Player 1'));
 assert.equal(api.cueDelayMs({{type: 'round_end'}}, 2500), 0);
 assert.equal(api.cueDelayMs({{type: 'heavy_damage'}}, 2500), 350);
 assert.equal(api.cueDelayMs({{type: 'plan_change'}}, 2500), 2200);
-assert(introPayload.delivery.format.includes('PLAYERRR ONE'));
+assert(introPayload.delivery.format.includes('TEEEAM BLUE'));
 const finished = JSON.parse(JSON.stringify(snapshot));
 finished.match.phase = 'finished';
 finished.match.winner = 'player_1';
@@ -209,7 +219,7 @@ def test_spectator_loads_commentator_controls_and_external_director():
         encoding="utf-8"
     )
 
-    assert 'src="elevenagents-commentator.js?v=20260731-single-voice-owner"' in index
+    assert 'src="elevenagents-commentator.js?v=20260731-team-colors"' in index
     assert 'id="arena-commentator-toggle"' in index
     assert 'id="arena-commentator-volume"' in index
     assert 'id="duel-commentator-caption"' in index
@@ -272,7 +282,7 @@ def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
     assert "/api/arena/commentator/config" in page
     assert "/api/arena/commentator/signed-url" in page
     assert "Shoutcaster audio test successful" in page
-    assert "elevenagents-commentator.js?v=20260731-single-voice-owner" in page
+    assert "elevenagents-commentator.js?v=20260731-team-colors" in page
     assert "browser autoplay policies" in page
     assert "Timed out after 15 seconds" in page
     assert "updateDuelDashboard" not in page

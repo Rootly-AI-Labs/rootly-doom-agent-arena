@@ -147,6 +147,23 @@
     function publicSnapshot(snapshot) {
         var copy = Object.assign({}, snapshot);
         delete copy.run_id;
+        copy.benchmark = Object.assign({}, snapshot.benchmark, {
+            score: {
+                blue: snapshot.benchmark.score.player_1,
+                red: snapshot.benchmark.score.player_2
+            }
+        });
+        copy.teams = {
+            blue: Object.assign({}, snapshot.players.player_1, {
+                id: "team_blue",
+                team: "Team Blue"
+            }),
+            red: Object.assign({}, snapshot.players.player_2, {
+                id: "team_red",
+                team: "Team Red"
+            })
+        };
+        delete copy.players;
         return copy;
     }
 
@@ -253,14 +270,15 @@
         if (snapshot.benchmark.current_round > 1) {
             return cue("match_start", "", "major", [
                 "Round " + snapshot.benchmark.current_round + " of " + snapshot.benchmark.total_rounds + " begins",
-                "Score: " + p1.name + " " + snapshot.benchmark.score.player_1 + ", " + p2.name + " " + snapshot.benchmark.score.player_2,
+                "Score: Team Blue, " + p1.name + ", " + snapshot.benchmark.score.player_1 +
+                    "; Team Red, " + p2.name + ", " + snapshot.benchmark.score.player_2,
                 "Announce the next round without reintroducing both competitors"
             ], { full_introduction: false });
         }
         return cue("match_start", "", "major", [
             "Open with: In the Rootly Doom Agent Areeennaaaa",
-            "Player 1 is " + p1.name,
-            "Player 2 is " + p2.name,
+            "Team Blue is " + p1.name,
+            "Team Red is " + p2.name,
             "Round " + snapshot.benchmark.current_round + " of " + snapshot.benchmark.total_rounds,
             "Introduce both competitors before calling the action"
         ], { full_introduction: true });
@@ -275,8 +293,8 @@
         var p2 = snapshot.players.player_2;
         return cue("broadcast_join", "", "medium", [
             "Join the match already in progress",
-            p1.name + " has " + healthLabel(p1.health) + " health",
-            p2.name + " has " + healthLabel(p2.health) + " health"
+            "Team Blue, " + p1.name + ", has " + healthLabel(p1.health) + " health",
+            "Team Red, " + p2.name + ", has " + healthLabel(p2.health) + " health"
         ]);
     }
 
@@ -840,13 +858,14 @@
             round: snapshot.benchmark.current_round,
             elapsed_seconds: snapshot.match.elapsed_seconds,
             event: event,
-            players: snapshot.players,
+            teams: publicSnapshot(snapshot).teams,
             delivery: {
                 role: "funny American boxing-broadcast shoutcaster",
                 maximum_words: isIntroduction ? 44 : 14,
                 format: isIntroduction
-                    ? "open with IN THE ROOTLY DOOM AGENT AREEENNAAAA, then use two theatrical ring-announcer sentences: introduce PLAYERRR ONE first and PLAYERRR TWO second, using each chosen name and one funny epithet"
+                    ? "open with IN THE ROOTLY DOOM AGENT AREEENNAAAA, then use two theatrical ring-announcer sentences: introduce TEEEAM BLUE first and TEEEAM RED second, using each chosen name and one funny epithet"
                     : "one fast sentence combining the action and a short punchline",
+                naming: "Always call the blue competitor Team Blue and the red competitor Team Red. Never say Player 1, Player 2, player one, or player two.",
                 humor: "broad, reactive, varied, and understandable without Doom knowledge",
                 avoid: ["technical jargon", "coordinates", "invented action", "repeated catchphrases"]
             }
