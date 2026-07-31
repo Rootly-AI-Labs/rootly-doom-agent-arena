@@ -283,6 +283,12 @@ def instructions(
 ```
 
 """
+    benchmark_isolation_section = """BENCHMARK ISOLATION
+- Do not use Hivemind during this benchmark.
+- Do not call Hivemind tools or read, search, write, note, or consolidate Hivemind memory.
+- Make decisions using only this prompt, the supplied map reference, and Doom Arena MCP tools.
+
+"""
     if str(control_mode).strip().lower() == "hierarchical":
         strategy_token_line = (
             f"Your controller_token is: `{controller_token}`\n\n"
@@ -315,6 +321,7 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {strategy_token_line}
 {session_line}
 {identity_section}
+{benchmark_isolation_section}
 ROLE AND LOOP
 - Control only `{participant_id}`. Never control `{opponent_id}`.
 - Use only `set_participant_plan` for normal play.
@@ -369,6 +376,7 @@ You control only `{participant_id}`.
 {token_line}
 {session_line}
 {identity_section}
+{benchmark_isolation_section}
 Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.

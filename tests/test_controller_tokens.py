@@ -67,6 +67,24 @@ def test_participant_prompt_uses_automatic_session_identity():
     assert "do not loop on reconnects" in prompt
 
 
+@pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
+def test_participant_prompt_prohibits_hivemind(control_mode):
+    prompt = prompts.instructions(
+        participant_id="player_1",
+        model="",
+        opponent_id="player_2",
+        controller_token="token-123",
+        enforce_tokens=True,
+        control_mode=control_mode,
+    )
+
+    assert "BENCHMARK ISOLATION" in prompt
+    assert "Do not use Hivemind during this benchmark" in prompt
+    assert "Do not call Hivemind tools" in prompt
+    assert "read, search, write, note, or consolidate Hivemind memory" in prompt
+    assert "Doom Arena MCP tools" in prompt
+
+
 def test_participant_prompt_requests_doom_alias_only_for_first_match():
     first_prompt = prompts.instructions(
         participant_id="player_1",
