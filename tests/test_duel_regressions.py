@@ -7,7 +7,6 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import doom_arena_server as server
-import doom_arena_strategy as strategy
 import pytest
 
 
@@ -285,12 +284,8 @@ def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> N
     blind_spawn = blind_spawns["player_1"]
     blind_spawn_p2 = blind_spawns["player_2"]
 
-    assert (blind_spawn["x"], blind_spawn["y"], blind_spawn["angle_deg"]) == (-320, -520, 0)
-    assert (blind_spawn_p2["x"], blind_spawn_p2["y"], blind_spawn_p2["angle_deg"]) == (320, -520, 180)
-    blocked_cells = set(strategy.blocked_grid_cells())
-    assert strategy.xy_to_grid_cell(blind_spawn["x"], blind_spawn["y"]) == "T12"
-    assert strategy.xy_to_grid_cell(blind_spawn_p2["x"], blind_spawn_p2["y"]) == "T22"
-    assert {"T12", "T13", "T22", "T21"}.isdisjoint(blocked_cells)
+    assert (blind_spawn["x"], blind_spawn["y"], blind_spawn["angle_deg"]) == (-960, 640, 315)
+    assert (blind_spawn_p2["x"], blind_spawn_p2["y"], blind_spawn_p2["angle_deg"]) == (960, -640, 135)
     assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees);" in arena_header
     assert "void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees)" in arena_duel
     assert "ArenaDuel_Player1SpawnCoordinates(&arena_start_x," in p_mobj

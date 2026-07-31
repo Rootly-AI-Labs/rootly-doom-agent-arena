@@ -30,14 +30,14 @@
                                                    "label":  "Blind spawn",
                                                    "spawns":  {
                                                                   "player_1":  {
-                                                                                   "x":  -320,
-                                                                                   "y":  -520,
-                                                                                   "angle_deg":  0
-                                                                   },
+                                                                                   "x":  -960,
+                                                                                   "y":  640,
+                                                                                   "angle_deg":  315
+                                                                               },
                                                                   "player_2":  {
-                                                                                   "x":  320,
-                                                                                   "y":  -520,
-                                                                                   "angle_deg":  180
+                                                                                   "x":  960,
+                                                                                   "y":  -640,
+                                                                                   "angle_deg":  135
                                                                                }
                                                               }
                                                },

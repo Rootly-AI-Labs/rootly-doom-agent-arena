@@ -1002,9 +1002,9 @@ void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        *x = -320;
-        *y = -520;
-        *angle_degrees = 0;
+        *x = -960;
+        *y = 640;
+        *angle_degrees = 315;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
         *x = -960;
@@ -2430,9 +2430,9 @@ void ArenaDuel_SpawnPlayer2(void)
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
-        x = 320;
-        y = -520;
-        angle = ANG180;
+        x = 960;
+        y = -640;
+        angle = ANG90 + ANG45;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
         x = 960;
@@ -3055,6 +3055,5 @@ ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)
 {
     return I_GetPaletteData();
 }
-
 
 
