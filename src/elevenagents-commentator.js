@@ -241,6 +241,7 @@
             heavy_damage: 5000,
             first_contact: 5000,
             match_start: 15000,
+            broadcast_join: 5000,
             health_pickup: 4500,
             plan_change: 4000
         }[event && event.type] || DEFAULT_CUE_MAX_AGE_MS;
@@ -249,13 +250,20 @@
     function matchIntroductionCue(snapshot) {
         var p1 = snapshot.players.player_1;
         var p2 = snapshot.players.player_2;
+        if (snapshot.benchmark.current_round > 1) {
+            return cue("match_start", "", "major", [
+                "Round " + snapshot.benchmark.current_round + " of " + snapshot.benchmark.total_rounds + " begins",
+                "Score: " + p1.name + " " + snapshot.benchmark.score.player_1 + ", " + p2.name + " " + snapshot.benchmark.score.player_2,
+                "Announce the next round without reintroducing both competitors"
+            ], { full_introduction: false });
+        }
         return cue("match_start", "", "major", [
             "Open with: In the Rootly Doom Agent Areeennaaaa",
             "Player 1 is " + p1.name,
             "Player 2 is " + p2.name,
             "Round " + snapshot.benchmark.current_round + " of " + snapshot.benchmark.total_rounds,
             "Introduce both competitors before calling the action"
-        ]);
+        ], { full_introduction: true });
     }
 
     function healthLabel(value) {
@@ -328,10 +336,16 @@
         }
 
         if (p1.equipment.indexOf("shotgun") !== -1 && old1.equipment.indexOf("shotgun") === -1) {
-            return cue("weapon_pickup", p1.name, "major", [p1.name + " acquired the shotgun"]);
+            return cue("weapon_pickup", p1.name, "major", [
+                p1.name + " acquired the shotgun",
+                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
+            ]);
         }
         if (p2.equipment.indexOf("shotgun") !== -1 && old2.equipment.indexOf("shotgun") === -1) {
-            return cue("weapon_pickup", p2.name, "major", [p2.name + " acquired the shotgun"]);
+            return cue("weapon_pickup", p2.name, "major", [
+                p2.name + " acquired the shotgun",
+                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
+            ]);
         }
 
         damageTaken1 = old1.health === null || p1.health === null ? 0 : Math.max(0, old1.health - p1.health);
@@ -425,7 +439,9 @@
         this.introduction = null;
         this.introductionPromise = null;
         this.introducingRunId = "";
+        this.introducingRound = 0;
         this.introducedRunId = "";
+        this.introducedRound = 0;
         this.enablePromise = null;
         this.audioOwnershipPromise = null;
         this.audioOwnershipRelease = null;
@@ -523,12 +539,14 @@
         this.audioOwnershipPromise = null;
     };
 
-    Commentator.prototype.expectIntroduction = function (runId) {
+    Commentator.prototype.expectIntroduction = function (runId, round) {
         runId = compactText(runId, 80);
-        if (!runId || this.introducedRunId === runId) {
+        round = Math.max(1, Math.floor(numberValue(round, 1)));
+        if (!runId || (this.introducedRunId === runId && this.introducedRound === round)) {
             return;
         }
         this.introducingRunId = runId;
+        this.introducingRound = round;
         if (
             this.pendingCue &&
             (this.pendingCue.event.type === "match_start" || this.pendingCue.event.type === "broadcast_join")
@@ -600,6 +618,7 @@
         }
         this.enablePromise = null;
         this.introducingRunId = "";
+        this.introducingRound = 0;
         this.releaseAudioOwnership();
         this.status("Shoutcaster off", "idle");
     };
@@ -719,7 +738,10 @@
                 this.lastContextAt = Date.now();
                 if (
                     this.lastSnapshot.match.phase === "combat" &&
-                    this.introducingRunId !== this.lastSnapshot.run_id
+                    (
+                        this.introducingRunId !== this.lastSnapshot.run_id ||
+                        this.introducingRound !== this.lastSnapshot.benchmark.current_round
+                    )
                 ) {
                     this.pendingCue = {
                         event: broadcastJoinCue(this.lastSnapshot),
@@ -751,6 +773,7 @@
         }
         if (message.type === "agent_response_complete") {
             this.speaking = false;
+            this.resolveIntroduction();
             this.flushPendingCue();
         }
     };
@@ -809,7 +832,7 @@
     };
 
     Commentator.prototype.commentaryPayload = function (event, snapshot) {
-        var isIntroduction = event && event.type === "match_start";
+        var isIntroduction = event && event.type === "match_start" && event.full_introduction !== false;
         return {
             schema_version: 1,
             message_type: "commentary_cue",
@@ -847,6 +870,7 @@
         }
         this.introduction = null;
         this.introducedRunId = introduction.runId;
+        this.introducedRound = introduction.round;
         window.clearTimeout(introduction.timer);
         introduction.resolve();
     };
@@ -857,14 +881,15 @@
         var event;
         var trackedPromise;
         var runId = compactText(input && input.runId, 80);
+        var round = Math.max(1, Math.floor(numberValue(input && input.round, 1)));
 
-        if (runId && this.introducedRunId === runId) {
+        if (runId && this.introducedRunId === runId && this.introducedRound === round) {
             return Promise.resolve();
         }
         if (this.introductionPromise) {
             return this.introductionPromise;
         }
-        this.expectIntroduction(runId);
+        this.expectIntroduction(runId, round);
         trackedPromise = this.waitUntilReady(15000).then(function () {
             snapshot = buildSnapshot({
                 runId: runId,
@@ -881,6 +906,7 @@
             return new Promise(function (resolve, reject) {
                 self.introduction = {
                     runId: runId,
+                    round: round,
                     resolve: resolve,
                     reject: reject,
                     timer: window.setTimeout(function () {
@@ -899,12 +925,14 @@
             if (self.introductionPromise === trackedPromise) {
                 self.introductionPromise = null;
                 self.introducingRunId = "";
+                self.introducingRound = 0;
             }
             return value;
         }, function (error) {
             if (self.introductionPromise === trackedPromise) {
                 self.introductionPromise = null;
                 self.introducingRunId = "";
+                self.introducingRound = 0;
             }
             throw error;
         });
@@ -958,7 +986,10 @@
         if (
             event &&
             event.type === "match_start" &&
-            (this.introducedRunId === snapshot.run_id || this.introducingRunId === snapshot.run_id)
+            (
+                (this.introducedRunId === snapshot.run_id && this.introducedRound === snapshot.benchmark.current_round) ||
+                (this.introducingRunId === snapshot.run_id && this.introducingRound === snapshot.benchmark.current_round)
+            )
         ) {
             event = null;
         }

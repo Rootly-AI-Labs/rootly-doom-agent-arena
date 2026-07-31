@@ -4,11 +4,17 @@ import subprocess
 from pathlib import Path
 
 import doom_arena_server as server
+import pytest
 
 from tests.test_duel_regressions import make_handler
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def require_node() -> None:
+    if not shutil.which("node"):
+        pytest.skip("node is required for commentator behavior tests")
 
 
 class FakeResponse:
@@ -109,15 +115,38 @@ def test_signed_url_endpoint_never_calls_upstream_when_unconfigured(monkeypatch)
     ]
 
 
+def test_signed_url_endpoint_rate_limits_repeated_local_requests(monkeypatch):
+    handler = make_handler()
+    responses = []
+    upstream_calls = []
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "secret-key")
+    monkeypatch.setenv("ELEVENLABS_AGENT_ID", "agent_test")
+    monkeypatch.setattr(server.time, "monotonic", lambda: 10.0)
+    monkeypatch.setattr(
+        server,
+        "fetch_elevenlabs_signed_url",
+        lambda *_args: upstream_calls.append(True) or "wss://api.elevenlabs.io/test",
+    )
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+
+    handler.read_commentator_signed_url()
+    handler.read_commentator_signed_url()
+
+    assert [status for status, _payload in responses] == [
+        server.HTTPStatus.OK,
+        server.HTTPStatus.TOO_MANY_REQUESTS,
+    ]
+    assert len(upstream_calls) == 1
+
+
 def test_commentary_director_sends_active_plans_without_raw_routes_or_coordinates():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
 const api = require({json.dumps(str(module_path))});
 const snapshot = api.buildSnapshot({{
-  runId: 'run_test', phase: 'combat', elapsedSeconds: 47.9, round: 2,
+  runId: 'run_test', phase: 'combat', elapsedSeconds: 47.9, round: 1,
   totalRounds: 5, scenario: 'Blind spawn', score: {{player_1: 1, player_2: 0}},
   player1Name: 'Invoice Badger', player2Name: 'Nacho Regrets',
   player1: {{health: '65', alive: '1', damage_dealt: '75', ready_weapon: '2',
@@ -195,8 +224,10 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert "Commentator.prototype.introduceMatch" in director
     assert "Commentator.prototype.prepareAudio" in director
     assert "Commentator.prototype.expectIntroduction" in director
-    assert "var arenaDuelStatePollMs = 500;" in index
-    assert "window.setInterval(refreshDuelState, arenaDuelStatePollMs);" in index
+    assert "var arenaDuelStatePollMs = 1000;" in index
+    assert "var arenaCommentatorStatePollMs = 500;" in index
+    assert "function scheduleDuelStateRefresh()" in index
+    assert "scheduleDuelStateRefresh();" in index
     assert "var elevenAgentsCommentatorDesired = false;" in index
     assert 'syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);' in index
     assert 'setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");' in index
@@ -220,8 +251,13 @@ def test_spectator_loads_commentator_controls_and_external_director():
     start_click = index.split(
         'document.getElementById("arena-start-game").addEventListener("click", function () {', 1
     )[1].split("var sessionMatchesSettings", 1)[0]
-    assert "prepareElevenAgentsCommentatorAudio()" in start_click
+    assert "prepareElevenAgentsCommentatorFromUserGesture()" in start_click
     assert "requestElevenAgentsCommentator()" not in start_click
+    assert "function restoreDuelLauncherAfterIntroductionFailure()" in index
+    assert "restoreDuelLauncherAfterIntroductionFailure();" in index
+    assert "function commentaryCanBlockDuelStart()" in index
+    assert "elevenAgentsCommentatorAudioPreparedByUser" in index
+    assert "Browser audio did not unlock in time" in index
 
 
 def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
@@ -243,8 +279,7 @@ def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
 
 
 def test_commentator_can_unlock_audio_without_connecting_or_speaking():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
@@ -285,8 +320,7 @@ const api = require({json.dumps(str(module_path))});
 
 
 def test_commentator_allows_only_one_audio_owner_across_tabs():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
@@ -319,8 +353,7 @@ const api = require({json.dumps(str(module_path))});
 
 
 def test_commentator_sends_plain_test_messages_and_reports_scheduled_audio():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
@@ -363,8 +396,7 @@ setTimeout(() => {{
 
 
 def test_match_introduction_resolves_after_audio_and_suppresses_duplicate_start_cue():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
@@ -423,24 +455,36 @@ const api = require({json.dumps(str(module_path))});
     player2Name: 'Nacho Regrets', player1: {{}}, player2: {{}}
   }});
   assert(!sent.some(message => message.type === 'user_message'));
+
+  const audioLess = new api.Commentator({{}});
+  audioLess.enabled = true;
+  audioLess.ready = true;
+  audioLess.socket = {{readyState: 1, send: () => {{}}}};
+  const audioLessIntroduction = audioLess.introduceMatch({{
+    runId: 'run_audio_less', round: 1, totalRounds: 1, scenario: 'Blind spawn',
+    player1Name: 'Invoice Badger', player2Name: 'Nacho Regrets'
+  }});
+  await new Promise(resolve => setTimeout(resolve, 0));
+  audioLess.handleMessage(JSON.stringify({{type: 'agent_response_complete'}}));
+  await audioLessIntroduction;
+  assert.equal(audioLess.introducedRunId, 'run_audio_less');
 }})().catch(error => {{ console.error(error); process.exit(1); }});
 """
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
 
 
 def test_commentary_prioritizes_combat_edges_and_treats_missing_health_as_unknown():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
 const api = require({json.dumps(str(module_path))});
-function snapshot(player1, pickups, visible) {{
+function snapshot(player1, pickups, visible, shotgun) {{
   return api.buildSnapshot({{
     runId: 'run_priority', phase: 'combat', player1Name: 'Invoice Badger',
     player2Name: 'Nacho Regrets', player1: Object.assign({{line_of_sight: visible ? '1' : '0'}}, player1),
     player2: {{health: '150', alive: '1', damage_dealt: '0', line_of_sight: visible ? '1' : '0'}},
-    pickups: {{player_1: {{health: pickups || 0, shotgun: 0}}, player_2: {{health: 0, shotgun: 0}}}}
+    pickups: {{player_1: {{health: pickups || 0, shotgun: shotgun || 0}}, player_2: {{health: 0, shotgun: 0}}}}
   }}, 1000);
 }}
 const before = snapshot({{health: '100', alive: '1', damage_dealt: '0'}}, 0, false);
@@ -448,6 +492,10 @@ const criticalAndPickup = snapshot({{health: '30', alive: '1', damage_dealt: '0'
 assert.equal(api.chooseCue(before, criticalAndPickup).type, 'critical_health');
 const contactAndPickup = snapshot({{health: '90', alive: '1', damage_dealt: '0'}}, 1, true);
 assert.equal(api.chooseCue(before, contactAndPickup).type, 'first_contact');
+const contactAndShotgun = snapshot({{health: '90', alive: '1', damage_dealt: '0', ready_weapon: '2'}}, 0, true, 1);
+const shotgunCue = api.chooseCue(before, contactAndShotgun);
+assert.equal(shotgunCue.type, 'weapon_pickup');
+assert(shotgunCue.facts.includes('This is first contact'));
 const incomplete = snapshot({{}}, 0, false);
 assert.equal(incomplete.players.player_1.health, null);
 assert.equal(incomplete.players.player_1.alive, null);
@@ -458,8 +506,7 @@ assert.equal(api.chooseCue(before, incomplete), null);
 
 
 def test_commentator_ignores_stale_socket_events_and_rejoins_without_full_intro():
-    if not shutil.which("node"):
-        return
+    require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
     script = f"""
 const assert = require('assert');
@@ -518,6 +565,19 @@ introSocket.emit('message', {{data: JSON.stringify({{
   type: 'conversation_initiation_metadata',
   conversation_initiation_metadata_event: {{agent_output_audio_format: 'pcm_16000'}}
 }})}});
-assert.equal(introSocket.sent.filter(message => message.type === 'user_message').length, 0);
+  assert.equal(introSocket.sent.filter(message => message.type === 'user_message').length, 0);
+
+const nextRound = api.buildSnapshot({{
+  runId: 'run_live', phase: 'combat', round: 2, totalRounds: 3,
+  score: {{player_1: 1, player_2: 0}},
+  player1Name: 'Invoice Badger', player2Name: 'Nacho Regrets', player1: {{}}, player2: {{}}
+}}, 2000);
+const roundCue = api.chooseCue(api.buildSnapshot({{
+  runId: 'run_live', phase: 'finished', round: 1, totalRounds: 3,
+  player1Name: 'Invoice Badger', player2Name: 'Nacho Regrets', player1: {{}}, player2: {{}}
+}}, 1000), nextRound);
+assert.equal(roundCue.type, 'match_start');
+assert.equal(roundCue.full_introduction, false);
+assert.equal(new api.Commentator({{}}).commentaryPayload(roundCue, nextRound).delivery.maximum_words, 14);
 """
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)

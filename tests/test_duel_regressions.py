@@ -295,7 +295,7 @@ def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> N
     replacement_reset = arena_duel.split(
         "if (arena_duel_player1_cached_mo != mobj)", 1
     )[1].split("arena_duel_player1_cached_mo = mobj;", 1)[0]
-    assert "P_RemoveMobj(arena_duel_player1_cached_mo);" in replacement_reset
+    assert "P_RemoveMobj(arena_duel_player1_cached_mo);" not in replacement_reset
     assert "arena_duel_player1_health_initialized = false;" in replacement_reset
     stale_actor_cleanup = arena_duel.split(
         "static void ArenaDuel_RemoveSupersededPlayerActors(void)", 1

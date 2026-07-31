@@ -2310,18 +2310,12 @@ boolean ArenaDuel_IsEnabled(void)
 
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
 {
-    // Doom's deathmatch setup can replace players[consoleplayer].mo after the
-    // first duel initialization pass. Remove the superseded actor so it does
-    // not remain visible or participate in collision, then make the replacement
-    // repeat spawn and health initialization instead of inheriting the old
-    // object's latch.
+    // A reborn player also replaces this pointer. Cache replacement must not
+    // destroy the previous actor here: during rebirth that object is the corpse
+    // managed by Doom's normal lifecycle. The one-time level-setup sweep below
+    // removes only bootstrap actors after both live duel participants exist.
     if (arena_duel_player1_cached_mo != mobj)
     {
-        if (arena_duel_player1_cached_mo != NULL)
-        {
-            arena_duel_player1_cached_mo->player = NULL;
-            P_RemoveMobj(arena_duel_player1_cached_mo);
-        }
         arena_duel_player1_health_initialized = false;
     }
     arena_duel_player1_cached_mo = mobj;
@@ -2522,6 +2516,9 @@ static void ArenaDuel_RemoveSupersededPlayerActors(void)
         return;
     }
 
+    // Duel mode has exactly two legitimate MT_PLAYER actors: the console
+    // player and the synthetic opponent. Any other player actor still present
+    // at this point is a level-setup bootstrap artifact.
     for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next)
     {
         mobj_t *mobj;

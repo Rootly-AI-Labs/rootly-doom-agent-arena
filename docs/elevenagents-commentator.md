@@ -68,7 +68,10 @@ text messages:
 
 The director rate-limits speech, prioritizes results and critical moments, and
 does not send controller tokens, prompts, raw MCP logs, raw routes, coordinates,
-or model chain-of-thought.
+or hidden model chain-of-thought. It does send the active plan's public
+objective, engagement policy, agent-authored reason, and battle note so the
+shoutcaster can explain the tactics. Those fields are truncated before leaving
+the browser.
 
 ## Diagnostics
 

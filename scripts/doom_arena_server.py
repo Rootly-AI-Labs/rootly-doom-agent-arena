@@ -68,6 +68,7 @@ ELEVENLABS_SIGNED_URL_ENDPOINT = (
     "https://api.elevenlabs.io/v1/convai/conversation/get-signed-url"
 )
 ELEVENLABS_REQUEST_TIMEOUT_SECONDS = 10
+ELEVENLABS_SIGNED_URL_MIN_INTERVAL_SECONDS = 2.0
 
 DEFAULT_SCENARIO_ID = "e1m8_arena"
 DEFAULT_DUEL_SCENARIO_ID = "duel_e1m8_blind_spawn"
@@ -395,6 +396,7 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.started_at_ms = now_ms()
         self.reset_requested = False
         self.stats_lock = threading.Lock()
+        self.commentator_signed_url_last_request_at = 0.0
         self.mcp_call_counter = 0
         self.mcp_calls: list[dict[str, Any]] = []
         self.active_mcp_calls: dict[str, dict[str, Any]] = {}
@@ -677,6 +679,26 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     "ok": False,
                     "error": "ElevenAgents commentator is not configured.",
                     "missing": missing,
+                },
+            )
+            return
+
+        now = time.monotonic()
+        with self.server.stats_lock:
+            last_request_at = getattr(
+                self.server, "commentator_signed_url_last_request_at", 0.0
+            )
+            if now - last_request_at < ELEVENLABS_SIGNED_URL_MIN_INTERVAL_SECONDS:
+                rate_limited = True
+            else:
+                rate_limited = False
+                self.server.commentator_signed_url_last_request_at = now
+        if rate_limited:
+            self.write_json(
+                HTTPStatus.TOO_MANY_REQUESTS,
+                {
+                    "ok": False,
+                    "error": "Please wait before reconnecting the ElevenAgents commentator.",
                 },
             )
             return
