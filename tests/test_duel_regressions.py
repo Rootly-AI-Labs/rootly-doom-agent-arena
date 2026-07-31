@@ -275,6 +275,7 @@ def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> N
     arena_duel = (REPO_ROOT / "src" / "doom" / "arena_duel.c").read_text(encoding="utf-8")
     arena_header = (REPO_ROOT / "src" / "doom" / "arena_duel.h").read_text(encoding="utf-8")
     p_mobj = (REPO_ROOT / "src" / "doom" / "p_mobj.c").read_text(encoding="utf-8-sig")
+    p_map = (REPO_ROOT / "src" / "doom" / "p_map.c").read_text(encoding="utf-8-sig")
     blueprints = json.loads(
         (REPO_ROOT / "scripts" / "map_blueprints" / "duel_e1m8_variants.json").read_text(
             encoding="utf-8"
@@ -301,6 +302,8 @@ def test_duel_player_1_replacement_uses_blueprint_spawn_and_reinitializes() -> N
         "if (arena_duel_player1_cached_mo != mobj)", 1
     )[1].split("arena_duel_player1_cached_mo = mobj;", 1)[0]
     assert "arena_duel_player1_health_initialized = false;" in replacement_reset
+    assert 'thing->type == MT_PLAYER' in p_map
+    assert 'strcmp(thing->arena_entity_id, "player_2")' in p_map
 
 
 def test_duel_player_1_retains_last_autopilot_command_briefly() -> None:

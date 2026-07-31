@@ -113,7 +113,7 @@ boolean PIT_StompThing (mobj_t* thing)
     // don't clip against self
     if (thing == tmthing)
 	return true;
-    
+
     // monsters don't stomp things except on boss level
     if ( !tmthing->player && gamemap != 30)
 	return false;	
@@ -293,7 +293,15 @@ boolean PIT_CheckThing (mobj_t* thing)
     // don't clip against self
     if (thing == tmthing)
 	return true;
-    
+
+    // The duel deathmatch bootstrap can leave an unlabeled superseded player
+    // actor at Player 1's replacement spawn. Ignore that stale MT_PLAYER but
+    // continue colliding normally with the explicitly labeled opponent.
+    if (!strcmp(tmthing->arena_entity_id, "player_1")
+        && thing->type == MT_PLAYER
+        && strcmp(thing->arena_entity_id, "player_2"))
+        return true;
+
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
