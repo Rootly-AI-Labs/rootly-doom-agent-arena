@@ -41,6 +41,49 @@ def test_participant_intent_parser_smoke_regressions() -> None:
     run_script("smoke_participant_intents_parser.py")
 
 
+def test_duel_weapon_fire_is_mixed_below_commentary_without_lowering_all_sfx() -> None:
+    sound_source = (REPO_ROOT / "src" / "doom" / "s_sound.c").read_text(
+        encoding="utf-8"
+    )
+
+    assert "#define ARENA_DUEL_GUN_VOLUME_PERCENT 40" in sound_source
+    assert "static int S_ApplyArenaDuelGunMix" in sound_source
+    assert "if (!ArenaDuel_IsEnabled())" in sound_source
+    assert "sfx == &S_sfx[sfx_pistol]" in sound_source
+    assert "sfx == &S_sfx[sfx_shotgn]" in sound_source
+    assert "volume = S_ApplyArenaDuelGunMix(sfx, volume);" in sound_source
+
+
+def test_duel_health_never_leaks_doom_overkill_as_a_negative_value() -> None:
+    state_source = (REPO_ROOT / "src" / "doom" / "agentic_control.c").read_text(
+        encoding="utf-8"
+    )
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    score = server.score_from_state(
+        [
+            {"kind": "match", "phase": "finished", "winner": "player_2"},
+            {
+                "kind": "participant",
+                "entity_id": "player_1",
+                "health": "-35",
+                "alive": "0",
+            },
+            {
+                "kind": "participant",
+                "entity_id": "player_2",
+                "health": "70",
+                "alive": "1",
+            },
+        ]
+    )
+
+    assert "static int Agentic_DisplayHealth(int health)" in state_source
+    assert state_source.count("Agentic_DisplayHealth(") >= 4
+    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
+    assert score["player_1_health"] == 0
+    assert score["player_2_health"] == 70
+
+
 def test_participant_autopilot_smoke_regressions() -> None:
     run_script("smoke_participant_autopilot.py")
 
@@ -258,7 +301,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'id="duel-p2-health"' not in index
     assert 'id="duel-p1-health-label">❤️ 150 / 150</div>' in index
     assert 'id="duel-p2-health-label">❤️ 150 / 150</div>' in index
-    assert 'label.textContent = "❤️ " + health + " / " + DUEL_MAX_HEALTH' in index
+    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
     assert 'label.textContent = "HP "' not in index
     assert 'id="duel-p1-damage"' not in index
     assert 'id="duel-p2-damage"' not in index

@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Rootly Doom Shoutcaster Test</title>
+        <style>
+            * { box-sizing: border-box; }
+            body {
+                min-height: 100vh;
+                margin: 0;
+                display: grid;
+                place-items: center;
+                padding: 24px;
+                background: radial-gradient(circle at top, #28301e, #0a0b09 58%);
+                color: #f7f5d8;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+            }
+            main {
+                width: min(680px, 100%);
+                border: 2px solid #b8e986;
+                background: #151713;
+                padding: clamp(22px, 5vw, 42px);
+                box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+            }
+            h1 { margin: 0 0 8px; color: #b8e986; font-size: clamp(25px, 5vw, 38px); }
+            .intro { margin: 0 0 24px; color: #c7c8b7; line-height: 1.5; }
+            .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+            button, a {
+                border: 1px solid #ffce6b;
+                background: #4b3212;
+                color: #fff1bd;
+                padding: 12px 16px;
+                cursor: pointer;
+                font: 800 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                text-decoration: none;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            button:disabled { cursor: not-allowed; opacity: 0.55; }
+            .secondary { border-color: #77806e; background: #20231d; color: #d8d9cc; }
+            ol { margin: 26px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+            li {
+                display: grid;
+                grid-template-columns: 28px minmax(0, 1fr);
+                gap: 10px;
+                align-items: start;
+                border: 1px solid rgba(255, 255, 255, 0.11);
+                background: #10120f;
+                padding: 12px;
+                color: #929789;
+            }
+            li::before { content: "○"; color: #929789; font-size: 18px; line-height: 1; }
+            li.running { color: #ffce6b; }
+            li.running::before { content: "●"; color: #ffce6b; }
+            li.pass { color: #d7f5b3; }
+            li.pass::before { content: "✓"; color: #69dc78; font-weight: 900; }
+            li.fail { color: #ffd0cb; border-color: rgba(255, 92, 92, 0.45); }
+            li.fail::before { content: "✕"; color: #ff5c5c; font-weight: 900; }
+            .step-title { display: block; color: inherit; font-weight: 800; }
+            .step-detail { display: block; margin-top: 4px; color: #929789; font-size: 12px; line-height: 1.4; }
+            #caption {
+                min-height: 62px;
+                margin-top: 22px;
+                border-left: 4px solid #ffce6b;
+                background: #0d0f0c;
+                padding: 14px 16px;
+                color: #f7f5d8;
+                font-size: 17px;
+                font-weight: 800;
+                line-height: 1.45;
+            }
+            #caption:empty::before { content: "The agent's test line will appear here."; color: #777d70; }
+            .hint { margin: 16px 0 0; color: #8e9583; font-size: 12px; line-height: 1.45; }
+        </style>
+    </head>
+    <body>
+        <main>
+            <h1>Shoutcaster audio test</h1>
+            <p class="intro">This page bypasses Doom completely. Click once, listen for a short beep, then an ElevenAgents voice line.</p>
+            <div class="actions">
+                <button id="run-test" type="button">Run voice test</button>
+                <button id="stop-test" class="secondary" type="button" disabled>Stop</button>
+                <a class="secondary" href="./?duel=1">Back to arena</a>
+            </div>
+            <ol aria-live="polite">
+                <li id="step-browser"><span><span class="step-title">Browser audio</span><span class="step-detail">Waiting for the local test beep.</span></span></li>
+                <li id="step-config"><span><span class="step-title">Server configuration</span><span class="step-detail">Waiting to check the local server.</span></span></li>
+                <li id="step-socket"><span><span class="step-title">ElevenAgents connection</span><span class="step-detail">Waiting for a signed connection and agent handshake.</span></span></li>
+                <li id="step-text"><span><span class="step-title">Agent response</span><span class="step-detail">Waiting for generated commentary text.</span></span></li>
+                <li id="step-audio"><span><span class="step-title">Voice audio</span><span class="step-detail">Waiting for PCM audio from ElevenLabs.</span></span></li>
+            </ol>
+            <div id="caption" aria-live="polite"></div>
+            <p class="hint">If the beep works but voice audio fails, tell us the first step above that does not turn green. No game needs to be running.</p>
+        </main>
+        <script src="elevenagents-commentator.js?v=20260731-low-latency-cadence"></script>
+        <script>
+            (function () {
+                "use strict";
+                var commentator = null;
+                var testMessageSent = false;
+                var runButton = document.getElementById("run-test");
+                var stopButton = document.getElementById("stop-test");
+                var caption = document.getElementById("caption");
+
+                function setStep(id, state, detail) {
+                    var node = document.getElementById(id);
+                    var detailNode = node && node.querySelector(".step-detail");
+                    if (!node) { return; }
+                    node.className = state || "";
+                    if (detailNode && detail) { detailNode.textContent = detail; }
+                }
+
+                function resetSteps() {
+                    ["step-browser", "step-config", "step-socket", "step-text", "step-audio"].forEach(function (id) {
+                        setStep(id, "", "Waiting…");
+                    });
+                    caption.textContent = "";
+                    testMessageSent = false;
+                }
+
+                function localBeep() {
+                    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    var context;
+                    var oscillator;
+                    var gain;
+                    if (!AudioContextClass) {
+                        return Promise.reject(new Error("AudioContext is unavailable in this browser"));
+                    }
+                    context = new AudioContextClass();
+                    oscillator = context.createOscillator();
+                    gain = context.createGain();
+                    oscillator.frequency.value = 660;
+                    gain.gain.setValueAtTime(0.0001, context.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.16, context.currentTime + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.24);
+                    oscillator.connect(gain);
+                    gain.connect(context.destination);
+                    oscillator.start();
+                    oscillator.stop(context.currentTime + 0.25);
+                    return context.resume().then(function () {
+                        return new Promise(function (resolve) {
+                            var finished = false;
+                            function finish() {
+                                if (finished) { return; }
+                                finished = true;
+                                context.close().catch(function () {});
+                                resolve(context.state);
+                            }
+                            oscillator.addEventListener("ended", finish, { once: true });
+                            window.setTimeout(finish, 500);
+                        });
+                    });
+                }
+
+                function stopTest() {
+                    if (commentator) {
+                        commentator.disable();
+                        commentator = null;
+                    }
+                    runButton.disabled = false;
+                    stopButton.disabled = true;
+                }
+
+                function startElevenAgentsTest() {
+                    var api = window.DoomArenaElevenAgents;
+                    if (!api || typeof api.Commentator !== "function") {
+                        throw new Error("The shoutcaster browser module did not load");
+                    }
+                    setStep("step-socket", "running", "Requesting a signed connection…");
+                    commentator = new api.Commentator({
+                        signedUrlEndpoint: "/api/arena/commentator/signed-url",
+                        volume: 0.9,
+                        onStatus: function (message, state) {
+                            if (state === "error") {
+                                setStep("step-socket", "fail", message);
+                                runButton.disabled = false;
+                                return;
+                            }
+                            if (state === "ready") {
+                                setStep("step-socket", "pass", "Signed WebSocket connected and agent handshake completed.");
+                                runButton.disabled = false;
+                                runButton.textContent = "Run again";
+                                if (!testMessageSent) {
+                                    testMessageSent = true;
+                                    window.setTimeout(function () {
+                                        if (!commentator || !commentator.send("user_message", "Say one short sentence: Shoutcaster audio test successful. The Doom arena is ready to rumble!")) {
+                                            setStep("step-text", "fail", "The test line could not be sent to the agent.");
+                                        } else {
+                                            setStep("step-text", "running", "Test line sent; waiting for the agent response…");
+                                        }
+                                    }, 300);
+                                }
+                                return;
+                            }
+                            setStep("step-socket", "running", message);
+                        },
+                        onCaption: function (message) {
+                            caption.textContent = message;
+                            setStep("step-text", "pass", "Commentary text received from ElevenAgents.");
+                        },
+                        onAudio: function (event) {
+                            setStep("step-audio", "pass", "PCM audio received and scheduled for playback (" + event.sample_rate + " Hz).");
+                            runButton.disabled = false;
+                            runButton.textContent = "Run again";
+                        }
+                    });
+                    return commentator.enable();
+                }
+
+                runButton.addEventListener("click", function () {
+                    var voicePromise;
+                    if (commentator) {
+                        commentator.disable();
+                        commentator = null;
+                    }
+                    resetSteps();
+                    runButton.disabled = true;
+                    runButton.textContent = "Starting…";
+                    stopButton.disabled = false;
+                    setStep("step-browser", "running", "Playing a local test beep…");
+
+                    // Both audio contexts are created synchronously inside the
+                    // click handler so browser autoplay policies see a genuine
+                    // user gesture. Network/config checks run in parallel.
+                    try {
+                        voicePromise = startElevenAgentsTest();
+                    } catch (error) {
+                        setStep("step-socket", "fail", error.message || "Unable to start ElevenAgents test");
+                        runButton.disabled = false;
+                        runButton.textContent = "Retry voice test";
+                    }
+
+                    localBeep()
+                        .then(function () {
+                            setStep("step-browser", "pass", "Local beep played. Browser audio is unlocked.");
+                        })
+                        .catch(function (error) {
+                            setStep("step-browser", "fail", error.message || "Browser audio could not start");
+                        });
+
+                    setStep("step-config", "running", "Checking server configuration…");
+                    fetch("/api/arena/commentator/config", { cache: "no-store" })
+                        .then(function (response) {
+                            return response.json().then(function (payload) {
+                                if (!response.ok || !payload.configured) {
+                                    throw new Error(payload.error || "ElevenAgents is not configured on the server");
+                                }
+                            });
+                        })
+                        .then(function () {
+                            setStep("step-config", "pass", "API key and agent ID are available to the server.");
+                        })
+                        .catch(function (error) {
+                            var detail = error && error.message ? error.message : "Voice test failed";
+                            setStep("step-config", "fail", detail);
+                            runButton.disabled = false;
+                            runButton.textContent = "Retry voice test";
+                        });
+
+                    if (voicePromise) {
+                        voicePromise.catch(function (error) {
+                            setStep("step-socket", "fail", error.message || "Unable to connect to ElevenAgents");
+                            runButton.disabled = false;
+                            runButton.textContent = "Retry voice test";
+                        });
+                    }
+
+                    window.setTimeout(function () {
+                        var socketStep = document.getElementById("step-socket");
+                        if (socketStep && socketStep.classList.contains("running")) {
+                            setStep("step-socket", "fail", "Timed out after 15 seconds waiting for the ElevenAgents handshake.");
+                            runButton.disabled = false;
+                            runButton.textContent = "Retry voice test";
+                        }
+                    }, 15000);
+                    window.setTimeout(function () {
+                        var audioStep = document.getElementById("step-audio");
+                        if (audioStep && !audioStep.classList.contains("pass")) {
+                            setStep("step-audio", "fail", "No PCM audio arrived within 30 seconds.");
+                            runButton.disabled = false;
+                            runButton.textContent = "Retry voice test";
+                        }
+                    }, 30000);
+                });
+                stopButton.addEventListener("click", stopTest);
+            })();
+        </script>
+    </body>
+</html>
