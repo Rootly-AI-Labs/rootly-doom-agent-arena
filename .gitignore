@@ -32,6 +32,8 @@ src/agentic_monster_commands.local.json
 .githelp
 .env
 .claude/
+.codex/
+.venv/
 .mcp.local.json
 src/.emscripten_cache/
 src/.emscripten_browser

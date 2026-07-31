@@ -150,6 +150,9 @@ http://127.0.0.1:8001/?duelPreview=disconnected
 The fixture canvases are deterministic and use local assets only, so the
 preview works without an active duel or network access. Use a real benchmark
 only when validating WASM rendering, live state polling, or agent behavior.
+The preview content is a fixed 1920x1080 stream frame with a 1px red capture
+boundary. It scales proportionally and remains centered when the browser
+viewport is smaller than the stream target.
 
 That mount is for development only. It lets locally rebuilt `websockets-doom.{html,js,wasm}` files take effect after a browser hard refresh.
 
