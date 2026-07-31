@@ -441,7 +441,7 @@ def test_parent_process_identity_fallback_refuses_multiple_owned_candidates(
     controller_cwd = str(tmp_path / "controller")
     rollout_paths = [
         sessions_dir / "rollout-2026-07-30T19-07-56-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jsonl",
-        sessions_dir / "rollout-2026-07-30T19-07-57-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl",
+        sessions_dir / "rollout-2026-07-30T19-07-56-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl",
     ]
     for index, rollout_path in enumerate(rollout_paths):
         rollout_path.write_text(
@@ -476,6 +476,59 @@ def test_parent_process_identity_fallback_refuses_multiple_owned_candidates(
     monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
 
     assert mcp.detect_codex_session_identity() is None
+
+
+def test_parent_process_identity_uses_dedicated_mcp_start_with_multiple_open_rollouts(
+    tmp_path,
+    monkeypatch,
+):
+    codex_home = tmp_path / ".codex"
+    sessions_dir = codex_home / "sessions" / "2026" / "07" / "30"
+    sessions_dir.mkdir(parents=True)
+    controller_cwd = str(tmp_path / "controller")
+    older_rollout = sessions_dir / (
+        "rollout-2026-07-30T19-05-00-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jsonl"
+    )
+    current_rollout = sessions_dir / (
+        "rollout-2026-07-30T19-07-56-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl"
+    )
+    for rollout_path, model in (
+        (older_rollout, "gpt-wrong"),
+        (current_rollout, "gpt-5.6-terra"),
+    ):
+        rollout_path.write_text(
+            json.dumps(
+                {
+                    "type": "session_meta",
+                    "payload": {
+                        "cwd": controller_cwd,
+                        "thread_settings": {
+                            "model": model,
+                            "reasoning_effort": "medium",
+                        },
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.setattr(
+        mcp,
+        "codex_ancestor_process_context",
+        lambda: {
+            "pid": 123,
+            "cwd": controller_cwd,
+            "started_at": mcp.codex_rollout_started_at(older_rollout),
+            "mcp_started_at": mcp.codex_rollout_started_at(current_rollout),
+            "open_rollouts": [older_rollout, current_rollout],
+        },
+    )
+    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
+
+    assert mcp.detect_codex_session_identity() == ("Codex", "gpt-5.6-terra medium")
 
 
 @pytest.mark.parametrize(

@@ -2066,6 +2066,7 @@ def process_file_open_pids(path: Path) -> set[int]:
 
 
 def codex_ancestor_process_context() -> dict[str, Any] | None:
+    mcp_started_at = process_started_at(os.getpid())
     pid = os.getpid()
     for _ in range(5):
         pid = os.getppid() if pid == os.getpid() else process_parent_pid(pid)
@@ -2078,6 +2079,7 @@ def codex_ancestor_process_context() -> dict[str, Any] | None:
                 "pid": pid,
                 "cwd": process_cwd(pid),
                 "started_at": process_started_at(pid),
+                "mcp_started_at": mcp_started_at,
                 "open_rollouts": process_open_codex_rollouts(pid),
             }
     return None
@@ -2092,20 +2094,18 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
         path for path in context.get("open_rollouts", [])
         if path.is_file()
     ]
-    if len(open_rollouts) == 1:
-        return open_rollouts[0]
-    if len(open_rollouts) > 1:
-        return None
-
-    process_started = context.get("started_at")
+    process_started = context.get("mcp_started_at") or context.get("started_at")
     process_working_directory = str(context.get("cwd") or "")
     if process_started is None or not process_working_directory:
         return None
 
-    try:
-        rollout_paths = list(sessions_root.rglob("rollout-*.jsonl"))
-    except OSError:
-        return None
+    if open_rollouts:
+        rollout_paths = open_rollouts
+    else:
+        try:
+            rollout_paths = list(sessions_root.rglob("rollout-*.jsonl"))
+        except OSError:
+            return None
 
     candidates = []
     resumed_candidates = []
@@ -2137,9 +2137,15 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
             candidates.append((start_delta, rollout_path))
             continue
         resumed_candidates.append((modified_at, rollout_path))
-    if len(candidates) == 1:
-        return candidates[0][1]
-    if len(candidates) > 1:
+    if candidates:
+        candidates.sort(key=lambda candidate: candidate[0])
+        closest_delta = candidates[0][0]
+        closest_candidates = [
+            path for delta, path in candidates
+            if abs(delta - closest_delta) < 1.0
+        ]
+        if len(closest_candidates) == 1:
+            return closest_candidates[0]
         return None
     if len(resumed_candidates) == 1:
         return resumed_candidates[0][1]
