@@ -180,7 +180,7 @@ def test_spectator_loads_commentator_controls_and_external_director():
         encoding="utf-8"
     )
 
-    assert 'src="elevenagents-commentator.js?v=20260731-pr20-review-fixes"' in index
+    assert 'src="elevenagents-commentator.js?v=20260731-play-view-audio-gate"' in index
     assert 'id="arena-commentator-toggle"' in index
     assert 'id="arena-commentator-volume"' in index
     assert 'id="duel-commentator-toggle"' in index
@@ -192,6 +192,7 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert 'type: "conversation_initiation_client_data"' in director
     assert 'href="elevenagents-test.html"' in index
     assert "Commentator.prototype.introduceMatch" in director
+    assert "Commentator.prototype.prepareAudio" in director
     assert "var arenaDuelStatePollMs = 500;" in index
     assert "window.setInterval(refreshDuelState, arenaDuelStatePollMs);" in index
     assert "var elevenAgentsCommentatorDesired = false;" in index
@@ -201,13 +202,24 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert "elevenAgentsCommentatorConfigPromise = fetch(" in index
     assert "!elevenAgentsCommentatorConfigResolved && elevenAgentsCommentatorConfigPromise" in index
     assert "return requestElevenAgentsCommentator().then(function ()" in index
+    assert "Shoutcaster waits until the arena is visible" in index
+    assert "function showDuelPlayViewBeforeIntroduction()" in index
+    assert 'launcher.style.display = "none";' in index
+    assert "window.requestAnimationFrame(resolve);" in index
     assert 'syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);' in index
-    gate_call = index.index("presentDuelParticipantsBeforeStart()")
+    play_view = index.index("showDuelPlayViewBeforeIntroduction()", index.index("function maybeAutoStartReadyDuel"))
+    gate_call = index.index("presentDuelParticipantsBeforeStart()", play_view)
     runtime_start = index.index(
         'return startDuel({ reuseExistingSession: true });', gate_call
     )
-    assert gate_call < runtime_start
+    assert play_view < gate_call < runtime_start
     assert "Introduction complete. Starting benchmark" in index
+
+    start_click = index.split(
+        'document.getElementById("arena-start-game").addEventListener("click", function () {', 1
+    )[1].split("var sessionMatchesSettings", 1)[0]
+    assert "prepareElevenAgentsCommentatorAudio()" in start_click
+    assert "requestElevenAgentsCommentator()" not in start_click
 
 
 def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
@@ -222,10 +234,45 @@ def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
     assert "/api/arena/commentator/config" in page
     assert "/api/arena/commentator/signed-url" in page
     assert "Shoutcaster audio test successful" in page
-    assert "elevenagents-commentator.js?v=20260731-pr20-review-fixes" in page
+    assert "elevenagents-commentator.js?v=20260731-play-view-audio-gate" in page
     assert "browser autoplay policies" in page
     assert "Timed out after 15 seconds" in page
     assert "updateDuelDashboard" not in page
+
+
+def test_commentator_can_unlock_audio_without_connecting_or_speaking():
+    if not shutil.which("node"):
+        return
+    module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
+    script = f"""
+const assert = require('assert');
+let fetches = 0;
+let connections = 0;
+global.fetch = () => {{ fetches += 1; throw new Error('prepareAudio must not fetch'); }};
+global.window = {{
+  AudioContext: function () {{
+    this.destination = {{}};
+    this.resume = () => Promise.resolve();
+    this.createGain = () => ({{
+      gain: {{value: 0}},
+      connect: () => {{ connections += 1; }}
+    }});
+  }}
+}};
+const api = require({json.dumps(str(module_path))});
+
+(async () => {{
+  const commentator = new api.Commentator({{volume: 0.6}});
+  await commentator.prepareAudio();
+  await commentator.prepareAudio();
+  assert.equal(fetches, 0);
+  assert.equal(connections, 1);
+  assert.equal(commentator.socket, null);
+  assert.equal(commentator.enabled, false);
+  assert.equal(commentator.gainNode.gain.value, 0.6);
+}})().catch(error => {{ console.error(error); process.exit(1); }});
+"""
+    subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
 
 
 def test_commentator_sends_plain_test_messages_and_reports_scheduled_audio():

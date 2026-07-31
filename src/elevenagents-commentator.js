@@ -443,23 +443,29 @@
         }
     };
 
-    Commentator.prototype.enable = function () {
-        var self = this;
+    Commentator.prototype.prepareAudio = function () {
         var AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (this.enabled && this.socket) {
-            return this.waitUntilReady(15000);
-        }
         if (!AudioContextClass) {
             this.status("Live audio is not supported in this browser", "error");
             return Promise.reject(new Error("AudioContext unavailable"));
         }
-        this.enabled = true;
         this.audioContext = this.audioContext || new AudioContextClass();
-        this.gainNode = this.gainNode || this.audioContext.createGain();
-        this.gainNode.connect(this.audioContext.destination);
+        if (!this.gainNode) {
+            this.gainNode = this.audioContext.createGain();
+            this.gainNode.connect(this.audioContext.destination);
+        }
         this.setVolume(this.options.volume === undefined ? 0.8 : this.options.volume);
+        return this.audioContext.resume();
+    };
+
+    Commentator.prototype.enable = function () {
+        var self = this;
+        if (this.enabled && this.socket) {
+            return this.waitUntilReady(15000);
+        }
+        this.enabled = true;
         this.status("Connecting shoutcaster…", "connecting");
-        return this.audioContext.resume()
+        return this.prepareAudio()
             .then(function () {
                 return fetch(self.options.signedUrlEndpoint || "/api/arena/commentator/signed-url", { cache: "no-store" });
             })
