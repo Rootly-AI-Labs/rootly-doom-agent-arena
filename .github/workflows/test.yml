@@ -21,3 +21,8 @@ jobs:
 
       - name: Run test suite
         run: python -m pytest tests/ -v --tb=short
+
+      - name: Validate browser JavaScript syntax
+        run: |
+          node --check src/websockets-doom.js
+          node -e "const fs=require('fs'); const html=fs.readFileSync('src/index.html','utf8'); const script=html.split('<script>').at(-1).split('</script>',1)[0]; new Function(script);"

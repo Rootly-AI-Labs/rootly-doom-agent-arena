@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import secrets
 import sys
 import urllib.error
@@ -24,6 +25,8 @@ from doom_arena_duel_prompts import instructions as render_participant_instructi
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+os.environ.setdefault("DOOM_ARENA_CODING_ASSISTANT", "Doom Arena smoke test")
+os.environ.setdefault("DOOM_ARENA_MODEL_IDENTITY", "participant intent smoke")
 
 
 def request(server_url: str, method: str, path: str) -> tuple[int, bytes]:
@@ -196,13 +199,21 @@ def main() -> int:
 
         p1_intent = parse_json_object(
             "set_participant_ready(player_1)",
-            client.set_participant_ready("player_1", controller_token=p1_token),
+            client.set_participant_ready(
+                "player_1",
+                controller_token=p1_token,
+                agent_name="Intent Killer",
+            ),
         )
         if not p1_intent.get("accepted") or not p1_intent.get("ready"):
             raise AssertionError("player_1 ready signal was not accepted")
         p2_ready = parse_json_object(
             "set_participant_ready(player_2)",
-            client.set_participant_ready("player_2", controller_token=p2_token),
+            client.set_participant_ready(
+                "player_2",
+                controller_token=p2_token,
+                agent_name="Schema Damned",
+            ),
         )
         if not p2_ready.get("accepted") or not p2_ready.get("ready"):
             raise AssertionError("player_2 ready signal was not accepted")

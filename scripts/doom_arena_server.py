@@ -31,7 +31,15 @@ from doom_arena_duel_prompts import (
     write_controller_tokens,
 )
 from doom_arena_map_blueprints import load_geometry_blueprint
-from doom_arena_mcp import DoomArenaClient, DoomArenaError, call_tool, tool_definitions
+from doom_arena_mcp import (
+    DoomArenaClient,
+    DoomArenaError,
+    call_tool,
+    format_agent_identity_label,
+    tool_definitions,
+    validate_agent_name,
+    validate_agent_identity,
+)
 from doom_arena_strategy import (
     CONTROL_MODE_HIERARCHICAL,
     PLAN_METADATA_FIELDS,
@@ -256,6 +264,21 @@ def new_duel_session_id() -> str:
     return "session_" + uuid.uuid4().hex[:12]
 
 
+def write_json_atomic(path: Path, payload: Any) -> None:
+    temporary_path = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        temporary_path.write_text(
+            json.dumps(payload, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        temporary_path.replace(path)
+    finally:
+        try:
+            temporary_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def clamp_int(value: Any, low: int, high: int) -> int:
     return max(low, min(high, int(value)))
 
@@ -354,6 +377,7 @@ class DoomArenaServer(ThreadingHTTPServer):
         self.mcp_presence: dict[str, dict[str, Any]] = {}
         self.mcp_presence_counter = 0
         self.participant_ready_agents: dict[str, str] = {}
+        self.participant_agent_names: dict[str, str] = {}
         self.intent_records: list[dict[str, Any]] = []
         self.latest_intent_by_participant: dict[str, dict[str, Any]] = {}
         self.summary_written_runs: set[str] = set()
@@ -1555,12 +1579,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         run_dir = self.run_dir()
         run_dir.mkdir(parents=True, exist_ok=True)
         payload = self.build_mcp_stats_payload_locked()
-        (run_dir / "stats.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        write_json_atomic(run_dir / "stats.json", payload)
         analysis = self.build_analysis_summary_locked(payload, run_dir)
-        (run_dir / "analysis_summary.json").write_text(
-            json.dumps(analysis, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        write_json_atomic(run_dir / "analysis_summary.json", analysis)
 
     def build_analysis_summary_locked(self, stats: dict[str, Any], run_dir: Path) -> dict[str, Any]:
         summary = self.read_json_artifact(run_dir / "summary.json")
@@ -1865,11 +1886,15 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
         run_dir = self.run_dir(run_id)
         run_dir.mkdir(parents=True, exist_ok=True)
+        with self.server.stats_lock:
+            ready_agents = copy.deepcopy(self.server.participant_ready_agents)
         summary = {
             "run_id": run_id,
             "mode": "duel",
             "player_1_model": self.server.player_1_model,
             "player_2_model": self.server.player_2_model,
+            "coding_assistant_1": ready_agents.get("player_1", ""),
+            "coding_assistant_2": ready_agents.get("player_2", ""),
             "round": self.server.round,
             "seed": self.server.seed,
             "winner": score.get("winner", ""),
@@ -2220,9 +2245,47 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     if summary_file.exists():
                         try:
                             summary_data = json.loads(summary_file.read_text(encoding="utf-8"))
-                            rounds.append(summary_data)
-                        except Exception:
-                            pass
+                        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+                            continue
+                        if not isinstance(summary_data, dict):
+                            continue
+                        stats_file = round_dir / "stats.json"
+                        if stats_file.exists():
+                            try:
+                                stats_data = json.loads(stats_file.read_text(encoding="utf-8"))
+                                if not isinstance(stats_data, dict):
+                                    raise TypeError("stats.json must contain a JSON object")
+                                decision_turns = stats_data.get("inferred_decision_turns", [])
+                                if isinstance(decision_turns, list):
+                                    for participant_id in ("player_1", "player_2"):
+                                        decision_latencies = [
+                                            float(turn["inferred_decision_latency_ms"])
+                                            for turn in decision_turns
+                                            if (
+                                                isinstance(turn, dict)
+                                                and turn.get("participant_id") == participant_id
+                                                and isinstance(turn.get("inferred_decision_latency_ms"), (int, float))
+                                            )
+                                        ]
+                                        summary_data[f"{participant_id}_decision_count"] = len(decision_latencies)
+                                        summary_data[f"{participant_id}_decision_avg_ms"] = (
+                                            round(sum(decision_latencies) / len(decision_latencies), 3)
+                                            if decision_latencies
+                                            else None
+                                        )
+                            except (OSError, TypeError, ValueError, json.JSONDecodeError):
+                                pass
+                        rounds.append(summary_data)
+
+        with self.server.stats_lock:
+            ready_agents = copy.deepcopy(self.server.participant_ready_agents)
+        for round_summary in reversed(rounds):
+            if not ready_agents.get("player_1") and round_summary.get("coding_assistant_1"):
+                ready_agents["player_1"] = str(round_summary["coding_assistant_1"])
+            if not ready_agents.get("player_2") and round_summary.get("coding_assistant_2"):
+                ready_agents["player_2"] = str(round_summary["coding_assistant_2"])
+            if ready_agents.get("player_1") and ready_agents.get("player_2"):
+                break
 
         self.write_json(
             HTTPStatus.OK,
@@ -2230,6 +2293,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "duel_session_id": duel_session_id,
                 "total_rounds": self.server.duel_total_rounds,
+                "coding_assistant_1": ready_agents.get("player_1", ""),
+                "coding_assistant_2": ready_agents.get("player_2", ""),
                 "player_1_model": self.server.player_1_model,
                 "player_2_model": self.server.player_2_model,
                 "rounds": rounds,
@@ -2535,6 +2600,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
     def write_participant_ready(self) -> None:
         body = self.read_body()
         content_type = self.headers.get("Content-Type", "")
+        ready_identity: dict[str, str] = {}
 
         try:
             if "application/json" in content_type:
@@ -2543,13 +2609,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     rows = [self.normalize_participant_ready(row) for row in payload]
                     body = self.participant_ready_rows_to_tsv(rows).encode("utf-8")
                 elif isinstance(payload, dict):
-                    self.update_participant_ready_agent(payload)
+                    ready_identity = self.update_participant_ready_agent(payload)
                     body = self.update_participant_ready_json(payload).encode("utf-8")
                 else:
                     raise ValueError("JSON payload must be an object or list")
             else:
                 self.validate_participant_ready_tsv(body.decode("utf-8", errors="replace"))
-        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        except (DoomArenaError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
             self.write_json(
                 HTTPStatus.BAD_REQUEST,
                 {"ok": False, "error": f"Invalid participant ready state: {exc}"},
@@ -2563,18 +2629,66 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "path": "arena_participant_ready.local.tsv",
                 "bytes": len(body),
+                **ready_identity,
             },
         )
 
-    def update_participant_ready_agent(self, payload: dict[str, Any]) -> None:
+    def update_participant_ready_agent(self, payload: dict[str, Any]) -> dict[str, str]:
         participant_id = str(payload.get("participant_id", ""))
-        agent_label = str(payload.get("agent_label", "")).strip()
+        requested_agent_name = str(payload.get("agent_name", "")).strip()
+        coding_assistant = str(payload.get("coding_assistant", "")).strip()
+        model = str(payload.get("model", "")).strip()
+        identity_source = str(payload.get("identity_source", "")).strip()
 
-        if participant_id not in PARTICIPANTS or not agent_label:
-            return
+        if participant_id not in PARTICIPANTS:
+            raise ValueError("participant_id must be player_1 or player_2")
+        if identity_source not in {"codex_session", "environment", "unavailable"}:
+            raise DoomArenaError(
+                "participant identity must come from automatic session detection"
+            )
+        validate_agent_identity(coding_assistant, model)
 
         with self.server.stats_lock:
+            existing_agent_name = self.server.participant_agent_names.get(participant_id, "")
+            if existing_agent_name:
+                if requested_agent_name:
+                    selected_agent_name = validate_agent_name(requested_agent_name)
+                    if selected_agent_name != existing_agent_name:
+                        raise DoomArenaError(
+                            "agent_name is locked for this benchmark session; "
+                            f"reuse {existing_agent_name!r}"
+                        )
+                selected_agent_name = existing_agent_name
+            else:
+                selected_agent_name = validate_agent_name(requested_agent_name)
+                claimed_by = next(
+                    (
+                        other_participant_id
+                        for other_participant_id, other_agent_name
+                        in self.server.participant_agent_names.items()
+                        if other_participant_id != participant_id
+                        and other_agent_name.casefold() == selected_agent_name.casefold()
+                    ),
+                    "",
+                )
+                if claimed_by:
+                    raise DoomArenaError(
+                        "agent_name is already claimed by the opponent; "
+                        "invent a completely different arena name and retry"
+                    )
+                self.server.participant_agent_names[participant_id] = selected_agent_name
+            agent_label = format_agent_identity_label(
+                coding_assistant,
+                model,
+                selected_agent_name,
+            )
             self.server.participant_ready_agents[participant_id] = agent_label
+        return {
+            "agent_name": selected_agent_name,
+            "coding_assistant": coding_assistant,
+            "model": model,
+            "agent_label": agent_label,
+        }
 
     def player_command_json_to_tsv(self, payload: dict[str, Any]) -> str:
         issued = int(payload.get("issued_at_ms", now_ms()))
@@ -3278,6 +3392,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.duel_controller_tokens = {}
             self.server.duel_player_1_prompt = ""
             self.server.duel_player_2_prompt = ""
+            self.server.participant_agent_names = {}
 
         return {
             "ok": True,
@@ -3335,6 +3450,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return random.choice(pool)
         return pool[(round_number - 1) % len(pool)]
 
+    def restart_duel_session_state(
+        self,
+        requested_total_rounds: int,
+    ) -> tuple[str, int, int]:
+        duel_session_id = self.server.duel_session_id
+        total_rounds = self.server.duel_total_rounds or requested_total_rounds
+        self.server.participant_agent_names = {}
+        self.server.duel_scenario_history = []
+        return duel_session_id, total_rounds, 1
+
     def create_duel_session(self) -> None:
         payload = self.read_json_body()
         decision_cadence_ms = int(payload.get("decision_cadence_ms", 750))
@@ -3368,9 +3493,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.duel_scenario_history = []
 
         if restart_session and self.server.duel_session_id:
-            duel_session_id = self.server.duel_session_id
-            total_rounds = self.server.duel_total_rounds or requested_total_rounds
-            round_number = self.server.duel_current_round or 1
+            duel_session_id, total_rounds, round_number = (
+                self.restart_duel_session_state(requested_total_rounds)
+            )
         elif continue_session and self.server.duel_session_id:
             if not self.match_is_finished():
                 self.write_json(
@@ -3406,6 +3531,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.duel_controller_tokens = {}
             self.server.duel_player_1_prompt = ""
             self.server.duel_player_2_prompt = ""
+            self.server.participant_agent_names = {}
 
         player_1_model = str(payload.get("player_1_model", self.server.player_1_model or DUEL_DEFAULTS["player_1_model"]))
         player_2_model = str(payload.get("player_2_model", self.server.player_2_model or DUEL_DEFAULTS["player_2_model"]))
@@ -3480,6 +3606,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
             enable_weapon_pickups=self.server.enable_weapon_pickups,
+            agent_name=self.server.participant_agent_names.get("player_1", ""),
         )
         player_2_instructions = render_participant_instructions(
             "player_2",
@@ -3496,6 +3623,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
             enable_weapon_pickups=self.server.enable_weapon_pickups,
+            agent_name=self.server.participant_agent_names.get("player_2", ""),
         )
         map_reference = build_map_reference(
             self.server.scenario_id,

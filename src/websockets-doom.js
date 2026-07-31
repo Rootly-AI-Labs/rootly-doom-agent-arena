@@ -217,7 +217,7 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
 // end include: web_or_worker_shell_read.js
   }
 
-  setWindowTitle = function(title) { document.title = title };
+  setWindowTitle = function(title) { document.title = 'Rootly Doom Agent Arena' };
 } else
 {
 }
@@ -9522,7 +9522,6 @@ var shouldRunNow = true;
 if (Module['noInitialRun']) shouldRunNow = false;
 
 run();
-
 
 
 

@@ -7,11 +7,14 @@ import argparse
 import json
 import math
 import os
+import re
+import subprocess
 import sys
 import time
 import traceback
 import urllib.error
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -98,6 +101,12 @@ PLAN_ROUTE_LEASE_MS = 16000
 PLAN_ROUTE_WALL_CLEARANCE_UNITS = 24
 PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
 PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
+PLAN_QUIP_MAX_CHARS = 80
+CODEX_RESUMED_SESSION_MAX_AGE_SECONDS = 1800
+IDENTITY_CONFIGURATION_HINT = (
+    "Set DOOM_ARENA_CODING_ASSISTANT and DOOM_ARENA_MODEL_IDENTITY in this "
+    "MCP server's environment to record an exact non-Codex identity."
+)
 OBSERVATION_WAIT_FOR_PLAN_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_FOR_PLAN_MS", "12000"))
 OBSERVATION_WAIT_POLL_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_POLL_MS", "250"))
 OBSERVATION_WAIT_STALLED_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_STALLED_MS", "1500"))
@@ -579,35 +588,66 @@ class DoomArenaClient:
         except Exception:
             return []
 
-    def set_participant_ready(self, participant_id: str, controller_token: str | None = None) -> str:
+    def set_participant_ready(
+        self,
+        participant_id: str,
+        controller_token: str | None = None,
+        agent_name: str | None = None,
+    ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         ready_at = now_ms()
+        assistant_name, model_name, identity_source = resolve_agent_identity()
+        selected_agent_name = validate_agent_name(agent_name)
+        identity_label = format_agent_identity_label(
+            assistant_name,
+            model_name,
+            selected_agent_name,
+        )
         payload = {
             "run_id": self.run_id,
             "scenario_id": self.scenario_id,
             "participant_id": participant_id,
             "ready_at_ms": ready_at,
             "status": "ready",
-            "agent_label": self.agent_label(),
+            "coding_assistant": assistant_name,
+            "model": model_name,
+            "agent_label": identity_label,
+            "identity_source": identity_source,
         }
+        if selected_agent_name:
+            payload["agent_name"] = selected_agent_name
         response_text = self._request(
             "POST",
             "/api/arena/participant-ready",
             json.dumps(payload).encode("utf-8"),
             "application/json; charset=utf-8",
         )
-        return json.dumps(
-            {
-                "accepted": True,
-                "participant_id": participant_id,
-                "agent_label": self.agent_label(),
-                "ready": True,
-                "ready_at_ms": ready_at,
-                "server_response": parse_optional_json(response_text),
-            },
-            indent=2,
-        )
+        server_response = parse_optional_json(response_text)
+        if isinstance(server_response, dict):
+            selected_agent_name = normalize_identity_component(
+                server_response.get("agent_name", selected_agent_name),
+                32,
+            )
+            identity_label = normalize_identity_component(
+                server_response.get("agent_label", identity_label),
+                160,
+            )
+        result = {
+            "accepted": True,
+            "participant_id": participant_id,
+            "agent_name": selected_agent_name,
+            "coding_assistant": assistant_name,
+            "model": model_name,
+            "agent_label": identity_label,
+            "identity_source": identity_source,
+            "ready": True,
+            "ready_at_ms": ready_at,
+            "server_response": server_response,
+        }
+        if identity_source == "unavailable":
+            result["identity_warning"] = IDENTITY_CONFIGURATION_HINT
+        return json.dumps(result, indent=2)
 
     def wait_for_match_start(
         self,
@@ -1068,7 +1108,11 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         objective_text = normalize_plan_objective(objective)
         reasoning_text = normalize_plan_reasoning(reasoning)
-        summary_text = normalize_plan_summary(plan_note or plan_summary)
+        summary_text = normalize_plan_summary(plan_note or plan_summary)[:PLAN_QUIP_MAX_CHARS]
+        if not summary_text:
+            raise DoomArenaError(
+                "plan_note is required and must be a short first-person battle quip"
+            )
         try:
             engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
             current_position = self.current_participant_position(participant_id, allow_spawn_fallback=True)
@@ -1868,6 +1912,355 @@ def normalize_participant_id(participant_id: str) -> str:
     if participant_id not in PARTICIPANTS:
         raise DoomArenaError("participant_id must be player_1 or player_2")
     return participant_id
+
+
+def normalize_identity_component(value: Any, max_length: int = 80) -> str:
+    return " ".join(str(value or "").strip().split())[:max_length]
+
+
+def codex_sessions_root() -> Path:
+    codex_home = os.environ.get("CODEX_HOME", "").strip()
+    if codex_home:
+        return Path(codex_home).expanduser() / "sessions"
+    return Path.home() / ".codex" / "sessions"
+
+
+def codex_service_tier_label(service_tier: str) -> str:
+    normalized = normalize_identity_component(service_tier).lower()
+    if normalized == "priority":
+        return "fast"
+    if normalized in {"", "default", "auto"}:
+        return ""
+    return normalized
+
+
+def codex_rollout_started_at(rollout_path: Path) -> float | None:
+    match = re.match(
+        r"rollout-(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})-",
+        rollout_path.name,
+    )
+    if match is None:
+        return None
+    try:
+        return datetime.strptime(
+            match.group(1),
+            "%Y-%m-%dT%H-%M-%S",
+        ).astimezone().timestamp()
+    except ValueError:
+        return None
+
+
+def codex_rollout_metadata(rollout_path: Path) -> dict[str, str]:
+    metadata = {
+        "cwd": "",
+        "model": "",
+        "reasoning_effort": "",
+        "service_tier": "",
+    }
+    try:
+        handle = rollout_path.open("r", encoding="utf-8", errors="replace")
+    except OSError:
+        return metadata
+
+    with handle:
+        for line in handle:
+            try:
+                event = json.loads(line)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                continue
+            payload = event.get("payload")
+            if not isinstance(payload, dict):
+                continue
+            if event.get("type") == "session_meta":
+                metadata["cwd"] = normalize_identity_component(payload.get("cwd"), 1024) or metadata["cwd"]
+            thread_settings = payload.get("thread_settings")
+            if isinstance(thread_settings, dict):
+                metadata["model"] = normalize_identity_component(thread_settings.get("model")) or metadata["model"]
+                metadata["reasoning_effort"] = (
+                    normalize_identity_component(thread_settings.get("reasoning_effort"))
+                    or metadata["reasoning_effort"]
+                )
+                metadata["service_tier"] = (
+                    normalize_identity_component(thread_settings.get("service_tier"))
+                    or metadata["service_tier"]
+                )
+            if event.get("type") == "turn_context":
+                metadata["model"] = normalize_identity_component(payload.get("model")) or metadata["model"]
+                metadata["reasoning_effort"] = (
+                    normalize_identity_component(payload.get("effort"))
+                    or metadata["reasoning_effort"]
+                )
+    return metadata
+
+
+def process_text(*command: str) -> str:
+    try:
+        completed = subprocess.run(
+            command,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return completed.stdout.strip() if completed.returncode == 0 else ""
+
+
+def process_parent_pid(pid: int) -> int:
+    text = process_text("ps", "-p", str(pid), "-o", "ppid=")
+    try:
+        return int(text)
+    except (TypeError, ValueError):
+        return 0
+
+
+def process_command(pid: int) -> str:
+    return process_text("ps", "-p", str(pid), "-o", "command=")
+
+
+def process_cwd(pid: int) -> str:
+    proc_cwd = Path(f"/proc/{pid}/cwd")
+    try:
+        return str(proc_cwd.resolve(strict=True))
+    except OSError:
+        pass
+
+    output = process_text("lsof", "-a", "-p", str(pid), "-d", "cwd", "-Fn")
+    for line in output.splitlines():
+        if line.startswith("n/"):
+            return line[1:]
+    return ""
+
+
+def process_started_at(pid: int) -> float | None:
+    text = process_text("ps", "-p", str(pid), "-o", "lstart=")
+    try:
+        local_started_at = datetime.strptime(" ".join(text.split()), "%a %b %d %H:%M:%S %Y")
+        return local_started_at.astimezone().timestamp()
+    except (TypeError, ValueError):
+        return None
+
+
+def process_open_codex_rollouts(pid: int) -> list[Path]:
+    output = process_text("lsof", "-p", str(pid), "-Fn")
+    paths = []
+    for line in output.splitlines():
+        if not line.startswith("n"):
+            continue
+        path = line[1:]
+        if "/.codex/sessions/" in path and "/rollout-" in path and path.endswith(".jsonl"):
+            paths.append(Path(path))
+    return paths
+
+
+def process_file_open_pids(path: Path) -> set[int]:
+    output = process_text("lsof", "-t", str(path))
+    pids = set()
+    for line in output.splitlines():
+        try:
+            pids.add(int(line.strip()))
+        except ValueError:
+            continue
+    return pids
+
+
+def codex_ancestor_process_context() -> dict[str, Any] | None:
+    pid = os.getpid()
+    for _ in range(5):
+        pid = os.getppid() if pid == os.getpid() else process_parent_pid(pid)
+        if pid <= 1:
+            return None
+        command = process_command(pid)
+        executable = Path(command.split()[0]).name.lower() if command else ""
+        if executable == "codex" or "/codex" in command.lower():
+            return {
+                "pid": pid,
+                "cwd": process_cwd(pid),
+                "started_at": process_started_at(pid),
+                "open_rollouts": process_open_codex_rollouts(pid),
+            }
+    return None
+
+
+def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
+    context = codex_ancestor_process_context()
+    if not context:
+        return None
+
+    open_rollouts = [
+        path for path in context.get("open_rollouts", [])
+        if path.is_file()
+    ]
+    if len(open_rollouts) == 1:
+        return open_rollouts[0]
+    if len(open_rollouts) > 1:
+        return None
+
+    process_started = context.get("started_at")
+    process_working_directory = str(context.get("cwd") or "")
+    if process_started is None or not process_working_directory:
+        return None
+
+    try:
+        rollout_paths = list(sessions_root.rglob("rollout-*.jsonl"))
+    except OSError:
+        return None
+
+    candidates = []
+    resumed_candidates = []
+    now = time.time()
+    codex_pid = int(context.get("pid") or 0)
+    for rollout_path in rollout_paths:
+        open_pids = process_file_open_pids(rollout_path)
+        if codex_pid not in open_pids:
+            continue
+        rollout_started = codex_rollout_started_at(rollout_path)
+        start_delta = (
+            abs(rollout_started - float(process_started))
+            if rollout_started is not None
+            else float("inf")
+        )
+        exact_start_candidate = start_delta <= 120
+        modified_at = 0.0
+        if not exact_start_candidate:
+            try:
+                modified_at = rollout_path.stat().st_mtime
+            except OSError:
+                continue
+            if now - modified_at > CODEX_RESUMED_SESSION_MAX_AGE_SECONDS:
+                continue
+        metadata = codex_rollout_metadata(rollout_path)
+        if metadata["cwd"] != process_working_directory:
+            continue
+        if exact_start_candidate:
+            candidates.append((start_delta, rollout_path))
+            continue
+        resumed_candidates.append((modified_at, rollout_path))
+    if len(candidates) == 1:
+        return candidates[0][1]
+    if len(candidates) > 1:
+        return None
+    if len(resumed_candidates) == 1:
+        return resumed_candidates[0][1]
+    return None
+
+
+def detect_codex_session_identity() -> tuple[str, str] | None:
+    thread_id = normalize_identity_component(os.environ.get("CODEX_THREAD_ID", ""))
+    sessions_root = codex_sessions_root()
+    rollout_path = None
+    if thread_id and all(character in "0123456789abcdefABCDEF-" for character in thread_id):
+        try:
+            rollout_paths = list(sessions_root.rglob(f"rollout-*{thread_id}.jsonl"))
+        except OSError:
+            rollout_paths = []
+        if rollout_paths:
+            try:
+                rollout_path = max(rollout_paths, key=lambda path: path.stat().st_mtime_ns)
+            except OSError:
+                rollout_path = None
+    if rollout_path is None:
+        rollout_path = detect_codex_rollout_from_process(sessions_root)
+    if rollout_path is None:
+        return None
+
+    metadata = codex_rollout_metadata(rollout_path)
+    model_name = metadata["model"]
+    reasoning_effort = metadata["reasoning_effort"]
+    service_tier = metadata["service_tier"]
+
+    if not model_name:
+        return None
+
+    identity_parts = [model_name]
+    if reasoning_effort and reasoning_effort.lower() not in model_name.lower():
+        identity_parts.append(reasoning_effort.lower())
+    tier_label = codex_service_tier_label(service_tier)
+    if tier_label and tier_label not in " ".join(identity_parts).lower():
+        identity_parts.append(tier_label)
+    return "Codex", " ".join(identity_parts)
+
+
+def resolve_agent_identity() -> tuple[str, str, str]:
+    environment_assistant = normalize_identity_component(
+        os.environ.get("DOOM_ARENA_CODING_ASSISTANT", "")
+    )
+    environment_model = normalize_identity_component(
+        os.environ.get("DOOM_ARENA_MODEL_IDENTITY", "")
+    )
+    if environment_assistant or environment_model:
+        validate_agent_identity(environment_assistant, environment_model)
+        return environment_assistant, environment_model, "environment"
+
+    detected = detect_codex_session_identity()
+    if detected is not None:
+        assistant_name, model_name = detected
+        validate_agent_identity(assistant_name, model_name)
+        return assistant_name, model_name, "codex_session"
+
+    return "Undetected assistant", "Model unavailable", "unavailable"
+
+
+def validate_agent_identity(coding_assistant: Any, model: Any) -> None:
+    assistant_name = normalize_identity_component(coding_assistant)
+    model_name = normalize_identity_component(model)
+    combined = f"{assistant_name} {model_name}".lower()
+
+    if not assistant_name or assistant_name == "Coding assistant":
+        raise DoomArenaError(
+            "coding_assistant must identify the actual coding assistant product"
+        )
+    if not model_name:
+        raise DoomArenaError(
+            "model must include the exact model identity reported by the client"
+        )
+    if "mcp-client" in combined or "mcp client" in combined:
+        raise DoomArenaError(
+            "assistant identity cannot use an MCP transport package name or version"
+        )
+    if "<" in combined or ">" in combined:
+        raise DoomArenaError("assistant identity cannot contain placeholder values")
+
+
+def validate_agent_name(agent_name: Any) -> str:
+    selected_name = normalize_identity_component(agent_name, 32)
+    if len(selected_name) < 2:
+        raise DoomArenaError("agent_name must be between 2 and 32 characters")
+    if len(selected_name.split()) > 2:
+        raise DoomArenaError("agent_name must contain at most two words")
+    if "," in selected_name:
+        raise DoomArenaError("agent_name cannot contain commas")
+    if selected_name.lower() in {
+        "agent",
+        "bot",
+        "doom agent",
+        "player",
+        "player 1",
+        "player 2",
+        "player_1",
+        "player_2",
+    }:
+        raise DoomArenaError(
+            "agent_name must be a distinctive arena name, not a generic player label"
+        )
+    return selected_name
+
+
+def format_agent_identity_label(
+    coding_assistant: Any,
+    model: Any,
+    agent_name: Any = "",
+) -> str:
+    selected_name = normalize_identity_component(agent_name, 32)
+    assistant_name = normalize_identity_component(coding_assistant)
+    model_name = normalize_identity_component(model)
+    components = [
+        component
+        for component in (selected_name, assistant_name, model_name)
+        if component
+    ]
+    return ", ".join(components) or "Coding assistant"
 
 
 def normalize_participant_intent(intent: str) -> str:
@@ -3164,14 +3557,38 @@ def tool_definitions() -> list[dict[str, Any]]:
         },
         {
             "name": "set_participant_ready",
-            "description": "Signal that one MCP participant is connected and ready for the duel start barrier.",
+            "description": (
+                "Signal that one MCP participant is connected and ready for the duel start barrier. "
+                "Identity is detected automatically from the current local session metadata or trusted "
+                "harness environment; if exact metadata is unavailable, readiness still succeeds with "
+                "an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
+                "DOOM_ARENA_MODEL_IDENTITY in the MCP server environment for an exact non-Codex identity. "
+                "On the first match, choose a funny arena name that a broad "
+                "audience can understand without Doom or gaming knowledge and pass it as agent_name; "
+                "the name must contain at most two words and differ from the opponent's. Submit the same "
+                "locked name again on later matches. A duplicate-name rejection should be retried with "
+                "a completely different name."
+            ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
                     "controller_token": {"type": "string"},
+                    "agent_name": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 32,
+                        "description": (
+                            "A distinctive funny arena name with immediately understandable everyday "
+                            "wordplay and a concrete ridiculous character or object, not bland "
+                            "alliteration, abstract nouns, obscure lore, or niche gaming references. "
+                            "Use at most two words and supply it only for the first match of the benchmark session. It must be "
+                            "unique within the duel."
+                        ),
+                        "pattern": r"^\S+(?:\s+\S+)?$",
+                    },
                 },
-                "required": ["participant_id"],
+                "required": ["participant_id", "agent_name"],
                 "additionalProperties": False,
             },
         },
@@ -3407,12 +3824,16 @@ def participant_plan_schema() -> dict[str, Any]:
             "reasoning": {"type": "string", "maxLength": PLAN_REASONING_MAX_CHARS},
             "plan_note": {
                 "type": "string",
-                "maxLength": PLAN_SUMMARY_MAX_CHARS,
-                "description": "Optional public planning note for analysis. Stored as plan_summary and ignored by Doom movement.",
+                "minLength": 1,
+                "maxLength": PLAN_QUIP_MAX_CHARS,
+                "description": (
+                    "Required short, funny, first-person battle quip describing this decision. "
+                    "For example: I need to find this bastard! or Ouch, medkit time."
+                ),
             },
             "sequence_number": {"type": "integer", "minimum": 0},
         },
-        "required": ["participant_id", "route"],
+        "required": ["participant_id", "route", "plan_note"],
         "additionalProperties": False,
     }
 
@@ -3458,6 +3879,7 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
         return client.set_participant_ready(
             str(arguments["participant_id"]),
             optional_string(arguments.get("controller_token")),
+            optional_string(arguments.get("agent_name")),
         )
     if name == "wait_for_match_start":
         return client.wait_for_match_start(
@@ -3610,20 +4032,32 @@ def write_message(message: dict[str, Any]) -> None:
     log_mcp(f"wrote message bytes={len(body)} framing={MCP_OUTPUT_FRAMING}")
 
 
+def read_exact_bytes(stream: Any, length: int) -> bytes:
+    chunks: list[bytes] = []
+    remaining = length
+    while remaining > 0:
+        chunk = stream.read(remaining)
+        if not chunk:
+            raise EOFError(f"Unexpected EOF while reading MCP body ({remaining} bytes missing)")
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
+
+
 def read_message() -> dict[str, Any] | None:
     global MCP_OUTPUT_FRAMING
     headers: dict[str, str] = {}
     while True:
-        line = sys.stdin.buffer.readline()
-        if line == b"":
+        raw_line = sys.stdin.buffer.readline()
+        if raw_line == b"":
             return None
-        line = line.decode("ascii", errors="replace").strip()
         # MCP stdio normally uses Content-Length framing. Some local launchers
         # and debugging clients use newline-delimited JSON-RPC; accepting that
         # form makes the server tolerant without changing the normal path.
-        if not headers and line.startswith("{"):
+        if not headers and raw_line.lstrip().startswith(b"{"):
             MCP_OUTPUT_FRAMING = "ndjson"
-            return json.loads(line)
+            return json.loads(raw_line.decode("utf-8"))
+        line = raw_line.decode("ascii").strip()
         if line == "":
             break
         name, separator, value = line.partition(":")
@@ -3634,7 +4068,7 @@ def read_message() -> dict[str, Any] | None:
     if length_text is None:
         raise json.JSONDecodeError("Missing Content-Length header", "", 0)
     MCP_OUTPUT_FRAMING = "content-length"
-    body = sys.stdin.buffer.read(int(length_text))
+    body = read_exact_bytes(sys.stdin.buffer, int(length_text))
     return json.loads(body.decode("utf-8"))
 
 
@@ -3764,6 +4198,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-
-

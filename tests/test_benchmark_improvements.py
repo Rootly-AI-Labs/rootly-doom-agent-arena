@@ -27,6 +27,7 @@ def make_handler_with_state(
         active_mcp_calls={},
         mcp_call_counter=0,
         participant_ready_agents={},
+        participant_agent_names={},
         intent_records=[],
         run_results_dirs={},
         current_run_results_dir=None,
@@ -439,6 +440,5 @@ def test_post_finish_stop_rule_always_present():
         enforce_tokens=False,
     )
     assert "stop all tool calls immediately" in prompt
-
 
 
