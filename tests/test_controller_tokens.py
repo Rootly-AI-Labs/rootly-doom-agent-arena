@@ -61,7 +61,10 @@ def test_participant_prompt_uses_automatic_session_identity():
     assert '"model"' not in prompt
     assert "Never submit an MCP transport package name or version" in prompt
     assert "`agent_name` is only your creative alias" in prompt
-    assert "reconnect the Doom Arena MCP" in prompt
+    assert "readiness still succeeds with an explicit unavailable label" in prompt
+    assert "DOOM_ARENA_CODING_ASSISTANT" in prompt
+    assert "DOOM_ARENA_MODEL_IDENTITY" in prompt
+    assert "do not loop on reconnects" in prompt
 
 
 def test_participant_prompt_requests_doom_alias_only_for_first_match():
@@ -84,6 +87,7 @@ def test_participant_prompt_requests_doom_alias_only_for_first_match():
         current_round=2,
         total_rounds=3,
         control_mode="hierarchical",
+        agent_name="Expense Goblin",
     )
 
     assert "ARENA NAME (FIRST MATCH ONLY)" in first_prompt
@@ -102,9 +106,11 @@ def test_participant_prompt_requests_doom_alias_only_for_first_match():
     assert "Avoid obscure lore" in first_prompt
     assert "one or two words only" in first_prompt
     assert '"agent_name": "chosen alias"' in first_prompt
-    assert "On later matches, omit `agent_name`" in first_prompt
+    assert "resubmit the exact same alias" in first_prompt
+    assert "reuse the exact quoted locked name" in first_prompt
     assert "ARENA NAME (ALREADY CHOSEN)" in later_prompt
-    assert '"agent_name": "chosen alias"' not in later_prompt
+    assert "Your locked arena name is `Expense Goblin`" in later_prompt
+    assert '"agent_name": "Expense Goblin"' in later_prompt
 
 
 def test_participant_prompt_requires_a_battle_quip_for_every_plan():
@@ -223,7 +229,7 @@ def test_ready_tool_schema_exposes_alias_but_no_manual_identity_fields():
     assert "duplicate-name rejection" in ready_tool["description"]
     assert "coding_assistant" not in ready_tool["inputSchema"]["properties"]
     assert "model" not in ready_tool["inputSchema"]["properties"]
-    assert set(ready_tool["inputSchema"]["required"]) == {"participant_id"}
+    assert set(ready_tool["inputSchema"]["required"]) == {"participant_id", "agent_name"}
 
 
 def test_set_participant_ready_detects_codex_session_identity(tmp_path, monkeypatch):
@@ -350,6 +356,7 @@ def test_set_participant_ready_detects_codex_identity_from_parent_process(tmp_pa
             "open_rollouts": [],
         },
     )
+    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
 
     assert mcp.detect_codex_session_identity() == ("Codex", "gpt-5.6-sol low")
 
@@ -394,7 +401,66 @@ def test_parent_process_identity_fallback_rejects_ambiguous_rollout(tmp_path, mo
     assert mcp.detect_codex_session_identity() is None
 
 
-def test_parent_process_identity_fallback_matches_recent_resumed_session(tmp_path, monkeypatch):
+def test_parent_process_identity_fallback_refuses_multiple_owned_candidates(
+    tmp_path,
+    monkeypatch,
+):
+    codex_home = tmp_path / ".codex"
+    sessions_dir = codex_home / "sessions" / "2026" / "07" / "30"
+    sessions_dir.mkdir(parents=True)
+    controller_cwd = str(tmp_path / "controller")
+    rollout_paths = [
+        sessions_dir / "rollout-2026-07-30T19-07-56-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jsonl",
+        sessions_dir / "rollout-2026-07-30T19-07-57-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb.jsonl",
+    ]
+    for index, rollout_path in enumerate(rollout_paths):
+        rollout_path.write_text(
+            json.dumps(
+                {
+                    "type": "session_meta",
+                    "payload": {
+                        "cwd": controller_cwd,
+                        "thread_settings": {
+                            "model": f"gpt-test-{index}",
+                            "reasoning_effort": "low",
+                        },
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.setattr(
+        mcp,
+        "codex_ancestor_process_context",
+        lambda: {
+            "pid": 123,
+            "cwd": controller_cwd,
+            "started_at": mcp.codex_rollout_started_at(rollout_paths[0]),
+            "open_rollouts": [],
+        },
+    )
+    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: {123})
+
+    assert mcp.detect_codex_session_identity() is None
+
+
+@pytest.mark.parametrize(
+    ("open_pids", "expected"),
+    [
+        (set(), None),
+        ({123}, ("Codex", "gpt-5.6-sol low fast")),
+    ],
+)
+def test_parent_process_identity_fallback_requires_owned_resumed_session(
+    tmp_path,
+    monkeypatch,
+    open_pids,
+    expected,
+):
     codex_home = tmp_path / ".codex"
     sessions_dir = codex_home / "sessions" / "2026" / "07" / "30"
     sessions_dir.mkdir(parents=True)
@@ -436,23 +502,57 @@ def test_parent_process_identity_fallback_matches_recent_resumed_session(tmp_pat
             "open_rollouts": [],
         },
     )
-    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: set())
+    monkeypatch.setattr(mcp, "process_file_open_pids", lambda _path: open_pids)
 
-    assert mcp.detect_codex_session_identity() == (
-        "Codex",
-        "gpt-5.6-sol low fast",
-    )
+    assert mcp.detect_codex_session_identity() == expected
 
 
-def test_set_participant_ready_never_infers_identity_from_transport_metadata(tmp_path, monkeypatch):
+def test_set_participant_ready_degrades_without_using_transport_metadata(tmp_path, monkeypatch):
     client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
     client.note_client_initialized(
         {"clientInfo": {"name": "codex-mcp-client", "version": "0.145.0"}}
     )
     monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    captured = {}
 
-    with pytest.raises(mcp.DoomArenaError, match="coding_assistant"):
+    def fake_request(_method, _path, body=None, _content_type=None):
+        captured.update(json.loads(body.decode("utf-8")))
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+
+    response = json.loads(
+        client.set_participant_ready(
+            "player_1",
+            controller_token="token",
+            agent_name="Budget Falcon",
+        )
+    )
+
+    assert captured["coding_assistant"] == "Undetected assistant"
+    assert captured["model"] == "Model unavailable"
+    assert captured["identity_source"] == "unavailable"
+    assert "codex-mcp-client" not in captured["agent_label"]
+    assert "DOOM_ARENA_CODING_ASSISTANT" in response["identity_warning"]
+    assert "DOOM_ARENA_MODEL_IDENTITY" in response["identity_warning"]
+
+
+def test_set_participant_ready_requires_agent_name_before_http(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    request_attempted = False
+
+    def fake_request(*_args, **_kwargs):
+        nonlocal request_attempted
+        request_attempted = True
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+
+    with pytest.raises(mcp.DoomArenaError, match="agent_name"):
         client.set_participant_ready("player_1", controller_token="token")
+
+    assert request_attempted is False
 
 
 @pytest.mark.parametrize(

@@ -103,6 +103,10 @@ PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
 PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
 PLAN_QUIP_MAX_CHARS = 80
 CODEX_RESUMED_SESSION_MAX_AGE_SECONDS = 1800
+IDENTITY_CONFIGURATION_HINT = (
+    "Set DOOM_ARENA_CODING_ASSISTANT and DOOM_ARENA_MODEL_IDENTITY in this "
+    "MCP server's environment to record an exact non-Codex identity."
+)
 OBSERVATION_WAIT_FOR_PLAN_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_FOR_PLAN_MS", "12000"))
 OBSERVATION_WAIT_POLL_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_POLL_MS", "250"))
 OBSERVATION_WAIT_STALLED_MS = int(os.environ.get("DOOM_ARENA_OBSERVATION_WAIT_STALLED_MS", "1500"))
@@ -594,9 +598,7 @@ class DoomArenaClient:
         self._verify_controller_token(participant_id, controller_token)
         ready_at = now_ms()
         assistant_name, model_name, identity_source = resolve_agent_identity()
-        selected_agent_name = normalize_identity_component(agent_name, 32)
-        if selected_agent_name:
-            validate_agent_name(selected_agent_name)
+        selected_agent_name = validate_agent_name(agent_name)
         identity_label = format_agent_identity_label(
             assistant_name,
             model_name,
@@ -631,21 +633,21 @@ class DoomArenaClient:
                 server_response.get("agent_label", identity_label),
                 160,
             )
-        return json.dumps(
-            {
-                "accepted": True,
-                "participant_id": participant_id,
-                "agent_name": selected_agent_name,
-                "coding_assistant": assistant_name,
-                "model": model_name,
-                "agent_label": identity_label,
-                "identity_source": identity_source,
-                "ready": True,
-                "ready_at_ms": ready_at,
-                "server_response": server_response,
-            },
-            indent=2,
-        )
+        result = {
+            "accepted": True,
+            "participant_id": participant_id,
+            "agent_name": selected_agent_name,
+            "coding_assistant": assistant_name,
+            "model": model_name,
+            "agent_label": identity_label,
+            "identity_source": identity_source,
+            "ready": True,
+            "ready_at_ms": ready_at,
+            "server_response": server_response,
+        }
+        if identity_source == "unavailable":
+            result["identity_warning"] = IDENTITY_CONFIGURATION_HINT
+        return json.dumps(result, indent=2)
 
     def wait_for_match_start(
         self,
@@ -2090,11 +2092,10 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
         path for path in context.get("open_rollouts", [])
         if path.is_file()
     ]
-    if open_rollouts:
-        try:
-            return max(open_rollouts, key=lambda path: path.stat().st_mtime_ns)
-        except OSError:
-            return None
+    if len(open_rollouts) == 1:
+        return open_rollouts[0]
+    if len(open_rollouts) > 1:
+        return None
 
     process_started = context.get("started_at")
     process_working_directory = str(context.get("cwd") or "")
@@ -2111,6 +2112,9 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
     now = time.time()
     codex_pid = int(context.get("pid") or 0)
     for rollout_path in rollout_paths:
+        open_pids = process_file_open_pids(rollout_path)
+        if codex_pid not in open_pids:
+            continue
         rollout_started = codex_rollout_started_at(rollout_path)
         start_delta = (
             abs(rollout_started - float(process_started))
@@ -2126,9 +2130,6 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
                 continue
             if now - modified_at > CODEX_RESUMED_SESSION_MAX_AGE_SECONDS:
                 continue
-            open_pids = process_file_open_pids(rollout_path)
-            if open_pids and codex_pid not in open_pids:
-                continue
         metadata = codex_rollout_metadata(rollout_path)
         if metadata["cwd"] != process_working_directory:
             continue
@@ -2136,11 +2137,11 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
             candidates.append((start_delta, rollout_path))
             continue
         resumed_candidates.append((modified_at, rollout_path))
-    if candidates:
-        candidates.sort(key=lambda item: item[0])
+    if len(candidates) == 1:
         return candidates[0][1]
-    if resumed_candidates:
-        resumed_candidates.sort(key=lambda item: item[0], reverse=True)
+    if len(candidates) > 1:
+        return None
+    if len(resumed_candidates) == 1:
         return resumed_candidates[0][1]
     return None
 
@@ -2198,9 +2199,7 @@ def resolve_agent_identity() -> tuple[str, str, str]:
         validate_agent_identity(assistant_name, model_name)
         return assistant_name, model_name, "codex_session"
 
-    raise DoomArenaError(
-        "automatic coding_assistant identity detection failed; reconnect the Doom Arena MCP and retry"
-    )
+    return "Undetected assistant", "Model unavailable", "unavailable"
 
 
 def validate_agent_identity(coding_assistant: Any, model: Any) -> None:
@@ -3561,10 +3560,14 @@ def tool_definitions() -> list[dict[str, Any]]:
             "description": (
                 "Signal that one MCP participant is connected and ready for the duel start barrier. "
                 "Identity is detected automatically from the current local session metadata or trusted "
-                "harness environment. On the first match, choose a funny arena name that a broad "
+                "harness environment; if exact metadata is unavailable, readiness still succeeds with "
+                "an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
+                "DOOM_ARENA_MODEL_IDENTITY in the MCP server environment for an exact non-Codex identity. "
+                "On the first match, choose a funny arena name that a broad "
                 "audience can understand without Doom or gaming knowledge and pass it as agent_name; "
-                "the name must contain at most two words, differ from the opponent's, and a duplicate-name rejection should be "
-                "retried with a completely different name. Later matches reuse it automatically."
+                "the name must contain at most two words and differ from the opponent's. Submit the same "
+                "locked name again on later matches. A duplicate-name rejection should be retried with "
+                "a completely different name."
             ),
             "inputSchema": {
                 "type": "object",
@@ -3585,7 +3588,7 @@ def tool_definitions() -> list[dict[str, Any]]:
                         "pattern": r"^\S+(?:\s+\S+)?$",
                     },
                 },
-                "required": ["participant_id"],
+                "required": ["participant_id", "agent_name"],
                 "additionalProperties": False,
             },
         },

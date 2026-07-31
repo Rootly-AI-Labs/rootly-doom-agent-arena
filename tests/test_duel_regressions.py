@@ -327,8 +327,13 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     round_progress_names = index.split('setText("round-progress-round-label"', 1)[1].split(
         'setText("round-progress-score"', 1
     )[0]
-    assert 'funAgentName(name1, "Player 1")' in round_progress_names
-    assert 'funAgentName(name2, "Player 2")' in round_progress_names
+    round_progress_renderer = index.split(
+        "function renderRoundProgressPopup", 1
+    )[1].split("function loadRoundProgressPopup", 1)[0]
+    assert "var name1 = funAgentName(" in round_progress_renderer
+    assert "var name2 = funAgentName(" in round_progress_renderer
+    assert '"round-progress-name-1",\n                    name1,' in round_progress_names
+    assert '"round-progress-name-2",\n                    name2,' in round_progress_names
     assert ".duel-agent-name.player-1 {" in index
     assert "color: #7ddcff;" in index
     assert ".duel-agent-name.player-2 {" in index
@@ -516,6 +521,45 @@ def test_server_locks_first_match_alias_and_reuses_it_later() -> None:
         )
 
 
+def test_server_accepts_explicit_unavailable_identity_without_blocking_ready() -> None:
+    handler = make_handler()
+
+    identity = handler.update_participant_ready_agent(
+        {
+            "participant_id": "player_1",
+            "agent_name": "Budget Falcon",
+            "coding_assistant": "Undetected assistant",
+            "model": "Model unavailable",
+            "identity_source": "unavailable",
+        }
+    )
+
+    assert identity["agent_name"] == "Budget Falcon"
+    assert identity["agent_label"] == (
+        "Budget Falcon, Undetected assistant, Model unavailable"
+    )
+
+
+def test_restart_duel_session_resets_round_and_alias_lock() -> None:
+    handler = make_handler()
+    handler.server.duel_session_id = "session_restart"
+    handler.server.duel_total_rounds = 5
+    handler.server.duel_current_round = 4
+    handler.server.participant_agent_names = {
+        "player_1": "Budget Falcon",
+        "player_2": "Nacho Sheriff",
+    }
+    handler.server.duel_scenario_history = ["map_a", "map_b"]
+
+    session_id, total_rounds, round_number = handler.restart_duel_session_state(3)
+
+    assert session_id == "session_restart"
+    assert total_rounds == 5
+    assert round_number == 1
+    assert handler.server.participant_agent_names == {}
+    assert handler.server.duel_scenario_history == []
+
+
 def test_server_requires_alias_when_session_has_none() -> None:
     handler = make_handler()
 
@@ -584,7 +628,10 @@ def test_human_decision_feed_stitches_goal_and_reason_without_llm_call() -> None
     assert 'context.textContent = "Latest decision"' in index
     assert "Earlier decisions (" not in index
     assert "duel-decision-history" not in index
-    assert 'node.scrollTop = contentChanged ? 0 : previousScrollTop' in index
+    assert "if (!contentChanged) {" in index
+    assert "return;" in index.split("if (!contentChanged) {", 1)[1].split("}", 1)[0]
+    assert "var previousTechnicalOpen" in index
+    assert "decisionTechnical.open = previousTechnicalOpen" in index
     assert 'quip.className = "duel-decision-quip"' not in index
     assert "stats.inferred_decision_turns.filter" in index
     assert '" · " + friendlyLatency(averageDecisionLatency + "ms") + " avg"' in index

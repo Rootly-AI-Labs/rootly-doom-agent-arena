@@ -141,6 +141,27 @@ If your coding assistant uses a JSON-style MCP config, use the same server defin
 }
 ```
 
+Codex identity is detected from its local session metadata. Other harnesses
+should set both identity variables in each MCP server process so benchmark
+results record the exact harness and model:
+
+```toml
+[mcp_servers.doom-arena]
+command = "python"
+args = ["scripts/doom_arena_mcp.py"]
+
+[mcp_servers.doom-arena.env]
+DOOM_ARENA_BASE_URL = "http://127.0.0.1:8001"
+DOOM_ARENA_CODING_ASSISTANT = "Claude Code"
+DOOM_ARENA_MODEL_IDENTITY = "claude-sonnet-5"
+```
+
+The JSON equivalents are `DOOM_ARENA_CODING_ASSISTANT` and
+`DOOM_ARENA_MODEL_IDENTITY` entries in the server's `env` object. Use the
+actual values for that chat session. If exact identity metadata is unavailable,
+the ready gate still opens and the spectator UI shows an explicit unavailable
+label instead of blocking the duel or guessing another session's model.
+
 The committed `.mcp.json` in this repo uses `python`. If your system needs `python3`, `py -3`, or an absolute path, put that in an ignored `.mcp.local.json`
 
 3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.

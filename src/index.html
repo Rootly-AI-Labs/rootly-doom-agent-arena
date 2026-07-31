@@ -6034,8 +6034,12 @@
                         "\t" + (line.showMcpLatency ? "1" : "0");
                 }).join("\n");
                 var contentChanged = node.dataset.renderKey !== nextRenderKey;
-                var previousScrollTop = node.scrollTop;
+                var previousTechnical = node.querySelector(".duel-decision-technical");
+                var previousTechnicalOpen = !!(previousTechnical && previousTechnical.open);
 
+                if (!contentChanged) {
+                    return;
+                }
                 node.innerHTML = "";
                 var decisions = normalizedLines.filter(function (entry) {
                     return entry.kind === "decision";
@@ -6100,6 +6104,7 @@
                         var decisionTechnicalCopy = document.createElement("div");
                         var decisionTechnicalParts = [];
                         decisionTechnical.className = "duel-decision-technical";
+                        decisionTechnical.open = previousTechnicalOpen;
                         decisionTechnicalCopy.className = "duel-decision-technical-copy";
                         decisionTechnicalSummary.textContent = "Decision details";
                         if (timingParts.length > 0) {
@@ -6123,7 +6128,7 @@
                 }
 
                 node.dataset.renderKey = nextRenderKey;
-                node.scrollTop = contentChanged ? 0 : previousScrollTop;
+                node.scrollTop = 0;
             }
 
             function playerWaitingForCommand(player) {
@@ -6916,10 +6921,10 @@
                     draws: 0,
                     damage1: 0,
                     damage2: 0,
-                    shots1: 0,
-                    shots2: 0,
-                    hits1: 0,
-                    hits2: 0,
+                    decisionMilliseconds1: 0,
+                    decisionMilliseconds2: 0,
+                    decisionCount1: 0,
+                    decisionCount2: 0,
                     streakWinner: "",
                     streak: 0
                 };
@@ -6935,10 +6940,18 @@
                     }
                     totals.damage1 += Math.max(0, benchmarkNumber(round.player_1_damage_dealt, 0));
                     totals.damage2 += Math.max(0, benchmarkNumber(round.player_2_damage_dealt, 0));
-                    totals.shots1 += Math.max(0, benchmarkNumber(round.player_1_shots_fired, 0));
-                    totals.shots2 += Math.max(0, benchmarkNumber(round.player_2_shots_fired, 0));
-                    totals.hits1 += Math.max(0, benchmarkNumber(round.player_1_shots_hit, 0));
-                    totals.hits2 += Math.max(0, benchmarkNumber(round.player_2_shots_hit, 0));
+                    var decisionCount1 = Math.max(0, benchmarkNumber(round.player_1_decision_count, 0));
+                    var decisionCount2 = Math.max(0, benchmarkNumber(round.player_2_decision_count, 0));
+                    totals.decisionMilliseconds1 += Math.max(
+                        0,
+                        benchmarkNumber(round.player_1_decision_avg_ms, 0)
+                    ) * decisionCount1;
+                    totals.decisionMilliseconds2 += Math.max(
+                        0,
+                        benchmarkNumber(round.player_2_decision_avg_ms, 0)
+                    ) * decisionCount2;
+                    totals.decisionCount1 += decisionCount1;
+                    totals.decisionCount2 += decisionCount2;
                 });
 
                 if (latestWinner === "player_1" || latestWinner === "player_2") {
@@ -6953,17 +6966,19 @@
                 return totals;
             }
 
-            function roundProgressAccuracyPercent(hits, shots) {
-                return shots > 0 ? Math.round((hits / shots) * 100) : 0;
-            }
-
             function renderRoundProgressPopup(data, completedRound, totalRounds) {
                 var rounds = Array.isArray(data.rounds) ? data.rounds : [];
                 var totals = roundProgressTotals(rounds);
                 var assistant1 = String(data.coding_assistant_1 || "").trim() || "Coding assistant A";
                 var assistant2 = String(data.coding_assistant_2 || "").trim() || "Coding assistant B";
-                var name1 = benchmarkCompetitorName(assistant1, data.player_1_model, "Coding assistant A");
-                var name2 = benchmarkCompetitorName(assistant2, data.player_2_model, "Coding assistant B");
+                var name1 = funAgentName(
+                    benchmarkCompetitorName(assistant1, data.player_1_model, "Coding assistant A"),
+                    "Player 1"
+                );
+                var name2 = funAgentName(
+                    benchmarkCompetitorName(assistant2, data.player_2_model, "Coding assistant B"),
+                    "Player 2"
+                );
                 var latestRound = rounds[rounds.length - 1] || {};
                 var latestWinnerName = latestRound.winner === "player_1"
                     ? name1
@@ -6974,10 +6989,14 @@
                 var leaderName = "";
                 var lead = Math.abs(totals.wins1 - totals.wins2);
                 var streakName = totals.streakWinner === "player_1" ? name1 : name2;
-                var accuracy1 = roundProgressAccuracyPercent(totals.hits1, totals.shots1);
-                var accuracy2 = roundProgressAccuracyPercent(totals.hits2, totals.shots2);
-                var accuracyName = accuracy1 === accuracy2 ? "" : (accuracy1 > accuracy2 ? name1 : name2);
-                var bestAccuracy = Math.max(accuracy1, accuracy2);
+                var decisionAverage1 = totals.decisionCount1
+                    ? totals.decisionMilliseconds1 / totals.decisionCount1
+                    : 0;
+                var decisionAverage2 = totals.decisionCount2
+                    ? totals.decisionMilliseconds2 / totals.decisionCount2
+                    : 0;
+                var fasterDecisionName = "";
+                var fasterDecisionAverage = 0;
                 var damageLead = Math.abs(totals.damage1 - totals.damage2);
                 var damageName = totals.damage1 === totals.damage2 ? "" : (totals.damage1 > totals.damage2 ? name1 : name2);
                 var progressPercent = totalRounds > 0 ? Math.min(100, (rounds.length / totalRounds) * 100) : 0;
@@ -6988,6 +7007,16 @@
                     leaderName = name1;
                 } else if (totals.wins2 > totals.wins1) {
                     leaderName = name2;
+                }
+                if (decisionAverage1 && decisionAverage2) {
+                    fasterDecisionName = decisionAverage1 < decisionAverage2 ? name1 : name2;
+                    fasterDecisionAverage = Math.min(decisionAverage1, decisionAverage2);
+                } else if (decisionAverage1) {
+                    fasterDecisionName = name1;
+                    fasterDecisionAverage = decisionAverage1;
+                } else if (decisionAverage2) {
+                    fasterDecisionName = name2;
+                    fasterDecisionAverage = decisionAverage2;
                 }
 
                 if (latestWinnerName) {
@@ -7009,10 +7038,10 @@
                 }
 
                 highlights.push({
-                    icon: "🎯",
-                    text: accuracyName
-                        ? accuracyName + " · " + bestAccuracy + "% accuracy"
-                        : "Accuracy tied · " + bestAccuracy + "%"
+                    icon: "⚡",
+                    text: fasterDecisionName
+                        ? fasterDecisionName + " · " + friendlyLatency(formatMillis(fasterDecisionAverage)) + " avg decision"
+                        : "Decision time pending"
                 });
 
                 highlights.push({
@@ -7025,13 +7054,13 @@
                 setText("round-progress-round-label", "Match " + completedRound + " of " + totalRounds + " complete");
                 renderColoredAgentIdentity(
                     "round-progress-name-1",
-                    funAgentName(name1, "Player 1"),
+                    name1,
                     "Player 1",
                     "player_1"
                 );
                 renderColoredAgentIdentity(
                     "round-progress-name-2",
-                    funAgentName(name2, "Player 2"),
+                    name2,
                     "Player 2",
                     "player_2"
                 );

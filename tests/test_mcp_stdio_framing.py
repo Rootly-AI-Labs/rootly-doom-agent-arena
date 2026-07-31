@@ -2,10 +2,29 @@ import io
 from types import SimpleNamespace
 
 import doom_arena_mcp as mcp
+import pytest
 
 
-def _install_stdin(monkeypatch, payload: bytes) -> None:
-    monkeypatch.setattr(mcp.sys, "stdin", SimpleNamespace(buffer=io.BytesIO(payload)))
+class ChunkedStream:
+    def __init__(self, payload: bytes, chunk_size: int = 2):
+        self.stream = io.BytesIO(payload)
+        self.chunk_size = chunk_size
+        self.read_calls = 0
+
+    def readline(self) -> bytes:
+        return self.stream.readline()
+
+    def read(self, size: int = -1) -> bytes:
+        self.read_calls += 1
+        if size < 0:
+            size = self.chunk_size
+        return self.stream.read(min(size, self.chunk_size))
+
+
+def _install_stdin(monkeypatch, payload: bytes, *, chunked: bool = False):
+    stream = ChunkedStream(payload) if chunked else io.BytesIO(payload)
+    monkeypatch.setattr(mcp.sys, "stdin", SimpleNamespace(buffer=stream))
+    return stream
 
 
 def test_read_message_preserves_unicode_in_ndjson(monkeypatch):
@@ -33,9 +52,17 @@ def test_read_message_preserves_unicode_with_content_length(monkeypatch):
         + '"}}}'
     ).encode("utf-8")
     payload = b"Content-Length: " + str(len(body)).encode("ascii") + b"\r\n\r\n" + body
-    _install_stdin(monkeypatch, payload)
+    stream = _install_stdin(monkeypatch, payload, chunked=True)
 
     message = mcp.read_message()
 
     assert message["params"]["arguments"]["plan_note"] == plan_note
     assert mcp.MCP_OUTPUT_FRAMING == "content-length"
+    assert stream.read_calls > 1
+
+
+def test_read_exact_bytes_raises_when_stream_ends_early():
+    stream = ChunkedStream(b"abc", chunk_size=1)
+
+    with pytest.raises(EOFError, match="2 bytes missing"):
+        mcp.read_exact_bytes(stream, 5)

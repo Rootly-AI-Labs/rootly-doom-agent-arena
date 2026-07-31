@@ -264,6 +264,21 @@ def new_duel_session_id() -> str:
     return "session_" + uuid.uuid4().hex[:12]
 
 
+def write_json_atomic(path: Path, payload: Any) -> None:
+    temporary_path = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        temporary_path.write_text(
+            json.dumps(payload, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        temporary_path.replace(path)
+    finally:
+        try:
+            temporary_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def clamp_int(value: Any, low: int, high: int) -> int:
     return max(low, min(high, int(value)))
 
@@ -1564,12 +1579,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         run_dir = self.run_dir()
         run_dir.mkdir(parents=True, exist_ok=True)
         payload = self.build_mcp_stats_payload_locked()
-        (run_dir / "stats.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        write_json_atomic(run_dir / "stats.json", payload)
         analysis = self.build_analysis_summary_locked(payload, run_dir)
-        (run_dir / "analysis_summary.json").write_text(
-            json.dumps(analysis, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        write_json_atomic(run_dir / "analysis_summary.json", analysis)
 
     def build_analysis_summary_locked(self, stats: dict[str, Any], run_dir: Path) -> dict[str, Any]:
         summary = self.read_json_artifact(run_dir / "summary.json")
@@ -2233,9 +2245,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     if summary_file.exists():
                         try:
                             summary_data = json.loads(summary_file.read_text(encoding="utf-8"))
-                            stats_file = round_dir / "stats.json"
-                            if stats_file.exists():
+                        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+                            continue
+                        if not isinstance(summary_data, dict):
+                            continue
+                        stats_file = round_dir / "stats.json"
+                        if stats_file.exists():
+                            try:
                                 stats_data = json.loads(stats_file.read_text(encoding="utf-8"))
+                                if not isinstance(stats_data, dict):
+                                    raise TypeError("stats.json must contain a JSON object")
                                 decision_turns = stats_data.get("inferred_decision_turns", [])
                                 if isinstance(decision_turns, list):
                                     for participant_id in ("player_1", "player_2"):
@@ -2254,9 +2273,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                                             if decision_latencies
                                             else None
                                         )
-                            rounds.append(summary_data)
-                        except Exception:
-                            pass
+                            except (OSError, TypeError, ValueError, json.JSONDecodeError):
+                                pass
+                        rounds.append(summary_data)
 
         with self.server.stats_lock:
             ready_agents = copy.deepcopy(self.server.participant_ready_agents)
@@ -2623,7 +2642,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if participant_id not in PARTICIPANTS:
             raise ValueError("participant_id must be player_1 or player_2")
-        if identity_source not in {"codex_session", "environment"}:
+        if identity_source not in {"codex_session", "environment", "unavailable"}:
             raise DoomArenaError(
                 "participant identity must come from automatic session detection"
             )
@@ -3431,6 +3450,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return random.choice(pool)
         return pool[(round_number - 1) % len(pool)]
 
+    def restart_duel_session_state(
+        self,
+        requested_total_rounds: int,
+    ) -> tuple[str, int, int]:
+        duel_session_id = self.server.duel_session_id
+        total_rounds = self.server.duel_total_rounds or requested_total_rounds
+        self.server.participant_agent_names = {}
+        self.server.duel_scenario_history = []
+        return duel_session_id, total_rounds, 1
+
     def create_duel_session(self) -> None:
         payload = self.read_json_body()
         decision_cadence_ms = int(payload.get("decision_cadence_ms", 750))
@@ -3464,9 +3493,9 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.server.duel_scenario_history = []
 
         if restart_session and self.server.duel_session_id:
-            duel_session_id = self.server.duel_session_id
-            total_rounds = self.server.duel_total_rounds or requested_total_rounds
-            round_number = self.server.duel_current_round or 1
+            duel_session_id, total_rounds, round_number = (
+                self.restart_duel_session_state(requested_total_rounds)
+            )
         elif continue_session and self.server.duel_session_id:
             if not self.match_is_finished():
                 self.write_json(
@@ -3577,6 +3606,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
             enable_weapon_pickups=self.server.enable_weapon_pickups,
+            agent_name=self.server.participant_agent_names.get("player_1", ""),
         )
         player_2_instructions = render_participant_instructions(
             "player_2",
@@ -3593,6 +3623,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             scenario_id=self.server.scenario_id,
             control_mode=self.server.control_mode,
             enable_weapon_pickups=self.server.enable_weapon_pickups,
+            agent_name=self.server.participant_agent_names.get("player_2", ""),
         )
         map_reference = build_map_reference(
             self.server.scenario_id,

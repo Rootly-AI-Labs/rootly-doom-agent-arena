@@ -138,3 +138,49 @@ def test_read_duel_session_results_recovers_identity_from_saved_round(tmp_path, 
     body = json.loads(handler.wfile.getvalue().decode("utf-8"))
     assert body["coding_assistant_1"] == "Codex gpt-5.6-sol low fast"
     assert body["coding_assistant_2"] == "Codex gpt-5.6-sol high fast"
+
+
+@pytest.mark.parametrize("stats_text", ["{", "[]"])
+def test_read_duel_session_results_keeps_round_when_stats_are_invalid(
+    tmp_path,
+    monkeypatch,
+    stats_text,
+):
+    monkeypatch.setattr(server, "RESULTS_ROOT", tmp_path)
+    session_id = "session_invalid_stats"
+    round_dir = tmp_path / session_id / "round_01_runA"
+    round_dir.mkdir(parents=True)
+    (round_dir / "summary.json").write_text(
+        json.dumps({"round": 1, "winner": "player_1"}),
+        encoding="utf-8",
+    )
+    (round_dir / "stats.json").write_text(stats_text, encoding="utf-8")
+
+    handler = make_handler()
+    handler.path = f"/api/arena/duel-session-results?duel_session_id={session_id}"
+    handler.wfile = BytesIO()
+    handler.server.duel_session_id = session_id
+    handler.server.duel_total_rounds = 1
+    handler.server.player_1_model = ""
+    handler.server.player_2_model = ""
+    handler.server.participant_ready_agents = {}
+    handler.send_response = lambda _status: None
+    handler.send_header = lambda _name, _value: None
+    handler.end_headers = lambda: None
+
+    handler.do_GET()
+
+    body = json.loads(handler.wfile.getvalue().decode("utf-8"))
+    assert body["rounds"] == [{"round": 1, "winner": "player_1"}]
+
+
+def test_write_json_atomic_replaces_complete_document(tmp_path):
+    output_path = tmp_path / "stats.json"
+    output_path.write_text('{"old": true}\n', encoding="utf-8")
+
+    server.write_json_atomic(output_path, {"new": "complete"})
+
+    assert json.loads(output_path.read_text(encoding="utf-8")) == {
+        "new": "complete"
+    }
+    assert list(tmp_path.glob(".stats.json.*.tmp")) == []
