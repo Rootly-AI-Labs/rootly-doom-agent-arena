@@ -134,7 +134,8 @@
                     minmax(320px, 0.85fr)
                     minmax(300px, 1fr);
                 grid-template-rows: 94px auto;
-                gap: 10px;
+                column-gap: 10px;
+                row-gap: 56px;
                 align-items: start;
                 align-content: start;
             }
@@ -207,7 +208,7 @@
                     minmax(320px, 0.85fr)
                     minmax(300px, 1fr);
                 column-gap: 10px;
-                row-gap: 20px;
+                row-gap: 56px;
                 transform: translate(-50%, -50%) scale(var(--duel-preview-scale));
                 transform-origin: center center;
             }
@@ -708,15 +709,15 @@
             .duel-play-footer-brand {
                 display: inline-flex;
                 align-items: center;
-                gap: 7px;
+                gap: 10px;
             }
 
             .duel-play-footer-logo {
                 display: block;
-                width: 82px;
+                width: 124px;
                 height: auto;
-                margin: -7px 0;
-                opacity: 0.78;
+                margin: -10px 0;
+                opacity: 0.9;
             }
 
             .duel-tactical-credit {
@@ -779,7 +780,7 @@
                 border-bottom: 1px solid var(--arena-panel-border-strong);
                 color: var(--arena-neutral-300);
                 font-family: var(--arena-title-font) !important;
-                font-size: 42px;
+                font-size: 32px;
                 font-weight: 800;
                 line-height: 0.9;
                 letter-spacing: 0.04em;
@@ -913,7 +914,7 @@
             }
 
             .duel-agent-identity-header {
-                margin-bottom: 10px;
+                margin-bottom: 22px;
                 padding: 5px 4px 10px;
             }
 
@@ -1332,8 +1333,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 14px;
-                margin: 6px 0 16px;
+                gap: 26px;
+                margin: 20px 0 32px;
             }
 
             .duel-versus-provider {
@@ -1360,15 +1361,19 @@
             }
 
             .duel-tactical-vs-label {
-                color: var(--arena-neutral-300);
-                font-family: var(--arena-title-font) !important;
-                font-size: 34px;
-                font-weight: 800;
-                line-height: 1;
-                letter-spacing: 0.02em;
+                color: transparent;
+                background: linear-gradient(180deg, #ffffff 0%, #c9c9c9 30%, #777777 64%, #252525 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                font: 900 clamp(52px, 5.2vw, 76px)/0.8 Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+                letter-spacing: -0.08em;
+                transform: scaleX(1.12) skewX(-4deg);
+                filter: drop-shadow(0 4px 1px rgba(0, 0, 0, 0.78));
+                -webkit-text-stroke: 1px #171717;
                 text-shadow:
-                    0 2px 0 rgba(0, 0, 0, 0.55),
-                    0 0 12px rgba(141, 111, 222, 0.28);
+                    0 -1px 0 rgba(255, 255, 255, 0.72),
+                    0 2px 0 #111111,
+                    0 0 10px rgba(190, 190, 190, 0.3);
             }
 
             #container.duel-layout-active #duel-tactical-panel {
@@ -1737,9 +1742,9 @@
             }
 
             .duel-equipment-strip {
-                min-height: 48px;
+                min-height: 62px;
                 margin: 0 0 8px;
-                padding: 8px 10px;
+                padding: 9px 11px;
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 background: linear-gradient(135deg, #151911, #0e110c);
             }
@@ -1748,8 +1753,8 @@
                 display: flex;
                 align-items: center;
                 flex-wrap: wrap;
-                gap: 7px;
-                min-height: 30px;
+                gap: 9px;
+                min-height: 42px;
             }
 
             .duel-equipment-icon {
@@ -1757,9 +1762,9 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                flex: 0 0 32px;
-                width: 32px;
-                height: 28px;
+                flex: 0 0 48px;
+                width: 48px;
+                height: 42px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
                 border-radius: 4px;
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 4px rgba(0, 0, 0, 0.34);
@@ -1772,8 +1777,8 @@
 
             .duel-equipment-icon.shotgun::before {
                 content: "";
-                width: 24px;
-                height: 8px;
+                width: 36px;
+                height: 12px;
                 background: #e3d7ad;
                 clip-path: polygon(0 20%, 72% 20%, 72% 0, 100% 0, 100% 42%, 75% 42%, 58% 100%, 43% 100%, 53% 42%, 0 42%);
                 filter: drop-shadow(0 1px 0 #090908);
@@ -1794,13 +1799,13 @@
             }
 
             .duel-equipment-icon.health-pack::before {
-                width: 16px;
-                height: 6px;
+                width: 24px;
+                height: 9px;
             }
 
             .duel-equipment-icon.health-pack::after {
-                width: 6px;
-                height: 16px;
+                width: 9px;
+                height: 24px;
             }
 
             .duel-equipment-icon.is-recent-pickup {
@@ -2758,7 +2763,7 @@
 
             .duel-tactical-score-card {
                 width: 52%;
-                margin: 0 auto 12px;
+                margin: 18px auto 24px;
                 border-radius: 10px;
             }
 
@@ -2912,7 +2917,7 @@
                     </div>
                 </div>
             </div>
-            <h1 id="duel-stream-title">AI Fighting</h1>
+            <h1 id="duel-stream-title">AIs Fighting</h1>
             <div id="duel-tactical-panel">
                 <div class="duel-tactical-vs" aria-label="Versus">
                     <span class="duel-model-provider duel-versus-provider player-1" id="player-1-versus-provider" hidden>
@@ -2968,10 +2973,6 @@
                                 <div class="duel-agent-name-line">
                                     <span class="duel-agent-chosen-label">model chosen name</span>
                                     <div class="duel-agent-name-lockup">
-                                        <span class="duel-model-provider" id="player-1-model-provider" hidden>
-                                            <img class="duel-model-provider-logo" alt="" />
-                                            <span class="duel-model-provider-name"></span>
-                                        </span>
                                         <h2 id="player-1-pov-title"><span class="duel-agent-name player-1">Player 1</span></h2>
                                     </div>
                                 </div>
@@ -3028,10 +3029,6 @@
                                     <span class="duel-agent-chosen-label">model chosen name</span>
                                     <div class="duel-agent-name-lockup">
                                         <h2 id="player-2-pov-title"><span class="duel-agent-name player-2">Player 2</span></h2>
-                                        <span class="duel-model-provider" id="player-2-model-provider" hidden>
-                                            <img class="duel-model-provider-logo" alt="" />
-                                            <span class="duel-model-provider-name"></span>
-                                        </span>
                                     </div>
                                 </div>
                                 <div class="duel-agent-opposite">
@@ -4746,7 +4743,6 @@
             function renderModelProvider(prefix, modelName) {
                 var provider = modelProviderFor(modelName);
 
-                renderProviderBadge(document.getElementById(prefix + "-model-provider"), provider);
                 renderProviderBadge(document.getElementById(prefix + "-versus-provider"), provider);
             }
 

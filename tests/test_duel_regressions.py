@@ -267,6 +267,9 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "function renderDuelEquipmentIcons" in index
     assert 'className = "duel-equipment-icon shotgun"' in index
     assert 'className = "duel-equipment-icon health-pack"' in index
+    equipment_icon_css = index.split(".duel-equipment-icon {", 1)[1].split("}", 1)[0]
+    assert "width: 48px;" in equipment_icon_css
+    assert "height: 42px;" in equipment_icon_css
     assert "var DUEL_PICKUP_GLOW_MS = 5000;" in index
     assert "function updateDuelEquipmentPickupGlow" in index
     assert 'icon.classList.add("is-recent-pickup")' in index
@@ -275,11 +278,11 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'class="duel-stat-label">Shotgun</span>' not in index
     assert 'class="duel-stat-label">Health packs</span>' not in index
     assert 'id="duel-tactical-match-progress">1/1</div>' in index
-    assert '<h1 id="duel-stream-title">AI Fighting</h1>' in index
+    assert '<h1 id="duel-stream-title">AIs Fighting</h1>' in index
     stream_title_css = index.split("#container.duel-layout-active #duel-stream-title {", 1)[1].split("}", 1)[0]
     assert "grid-column: 1 / -1;" in stream_title_css
     assert "grid-row: 1;" in stream_title_css
-    assert "font-size: 42px;" in stream_title_css
+    assert "font-size: 32px;" in stream_title_css
     assert "font-weight: 800;" in stream_title_css
     assert "min-height: 94px;" in stream_title_css
     assert "border-bottom: 1px solid var(--arena-panel-border-strong);" in stream_title_css
@@ -288,6 +291,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert '--arena-title-font: "Tourney", "Arial Black", sans-serif;' in index
     duel_layout_css = index.split("#container.duel-layout-active {", 1)[1].split("}", 1)[0]
     assert "grid-template-rows: 94px auto;" in duel_layout_css
+    assert "row-gap: 56px;" in duel_layout_css
     assert "align-content: start;" in duel_layout_css
     tactical_panel_markup = index.split('id="duel-tactical-panel"', 1)[1].split(
         'id="duel-pov-grid"', 1
@@ -306,8 +310,10 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     )
     score_card_css = index.split(".duel-tactical-score-card {", 1)[1].split("}", 1)[0]
     assert "width: 52%;" in score_card_css
-    assert "margin: 0 auto 12px;" in score_card_css
+    assert "margin: 18px auto 24px;" in score_card_css
     assert "border-radius: 10px;" in score_card_css
+    score_meta_card_css = index.split(".duel-tactical-meta-card.score {", 1)[1].split("}", 1)[0]
+    assert "padding-block: 15px;" in score_meta_card_css
     tactical_meta_card_css = index.split(".duel-tactical-meta-card {", 1)[1].split("}", 1)[0]
     assert "text-align: center;" in tactical_meta_card_css
     assert 'id="duel-tactical-elapsed">0s</div>' in index
@@ -328,8 +334,8 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'id="player-1-model-name"' in index
     assert 'id="player-1-harness-name"' in index
     assert 'id="player-2-model-name"' in index
-    assert 'id="player-1-model-provider" hidden' in index
-    assert 'id="player-2-model-provider" hidden' in index
+    assert 'id="player-1-model-provider"' not in index
+    assert 'id="player-2-model-provider"' not in index
     assert "function modelProviderFor(modelName)" in index
     assert "function renderModelProvider(prefix, modelName)" in index
     assert 'renderModelProvider(prefix, identity.model);' in index
@@ -361,8 +367,6 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "flex-direction: column;" in index
     assert player_1_card.index('class="duel-agent-chosen-label"') < player_1_card.index('id="player-1-pov-title"')
     assert player_2_card.index('class="duel-agent-chosen-label"') < player_2_card.index('id="player-2-pov-title"')
-    assert player_1_card.index('id="player-1-model-provider"') < player_1_card.index('id="player-1-pov-title"')
-    assert player_2_card.index('id="player-2-pov-title"') < player_2_card.index('id="player-2-model-provider"')
     provider_badge_css = index.split(".duel-model-provider {", 1)[1].split("}", 1)[0]
     provider_logo_css = index.split(".duel-model-provider-logo {", 1)[1].split("}", 1)[0]
     assert "min-height: 42px;" in provider_badge_css
@@ -384,6 +388,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "#player-1-pov-card .duel-agent-identity-meta {" in index
     assert "#player-2-pov-card .duel-agent-identity-meta {" in index
     identity_header_css = index.split(".duel-agent-identity-header {", 1)[1].split("}", 1)[0]
+    assert "margin-bottom: 22px;" in identity_header_css
     assert "border" not in identity_header_css
     round_progress_names = index.split('setText("round-progress-round-label"', 1)[1].split(
         'setText("round-progress-score"', 1
@@ -410,12 +415,22 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "duel-tactical-legend" not in index
     assert "duel-tactical-swatch" not in index
     assert 'class="duel-tactical-vs" aria-label="Versus"' in index
+    versus_row_css = index.split(".duel-tactical-vs {", 1)[1].split("}", 1)[0]
+    assert "gap: 26px;" in versus_row_css
+    assert "margin: 20px 0 32px;" in versus_row_css
     assert 'id="player-1-versus-provider" hidden' in index
     assert 'id="player-2-versus-provider" hidden' in index
+    assert index.count('class="duel-model-provider duel-versus-provider') == 2
     assert '<span class="duel-tactical-vs-label">VS</span>' in index
+    versus_label_css = index.split(".duel-tactical-vs-label {", 1)[1].split("}", 1)[0]
+    assert "clamp(52px, 5.2vw, 76px)" in versus_label_css
+    assert "linear-gradient(180deg, #ffffff 0%, #c9c9c9 30%, #777777 64%, #252525 100%)" in versus_label_css
+    assert "background-clip: text;" in versus_label_css
+    assert "-webkit-text-stroke: 1px #171717;" in versus_label_css
     assert ".duel-versus-provider.player-1 {" in index
     assert ".duel-versus-provider.player-2 {" in index
     assert "renderProviderBadge(document.getElementById(prefix + \"-versus-provider\"), provider);" in index
+    assert 'prefix + "-model-provider"' not in index
     assert '<span class="player-1">V</span><span class="player-2">S</span>' not in index
     assert "benchmark-score-crown" in index
     assert 'winnerNode.textContent = winningSide ? winningName + " wins" : "Match drawn"' in index
@@ -487,6 +502,8 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'aria-label="Rootly AI Labs"' in tactical_credit
     assert "Built with <strong>Codex</strong>" not in tactical_credit
     assert 'class="duel-play-footer-logo"' in tactical_credit
+    footer_logo_css = index.split(".duel-play-footer-logo {", 1)[1].split("}", 1)[0]
+    assert "width: 124px;" in footer_logo_css
     assert "Built with <strong>Codex</strong>" not in play_footer
     assert 'class="duel-play-footer-logo"' not in play_footer
     assert ">Built by Rootly AI Labs</a>" not in index
@@ -536,7 +553,7 @@ def test_duel_preview_mode_uses_fixture_state_without_starting_doom() -> None:
     preview_frame_css = index.split("html.duel-preview #container.duel-layout-active {", 1)[1].split("}", 1)[0]
     assert "padding: 0 24px;" in preview_frame_css
     assert "column-gap: 10px;" in preview_frame_css
-    assert "row-gap: 20px;" in preview_frame_css
+    assert "row-gap: 56px;" in preview_frame_css
     assert 'scale(var(--duel-preview-scale))' in index
     assert 'window.addEventListener("resize", syncDuelPreviewStreamFrame);' in index
     assert 'document.body.appendChild(controls);' in index
