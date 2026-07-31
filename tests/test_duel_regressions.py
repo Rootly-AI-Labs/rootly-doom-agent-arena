@@ -437,6 +437,25 @@ def test_duel_pov_refresh_loop_recovers_from_individual_render_errors() -> None:
     assert "requestAnimationFrame(refreshDuelPovsOnAnimationFrame)" in index
 
 
+def test_duel_preview_mode_uses_fixture_state_without_starting_doom() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    initializer = index.split("function initializeArenaLauncher()", 1)[1].split(
+        "var Module =", 1
+    )[0]
+
+    assert 'get("duelPreview")' in index
+    assert 'document.documentElement.classList.add("duel-autostart", "duel-preview")' in index
+    assert "function initializeDuelPreview" in index
+    assert "function duelPreviewFixtures" in index
+    assert '["fighting", "finished", "waiting", "disconnected"]' in index
+    assert 'id="duel-tactical-map-image" src="assets/duel_room_layout.svg"' in index
+    assert "image.hidden = false;" in index
+    assert "if (duelPreviewRequestedState)" in initializer
+    preview_branch = initializer.split("if (duelPreviewRequestedState)", 1)[1].split("}", 1)[0]
+    assert "initializeDuelPreview(duelPreviewRequestedState);" in preview_branch
+    assert "return;" in preview_branch
+
+
 def test_duel_autostart_reuses_server_session_without_run_metadata() -> None:
     index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
     function_body = index.split("function startDuelFromExistingRun()", 1)[1].split(

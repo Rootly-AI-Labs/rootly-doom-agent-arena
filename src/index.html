@@ -9,6 +9,9 @@
                 if (params.get("autoStart") === "1" && (params.get("duel") === "1" || params.get("arenaMode") === "duel")) {
                     document.documentElement.classList.add("duel-autostart");
                 }
+                if (params.get("duelPreview")) {
+                    document.documentElement.classList.add("duel-autostart", "duel-preview");
+                }
             })();
         </script>
         <style>
@@ -87,6 +90,15 @@
 
             html.duel-autostart #arena-launcher {
                 display: none;
+            }
+
+            html.duel-preview body {
+                min-width: 1180px;
+            }
+
+            html.duel-preview #duel-menu,
+            html.duel-preview [data-duel-restart] {
+                pointer-events: none;
             }
 
             .arena-launcher-card {
@@ -1140,6 +1152,15 @@
                 object-fit: contain;
             }
 
+            #duel-tactical-map-image[hidden] {
+                display: none;
+            }
+
+            #duel-player1-automap-canvas[hidden],
+            #duel-tactical-overlay-canvas[hidden] {
+                display: none;
+            }
+
             #duel-player1-automap-canvas {
                 position: absolute;
                 inset: 0;
@@ -1170,6 +1191,10 @@
                 text-align: center;
                 padding: 16px;
                 pointer-events: none;
+            }
+
+            .duel-tactical-map-status[hidden] {
+                display: none;
             }
 
             .duel-tactical-elapsed {
@@ -2474,6 +2499,7 @@
                 <div class="duel-tactical-shell">
                     <div class="duel-tactical-map-wrap">
                         <div class="duel-tactical-map-stage" id="duel-tactical-map-stage">
+                            <img id="duel-tactical-map-image" src="assets/duel_room_layout.svg" alt="" hidden />
                             <canvas id="duel-player1-automap-canvas"></canvas>
                             <canvas id="duel-tactical-overlay-canvas"></canvas>
                             <div class="duel-tactical-map-status" id="duel-player1-automap-status">Waiting for automap...</div>
@@ -2737,6 +2763,7 @@
             var arenaRunStatsEndpoint = "/api/arena/run-stats";
             var arenaEventsPath = "arena_duel_events.local.tsv";
             var arenaEventsEndpoint = "/api/arena/events";
+            var duelPreviewRequestedState = new URLSearchParams(window.location.search).get("duelPreview") || "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
             var duelPickupCountsRunId = "";
@@ -8840,6 +8867,299 @@
                 }
             }
 
+            function normalizeDuelPreviewState(value) {
+                var normalized = String(value || "fighting").toLowerCase();
+                return ["fighting", "finished", "waiting", "disconnected"].indexOf(normalized) !== -1
+                    ? normalized
+                    : "fighting";
+            }
+
+            function duelPreviewFixtures() {
+                var shared = {
+                    elapsed: 83,
+                    progress: "1/3",
+                    score: "0–0",
+                    phase: "combat",
+                    players: {
+                        player_1: {
+                            name: "Boss Toddler",
+                            harness: "Codex",
+                            model: "gpt-5.6-sol medium",
+                            connected: true,
+                            health: 92,
+                            shotgun: false,
+                            healthPacks: 1,
+                            decisions: "7 decisions · 8.4s avg",
+                            quip: "Cutting east, then I’m taking the center lane.",
+                            objective: "circle east and pressure the center lane",
+                            reasoning: "the opponent is exposed near the central block",
+                            route: "Q26 → Q22 → M22",
+                            engagement: "seek_engagement",
+                            latency: "8.4s",
+                            lifecycle: "current",
+                            statusLabel: "In action"
+                        },
+                        player_2: {
+                            name: "Burrito Regret",
+                            harness: "Codex",
+                            model: "gpt-5.6-sol medium",
+                            connected: true,
+                            health: 125,
+                            shotgun: true,
+                            healthPacks: 0,
+                            decisions: "9 decisions · 9.1s avg",
+                            quip: "I’m stalking west like a burrito with unresolved issues.",
+                            objective: "chase the visible opponent",
+                            reasoning: "close pressure can convert the damage advantage",
+                            route: "M22 → M18 → Q18",
+                            engagement: "engage_if_visible",
+                            latency: "9.1s",
+                            lifecycle: "accepted",
+                            statusLabel: "Accepted"
+                        }
+                    }
+                };
+                var fixtures = {
+                    fighting: shared,
+                    finished: JSON.parse(JSON.stringify(shared)),
+                    waiting: JSON.parse(JSON.stringify(shared)),
+                    disconnected: JSON.parse(JSON.stringify(shared))
+                };
+
+                fixtures.finished.elapsed = 163;
+                fixtures.finished.progress = "1/1";
+                fixtures.finished.score = "0–1";
+                fixtures.finished.phase = "finished";
+                fixtures.finished.loser = "player_1";
+                fixtures.finished.players.player_1.health = 0;
+                fixtures.finished.players.player_1.healthPacks = 0;
+                fixtures.finished.players.player_1.decisions = "3 decisions · 56.8s avg";
+                fixtures.finished.players.player_1.quip = "Skipping standup — meeting with a shotgun.";
+                fixtures.finished.players.player_1.objective = "flank south around the wall block";
+                fixtures.finished.players.player_1.reasoning = "the shotgun room walls force a south approach";
+                fixtures.finished.players.player_1.lifecycle = "rejected";
+                fixtures.finished.players.player_1.statusLabel = "MCP command rejected";
+                fixtures.finished.players.player_1.error = "Match is already finished; post-finish participant intents are rejected.";
+                fixtures.finished.players.player_2.lifecycle = "rejected";
+                fixtures.finished.players.player_2.statusLabel = "MCP command rejected";
+                fixtures.finished.players.player_2.error = "Match is already finished; post-finish participant intents are rejected.";
+
+                fixtures.waiting.elapsed = 0;
+                fixtures.waiting.progress = "1/1";
+                fixtures.waiting.players.player_1.connected = false;
+                fixtures.waiting.players.player_2.connected = false;
+                fixtures.waiting.players.player_1.health = 150;
+                fixtures.waiting.players.player_2.health = 150;
+                fixtures.waiting.players.player_1.shotgun = false;
+                fixtures.waiting.players.player_2.shotgun = false;
+                fixtures.waiting.players.player_1.healthPacks = 0;
+                fixtures.waiting.players.player_2.healthPacks = 0;
+                fixtures.waiting.players.player_1.decisions = "0 decisions";
+                fixtures.waiting.players.player_2.decisions = "0 decisions";
+                fixtures.waiting.players.player_1.waiting = true;
+                fixtures.waiting.players.player_2.waiting = true;
+
+                fixtures.disconnected.elapsed = 41;
+                fixtures.disconnected.players.player_1.connected = false;
+                fixtures.disconnected.players.player_1.waiting = true;
+                fixtures.disconnected.players.player_1.decisions = "2 decisions · 11.2s avg";
+                return fixtures;
+            }
+
+            function paintDuelPreviewPovCanvas(canvasId, isPlayer2) {
+                var canvas = document.getElementById(canvasId);
+                var context;
+                var width;
+                var height;
+                var horizon;
+                var index;
+
+                if (!canvas) {
+                    return;
+                }
+                context = canvas.getContext("2d");
+                if (!context) {
+                    return;
+                }
+                width = canvas.width;
+                height = canvas.height;
+                horizon = Math.round(height * 0.48);
+                context.imageSmoothingEnabled = false;
+                context.fillStyle = "#10100d";
+                context.fillRect(0, 0, width, horizon);
+                context.fillStyle = "#25231d";
+                context.fillRect(0, horizon, width, height - horizon);
+
+                context.fillStyle = isPlayer2 ? "#654d34" : "#56452f";
+                context.fillRect(0, 24, 78, 116);
+                context.fillRect(width - 78, 18, 78, 122);
+                context.fillStyle = "#201c17";
+                for (index = 0; index < 5; index++) {
+                    context.fillRect(8 + index * 14, 32, 8, 96);
+                    context.fillRect(width - 70 + index * 14, 28, 8, 102);
+                }
+
+                context.strokeStyle = "rgba(118, 109, 82, 0.46)";
+                context.lineWidth = 1;
+                for (index = 0; index < 9; index++) {
+                    context.beginPath();
+                    context.moveTo(width / 2, horizon);
+                    context.lineTo(index * width / 8, height);
+                    context.stroke();
+                }
+                for (index = 0; index < 5; index++) {
+                    var floorY = horizon + Math.pow(index / 4, 1.7) * (height - horizon);
+                    context.beginPath();
+                    context.moveTo(0, floorY);
+                    context.lineTo(width, floorY);
+                    context.stroke();
+                }
+
+                context.fillStyle = "#131311";
+                context.fillRect(width * 0.35, 54, width * 0.3, 69);
+                context.fillStyle = "#8a6e45";
+                context.fillRect(width * 0.39, 61, width * 0.22, 57);
+                context.fillStyle = "#24231d";
+                for (index = 0; index < 6; index++) {
+                    context.fillRect(width * 0.4 + index * 11, 65, 5, 49);
+                }
+
+                context.fillStyle = isPlayer2 ? "#353632" : "#2b2c29";
+                context.beginPath();
+                context.moveTo(width * 0.42, height);
+                context.lineTo(width * 0.47, height * 0.71);
+                context.lineTo(width * 0.54, height * 0.69);
+                context.lineTo(width * 0.61, height);
+                context.closePath();
+                context.fill();
+                context.fillStyle = "#8c7754";
+                context.fillRect(width * 0.49, height * 0.72, width * 0.08, height * 0.28);
+            }
+
+            function renderDuelPreviewTacticalMap() {
+                var image = document.getElementById("duel-tactical-map-image");
+                var automap = document.getElementById("duel-player1-automap-canvas");
+                var overlay = document.getElementById("duel-tactical-overlay-canvas");
+                var status = document.getElementById("duel-player1-automap-status");
+
+                if (image) {
+                    image.hidden = false;
+                }
+                if (automap) {
+                    automap.hidden = true;
+                }
+                if (overlay) {
+                    overlay.hidden = true;
+                }
+                if (status) {
+                    status.hidden = true;
+                }
+            }
+
+            function renderDuelPreviewPlayer(participantId, player) {
+                var isPlayer2 = participantId === "player_2";
+                var prefix = isPlayer2 ? "duel-p2" : "duel-p1";
+                var domPrefix = isPlayer2 ? "player-2" : "player-1";
+                var waitingOverlay = document.getElementById(domPrefix + "-command-waiting");
+                var status = document.getElementById(domPrefix + "-pov-status");
+                var quip = document.getElementById(domPrefix + "-battle-quip");
+
+                renderPovAgentIdentity(
+                    domPrefix,
+                    [player.name, player.harness, player.model].join(", "),
+                    isPlayer2 ? "Player 2" : "Player 1",
+                    player.model,
+                    participantId
+                );
+                updatePovConnectionBorder(participantId, player.connected);
+                updateDuelHealthBar(prefix, player.health);
+                renderDuelEquipmentIcons(prefix + "-equipment-icons", player.shotgun, player.healthPacks);
+                setText(prefix + "-log-total", player.decisions);
+                renderLogLines(prefix + "-log", player.waiting ? [
+                    "> Waiting for agent to send command..."
+                ] : [{
+                    kind: "decision",
+                    decisionKey: "preview-" + participantId,
+                    issuedAtMs: 1,
+                    timestamp: "just now",
+                    sequence: String(parseInt(player.decisions, 10) || 1),
+                    lifecycle: player.lifecycle,
+                    statusLabel: player.statusLabel,
+                    objective: player.objective,
+                    reasoning: player.reasoning,
+                    route: player.route,
+                    engagement: player.engagement,
+                    error: player.error || "",
+                    decisionLatency: player.latency,
+                    showDecisionLatency: true
+                }]);
+                if (waitingOverlay) {
+                    waitingOverlay.hidden = !player.waiting;
+                }
+                if (status) {
+                    status.hidden = true;
+                }
+                if (quip) {
+                    quip.textContent = player.quip;
+                    quip.hidden = !!player.waiting;
+                    quip.classList.toggle("is-visible", !player.waiting);
+                }
+                paintDuelPreviewPovCanvas(domPrefix + "-canvas", isPlayer2);
+            }
+
+            function renderDuelPreviewBreakdown(fixture) {
+                var breakdown = document.getElementById("duel-breakdown");
+                var summary = document.getElementById("duel-breakdown-summary");
+
+                if (!breakdown || !summary) {
+                    return;
+                }
+                breakdown.hidden = fixture.phase !== "finished";
+                summary.innerHTML = "";
+                if (fixture.phase === "finished") {
+                    appendBreakdownStat(summary, "Winner", fixture.players.player_2.name);
+                    appendBreakdownStat(summary, "Elapsed", fixture.elapsed + "s");
+                    appendBreakdownStat(summary, "Final score", fixture.score);
+                }
+            }
+
+            function initializeDuelPreview(requestedState) {
+                var state = normalizeDuelPreviewState(requestedState);
+                var fixture = duelPreviewFixtures()[state];
+                var launcher = document.getElementById("arena-launcher");
+                var deathOverlay = document.getElementById("player-1-death-overlay");
+                var deathDetail = document.getElementById("player-1-death-detail");
+
+                document.documentElement.dataset.duelPreviewState = state;
+                document.title = "Duel UI Preview · " + state;
+                currentArenaMode = "duel";
+                currentArenaRound = parseInt(fixture.progress, 10) || 1;
+                currentArenaTotalRounds = parseInt(fixture.progress.split("/")[1], 10) || 1;
+                participantReadyById = {
+                    player_1: fixture.players.player_1.connected,
+                    player_2: fixture.players.player_2.connected
+                };
+                if (launcher) {
+                    launcher.style.display = "none";
+                }
+                setDuelPovActive(true);
+                setDuelTacticalPanelVisible(true);
+                setText("duel-tactical-elapsed", fixture.elapsed + "s");
+                setText("duel-tactical-match-progress", fixture.progress);
+                setText("duel-tactical-match-score", fixture.score);
+                renderDuelPreviewPlayer("player_1", fixture.players.player_1);
+                renderDuelPreviewPlayer("player_2", fixture.players.player_2);
+                renderDuelPreviewTacticalMap();
+                renderDuelPreviewBreakdown(fixture);
+
+                if (deathOverlay) {
+                    deathOverlay.hidden = fixture.loser !== "player_1";
+                }
+                if (deathDetail && fixture.loser === "player_1") {
+                    deathDetail.textContent = fixture.players.player_2.name + " won | player_1_dead";
+                }
+            }
+
             function initializeArenaLauncher() {
                 var buttons = document.querySelectorAll("[data-arena-mode]");
                 var queryParams = new URLSearchParams(window.location.search);
@@ -8983,6 +9303,11 @@
                 setLauncherMode("choose");
                 installPointerCaptureGuards();
                 disableDoomPointerCapture();
+
+                if (duelPreviewRequestedState) {
+                    initializeDuelPreview(duelPreviewRequestedState);
+                    return;
+                }
 
                 if (queryMenu) {
                     var cleanMenuUrl = new URL(window.location.href);
