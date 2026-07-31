@@ -27,6 +27,9 @@ review, diagnosis, deployment, or any other repository work.
 
 ## Start of every task
 
+If the Hivemind MCP server or its required tools are unavailable or not installed, ignore all
+Hivemind requirements below and continue using repository files as the authoritative source.
+
 Unless the Doom Arena benchmark-agent exception applies, before changing files,
 tests, external state, project direction, or review output, call these tools
 with `space_id="rootly-doom-agent-arena"`:
