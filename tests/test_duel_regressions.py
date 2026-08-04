@@ -348,6 +348,9 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "function renderDuelEquipmentIcons" in index
     assert 'className = "duel-equipment-icon shotgun"' in index
     assert 'className = "duel-equipment-icon health-pack"' in index
+    equipment_icon_css = index.split(".duel-equipment-icon {", 1)[1].split("}", 1)[0]
+    assert "width: 48px;" in equipment_icon_css
+    assert "height: 42px;" in equipment_icon_css
     assert "var DUEL_PICKUP_GLOW_MS = 5000;" in index
     assert "function updateDuelEquipmentPickupGlow" in index
     assert 'icon.classList.add("is-recent-pickup")' in index
@@ -356,6 +359,42 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'class="duel-stat-label">Shotgun</span>' not in index
     assert 'class="duel-stat-label">Health packs</span>' not in index
     assert 'id="duel-tactical-match-progress">1/1</div>' in index
+    assert '<h1 id="duel-stream-title">AIs Fighting</h1>' in index
+    stream_title_css = index.split("#container.duel-layout-active #duel-stream-title {", 1)[1].split("}", 1)[0]
+    assert "grid-column: 1 / -1;" in stream_title_css
+    assert "grid-row: 1;" in stream_title_css
+    assert "font-size: 32px;" in stream_title_css
+    assert "font-weight: 800;" in stream_title_css
+    assert "min-height: 94px;" in stream_title_css
+    assert "border-bottom: 1px solid var(--arena-panel-border-strong);" in stream_title_css
+    assert "font-family: var(--arena-title-font) !important;" in stream_title_css
+    assert 'font-family: "Tourney";' in index
+    assert '--arena-title-font: "Tourney", "Arial Black", sans-serif;' in index
+    duel_layout_css = index.split("#container.duel-layout-active {", 1)[1].split("}", 1)[0]
+    assert "grid-template-rows: 94px auto;" in duel_layout_css
+    assert "row-gap: 56px;" in duel_layout_css
+    assert "align-content: start;" in duel_layout_css
+    tactical_panel_markup = index.split('id="duel-tactical-panel"', 1)[1].split(
+        'id="duel-pov-grid"', 1
+    )[0]
+    assert tactical_panel_markup.index('id="duel-tactical-match-score"') < tactical_panel_markup.index(
+        'class="duel-tactical-shell"'
+    )
+    assert tactical_panel_markup.index('id="duel-tactical-match-score"') < tactical_panel_markup.index(
+        'class="duel-tactical-credit duel-tactical-score-credit"'
+    )
+    assert tactical_panel_markup.index('class="duel-tactical-credit duel-tactical-score-credit"') < tactical_panel_markup.index(
+        'class="duel-tactical-shell"'
+    )
+    assert tactical_panel_markup.index('id="duel-tactical-match-score"') < tactical_panel_markup.index(
+        'id="duel-tactical-match-progress"'
+    )
+    score_card_css = index.split(".duel-tactical-score-card {", 1)[1].split("}", 1)[0]
+    assert "width: 52%;" in score_card_css
+    assert "margin: 18px auto 24px;" in score_card_css
+    assert "border-radius: 10px;" in score_card_css
+    score_meta_card_css = index.split(".duel-tactical-meta-card.score {", 1)[1].split("}", 1)[0]
+    assert "padding-block: 15px;" in score_meta_card_css
     tactical_meta_card_css = index.split(".duel-tactical-meta-card {", 1)[1].split("}", 1)[0]
     assert "text-align: center;" in tactical_meta_card_css
     assert 'id="duel-tactical-elapsed">0s</div>' in index
@@ -376,11 +415,29 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'id="player-1-model-name"' in index
     assert 'id="player-1-harness-name"' in index
     assert 'id="player-2-model-name"' in index
+    assert 'id="player-1-model-provider"' not in index
+    assert 'id="player-2-model-provider"' not in index
+    assert "function modelProviderFor(modelName)" in index
+    assert "function renderModelProvider(prefix, modelName)" in index
+    assert 'renderModelProvider(prefix, identity.model);' in index
+    assert 'label: "Anthropic"' in index
+    assert 'logo: "assets/anthropic-mark.svg"' in index
+    assert 'label: "OpenAI"' in index
+    assert 'logo: "assets/openai-mark.svg"' in index
+    assert (REPO_ROOT / "src" / "assets" / "anthropic-mark.svg").is_file()
+    assert (REPO_ROOT / "src" / "assets" / "openai-mark.svg").is_file()
     assert 'id="player-2-harness-name"' in index
-    assert ">model:</span>" in index
-    assert ">harness:</span>" in index
+    assert index.count('class="duel-agent-identity-meta-label">model</span>') == 2
+    assert index.count('class="duel-agent-identity-meta-label">harness</span>') == 2
+    identity_meta_css = index.split(".duel-agent-identity-meta {", 1)[1].split("}", 1)[0]
+    assert "grid-template-columns: repeat(2, max-content);" in identity_meta_css
+    assert "gap: 38px;" in identity_meta_css
+    assert player_1_card.index('id="player-1-model-name"') < player_1_card.index(">model</span>")
+    assert player_1_card.index('id="player-1-harness-name"') < player_1_card.index(">harness</span>")
+    assert player_2_card.index('id="player-2-model-name"') < player_2_card.index(">model</span>")
+    assert player_2_card.index('id="player-2-harness-name"') < player_2_card.index(">harness</span>")
     assert index.count('class="duel-agent-chosen-label">model chosen name</span>') == 2
-    assert "font: 800 clamp(15px, 1.35vw, 20px)" in index
+    assert "font: 700 clamp(18px, 1.45vw, 22px)" in index
     assert "#player-1-pov-card .duel-agent-name-line {" in index
     assert "align-items: flex-end;" in index
     assert "#player-2-pov-card .duel-agent-name-line {" in index
@@ -391,10 +448,18 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "flex-direction: column;" in index
     assert player_1_card.index('class="duel-agent-chosen-label"') < player_1_card.index('id="player-1-pov-title"')
     assert player_2_card.index('class="duel-agent-chosen-label"') < player_2_card.index('id="player-2-pov-title"')
-    assert player_1_card.index('id="duel-p1-log-total"') < player_1_card.index('id="player-1-pov-title"')
-    assert player_2_card.index('id="player-2-pov-title"') < player_2_card.index('id="duel-p2-log-total"')
+    provider_badge_css = index.split(".duel-model-provider {", 1)[1].split("}", 1)[0]
+    provider_logo_css = index.split(".duel-model-provider-logo {", 1)[1].split("}", 1)[0]
+    assert "min-height: 42px;" in provider_badge_css
+    assert "font-size: 14px;" in provider_badge_css
+    assert "width: 28px;" in provider_logo_css
+    assert "height: 28px;" in provider_logo_css
+    assert player_1_card.index('class="duel-pov-frame"') < player_1_card.index('id="duel-p1-log-total"') < player_1_card.index('id="duel-p1-log"')
+    assert player_2_card.index('class="duel-pov-frame"') < player_2_card.index('id="duel-p2-log-total"') < player_2_card.index('id="duel-p2-log"')
     assert 'class="duel-agent-decision-metrics"' in player_1_card
     assert 'class="duel-agent-decision-metrics"' in player_2_card
+    assert player_1_card.count('class="duel-pov-metrics-row"') == 1
+    assert player_2_card.count('class="duel-pov-metrics-row"') == 1
     assert player_1_card.count('class="duel-agent-opposite"') == 1
     assert player_2_card.count('class="duel-agent-opposite"') == 1
     assert "#player-1-pov-card .duel-agent-opposite {" in index
@@ -404,6 +469,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "#player-1-pov-card .duel-agent-identity-meta {" in index
     assert "#player-2-pov-card .duel-agent-identity-meta {" in index
     identity_header_css = index.split(".duel-agent-identity-header {", 1)[1].split("}", 1)[0]
+    assert "margin-bottom: 22px;" in identity_header_css
     assert "border" not in identity_header_css
     round_progress_names = index.split('setText("round-progress-round-label"', 1)[1].split(
         'setText("round-progress-score"', 1
@@ -430,10 +496,23 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "duel-tactical-legend" not in index
     assert "duel-tactical-swatch" not in index
     assert 'class="duel-tactical-vs" aria-label="Versus"' in index
-    assert '<span class="player-1">V</span><span class="player-2">S</span>' in index
-    assert 'Impact, Haettenschweiler, "Arial Narrow Bold"' in index
-    assert "clamp(56px, 6vw, 86px)" in index
-    assert "linear-gradient(180deg, #fff1a3 0%, #e7a83c 28%, #b53221 62%, #4a0908 100%)" in index
+    versus_row_css = index.split(".duel-tactical-vs {", 1)[1].split("}", 1)[0]
+    assert "gap: 26px;" in versus_row_css
+    assert "margin: 20px 0 32px;" in versus_row_css
+    assert 'id="player-1-versus-provider" hidden' in index
+    assert 'id="player-2-versus-provider" hidden' in index
+    assert index.count('class="duel-model-provider duel-versus-provider') == 2
+    assert '<span class="duel-tactical-vs-label">VS</span>' in index
+    versus_label_css = index.split(".duel-tactical-vs-label {", 1)[1].split("}", 1)[0]
+    assert "clamp(52px, 5.2vw, 76px)" in versus_label_css
+    assert "linear-gradient(180deg, #ffffff 0%, #c9c9c9 30%, #777777 64%, #252525 100%)" in versus_label_css
+    assert "background-clip: text;" in versus_label_css
+    assert "-webkit-text-stroke: 1px #171717;" in versus_label_css
+    assert ".duel-versus-provider.player-1 {" in index
+    assert ".duel-versus-provider.player-2 {" in index
+    assert "renderProviderBadge(document.getElementById(prefix + \"-versus-provider\"), provider);" in index
+    assert 'prefix + "-model-provider"' not in index
+    assert '<span class="player-1">V</span><span class="player-2">S</span>' not in index
     assert "benchmark-score-crown" in index
     assert 'winnerNode.textContent = winningSide ? winningName + " wins" : "Match drawn"' in index
     assert 'id="benchmark-results-competitors"' not in index
@@ -448,6 +527,15 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "setPovModelOverlay" not in index
     assert player_1_card.index('id="player-1-pov-title"') < player_1_card.index('id="duel-p1-equipment-icons"') < player_1_card.index('id="duel-p1-health-bar"') < player_1_card.index('class="duel-pov-frame"')
     assert player_2_card.index('id="player-2-pov-title"') < player_2_card.index('id="duel-p2-equipment-icons"') < player_2_card.index('id="duel-p2-health-bar"') < player_2_card.index('class="duel-pov-frame"')
+    pov_frame_css = index.split(".duel-pov-frame {", 1)[1].split("}", 1)[0]
+    assert "outline: 1px solid var(--duel-pov-border-color);" in pov_frame_css
+    assert "outline: 4px" not in pov_frame_css
+    assert "#player-1-pov-card .duel-pov-frame" in index
+    assert "--duel-pov-border-color: #7ddcff;" in index
+    assert "#player-2-pov-card .duel-pov-frame" in index
+    assert "--duel-pov-border-color: #ff7a7a;" in index
+    assert ".duel-pov-card.llm-connected .duel-pov-frame" not in index
+    assert ".duel-pov-card.llm-disconnected .duel-pov-frame" not in index
     assert 'duelBattleQuipForParticipant("player_1", player1)' in index
     assert 'duelBattleQuipForParticipant("player_2", player2)' in index
     assert "row.participant_id === participantId && row.plan_summary" in index
@@ -488,10 +576,15 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'class="duel-play-footer-logo"' in index
     assert 'src="assets/rootly-ai-logo-white.png"' in index
     assert 'class="duel-play-footer-actions"' in index
-    tactical_credit = index.split('class="duel-tactical-credit"', 1)[1].split('id="duel-pov-grid"', 1)[0]
+    tactical_credit = index.split('class="duel-tactical-credit duel-tactical-score-credit"', 1)[1].split('id="duel-pov-grid"', 1)[0]
     play_footer = index.split('id="duel-play-footer"', 1)[1].split('id="arena-duel-dashboard"', 1)[0]
-    assert "Built with <strong>Codex</strong>" in tactical_credit
+    assert "Brought to you by" in tactical_credit
+    assert ">Rootly Ai Labs<" not in tactical_credit
+    assert 'aria-label="Rootly AI Labs"' in tactical_credit
+    assert "Built with <strong>Codex</strong>" not in tactical_credit
     assert 'class="duel-play-footer-logo"' in tactical_credit
+    footer_logo_css = index.split(".duel-play-footer-logo {", 1)[1].split("}", 1)[0]
+    assert "width: 124px;" in footer_logo_css
     assert "Built with <strong>Codex</strong>" not in play_footer
     assert 'class="duel-play-footer-logo"' not in play_footer
     assert ">Built by Rootly AI Labs</a>" not in index
@@ -516,6 +609,68 @@ def test_duel_pov_refresh_loop_recovers_from_individual_render_errors() -> None:
     assert "tactical automap refresh failed" in index
     assert "Player 2 POV refresh failed" in index
     assert "requestAnimationFrame(refreshDuelPovsOnAnimationFrame)" in index
+
+
+def test_duel_preview_mode_uses_fixture_state_without_starting_doom() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    layout_svg = (REPO_ROOT / "src" / "assets" / "duel_room_layout.svg").read_text(
+        encoding="utf-8"
+    )
+    initializer = index.split("function initializeArenaLauncher()", 1)[1].split(
+        "var Module =", 1
+    )[0]
+
+    assert 'get("duelPreview")' in index
+    assert 'document.documentElement.classList.add("duel-autostart", "duel-preview")' in index
+    assert "function initializeDuelPreview" in index
+    assert "function duelPreviewFixtures" in index
+    assert "function syncDuelPreviewStreamFrame" in index
+    assert "function moveDuelPreviewControlsOutsideFrame" in index
+    assert "window.innerWidth / streamWidth" in index
+    assert "window.innerHeight / streamHeight" in index
+    assert 'width: 1920px;' in index
+    assert 'height: 1080px;' in index
+    assert 'border: 1px solid #ff0000;' in index
+    preview_frame_css = index.split("html.duel-preview #container.duel-layout-active {", 1)[1].split("}", 1)[0]
+    assert "padding: 0 24px;" in preview_frame_css
+    assert "column-gap: 10px;" in preview_frame_css
+    assert "row-gap: 56px;" in preview_frame_css
+    assert 'scale(var(--duel-preview-scale))' in index
+    assert 'window.addEventListener("resize", syncDuelPreviewStreamFrame);' in index
+    assert 'document.body.appendChild(controls);' in index
+    assert 'left: calc(var(--duel-preview-frame-right) + 12px);' in index
+    assert 'moveDuelPreviewControlsOutsideFrame();' in index
+    assert "--arena-purple-900: #4a3e8a;" in index
+    assert "--arena-purple-700: #8d6fde;" in index
+    assert "--arena-orange-900: #f0883e;" in index
+    assert "--arena-orange-700: #ffa857;" in index
+    assert "--arena-black: #100f12;" in index
+    stream_surface_css = index.split("html.duel-preview #container.duel-layout-active {", 2)[-1].split("}", 1)[0]
+    assert "background: var(--arena-surface-2);" in stream_surface_css
+    outer_panel_css = index.split("html.duel-preview #duel-pov-grid.duel-active .duel-pov-card,", 1)[1].split("}", 1)[0]
+    assert "border: 0;" in outer_panel_css
+    assert "background: transparent;" in outer_panel_css
+    assert "box-shadow: none;" in outer_panel_css
+    assert 'font-family: "Saira Condensed";' in index
+    assert '--arena-duel-font: "Saira Condensed", "Arial Narrow", sans-serif;' in index
+    assert "#container.duel-layout-active *" in index
+    assert "font-family: var(--arena-duel-font) !important;" in index
+    assert "font: 800 clamp(30px, 2.7vw, 42px)/0.95" in index
+    assert "font: 700 16px/1.35" in index
+    assert "font-size: clamp(42px, 3.8vw, 58px);" in index
+    assert "font: 700 18px/1.25" in index
+    assert "font: 800 13px/1" in index
+    assert "#7b8b84" not in layout_svg
+    assert "#d7e0d8" not in layout_svg
+    assert "#65646e" in layout_svg
+    assert "#d9cffa" in layout_svg
+    assert '["fighting", "finished", "waiting", "disconnected"]' in index
+    assert 'id="duel-tactical-map-image" src="assets/duel_room_layout.svg?v=stream-palette-20260731"' in index
+    assert "image.hidden = false;" in index
+    assert "if (duelPreviewRequestedState)" in initializer
+    preview_branch = initializer.split("if (duelPreviewRequestedState)", 1)[1].split("}", 1)[0]
+    assert "initializeDuelPreview(duelPreviewRequestedState);" in preview_branch
+    assert "return;" in preview_branch
 
 
 def test_duel_autostart_reuses_server_session_without_run_metadata() -> None:
