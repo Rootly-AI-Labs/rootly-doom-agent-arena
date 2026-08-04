@@ -30,6 +30,12 @@ from doom_arena_duel_prompts import (
     instructions as render_participant_instructions,
     write_controller_tokens,
 )
+from doom_arena_automation import (
+    RUNNER as AUTOMATION_RUNNER,
+    AutomationError,
+    normalize_config as normalize_automation_config,
+    preflight as automation_preflight,
+)
 from doom_arena_map_blueprints import load_geometry_blueprint
 from doom_arena_mcp import (
     DoomArenaClient,
@@ -428,6 +434,63 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(content)
 
+    def serve_automation_dashboard(self) -> None:
+        try:
+            content = (SRC_DIR / "automation.html").read_bytes()
+        except OSError:
+            self.send_error(HTTPStatus.NOT_FOUND, "automation.html not found")
+            return
+
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(content)
+
+    def start_automation_run(self) -> None:
+        payload = self.read_json_body()
+        try:
+            config = normalize_automation_config(payload)
+            started = AUTOMATION_RUNNER.start(config)
+        except AutomationError as error:
+            self.write_json(HTTPStatus.BAD_REQUEST, {"ok": False, "error": str(error)})
+            return
+        except Exception as error:  # pragma: no cover - defensive
+            self.log_error("automation start failed: %s: %s", error.__class__.__name__, error)
+            self.write_json(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                {"ok": False, "error": f"{error.__class__.__name__}: {error}"},
+            )
+            return
+
+        self.write_json(HTTPStatus.OK, {"ok": True, **started})
+
+    def stop_automation_run(self) -> None:
+        try:
+            result = AUTOMATION_RUNNER.stop()
+        except Exception as error:  # pragma: no cover - defensive
+            self.log_error("automation stop failed: %s: %s", error.__class__.__name__, error)
+            self.write_json(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                {"ok": False, "error": f"{error.__class__.__name__}: {error}"},
+            )
+            return
+        self.write_json(HTTPStatus.OK, {"ok": True, **result})
+
+    def read_automation_status(self) -> None:
+        query = parse_qs(urlparse(self.path).query)
+        agent_cli = (query.get("agent_cli") or [""])[0].strip().lower()
+        status = AUTOMATION_RUNNER.status()
+        # While a run is active its own CLI is what matters, not the dropdown.
+        active_cli = str((status.get("config") or {}).get("agent_cli") or "")
+        if status.get("running") and active_cli:
+            agent_cli = active_cli
+        checks = (
+            automation_preflight(agent_cli) if agent_cli else automation_preflight()
+        )
+        self.write_json(HTTPStatus.OK, {"ok": True, "preflight": checks, **status})
+
     def do_POST(self) -> None:
         path = self.path.split("?", 1)[0]
 
@@ -493,6 +556,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             self.write_file(ARENA_RUN_METADATA_TSV, "arena_run_metadata.local.tsv")
             return
 
+        if path == "/api/arena/automation/start":
+            self.start_automation_run()
+            return
+
+        if path == "/api/arena/automation/stop":
+            self.stop_automation_run()
+            return
+
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_GET(self) -> None:
@@ -500,6 +571,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if path in {"/", "/index.html", "/websockets-doom.html"}:
             self.serve_arena_index()
+            return
+
+        if path in {"/automation", "/automation.html"}:
+            self.serve_automation_dashboard()
+            return
+
+        if path == "/api/arena/automation/status":
+            self.read_automation_status()
             return
 
         if path == "/api/arena/state":

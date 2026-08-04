@@ -8,11 +8,13 @@ from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
+import shutil
 import signal
 import subprocess
 import sys
 import time
 from typing import Any
+import uuid
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -23,15 +25,51 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 HARNESS_DIR = Path(__file__).resolve().parent
 MCP_SERVER = REPO_ROOT / "scripts" / "doom_arena_mcp.py"
 START_DOCKER = REPO_ROOT / "scripts" / "start-docker.sh"
+START_DOCKER_PS1 = REPO_ROOT / "scripts" / "start-docker.ps1"
+
+IS_WINDOWS = sys.platform == "win32"
 
 BASE_URL = "http://127.0.0.1:8001"
 PLAYER_1_MODEL = "gpt-5.5"
 PLAYER_2_MODEL = "gpt-5.4"
 MATCHES = 10
+SCENARIO_ID = "duel_e1m8_blind_spawn"
+AGENT_CLI = "codex"
+# Empty means "pick the default for the selected CLI": stdio for Claude Code
+# (--strict-mcp-config isolates it from the user's own MCP config, and stdio is
+# the only transport that can carry the identity env vars), http for Codex.
+MCP_TRANSPORT = ""
+BYPASS_PERMISSIONS = True
+ENABLE_WEAPON_PICKUPS = True
+KEEP_BACKEND = False
+OPEN_BROWSER = True
 ROUND_TIMEOUT_SECONDS = 180
 READY_TIMEOUT_SECONDS = 180
 POLL_SECONDS = 2.0
 MAX_AGENT_RESTARTS = 20
+
+
+def child_process_kwargs() -> dict[str, Any]:
+    """Isolate each agent in its own process group so it can be killed as a tree.
+
+    `start_new_session` is POSIX-only and raises ValueError on Windows, so the
+    Windows path uses CREATE_NEW_PROCESS_GROUP instead.
+    """
+    if IS_WINDOWS:
+        return {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    return {"start_new_session": True}
+
+
+def kill_process_tree(process: "subprocess.Popen[str]") -> None:
+    if IS_WINDOWS:
+        subprocess.run(
+            ["taskkill", "/T", "/F", "/PID", str(process.pid)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        return
+    os.killpg(process.pid, signal.SIGTERM)
 
 
 @dataclass
@@ -104,18 +142,28 @@ def ensure_backend() -> None:
         raise RuntimeError("Docker is not ready. Start Docker Desktop and run this script again.")
 
     print("Building and starting Doom Arena ...")
-    subprocess.run(
-        [
+    if IS_WINDOWS:
+        start_command = [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(START_DOCKER_PS1),
+            "-NoOpenBrowser",
+            "-TimeoutSeconds",
+            "90",
+        ]
+    else:
+        start_command = [
             "bash",
             str(START_DOCKER),
             "start",
             "--no-open-browser",
             "--timeout-seconds",
             "90",
-        ],
-        cwd=REPO_ROOT,
-        check=True,
-    )
+        ]
+    subprocess.run(start_command, cwd=REPO_ROOT, check=True)
     if not backend_is_healthy():
         raise RuntimeError(f"Doom Arena did not become healthy at {BASE_URL}")
 
@@ -124,7 +172,7 @@ def create_session() -> dict[str, Any]:
     payload = {
         "arena_mode": "duel",
         "control_mode": "hierarchical",
-        "scenario_id": "duel_e1m8_blind_spawn",
+        "scenario_id": SCENARIO_ID,
         "player_1_model": PLAYER_1_MODEL,
         "player_2_model": PLAYER_2_MODEL,
         "rounds": MATCHES,
@@ -138,7 +186,7 @@ def create_session() -> dict[str, Any]:
         "rotate_all_maps": False,
         "recap_window": 1,
         "enable_map_blueprint": False,
-        "enable_weapon_pickups": True,
+        "enable_weapon_pickups": ENABLE_WEAPON_PICKUPS,
         "mirror_pair": False,
         "enforce_controller_tokens": True,
         "continue_session": False,
@@ -154,7 +202,122 @@ def create_session() -> dict[str, Any]:
     return session
 
 
-def codex_command(model: str, prompt: str, thread_id: str = "") -> list[str]:
+def agent_executable() -> str:
+    """Resolve the CLI that drives the agents.
+
+    On Windows the npm shims are `codex.CMD` / `claude.CMD`; CreateProcess
+    cannot find the extensionless name, so always use the resolved path.
+    """
+    name = "claude" if AGENT_CLI == "claude" else "codex"
+    resolved = shutil.which(name)
+    if not resolved:
+        raise RuntimeError(
+            f"The {name} CLI was not found on PATH. Install it and confirm "
+            f"`{name} --version` works before running the benchmark."
+        )
+    return resolved
+
+
+def resolved_mcp_transport() -> str:
+    if MCP_TRANSPORT:
+        return MCP_TRANSPORT
+    return "stdio" if AGENT_CLI == "claude" else "http"
+
+
+def codex_executable() -> str:
+    """Resolve the Codex CLI.
+
+    On Windows the npm shim is `codex.CMD`; CreateProcess cannot find the
+    extensionless `codex`, so always use the fully resolved path.
+    """
+    resolved = shutil.which("codex")
+    if not resolved:
+        raise RuntimeError(
+            "The Codex CLI was not found on PATH. Install it and confirm "
+            "`codex --version` works before running the benchmark."
+        )
+    return resolved
+
+
+def mcp_python_executable() -> str:
+    """Interpreter Codex should use to run the Doom Arena MCP server.
+
+    `python3` does not exist on a standard Windows install, so fall back to
+    the interpreter running this harness.
+    """
+    return shutil.which("python3") or sys.executable
+
+
+def claude_mcp_config(model: str) -> str:
+    """Inline MCP server definition passed to `claude --mcp-config`.
+
+    Paired with --strict-mcp-config so the user's own doom-arena entry in
+    ~/.claude.json is ignored; the benchmark always talks to this run's server.
+    """
+    if resolved_mcp_transport() == "http":
+        server: dict[str, Any] = {"type": "http", "url": f"{BASE_URL}/mcp"}
+    else:
+        server = {
+            "type": "stdio",
+            "command": mcp_python_executable(),
+            "args": [str(MCP_SERVER)],
+            "env": {
+                "DOOM_ARENA_BASE_URL": BASE_URL,
+                "DOOM_ARENA_CODING_ASSISTANT": "Claude Code",
+                "DOOM_ARENA_MODEL_IDENTITY": model,
+            },
+        }
+    return json.dumps({"mcpServers": {"doom-arena": server}}, separators=(",", ":"))
+
+
+def claude_command(model: str, prompt: str, session_id: str, resume: bool) -> list[str]:
+    command = [
+        agent_executable(),
+        "--print",
+        "--model",
+        model,
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--mcp-config",
+        claude_mcp_config(model),
+        "--strict-mcp-config",
+        "--add-dir",
+        str(REPO_ROOT),
+    ]
+    if BYPASS_PERMISSIONS:
+        command.append("--dangerously-skip-permissions")
+    if resume:
+        command.extend(["--resume", session_id])
+    else:
+        # Pre-assigning the session id means a restart can resume without
+        # scraping the id back out of the event log.
+        command.extend(["--session-id", session_id])
+    # The prompt is deliberately NOT appended as an argv element. On Windows the
+    # npm shim runs through cmd.exe, which truncates an argument at its first
+    # newline, so a multi-line prompt would arrive as just its heading. It is
+    # written to stdin by launch_agent instead.
+    return command
+
+
+def mcp_transport_config(model: str) -> list[str]:
+    """Build the `--config` overrides that point Codex at the Doom Arena MCP.
+
+    HTTP is the default because a `[mcp_servers.doom-arena]` entry in the
+    user's ~/.codex/config.toml commonly already sets `url`. Codex rejects a
+    server that carries both `url` and `command` ("url is not supported for
+    stdio"), so injecting stdio args on top of such an entry fails to load.
+    """
+    if resolved_mcp_transport() == "http":
+        return [
+            "--config",
+            f'mcp_servers.doom-arena.url="{BASE_URL}/mcp"',
+            "--config",
+            "mcp_servers.doom-arena.startup_timeout_sec=10.0",
+            "--config",
+            "mcp_servers.doom-arena.tool_timeout_sec=60.0",
+        ]
+
     mcp_args = json.dumps([str(MCP_SERVER)], separators=(",", ":"))
     mcp_env = (
         '{DOOM_ARENA_BASE_URL="'
@@ -163,8 +326,20 @@ def codex_command(model: str, prompt: str, thread_id: str = "") -> list[str]:
         + model
         + '"}'
     )
+    mcp_python = json.dumps(mcp_python_executable())
+    return [
+        "--config",
+        f"mcp_servers.doom-arena.command={mcp_python}",
+        "--config",
+        f"mcp_servers.doom-arena.args={mcp_args}",
+        "--config",
+        f"mcp_servers.doom-arena.env={mcp_env}",
+    ]
+
+
+def codex_command(model: str, prompt: str, thread_id: str = "") -> list[str]:
     command = [
-        "codex",
+        codex_executable(),
         "--model",
         model,
         "--sandbox",
@@ -173,12 +348,7 @@ def codex_command(model: str, prompt: str, thread_id: str = "") -> list[str]:
         "never",
         "--cd",
         str(REPO_ROOT),
-        "--config",
-        'mcp_servers.doom-arena.command="python3"',
-        "--config",
-        f"mcp_servers.doom-arena.args={mcp_args}",
-        "--config",
-        f"mcp_servers.doom-arena.env={mcp_env}",
+        *mcp_transport_config(model),
         "--config",
         'mcp_servers.doom-arena.default_tools_approval_mode="approve"',
         "exec",
@@ -204,20 +374,40 @@ def launch_agent(
         "the browser advances the arena, then continue controlling the same participant. "
         "Do not produce your final response or disconnect until has_next_round is false."
     )
+    if AGENT_CLI == "claude":
+        # Claude Code accepts a caller-supplied session id, so the id is known
+        # before launch instead of being recovered from the event stream.
+        session_id = thread_id or str(uuid.uuid4())
+        command = claude_command(model, prompt, session_id, resume=bool(thread_id))
+    else:
+        session_id = thread_id
+        command = codex_command(model, prompt, thread_id)
+
     suffix = "" if restart_count == 0 else f".restart_{restart_count:02d}"
     log_path = HARNESS_DIR / f"{participant_id}_{model}{suffix}.jsonl"
     log_file = log_path.open("w", encoding="utf-8")
+    prompt_via_stdin = AGENT_CLI == "claude"
     process = subprocess.Popen(
-        codex_command(model, prompt, thread_id),
+        command,
         cwd=REPO_ROOT,
         text=True,
-        stdin=subprocess.DEVNULL,
+        stdin=subprocess.PIPE if prompt_via_stdin else subprocess.DEVNULL,
         stdout=log_file,
         stderr=subprocess.STDOUT,
-        start_new_session=True,
+        **child_process_kwargs(),
     )
+    if prompt_via_stdin and process.stdin is not None:
+        # stdout is a file, not a pipe, so writing the whole prompt cannot
+        # deadlock against an unread output buffer.
+        try:
+            process.stdin.write(prompt)
+            process.stdin.close()
+        except OSError as error:
+            raise RuntimeError(
+                f"Could not send the prompt to {participant_id}: {error}"
+            ) from error
     action = "Launched" if restart_count == 0 else f"Resumed (turn {restart_count + 1})"
-    print(f"{action} {participant_id} with {model} (PID {process.pid})")
+    print(f"{action} {participant_id} with {model} via {AGENT_CLI} (PID {process.pid})")
     return AgentProcess(
         participant_id,
         model,
@@ -225,13 +415,18 @@ def launch_agent(
         log_path,
         log_file,
         restart_count,
-        thread_id,
+        session_id,
     )
 
 
 def read_thread_id(agent: AgentProcess) -> str:
     if agent.thread_id:
         return agent.thread_id
+    if AGENT_CLI == "claude":
+        raise RuntimeError(
+            f"No Claude session id recorded for {agent.participant_id}; "
+            f"cannot resume its context. Log: {agent.log_path}"
+        )
     agent.log_file.flush()
     try:
         with agent.log_path.open("r", encoding="utf-8") as log:
@@ -319,6 +514,9 @@ def wait_for_agents_ready(agents: list[AgentProcess]) -> dict[str, Any]:
 def open_game() -> str:
     query = urlencode({"duel": "1", "autoStart": "1"})
     url = f"{BASE_URL}/?{query}"
+    if not OPEN_BROWSER:
+        print(f"Browser auto-open disabled. Open the game tab manually: {url}")
+        return url
     print(f"Starting the browser game: {url}")
     if not webbrowser.open(url, new=2):
         raise RuntimeError(f"Could not open a browser. Open this URL manually: {url}")
@@ -359,7 +557,7 @@ def monitor_session(session_id: str, agents: list[AgentProcess]) -> dict[str, An
 def reset_arena() -> None:
     payload = {
         "arena_mode": "duel",
-        "scenario_id": "duel_e1m8_blind_spawn",
+        "scenario_id": SCENARIO_ID,
         "rounds": MATCHES,
         "clear_duel_session": True,
     }
@@ -370,24 +568,37 @@ def reset_arena() -> None:
 
 
 def stop_backend() -> None:
-    subprocess.run(
-        ["bash", str(START_DOCKER), "stop"],
-        cwd=REPO_ROOT,
-        check=True,
-    )
+    if KEEP_BACKEND:
+        print("Leaving the arena backend running (--keep-backend).")
+        return
+    if IS_WINDOWS:
+        subprocess.run(
+            ["docker", "compose", "-f", "docker/docker-compose.yml", "down"],
+            cwd=REPO_ROOT,
+            check=True,
+        )
+    else:
+        subprocess.run(
+            ["bash", str(START_DOCKER), "stop"],
+            cwd=REPO_ROOT,
+            check=True,
+        )
     print("Docker backend stopped; localhost port 8001 is now free.")
 
 
 def stop_agent(agent: AgentProcess) -> None:
     if agent.process.poll() is None:
         try:
-            os.killpg(agent.process.pid, signal.SIGTERM)
+            kill_process_tree(agent.process)
             agent.process.wait(timeout=8)
         except (ProcessLookupError, subprocess.TimeoutExpired):
             if agent.process.poll() is None:
                 try:
-                    os.killpg(agent.process.pid, signal.SIGKILL)
-                except ProcessLookupError:
+                    if IS_WINDOWS:
+                        agent.process.kill()
+                    else:
+                        os.killpg(agent.process.pid, signal.SIGKILL)
+                except (ProcessLookupError, OSError):
                     pass
                 agent.process.wait()
     agent.log_file.close()
@@ -398,13 +609,103 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--prepare-only",
         action="store_true",
-        help="Create the 10-match session and prompts, but do not launch agents or the game.",
+        help="Create the session and prompts, but do not launch agents or the game.",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--matches",
+        type=int,
+        default=MATCHES,
+        help=f"Number of matches in the session (default: {MATCHES}).",
+    )
+    parser.add_argument(
+        "--player-1-model",
+        default=PLAYER_1_MODEL,
+        help=f"Model driving player_1 (default: {PLAYER_1_MODEL}).",
+    )
+    parser.add_argument(
+        "--player-2-model",
+        default=PLAYER_2_MODEL,
+        help=f"Model driving player_2 (default: {PLAYER_2_MODEL}).",
+    )
+    parser.add_argument(
+        "--scenario-id",
+        default=SCENARIO_ID,
+        help=f"Map / spawn variant (default: {SCENARIO_ID}).",
+    )
+    parser.add_argument(
+        "--weapon-pickups",
+        choices=("true", "false"),
+        default="true",
+        help="Whether weapons spawn on the map (default: true).",
+    )
+    parser.add_argument(
+        "--round-timeout-seconds",
+        type=int,
+        default=ROUND_TIMEOUT_SECONDS,
+        help=f"Per-round timeout (default: {ROUND_TIMEOUT_SECONDS}).",
+    )
+    parser.add_argument(
+        "--agent-cli",
+        choices=("codex", "claude"),
+        default=AGENT_CLI,
+        help=f"CLI that drives both agents (default: {AGENT_CLI}).",
+    )
+    parser.add_argument(
+        "--bypass-permissions",
+        action=argparse.BooleanOptionalAction,
+        default=BYPASS_PERMISSIONS,
+        help=(
+            "Claude Code only: pass --dangerously-skip-permissions so the agent "
+            "never blocks on a permission prompt (default: enabled)."
+        ),
+    )
+    parser.add_argument(
+        "--mcp-transport",
+        choices=("http", "stdio"),
+        default=MCP_TRANSPORT,
+        help=(
+            "How the agent reaches the Doom Arena MCP server. Defaults to stdio "
+            f"for claude and http for codex. 'http' targets {BASE_URL}/mcp. For "
+            "codex, 'stdio' requires that ~/.codex/config.toml does not set a url "
+            "for mcp_servers.doom-arena."
+        ),
+    )
+    parser.add_argument(
+        "--keep-backend",
+        action="store_true",
+        help="Do not stop the arena backend after the benchmark completes.",
+    )
+    parser.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="Do not auto-open the game tab; open the printed URL yourself.",
+    )
+    args = parser.parse_args()
+    if args.matches < 1:
+        parser.error("--matches must be at least 1")
+    return args
+
+
+def apply_args(args: argparse.Namespace) -> None:
+    global MATCHES, PLAYER_1_MODEL, PLAYER_2_MODEL, SCENARIO_ID, MCP_TRANSPORT
+    global ENABLE_WEAPON_PICKUPS, ROUND_TIMEOUT_SECONDS, KEEP_BACKEND, OPEN_BROWSER
+    global AGENT_CLI, BYPASS_PERMISSIONS
+    MATCHES = args.matches
+    MCP_TRANSPORT = args.mcp_transport
+    AGENT_CLI = args.agent_cli
+    BYPASS_PERMISSIONS = args.bypass_permissions
+    PLAYER_1_MODEL = args.player_1_model
+    PLAYER_2_MODEL = args.player_2_model
+    SCENARIO_ID = args.scenario_id
+    ENABLE_WEAPON_PICKUPS = args.weapon_pickups == "true"
+    ROUND_TIMEOUT_SECONDS = args.round_timeout_seconds
+    KEEP_BACKEND = args.keep_backend
+    OPEN_BROWSER = not args.no_browser
 
 
 def main() -> int:
     args = parse_args()
+    apply_args(args)
     agents: list[AgentProcess] = []
     completed = False
     ensure_backend()

@@ -13,6 +13,7 @@ Makefile.in
 *.js
 *.html
 !src/index.html
+!src/automation.html
 *.html.symbols
 config.h
 !src/config.h
