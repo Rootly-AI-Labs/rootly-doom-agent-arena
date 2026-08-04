@@ -125,6 +125,35 @@ Dev mode adds:
 ./src:/app/src
 ```
 
+### Duel UI Preview
+
+For layout and styling work, use the deterministic duel preview instead of
+starting a benchmark. The preview uses the production duel DOM and render
+helpers, but skips Doom/WASM startup, API polling, MCP agents, controller
+tokens, and result writes.
+
+Start the bind-mounted development server once:
+
+```bash
+bash scripts/start-docker.sh --dev --no-open-browser
+```
+
+Then open one of these URLs and refresh after editing `src/index.html`:
+
+```text
+http://127.0.0.1:8001/?duelPreview=fighting
+http://127.0.0.1:8001/?duelPreview=finished
+http://127.0.0.1:8001/?duelPreview=waiting
+http://127.0.0.1:8001/?duelPreview=disconnected
+```
+
+The fixture canvases are deterministic and use local assets only, so the
+preview works without an active duel or network access. Use a real benchmark
+only when validating WASM rendering, live state polling, or agent behavior.
+The preview content is a fixed 1920x1080 stream frame with a 1px red capture
+boundary. It scales proportionally and remains centered when the browser
+viewport is smaller than the stream target.
+
 That mount is for development only. It lets locally rebuilt `websockets-doom.{html,js,wasm}` files take effect after a browser hard refresh.
 
 ## Controller-Token Sync

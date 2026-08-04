@@ -14,6 +14,8 @@ Makefile.in
 *.html
 !src/index.html
 !src/automation.html
+!src/elevenagents-test.html
+!src/elevenagents-commentator.js
 *.html.symbols
 config.h
 !src/config.h
@@ -33,6 +35,8 @@ src/agentic_monster_commands.local.json
 .githelp
 .env
 .claude/
+.codex/
+.venv/
 .mcp.local.json
 src/.emscripten_cache/
 src/.emscripten_browser

@@ -9,6 +9,9 @@
                 if (params.get("autoStart") === "1" && (params.get("duel") === "1" || params.get("arenaMode") === "duel")) {
                     document.documentElement.classList.add("duel-autostart");
                 }
+                if (params.get("duelPreview")) {
+                    document.documentElement.classList.add("duel-autostart", "duel-preview");
+                }
             })();
         </script>
         <style>
@@ -20,6 +23,63 @@
                 unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
             }
 
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 400;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJROQgErUN8XuHNEtX81i9TmEkrfpQ.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 500;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJRLQgErUN8XuHNEtX81i9TmEkrnUchg8A.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 600;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJRLQgErUN8XuHNEtX81i9TmEkrnfc9g8A.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 700;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJRLQgErUN8XuHNEtX81i9TmEkrnGc5g8A.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 800;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJRLQgErUN8XuHNEtX81i9TmEkrnBc1g8A.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Saira Condensed";
+                font-style: normal;
+                font-weight: 900;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/sairacondensed/v12/EJRLQgErUN8XuHNEtX81i9TmEkrnIcxg8A.ttf) format("truetype");
+            }
+
+            @font-face {
+                font-family: "Tourney";
+                font-style: normal;
+                font-weight: 800;
+                font-stretch: normal;
+                font-display: swap;
+                src: url(https://fonts.gstatic.com/s/tourney/v16/AlZa_ztDtYzv1tzq1wcJnbVt7xseomk-tNs7qrzTWbyt8n7GuQZyZQ.ttf) format("truetype");
+            }
+
             * {
                 box-sizing: border-box;
             }
@@ -27,6 +87,28 @@
             html {
                 font-family: "VT323", monospace;
                 font-size: 12px;
+            }
+
+            :root {
+                --arena-black: #100f12;
+                --arena-surface-1: #17141f;
+                --arena-surface-2: #1d1929;
+                --arena-surface-3: #241e35;
+                --arena-purple-900: #4a3e8a;
+                --arena-purple-800: #6d55bd;
+                --arena-purple-700: #8d6fde;
+                --arena-purple-500: #a28ae5;
+                --arena-purple-300: #d9cffa;
+                --arena-orange-900: #f0883e;
+                --arena-orange-700: #ffa857;
+                --arena-neutral-900: #44434e;
+                --arena-neutral-700: #65646e;
+                --arena-neutral-500: #aaa9ae;
+                --arena-neutral-300: #d2d2d5;
+                --arena-panel-border: rgba(141, 111, 222, 0.3);
+                --arena-panel-border-strong: rgba(162, 138, 229, 0.52);
+                --arena-duel-font: "Saira Condensed", "Arial Narrow", sans-serif;
+                --arena-title-font: "Tourney", "Arial Black", sans-serif;
             }
 
             body {
@@ -51,8 +133,11 @@
                     minmax(300px, 1fr)
                     minmax(320px, 0.85fr)
                     minmax(300px, 1fr);
-                gap: 10px;
+                grid-template-rows: 94px auto;
+                column-gap: 10px;
+                row-gap: 56px;
                 align-items: start;
+                align-content: start;
             }
 
             .frame {
@@ -87,6 +172,62 @@
 
             html.duel-autostart #arena-launcher {
                 display: none;
+            }
+
+            html.duel-preview {
+                --duel-preview-scale: 1;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: #000;
+            }
+
+            html.duel-preview body {
+                width: 100vw;
+                height: 100vh;
+                min-width: 0;
+                padding: 0;
+                overflow: hidden;
+                background: #000;
+            }
+
+            html.duel-preview #container.duel-layout-active {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                width: 1920px;
+                height: 1080px;
+                min-height: 1080px;
+                max-width: none;
+                margin: 0;
+                padding: 0 24px;
+                overflow: hidden;
+                border: 1px solid #ff0000;
+                grid-template-columns:
+                    minmax(300px, 1fr)
+                    minmax(320px, 0.85fr)
+                    minmax(300px, 1fr);
+                column-gap: 10px;
+                row-gap: 56px;
+                transform: translate(-50%, -50%) scale(var(--duel-preview-scale));
+                transform-origin: center center;
+            }
+
+            html.duel-preview [data-duel-restart] {
+                pointer-events: none;
+            }
+
+            html.duel-preview body > #duel-play-footer.duel-preview-outside-controls {
+                position: fixed;
+                left: calc(var(--duel-preview-frame-right) + 12px);
+                top: var(--duel-preview-frame-top);
+                z-index: 10;
+                display: flex;
+                width: max-content;
+                margin: 0;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 12px;
             }
 
             .arena-launcher-card {
@@ -568,15 +709,15 @@
             .duel-play-footer-brand {
                 display: inline-flex;
                 align-items: center;
-                gap: 7px;
+                gap: 10px;
             }
 
             .duel-play-footer-logo {
                 display: block;
-                width: 70px;
+                width: 124px;
                 height: auto;
-                margin: -7px 0;
-                opacity: 0.78;
+                margin: -10px 0;
+                opacity: 0.9;
             }
 
             .duel-tactical-credit {
@@ -584,11 +725,14 @@
                 justify-content: center;
                 margin-top: 12px;
                 color: rgba(184, 233, 134, 0.45);
-                font: 11px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                font: 600 16px/1.2 "Trebuchet MS", Verdana, sans-serif;
+
                 text-align: center;
             }
 
             .duel-tactical-credit a {
+                display: inline-flex;
+                align-items: center;
                 color: rgba(184, 233, 134, 0.65);
                 text-decoration: none;
             }
@@ -621,6 +765,37 @@
                 display: contents;
             }
 
+            #duel-stream-title {
+                display: none;
+            }
+
+            #container.duel-layout-active #duel-stream-title {
+                display: flex;
+                grid-column: 1 / -1;
+                grid-row: 1;
+                align-self: stretch;
+                align-items: center;
+                justify-content: center;
+                min-height: 94px;
+                margin: 0;
+                border-bottom: 1px solid var(--arena-panel-border-strong);
+                color: var(--arena-neutral-300);
+                font-family: var(--arena-title-font) !important;
+                font-size: 32px;
+                font-weight: 800;
+                line-height: 0.9;
+                letter-spacing: 0.04em;
+                text-align: center;
+                text-shadow: 0 3px 0 rgba(74, 62, 138, 0.68), 0 0 24px rgba(141, 111, 222, 0.22);
+            }
+
+            #container.duel-layout-active,
+            #container.duel-layout-active *,
+            #duel-play-footer,
+            #duel-play-footer * {
+                font-family: var(--arena-duel-font) !important;
+            }
+
             #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:first-child {
                 grid-column: 1;
                 grid-row: 2;
@@ -642,14 +817,14 @@
                 color: #f7f5d8;
                 padding: 8px;
                 overflow: hidden;
-                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                font: 600 14px/1.35 "Trebuchet MS", Verdana, sans-serif;
             }
 
             #duel-pov-grid.duel-active .duel-pov-card h2 {
                 display: block;
                 margin: 0;
                 color: #f3f0df;
-                font: 900 clamp(24px, 2.4vw, 36px)/0.95 "Trebuchet MS", Verdana, sans-serif;
+                font: 800 clamp(30px, 2.7vw, 42px)/0.95 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: -0.025em;
             }
 
@@ -690,17 +865,31 @@
             .duel-agent-chosen-label {
                 flex: 0 0 auto;
                 color: #8f9584;
-                font: 800 9px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.12em;
                 text-transform: uppercase;
             }
 
             .duel-agent-decision-metrics {
                 color: #d8c07a;
-                font: 800 12px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 14px/1.2 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.025em;
                 font-variant-numeric: tabular-nums;
                 white-space: nowrap;
+            }
+
+            .duel-pov-metrics-row {
+                display: flex;
+                min-height: 18px;
+                margin: 7px 2px 0;
+            }
+
+            #player-1-pov-card .duel-pov-metrics-row {
+                justify-content: flex-start;
+            }
+
+            #player-2-pov-card .duel-pov-metrics-row {
+                justify-content: flex-end;
             }
 
             .duel-agent-opposite {
@@ -726,38 +915,103 @@
             }
 
             .duel-agent-identity-header {
-                margin-bottom: 10px;
+                margin-bottom: 22px;
                 padding: 5px 4px 10px;
             }
 
             .duel-agent-identity-meta {
                 display: grid;
-                gap: 6px;
+                grid-template-columns: repeat(2, max-content);
+                gap: 38px;
                 margin-top: 10px;
                 color: #f3f0df;
-                font: 800 clamp(15px, 1.35vw, 20px)/1.2 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 clamp(18px, 1.45vw, 22px)/1.2 "Trebuchet MS", Verdana, sans-serif;
                 overflow-wrap: anywhere;
             }
 
             #player-1-pov-card .duel-agent-identity-meta {
+                justify-content: end;
                 text-align: right;
             }
 
             #player-2-pov-card .duel-agent-identity-meta {
+                justify-content: start;
                 text-align: left;
+            }
+
+            .duel-agent-identity-meta-field {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                min-width: 0;
+            }
+
+            .duel-agent-identity-meta-value {
+                color: #f3f0df;
+                font-size: 1em;
+                font-weight: 700;
+                line-height: 1.1;
+                white-space: nowrap;
             }
 
             .duel-agent-identity-meta-label {
                 color: #7f8674;
                 font-size: 0.68em;
-                font-weight: 900;
+                font-weight: 700;
                 letter-spacing: 0.05em;
+                line-height: 1;
+                text-transform: lowercase;
+            }
+
+            .duel-agent-name-lockup {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                max-width: 100%;
+            }
+
+            #player-1-pov-card .duel-agent-name-lockup {
+                justify-content: flex-end;
+            }
+
+            #player-2-pov-card .duel-agent-name-lockup {
+                justify-content: flex-start;
+            }
+
+            .duel-model-provider {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                min-height: 42px;
+                padding: 6px 10px;
+                border: 1px solid var(--arena-panel-border-strong);
+                border-radius: 7px;
+                background: rgba(16, 15, 18, 0.72);
+                color: var(--arena-neutral-300);
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: 0.035em;
+                line-height: 1;
+                white-space: nowrap;
+            }
+
+            .duel-model-provider[hidden] {
+                display: none;
+            }
+
+            .duel-model-provider-logo {
+                display: block;
+                width: 28px;
+                height: 28px;
+                filter: invert(1);
+                opacity: 0.92;
             }
 
             .duel-agent-status {
                 display: none;
                 margin: 0 0 7px;
-                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 13px/1 "Trebuchet MS", Verdana, sans-serif;
                 text-transform: uppercase;
                 text-align: right;
                 white-space: nowrap;
@@ -787,19 +1041,16 @@
                 position: relative;
                 overflow: hidden;
                 background: #000;
-                outline: 4px solid rgba(255, 92, 92, 0.42);
+                outline: 1px solid var(--duel-pov-border-color);
                 outline-offset: 0;
-                transition: outline-color 120ms ease, box-shadow 120ms ease;
             }
 
-            #duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-pov-frame {
-                outline-color: rgba(255, 92, 92, 0.72);
-                box-shadow: 0 0 0 2px rgba(255, 92, 92, 0.18);
+            #player-1-pov-card .duel-pov-frame {
+                --duel-pov-border-color: #7ddcff;
             }
 
-            #duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-pov-frame {
-                outline-color: rgba(105, 220, 120, 0.78);
-                box-shadow: 0 0 0 2px rgba(105, 220, 120, 0.22);
+            #player-2-pov-card .duel-pov-frame {
+                --duel-pov-border-color: #ff7a7a;
             }
 
             .duel-readiness-panel {
@@ -993,7 +1244,7 @@
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
                 padding: 9px 12px;
                 text-align: center;
-                font: 900 14px/1.3 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 18px/1.25 "Trebuchet MS", Verdana, sans-serif;
                 text-shadow: 0 1px 0 #000;
                 pointer-events: none;
             }
@@ -1083,25 +1334,47 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 1px;
-                margin: 4px 0 14px;
-                font: 900 clamp(56px, 6vw, 86px)/0.78 Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-                letter-spacing: -0.11em;
-                transform: scaleX(1.12) skewX(-4deg);
-                filter: drop-shadow(0 4px 1px rgba(0, 0, 0, 0.78));
+                gap: 26px;
+                margin: 20px 0 32px;
             }
 
-            .duel-tactical-vs .player-1,
-            .duel-tactical-vs .player-2 {
+            .duel-versus-provider {
+                min-width: 132px;
+                min-height: 50px;
+                justify-content: center;
+                padding: 8px 14px;
+                border-radius: 999px;
+                font-size: 16px;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+            }
+
+            .duel-versus-provider.player-1 {
+                border-color: #7ddcff;
+            }
+
+            .duel-versus-provider.player-2 {
+                border-color: #ff7a7a;
+            }
+
+            .duel-versus-provider .duel-model-provider-logo {
+                width: 30px;
+                height: 30px;
+            }
+
+            .duel-tactical-vs-label {
                 color: transparent;
-                background: linear-gradient(180deg, #fff1a3 0%, #e7a83c 28%, #b53221 62%, #4a0908 100%);
+                background: linear-gradient(180deg, #ffffff 0%, #c9c9c9 30%, #777777 64%, #252525 100%);
                 background-clip: text;
                 -webkit-background-clip: text;
-                -webkit-text-stroke: 1px #210504;
+                font: 900 clamp(52px, 5.2vw, 76px)/0.8 Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+                letter-spacing: -0.08em;
+                transform: scaleX(1.12) skewX(-4deg);
+                filter: drop-shadow(0 4px 1px rgba(0, 0, 0, 0.78));
+                -webkit-text-stroke: 1px #171717;
                 text-shadow:
-                    0 -1px 0 rgba(255, 244, 171, 0.72),
-                    0 2px 0 #230303,
-                    0 0 10px rgba(190, 39, 25, 0.38);
+                    0 -1px 0 rgba(255, 255, 255, 0.72),
+                    0 2px 0 #111111,
+                    0 0 10px rgba(190, 190, 190, 0.3);
             }
 
             #container.duel-layout-active #duel-tactical-panel {
@@ -1140,6 +1413,15 @@
                 object-fit: contain;
             }
 
+            #duel-tactical-map-image[hidden] {
+                display: none;
+            }
+
+            #duel-player1-automap-canvas[hidden],
+            #duel-tactical-overlay-canvas[hidden] {
+                display: none;
+            }
+
             #duel-player1-automap-canvas {
                 position: absolute;
                 inset: 0;
@@ -1172,6 +1454,10 @@
                 pointer-events: none;
             }
 
+            .duel-tactical-map-status[hidden] {
+                display: none;
+            }
+
             .duel-tactical-elapsed {
                 margin-top: 8px;
                 border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1179,7 +1465,7 @@
                 color: #ffce6b;
                 padding: 8px 10px;
                 text-align: center;
-                font: 900 18px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 800 20px/1 "Trebuchet MS", Verdana, sans-serif;
                 font-variant-numeric: tabular-nums;
                 letter-spacing: 0.04em;
                 text-transform: uppercase;
@@ -1314,9 +1600,30 @@
 
             }
 
+            html.duel-preview #container.duel-layout-active #duel-tactical-panel {
+                grid-column: 2;
+                grid-row: 2;
+                position: sticky;
+                top: 10px;
+            }
+
+            html.duel-preview #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:first-child {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            html.duel-preview #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:last-child {
+                grid-column: 3;
+                grid-row: 2;
+            }
+
+            html.duel-preview .duel-tactical-shell {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
             .duel-tactical-meta-label {
                 color: #a9c187;
-                font: 800 12px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 14px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.1em;
                 text-transform: uppercase;
                 margin-bottom: 8px;
@@ -1324,7 +1631,7 @@
 
             .duel-tactical-meta-value {
                 color: #f7f5d8;
-                font: 800 clamp(16px, 1.25vw, 20px)/1.25 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 clamp(18px, 1.35vw, 22px)/1.2 "Trebuchet MS", Verdana, sans-serif;
                 overflow-wrap: anywhere;
             }
 
@@ -1335,10 +1642,84 @@
 
             .duel-tactical-meta-card.score .duel-tactical-meta-value {
                 color: #ffce6b;
-                font-size: clamp(36px, 3.5vw, 52px);
+                font-size: clamp(42px, 3.8vw, 58px);
+                font-weight: 800;
                 line-height: 0.95;
                 letter-spacing: -0.04em;
                 font-variant-numeric: tabular-nums;
+            }
+
+            .duel-commentator-panel {
+                margin-top: 10px;
+                border: 1px solid rgba(255, 206, 107, 0.28);
+                background: linear-gradient(135deg, rgba(54, 38, 14, 0.82), rgba(14, 17, 13, 0.98));
+                padding: 11px 12px;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-commentator-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .duel-commentator-toggle {
+                cursor: pointer;
+                border: 1px solid rgba(255, 206, 107, 0.56);
+                background: #4b3212;
+                color: #fff1bd;
+                padding: 8px 10px;
+                font: 900 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+            }
+
+            .duel-commentator-toggle[aria-pressed="true"] {
+                border-color: rgba(105, 220, 120, 0.72);
+                background: #214123;
+                color: #c8f8ce;
+            }
+
+            .duel-commentator-volume {
+                min-width: 0;
+                flex: 1;
+                accent-color: #ffce6b;
+            }
+
+            .duel-commentator-status {
+                margin-top: 8px;
+                color: #a9a997;
+                font: 700 10px/1.25 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .duel-commentator-status.ready {
+                color: #69dc78;
+            }
+
+            .duel-commentator-status.error {
+                color: #ff7a6b;
+            }
+
+            .duel-commentator-caption {
+                margin-top: 9px;
+                border-left: 3px solid #ffce6b;
+                color: #f7f5d8;
+                padding: 2px 0 2px 9px;
+                font: 800 13px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .duel-commentator-caption[hidden] {
+                display: none;
+            }
+
+            .duel-commentator-test-link {
+                color: #ffce6b;
+                font: 800 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                white-space: nowrap;
             }
 
             .duel-panels {
@@ -1392,7 +1773,7 @@
                 background: rgba(7, 16, 13, 0.72);
                 color: #b8e986;
                 padding: 4px 8px;
-                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
                 white-space: nowrap;
@@ -1435,9 +1816,9 @@
             }
 
             .duel-equipment-strip {
-                min-height: 48px;
+                min-height: 62px;
                 margin: 0 0 8px;
-                padding: 8px 10px;
+                padding: 9px 11px;
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 background: linear-gradient(135deg, #151911, #0e110c);
             }
@@ -1446,8 +1827,8 @@
                 display: flex;
                 align-items: center;
                 flex-wrap: wrap;
-                gap: 7px;
-                min-height: 30px;
+                gap: 9px;
+                min-height: 42px;
             }
 
             .duel-equipment-icon {
@@ -1455,9 +1836,9 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                flex: 0 0 32px;
-                width: 32px;
-                height: 28px;
+                flex: 0 0 48px;
+                width: 48px;
+                height: 42px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
                 border-radius: 4px;
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 4px rgba(0, 0, 0, 0.34);
@@ -1470,8 +1851,8 @@
 
             .duel-equipment-icon.shotgun::before {
                 content: "";
-                width: 24px;
-                height: 8px;
+                width: 36px;
+                height: 12px;
                 background: #e3d7ad;
                 clip-path: polygon(0 20%, 72% 20%, 72% 0, 100% 0, 100% 42%, 75% 42%, 58% 100%, 43% 100%, 53% 42%, 0 42%);
                 filter: drop-shadow(0 1px 0 #090908);
@@ -1492,13 +1873,13 @@
             }
 
             .duel-equipment-icon.health-pack::before {
-                width: 16px;
-                height: 6px;
+                width: 24px;
+                height: 9px;
             }
 
             .duel-equipment-icon.health-pack::after {
-                width: 6px;
-                height: 16px;
+                width: 9px;
+                height: 24px;
             }
 
             .duel-equipment-icon.is-recent-pickup {
@@ -1589,7 +1970,7 @@
                 align-items: center;
                 justify-content: center;
                 color: #f7f5d8;
-                font: 900 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 800 13px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.05em;
                 text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
                 text-transform: uppercase;
@@ -1774,7 +2155,7 @@
 
             .duel-decision-context {
                 color: #8a907c;
-                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 12px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
             }
@@ -1786,7 +2167,7 @@
                 background: rgba(125, 220, 255, 0.1);
                 color: #7ddcff;
                 padding: 4px 7px;
-                font: 800 9px/1 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
             }
@@ -1813,13 +2194,13 @@
 
             .duel-decision-objective {
                 color: #f7f5d8;
-                font: 800 14px/1.4 "Trebuchet MS", Verdana, sans-serif;
+                font: 700 16px/1.35 "Trebuchet MS", Verdana, sans-serif;
             }
 
             .duel-decision-reasoning {
                 margin-top: 4px;
                 color: #aeb39f;
-                font: 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                font: 500 14px/1.4 "Trebuchet MS", Verdana, sans-serif;
             }
 
             .duel-decision-meta {
@@ -2384,6 +2765,149 @@
                 to { transform: translateY(0); opacity: 1; }
             }
 
+            /* Rootly stream palette: dark neutral surfaces with restrained purple and orange accents. */
+            body,
+            html.duel-preview,
+            html.duel-preview body {
+                background: var(--arena-black);
+            }
+
+            #duel-pov-grid.duel-active .duel-pov-card,
+            #duel-tactical-panel,
+            .duel-breakdown,
+            .duel-prompt-panel,
+            .duel-player-panel {
+                border-color: var(--arena-panel-border);
+                background: linear-gradient(145deg, var(--arena-surface-2), var(--arena-surface-1));
+            }
+
+            .duel-readiness-panel,
+            .duel-shared,
+            .duel-equipment-strip,
+            .duel-player-log-body,
+            .duel-breakdown-stat,
+            .duel-prompt-card textarea {
+                border-color: rgba(162, 138, 229, 0.24);
+                background: linear-gradient(135deg, var(--arena-surface-1), var(--arena-black));
+            }
+
+            .duel-player-log,
+            .duel-prompt-card,
+            .duel-prompt-card-header,
+            .duel-readiness-card + .duel-readiness-card,
+            .duel-results-link {
+                border-color: rgba(162, 138, 229, 0.22);
+            }
+
+            .duel-decision-card {
+                border-color: rgba(162, 138, 229, 0.24);
+                background: linear-gradient(135deg, var(--arena-surface-3), var(--arena-surface-1));
+            }
+
+            .duel-decision-card.status-rejected {
+                background: linear-gradient(135deg, rgba(240, 136, 62, 0.14), var(--arena-surface-1));
+            }
+
+            .duel-tactical-map-wrap {
+                border-color: var(--arena-panel-border);
+                background: var(--arena-surface-1);
+            }
+
+            .duel-tactical-map-stage,
+            #duel-player1-automap-canvas,
+            #duel-tactical-overlay-canvas {
+                background: var(--arena-black);
+            }
+
+            .duel-tactical-elapsed {
+                border-color: rgba(162, 138, 229, 0.28);
+                background: var(--arena-black);
+                color: var(--arena-orange-700);
+            }
+
+            .duel-tactical-meta-card {
+                border-color: var(--arena-panel-border);
+                background: linear-gradient(135deg, rgba(74, 62, 138, 0.36), var(--arena-surface-1));
+            }
+
+            .duel-tactical-meta-card.score {
+                border-color: rgba(240, 136, 62, 0.52);
+                background: linear-gradient(135deg, rgba(240, 136, 62, 0.18), var(--arena-surface-1));
+            }
+
+            .duel-tactical-score-card {
+                width: 52%;
+                margin: 18px auto 24px;
+                border-radius: 10px;
+            }
+
+            .duel-tactical-score-credit {
+                margin: -2px 0 12px;
+            }
+
+            .duel-tactical-meta-label,
+            .duel-breakdown-label,
+            .duel-shared,
+            .duel-readiness-note {
+                color: var(--arena-purple-300);
+            }
+
+            .duel-tactical-meta-card.score .duel-tactical-meta-label,
+            .duel-tactical-meta-card.score .duel-tactical-meta-value,
+            .duel-log-title,
+            .duel-results-link a {
+                color: var(--arena-orange-700);
+            }
+
+            .duel-agent-identity-meta-label,
+            .duel-agent-chosen-label,
+            .duel-decision-context,
+            .duel-decision-technical summary,
+            .duel-decision-technical-copy {
+                color: var(--arena-neutral-500);
+            }
+
+            .duel-battle-quip-overlay {
+                border-color: var(--arena-orange-700);
+                background: rgba(16, 15, 18, 0.92);
+                color: var(--arena-neutral-300);
+            }
+
+            .duel-battle-quip-overlay::after {
+                border-color: transparent var(--arena-orange-700) var(--arena-orange-700) transparent;
+                background: rgba(16, 15, 18, 0.92);
+            }
+
+            .duel-prompt-card button {
+                border-color: var(--arena-panel-border-strong);
+                background: rgba(74, 62, 138, 0.3);
+            }
+
+            #duel-play-footer,
+            .duel-tactical-credit {
+                color: var(--arena-neutral-500);
+            }
+
+            #duel-play-footer a,
+            #duel-play-footer button,
+            .duel-tactical-credit a,
+            .duel-tactical-credit strong {
+                color: var(--arena-purple-500);
+            }
+
+            html.duel-preview,
+            html.duel-preview body,
+            html.duel-preview #container.duel-layout-active {
+                background: var(--arena-surface-2);
+            }
+
+            html.duel-preview #duel-pov-grid.duel-active .duel-pov-card,
+            html.duel-preview #duel-tactical-panel {
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+            }
+
         </style>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
     </head>
@@ -2414,6 +2938,15 @@
                                     <label for="arena-round">Matches in session</label>
                                     <input id="arena-round" type="number" min="1" value="1" />
                                 </div>
+                            </div>
+                            <div class="duel-commentator-panel arena-commentator-setup">
+                                <div class="arena-config-section-title">Live shoutcaster</div>
+                                <div class="duel-commentator-controls">
+                                    <button type="button" class="duel-commentator-toggle" id="arena-commentator-toggle" data-commentator-toggle aria-pressed="false">Enable shoutcaster</button>
+                                    <input class="duel-commentator-volume" id="arena-commentator-volume" data-commentator-volume type="range" min="0" max="1" step="0.05" value="0.8" aria-label="Shoutcaster volume" />
+                                    <a class="duel-commentator-test-link" href="elevenagents-test.html" target="_blank" rel="noopener">Test voice</a>
+                                </div>
+                                <div class="duel-commentator-status" id="arena-commentator-status">Checking ElevenAgents…</div>
                             </div>
                         </div>
                     </details>
@@ -2467,13 +3000,35 @@
                     </div>
                 </div>
             </div>
+            <h1 id="duel-stream-title">AIs Fighting</h1>
             <div id="duel-tactical-panel">
                 <div class="duel-tactical-vs" aria-label="Versus">
-                    <span class="player-1">V</span><span class="player-2">S</span>
+                    <span class="duel-model-provider duel-versus-provider player-1" id="player-1-versus-provider" hidden>
+                        <img class="duel-model-provider-logo" alt="" />
+                        <span class="duel-model-provider-name"></span>
+                    </span>
+                    <span class="duel-tactical-vs-label">VS</span>
+                    <span class="duel-model-provider duel-versus-provider player-2" id="player-2-versus-provider" hidden>
+                        <img class="duel-model-provider-logo" alt="" />
+                        <span class="duel-model-provider-name"></span>
+                    </span>
+                </div>
+                <div class="duel-tactical-meta-card score duel-tactical-score-card">
+                    <div class="duel-tactical-meta-label">Score</div>
+                    <div class="duel-tactical-meta-value" id="duel-tactical-match-score">0–0</div>
+                </div>
+                <div class="duel-tactical-credit duel-tactical-score-credit">
+                    <span class="duel-play-footer-brand">
+                        <span>Brought to you by</span>
+                        <a href="https://rootly.com/ai-labs" target="_blank" rel="noopener" aria-label="Rootly AI Labs">
+                            <img class="duel-play-footer-logo" src="assets/rootly-ai-logo-white.png" alt="Rootly AI Labs" />
+                        </a>
+                    </span>
                 </div>
                 <div class="duel-tactical-shell">
                     <div class="duel-tactical-map-wrap">
                         <div class="duel-tactical-map-stage" id="duel-tactical-map-stage">
+                            <img id="duel-tactical-map-image" src="assets/duel_room_layout.svg?v=stream-palette-20260731" alt="" hidden />
                             <canvas id="duel-player1-automap-canvas"></canvas>
                             <canvas id="duel-tactical-overlay-canvas"></canvas>
                             <div class="duel-tactical-map-status" id="duel-player1-automap-status">Waiting for automap...</div>
@@ -2486,17 +3041,8 @@
                                 <div class="duel-tactical-meta-label">Match progress</div>
                                 <div class="duel-tactical-meta-value" id="duel-tactical-match-progress">1/1</div>
                             </div>
-                            <div class="duel-tactical-meta-card score">
-                                <div class="duel-tactical-meta-label">Score</div>
-                                <div class="duel-tactical-meta-value" id="duel-tactical-match-score">0–0</div>
-                            </div>
                         </div>
-                        <div class="duel-tactical-credit">
-                            <span class="duel-play-footer-brand">
-                                <span>Built with <strong>Codex</strong> by <a href="https://rootly.com/ai-labs" target="_blank" rel="noopener">Rootly AI Labs</a></span>
-                                <img class="duel-play-footer-logo" src="assets/rootly-ai-logo-white.png" alt="Rootly AI" />
-                            </span>
-                        </div>
+                        <div class="duel-commentator-caption" id="duel-commentator-caption" aria-live="polite" hidden></div>
                     </div>
                 </div>
             </div>
@@ -2506,17 +3052,24 @@
                         <div class="duel-agent-identity-header">
                             <div class="duel-pov-title-row">
                                 <div class="duel-agent-opposite">
-                                    <span class="duel-agent-decision-metrics" id="duel-p1-log-total">0 decisions</span>
                                     <div class="duel-agent-status" id="player-1-agent-status">Agent not connected</div>
                                 </div>
                                 <div class="duel-agent-name-line">
                                     <span class="duel-agent-chosen-label">model chosen name</span>
-                                    <h2 id="player-1-pov-title"><span class="duel-agent-name player-1">Player 1</span></h2>
+                                    <div class="duel-agent-name-lockup">
+                                        <h2 id="player-1-pov-title"><span class="duel-agent-name player-1">Player 1</span></h2>
+                                    </div>
                                 </div>
                             </div>
                             <div class="duel-agent-identity-meta">
-                                <div><span class="duel-agent-identity-meta-label">model:</span> <span id="player-1-model-name">Detecting…</span></div>
-                                <div><span class="duel-agent-identity-meta-label">harness:</span> <span id="player-1-harness-name">Detecting…</span></div>
+                                <div class="duel-agent-identity-meta-field">
+                                    <span class="duel-agent-identity-meta-value" id="player-1-model-name">Detecting…</span>
+                                    <span class="duel-agent-identity-meta-label">model</span>
+                                </div>
+                                <div class="duel-agent-identity-meta-field">
+                                    <span class="duel-agent-identity-meta-value" id="player-1-harness-name">Detecting…</span>
+                                    <span class="duel-agent-identity-meta-label">harness</span>
+                                </div>
                             </div>
                         </div>
                         <div class="duel-equipment-strip">
@@ -2542,6 +3095,9 @@
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
                         </div>
+                        <div class="duel-pov-metrics-row">
+                            <span class="duel-agent-decision-metrics" id="duel-p1-log-total">0 decisions</span>
+                        </div>
                         <canvas style="display:none" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
                         <div id="player-1-pov-status">Waiting for Player 1 camera</div>
                         <div class="duel-player-log">
@@ -2555,16 +3111,23 @@
                             <div class="duel-pov-title-row">
                                 <div class="duel-agent-name-line">
                                     <span class="duel-agent-chosen-label">model chosen name</span>
-                                    <h2 id="player-2-pov-title"><span class="duel-agent-name player-2">Player 2</span></h2>
+                                    <div class="duel-agent-name-lockup">
+                                        <h2 id="player-2-pov-title"><span class="duel-agent-name player-2">Player 2</span></h2>
+                                    </div>
                                 </div>
                                 <div class="duel-agent-opposite">
-                                    <span class="duel-agent-decision-metrics" id="duel-p2-log-total">0 decisions</span>
                                     <div class="duel-agent-status" id="player-2-agent-status">Agent not connected</div>
                                 </div>
                             </div>
                             <div class="duel-agent-identity-meta">
-                                <div><span class="duel-agent-identity-meta-label">model:</span> <span id="player-2-model-name">Detecting…</span></div>
-                                <div><span class="duel-agent-identity-meta-label">harness:</span> <span id="player-2-harness-name">Detecting…</span></div>
+                                <div class="duel-agent-identity-meta-field">
+                                    <span class="duel-agent-identity-meta-value" id="player-2-model-name">Detecting…</span>
+                                    <span class="duel-agent-identity-meta-label">model</span>
+                                </div>
+                                <div class="duel-agent-identity-meta-field">
+                                    <span class="duel-agent-identity-meta-value" id="player-2-harness-name">Detecting…</span>
+                                    <span class="duel-agent-identity-meta-label">harness</span>
+                                </div>
                             </div>
                         </div>
                         <div class="duel-equipment-strip">
@@ -2589,6 +3152,9 @@
                                 <div class="duel-death-subtitle" id="player-2-death-detail">Player 2 eliminated</div>
                                 <button type="button" data-duel-restart>Restart Duel</button>
                             </div>
+                        </div>
+                        <div class="duel-pov-metrics-row">
+                            <span class="duel-agent-decision-metrics" id="duel-p2-log-total">0 decisions</span>
                         </div>
                         <div id="player-2-pov-status">Waiting for Player 2 camera</div>
                         <div class="duel-player-log">
@@ -2704,8 +3270,9 @@
             </div>
         </div>
 
+        <script src="elevenagents-commentator.js?v=20260731-team-colors"></script>
         <script>
-            var doomAssetCacheBust = "cache-bust-20260730-rootly-title-heart-health";
+            var doomAssetCacheBust = "cache-bust-20260731-lifecycle-safe-player-cache";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
             var arenaDataMountPath = "arena_enemies.mock.tsv";
             var arenaDataLocalPath = "arena_enemies.local.tsv";
@@ -2727,6 +3294,8 @@
             var arenaHealthEndpoint = "/api/arena/health";
             var arenaMcpPresenceEndpoint = "/api/arena/mcp-presence";
             var arenaMcpStatusPollMs = 2000;
+            var arenaDuelStatePollMs = 1000;
+            var arenaCommentatorStatePollMs = 500;
             var arenaRunMetadataPath = "arena_run_metadata.local.tsv";
             var arenaRunMetadataEndpoint = "/api/arena/run-metadata";
             var arenaResetEndpoint = "/api/arena/reset";
@@ -2737,6 +3306,20 @@
             var arenaRunStatsEndpoint = "/api/arena/run-stats";
             var arenaEventsPath = "arena_duel_events.local.tsv";
             var arenaEventsEndpoint = "/api/arena/events";
+            var duelPreviewRequestedState = new URLSearchParams(window.location.search).get("duelPreview") || "";
+            var arenaCommentatorConfigEndpoint = "/api/arena/commentator/config";
+            var arenaCommentatorSignedUrlEndpoint = "/api/arena/commentator/signed-url";
+            var elevenAgentsCommentator = null;
+            var elevenAgentsCommentatorEnabled = false;
+            var elevenAgentsCommentatorRequested = false;
+            var elevenAgentsCommentatorAvailable = false;
+            var elevenAgentsCommentatorDesired = false;
+            var elevenAgentsCommentatorError = false;
+            var elevenAgentsCommentatorConfigPromise = null;
+            var elevenAgentsCommentatorConfigResolved = false;
+            var elevenAgentsCommentatorAudioPreparedByUser = false;
+            var elevenAgentsCommentatorAudioPreparationPromise = null;
+            var duelIntroductionBlockedRunId = "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
             var duelPickupCountsRunId = "";
@@ -4201,12 +4784,315 @@
                 };
             }
 
+            function setElevenAgentsCommentatorStatus(message, state) {
+                document.querySelectorAll(".duel-commentator-status").forEach(function (node) {
+                    node.textContent = message || "";
+                    node.classList.remove("ready", "error", "connecting");
+                    if (state) {
+                        node.classList.add(state);
+                    }
+                });
+            }
+
+            function setElevenAgentsCommentatorCaption(message) {
+                var node = document.getElementById("duel-commentator-caption");
+                if (node === null) {
+                    return;
+                }
+                node.textContent = message || "";
+                node.hidden = !message;
+            }
+
+            function syncElevenAgentsCommentatorControls(label, pressed, disabled) {
+                document.querySelectorAll("[data-commentator-toggle]").forEach(function (toggle) {
+                    toggle.textContent = label;
+                    toggle.setAttribute("aria-pressed", pressed ? "true" : "false");
+                    toggle.disabled = !!disabled;
+                });
+            }
+
+            function duelPlayViewIsDisplayed() {
+                var grid = document.getElementById("duel-pov-grid");
+                var launcher = document.getElementById("arena-launcher");
+                return !!(
+                    grid &&
+                    grid.classList.contains("duel-active") &&
+                    (!launcher || window.getComputedStyle(launcher).display === "none")
+                );
+            }
+
+            function prepareElevenAgentsCommentatorAudio() {
+                if (!elevenAgentsCommentator || typeof elevenAgentsCommentator.prepareAudio !== "function") {
+                    return Promise.resolve();
+                }
+                return elevenAgentsCommentator.prepareAudio();
+            }
+
+            function promiseWithTimeout(promise, timeoutMs, message) {
+                return new Promise(function (resolve, reject) {
+                    var settled = false;
+                    var timer = window.setTimeout(function () {
+                        if (!settled) {
+                            settled = true;
+                            reject(new Error(message));
+                        }
+                    }, timeoutMs);
+
+                    Promise.resolve(promise).then(function (value) {
+                        if (!settled) {
+                            settled = true;
+                            window.clearTimeout(timer);
+                            resolve(value);
+                        }
+                    }, function (error) {
+                        if (!settled) {
+                            settled = true;
+                            window.clearTimeout(timer);
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            function prepareElevenAgentsCommentatorFromUserGesture() {
+                if (elevenAgentsCommentatorAudioPreparationPromise) {
+                    return elevenAgentsCommentatorAudioPreparationPromise;
+                }
+                elevenAgentsCommentatorAudioPreparationPromise = promiseWithTimeout(
+                    prepareElevenAgentsCommentatorAudio(),
+                    3000,
+                    "Browser audio did not unlock in time"
+                ).then(function () {
+                    elevenAgentsCommentatorAudioPreparedByUser = true;
+                    return true;
+                }).catch(function (error) {
+                    elevenAgentsCommentatorAudioPreparedByUser = false;
+                    throw error;
+                }).finally(function () {
+                    elevenAgentsCommentatorAudioPreparationPromise = null;
+                });
+                return elevenAgentsCommentatorAudioPreparationPromise;
+            }
+
+            function requestElevenAgentsCommentator() {
+                if (!elevenAgentsCommentator) {
+                    return Promise.reject(new Error("Shoutcaster is not initialized"));
+                }
+                if (!duelPlayViewIsDisplayed()) {
+                    return Promise.reject(new Error("Shoutcaster waits until the arena is visible"));
+                }
+                elevenAgentsCommentatorDesired = true;
+                elevenAgentsCommentatorError = false;
+                elevenAgentsCommentatorRequested = true;
+                duelIntroductionBlockedRunId = "";
+                syncElevenAgentsCommentatorControls("Connecting…", false, true);
+                return elevenAgentsCommentator.enable()
+                    .then(function () {
+                        elevenAgentsCommentatorEnabled = true;
+                        syncElevenAgentsCommentatorControls("Disable shoutcaster", true, false);
+                        maybeAutoStartReadyDuel();
+                    })
+                    .catch(function (error) {
+                        elevenAgentsCommentatorEnabled = false;
+                        elevenAgentsCommentatorRequested = false;
+                        elevenAgentsCommentatorError = true;
+                        syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                        throw error;
+                    });
+            }
+
+            function initializeElevenAgentsCommentator() {
+                var toggles = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-toggle]"));
+                var volumes = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-volume]"));
+                var api = window.DoomArenaElevenAgents;
+                var initialVolume = volumes.length ? Number(volumes[0].value) : 0.8;
+
+                if (!toggles.length || !volumes.length || !api || typeof api.Commentator !== "function") {
+                    return;
+                }
+                elevenAgentsCommentator = new api.Commentator({
+                    signedUrlEndpoint: arenaCommentatorSignedUrlEndpoint,
+                    volume: initialVolume,
+                    onStatus: setElevenAgentsCommentatorStatus,
+                    onCaption: setElevenAgentsCommentatorCaption
+                });
+                toggles.forEach(function (toggle) {
+                    toggle.addEventListener("click", function () {
+                        if (elevenAgentsCommentatorDesired && !elevenAgentsCommentatorError) {
+                            elevenAgentsCommentatorDesired = false;
+                            elevenAgentsCommentatorRequested = false;
+                            elevenAgentsCommentatorEnabled = false;
+                            elevenAgentsCommentator.disable();
+                            syncElevenAgentsCommentatorControls("Enable shoutcaster", false, false);
+                            return;
+                        }
+                        elevenAgentsCommentatorDesired = true;
+                        elevenAgentsCommentatorError = false;
+                        if (duelPlayViewIsDisplayed()) {
+                            requestElevenAgentsCommentator().catch(function () {});
+                            return;
+                        }
+                        prepareElevenAgentsCommentatorFromUserGesture()
+                            .then(function () {
+                                duelIntroductionBlockedRunId = "";
+                                syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                                setElevenAgentsCommentatorStatus("Ready — starts when the arena opens", "ready");
+                                maybeAutoStartReadyDuel();
+                            })
+                            .catch(function (error) {
+                                elevenAgentsCommentatorError = true;
+                                syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                                setElevenAgentsCommentatorStatus(error.message || "Unable to prepare audio", "error");
+                            });
+                    });
+                });
+                volumes.forEach(function (volume) {
+                    volume.addEventListener("input", function () {
+                        var nextVolume = Number(volume.value);
+                        volumes.forEach(function (peer) {
+                            if (peer !== volume) {
+                                peer.value = volume.value;
+                            }
+                        });
+                        elevenAgentsCommentator.setVolume(nextVolume);
+                    });
+                });
+                elevenAgentsCommentatorConfigPromise = fetch(arenaCommentatorConfigEndpoint, { cache: "no-store" })
+                    .then(function (response) {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then(function (config) {
+                        if (!config || !config.configured) {
+                            elevenAgentsCommentatorAvailable = false;
+                            elevenAgentsCommentatorDesired = false;
+                            setElevenAgentsCommentatorStatus(
+                                "Set ELEVENLABS_API_KEY and ELEVENLABS_AGENT_ID to enable",
+                                "error"
+                            );
+                            return;
+                        }
+                        elevenAgentsCommentatorAvailable = true;
+                        elevenAgentsCommentatorDesired = true;
+                        elevenAgentsCommentatorError = false;
+                        syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                        setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                    })
+                    .catch(function () {
+                        elevenAgentsCommentatorAvailable = false;
+                        setElevenAgentsCommentatorStatus("Unable to check ElevenAgents configuration", "error");
+                    })
+                    .finally(function () {
+                        elevenAgentsCommentatorConfigResolved = true;
+                    });
+            }
+
+            function currentCommentaryScore(livePhase, liveRunId) {
+                var rounds = tacticalMatchSummary && Array.isArray(tacticalMatchSummary.rounds)
+                    ? tacticalMatchSummary.rounds
+                    : [];
+                var totals;
+                if (livePhase && livePhase !== "finished" && liveRunId) {
+                    rounds = rounds.filter(function (round) {
+                        return round.run_id !== liveRunId;
+                    });
+                }
+                totals = roundProgressTotals(rounds);
+                return { player_1: totals.wins1, player_2: totals.wins2 };
+            }
+
+            function updateElevenAgentsCommentator(
+                runId,
+                phase,
+                elapsed,
+                winner,
+                terminalReason,
+                roundNumber,
+                totalRounds,
+                player1,
+                player2
+            ) {
+                if (!elevenAgentsCommentator) {
+                    return;
+                }
+                elevenAgentsCommentator.update({
+                    runId: runId,
+                    phase: phase,
+                    elapsedSeconds: elapsed,
+                    winner: winner,
+                    terminalReason: terminalReason,
+                    round: roundNumber,
+                    totalRounds: totalRounds,
+                    scenario: scenarioDisplayName(currentArenaScenarioId),
+                    score: currentCommentaryScore(phase, runId),
+                    player1: player1,
+                    player2: player2,
+                    player1Name: funAgentName(participantReadyAgentById.player_1, "Player 1"),
+                    player2Name: funAgentName(participantReadyAgentById.player_2, "Player 2"),
+                    pickups: duelPickupCountsByParticipant,
+                    intentRows: latestParticipantIntentRows
+                });
+            }
+
             function renderPovAgentIdentity(prefix, identityLabel, fallbackName, fallbackModel, participantId) {
                 var identity = parseAgentIdentity(identityLabel, fallbackName, fallbackModel);
 
                 renderColoredAgentIdentity(prefix + "-pov-title", identity.name, fallbackName, participantId);
                 setText(prefix + "-model-name", identity.model);
                 setText(prefix + "-harness-name", identity.harness);
+                renderModelProvider(prefix, identity.model);
+            }
+
+            function modelProviderFor(modelName) {
+                var normalized = String(modelName || "").trim().toLowerCase();
+
+                if (/(anthropic|claude|opus|sonnet|sonet|soneet|haiku)/.test(normalized)) {
+                    return {
+                        id: "anthropic",
+                        label: "Anthropic",
+                        logo: "assets/anthropic-mark.svg"
+                    };
+                }
+                if (/(openai|chatgpt|gpt(?:-|\b)|codex|\bo[134](?:-|\b))/.test(normalized)) {
+                    return {
+                        id: "openai",
+                        label: "OpenAI",
+                        logo: "assets/openai-mark.svg"
+                    };
+                }
+                return null;
+            }
+
+            function renderProviderBadge(badge, provider) {
+                var logo;
+                var name;
+
+                if (badge === null) {
+                    return;
+                }
+                if (provider === null) {
+                    badge.hidden = true;
+                    badge.removeAttribute("data-provider");
+                    return;
+                }
+
+                logo = badge.querySelector(".duel-model-provider-logo");
+                name = badge.querySelector(".duel-model-provider-name");
+                badge.dataset.provider = provider.id;
+                badge.title = provider.label + " model";
+                if (logo !== null) {
+                    logo.src = provider.logo;
+                    logo.alt = provider.label;
+                }
+                if (name !== null) {
+                    name.textContent = provider.label;
+                }
+                badge.hidden = false;
+            }
+
+            function renderModelProvider(prefix, modelName) {
+                var provider = modelProviderFor(modelName);
+
+                renderProviderBadge(document.getElementById(prefix + "-versus-provider"), provider);
             }
 
             function setPovModelNames() {
@@ -5844,6 +6730,94 @@
                 setPovModelNames();
             }
 
+            function presentDuelParticipantsBeforeStart() {
+                if (!elevenAgentsCommentatorConfigResolved && elevenAgentsCommentatorConfigPromise) {
+                    return elevenAgentsCommentatorConfigPromise.then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
+                }
+                if (!elevenAgentsCommentatorAvailable || !elevenAgentsCommentatorDesired) {
+                    return Promise.resolve();
+                }
+                if (
+                    elevenAgentsCommentator &&
+                    typeof elevenAgentsCommentator.expectIntroduction === "function"
+                ) {
+                    elevenAgentsCommentator.expectIntroduction(
+                        currentDuelSession.run_id,
+                        currentDuelSession.current_round || currentArenaRound
+                    );
+                }
+                if (!elevenAgentsCommentatorRequested) {
+                    return requestElevenAgentsCommentator().then(function () {
+                        return presentDuelParticipantsBeforeStart();
+                    });
+                }
+                if (!elevenAgentsCommentator || typeof elevenAgentsCommentator.introduceMatch !== "function") {
+                    return Promise.reject(new Error("Shoutcaster introduction is unavailable"));
+                }
+                updateLauncherStatus("Presenting both competitors before the arena opens...");
+                return elevenAgentsCommentator.introduceMatch({
+                    runId: currentDuelSession.run_id,
+                    round: currentDuelSession.current_round || currentArenaRound,
+                    totalRounds: currentDuelSession.total_rounds || currentArenaTotalRounds,
+                    scenario: scenarioDisplayName(currentArenaScenarioId),
+                    player1Name: funAgentName(participantReadyAgentById.player_1, "Player 1"),
+                    player2Name: funAgentName(participantReadyAgentById.player_2, "Player 2")
+                });
+            }
+
+            function showDuelPlayViewBeforeIntroduction() {
+                var launcher = document.getElementById("arena-launcher");
+
+                currentArenaMode = "duel";
+                setDuelPovActive(true);
+                setDuelTacticalPanelVisible(true);
+                if (launcher !== null) {
+                    launcher.style.display = "none";
+                }
+                duelLauncherHidePending = false;
+
+                // Wait for two animation frames so the browser paints the
+                // spectator layout before ElevenAgents can emit any audio.
+                return new Promise(function (resolve) {
+                    window.requestAnimationFrame(function () {
+                        window.requestAnimationFrame(resolve);
+                    });
+                });
+            }
+
+            function restoreDuelLauncherAfterIntroductionFailure() {
+                var launcher = document.getElementById("arena-launcher");
+
+                setDuelPovActive(false);
+                setDuelTacticalPanelVisible(false);
+                duelLauncherHidePending = false;
+                if (launcher !== null) {
+                    launcher.style.display = "flex";
+                }
+                setArenaLauncherButtonsDisabled(false);
+            }
+
+            function commentaryCanBlockDuelStart() {
+                if (!elevenAgentsCommentatorAvailable || !elevenAgentsCommentatorDesired) {
+                    return Promise.resolve(false);
+                }
+                if (elevenAgentsCommentatorAudioPreparedByUser) {
+                    return Promise.resolve(true);
+                }
+                if (elevenAgentsCommentatorAudioPreparationPromise) {
+                    return elevenAgentsCommentatorAudioPreparationPromise.then(function () {
+                        return elevenAgentsCommentatorAudioPreparedByUser;
+                    }).catch(function () {
+                        return false;
+                    });
+                }
+                // Automatic reloads have no browser user activation. Start the
+                // duel normally instead of waiting forever on AudioContext.resume().
+                return Promise.resolve(false);
+            }
+
             function maybeAutoStartReadyDuel() {
                 if (
                     duelReadyAutoStartInFlight ||
@@ -5851,6 +6825,7 @@
                     currentArenaMode !== "duel" ||
                     !currentDuelSession ||
                     !currentDuelSession.run_id ||
+                    duelIntroductionBlockedRunId === currentDuelSession.run_id ||
                     !participantReadyById.player_1 ||
                     !participantReadyById.player_2
                 ) {
@@ -5858,8 +6833,36 @@
                 }
 
                 duelReadyAutoStartInFlight = true;
-                updateLauncherStatus("Both agents are ready. Starting benchmark...");
-                startDuel({ reuseExistingSession: true })
+                updateLauncherStatus("Both agents are ready. Preparing the introduction...");
+                commentaryCanBlockDuelStart()
+                    .then(function (canBlockForIntroduction) {
+                        return showDuelPlayViewBeforeIntroduction().then(function () {
+                            if (!canBlockForIntroduction) {
+                                return;
+                            }
+                            return presentDuelParticipantsBeforeStart();
+                        });
+                    })
+                    .then(function () {
+                        updateLauncherStatus("Introduction complete. Starting benchmark...");
+                        return startDuel({ reuseExistingSession: true });
+                    })
+                    .catch(function (error) {
+                        duelIntroductionBlockedRunId = currentDuelSession ? currentDuelSession.run_id : "";
+                        elevenAgentsCommentatorEnabled = false;
+                        elevenAgentsCommentatorRequested = false;
+                        elevenAgentsCommentatorError = true;
+                        if (elevenAgentsCommentator) {
+                            elevenAgentsCommentator.disable();
+                        }
+                        restoreDuelLauncherAfterIntroductionFailure();
+                        syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                        updateLauncherStatus(
+                            "The benchmark is paused: " + (error.message || "the shoutcaster introduction failed") +
+                            ". Retry the shoutcaster to continue."
+                        );
+                        setElevenAgentsCommentatorStatus(error.message || "Introduction failed", "error");
+                    })
                     .finally(function () {
                         duelReadyAutoStartInFlight = false;
                     });
@@ -5951,7 +6954,7 @@
                     fill.style.width = percent.toFixed(1) + "%";
                 }
                 if (label !== null) {
-                    label.textContent = "❤️ " + health + " / " + DUEL_MAX_HEALTH;
+                    label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH;
                 }
                 if (bar !== null) {
                     bar.classList.toggle("health-critical", clamped > 0 && clamped <= DUEL_MAX_HEALTH * 0.25);
@@ -8554,6 +9557,17 @@
                 updateParticipantFootstepAudio("player_1", player1, phase, matchOver);
                 updateParticipantDeathOverlay("player_2", player2, "Player 1", phase, winner, terminalReason);
                 updateParticipantFootstepAudio("player_2", player2, phase, matchOver);
+                updateElevenAgentsCommentator(
+                    runId,
+                    phase,
+                    elapsed,
+                    winner,
+                    terminalReason,
+                    roundNumber,
+                    totalRounds,
+                    player1,
+                    player2
+                );
                 updateNextRoundButton(phase);
                 maybeShowRoundProgressPopup(phase);
                 maybeAutoAdvanceDuelRound(phase);
@@ -8580,6 +9594,16 @@
                     .then(function (text) {
                         updateDuelDashboard(parseTsv(text));
                     });
+            }
+
+            function scheduleDuelStateRefresh() {
+                var delay = elevenAgentsCommentatorAvailable && elevenAgentsCommentatorDesired
+                    ? arenaCommentatorStatePollMs
+                    : arenaDuelStatePollMs;
+                window.setTimeout(function () {
+                    refreshDuelState();
+                    scheduleDuelStateRefresh();
+                }, delay);
             }
 
             function postPlayerDebugCommand(command) {
@@ -8840,6 +9864,346 @@
                 }
             }
 
+            function normalizeDuelPreviewState(value) {
+                var normalized = String(value || "fighting").toLowerCase();
+                return ["fighting", "finished", "waiting", "disconnected"].indexOf(normalized) !== -1
+                    ? normalized
+                    : "fighting";
+            }
+
+            function syncDuelPreviewStreamFrame() {
+                var streamWidth = 1920;
+                var streamHeight = 1080;
+                var scale = Math.min(
+                    window.innerWidth / streamWidth,
+                    window.innerHeight / streamHeight
+                );
+                var renderedWidth;
+                var renderedHeight;
+                var frameLeft;
+                var frameTop;
+
+                if (!Number.isFinite(scale) || scale <= 0) {
+                    scale = 1;
+                }
+                document.documentElement.style.setProperty(
+                    "--duel-preview-scale",
+                    scale.toFixed(6)
+                );
+                document.documentElement.dataset.duelPreviewScale = scale.toFixed(6);
+                renderedWidth = streamWidth * scale;
+                renderedHeight = streamHeight * scale;
+                frameLeft = (window.innerWidth - renderedWidth) / 2;
+                frameTop = (window.innerHeight - renderedHeight) / 2;
+                document.documentElement.style.setProperty(
+                    "--duel-preview-frame-right",
+                    (frameLeft + renderedWidth).toFixed(3) + "px"
+                );
+                document.documentElement.style.setProperty(
+                    "--duel-preview-frame-top",
+                    frameTop.toFixed(3) + "px"
+                );
+            }
+
+            function moveDuelPreviewControlsOutsideFrame() {
+                var controls = document.getElementById("duel-play-footer");
+
+                if (!controls) {
+                    return;
+                }
+                controls.classList.add("duel-preview-outside-controls");
+                document.body.appendChild(controls);
+            }
+
+            function duelPreviewFixtures() {
+                var shared = {
+                    elapsed: 83,
+                    progress: "1/3",
+                    score: "0–0",
+                    phase: "combat",
+                    players: {
+                        player_1: {
+                            name: "Boss Toddler",
+                            harness: "Codex",
+                            model: "gpt-5.6-sol medium",
+                            connected: true,
+                            health: 92,
+                            shotgun: false,
+                            healthPacks: 1,
+                            decisions: "7 decisions · 8.4s avg",
+                            quip: "Cutting east, then I’m taking the center lane.",
+                            objective: "circle east and pressure the center lane",
+                            reasoning: "the opponent is exposed near the central block",
+                            route: "Q26 → Q22 → M22",
+                            engagement: "seek_engagement",
+                            latency: "8.4s",
+                            lifecycle: "current",
+                            statusLabel: "In action"
+                        },
+                        player_2: {
+                            name: "Burrito Regret",
+                            harness: "Codex",
+                            model: "gpt-5.6-sol medium",
+                            connected: true,
+                            health: 125,
+                            shotgun: true,
+                            healthPacks: 0,
+                            decisions: "9 decisions · 9.1s avg",
+                            quip: "I’m stalking west like a burrito with unresolved issues.",
+                            objective: "chase the visible opponent",
+                            reasoning: "close pressure can convert the damage advantage",
+                            route: "M22 → M18 → Q18",
+                            engagement: "engage_if_visible",
+                            latency: "9.1s",
+                            lifecycle: "accepted",
+                            statusLabel: "Accepted"
+                        }
+                    }
+                };
+                var fixtures = {
+                    fighting: shared,
+                    finished: JSON.parse(JSON.stringify(shared)),
+                    waiting: JSON.parse(JSON.stringify(shared)),
+                    disconnected: JSON.parse(JSON.stringify(shared))
+                };
+
+                fixtures.finished.elapsed = 163;
+                fixtures.finished.progress = "1/1";
+                fixtures.finished.score = "0–1";
+                fixtures.finished.phase = "finished";
+                fixtures.finished.loser = "player_1";
+                fixtures.finished.players.player_1.health = 0;
+                fixtures.finished.players.player_1.healthPacks = 0;
+                fixtures.finished.players.player_1.decisions = "3 decisions · 56.8s avg";
+                fixtures.finished.players.player_1.quip = "Skipping standup — meeting with a shotgun.";
+                fixtures.finished.players.player_1.objective = "flank south around the wall block";
+                fixtures.finished.players.player_1.reasoning = "the shotgun room walls force a south approach";
+                fixtures.finished.players.player_1.lifecycle = "rejected";
+                fixtures.finished.players.player_1.statusLabel = "MCP command rejected";
+                fixtures.finished.players.player_1.error = "Match is already finished; post-finish participant intents are rejected.";
+                fixtures.finished.players.player_2.lifecycle = "rejected";
+                fixtures.finished.players.player_2.statusLabel = "MCP command rejected";
+                fixtures.finished.players.player_2.error = "Match is already finished; post-finish participant intents are rejected.";
+
+                fixtures.waiting.elapsed = 0;
+                fixtures.waiting.progress = "1/1";
+                fixtures.waiting.players.player_1.connected = false;
+                fixtures.waiting.players.player_2.connected = false;
+                fixtures.waiting.players.player_1.health = 150;
+                fixtures.waiting.players.player_2.health = 150;
+                fixtures.waiting.players.player_1.shotgun = false;
+                fixtures.waiting.players.player_2.shotgun = false;
+                fixtures.waiting.players.player_1.healthPacks = 0;
+                fixtures.waiting.players.player_2.healthPacks = 0;
+                fixtures.waiting.players.player_1.decisions = "0 decisions";
+                fixtures.waiting.players.player_2.decisions = "0 decisions";
+                fixtures.waiting.players.player_1.waiting = true;
+                fixtures.waiting.players.player_2.waiting = true;
+
+                fixtures.disconnected.elapsed = 41;
+                fixtures.disconnected.players.player_1.connected = false;
+                fixtures.disconnected.players.player_1.waiting = true;
+                fixtures.disconnected.players.player_1.decisions = "2 decisions · 11.2s avg";
+                return fixtures;
+            }
+
+            function paintDuelPreviewPovCanvas(canvasId, isPlayer2) {
+                var canvas = document.getElementById(canvasId);
+                var context;
+                var width;
+                var height;
+                var horizon;
+                var index;
+
+                if (!canvas) {
+                    return;
+                }
+                context = canvas.getContext("2d");
+                if (!context) {
+                    return;
+                }
+                width = canvas.width;
+                height = canvas.height;
+                horizon = Math.round(height * 0.48);
+                context.imageSmoothingEnabled = false;
+                context.fillStyle = "#10100d";
+                context.fillRect(0, 0, width, horizon);
+                context.fillStyle = "#25231d";
+                context.fillRect(0, horizon, width, height - horizon);
+
+                context.fillStyle = isPlayer2 ? "#654d34" : "#56452f";
+                context.fillRect(0, 24, 78, 116);
+                context.fillRect(width - 78, 18, 78, 122);
+                context.fillStyle = "#201c17";
+                for (index = 0; index < 5; index++) {
+                    context.fillRect(8 + index * 14, 32, 8, 96);
+                    context.fillRect(width - 70 + index * 14, 28, 8, 102);
+                }
+
+                context.strokeStyle = "rgba(118, 109, 82, 0.46)";
+                context.lineWidth = 1;
+                for (index = 0; index < 9; index++) {
+                    context.beginPath();
+                    context.moveTo(width / 2, horizon);
+                    context.lineTo(index * width / 8, height);
+                    context.stroke();
+                }
+                for (index = 0; index < 5; index++) {
+                    var floorY = horizon + Math.pow(index / 4, 1.7) * (height - horizon);
+                    context.beginPath();
+                    context.moveTo(0, floorY);
+                    context.lineTo(width, floorY);
+                    context.stroke();
+                }
+
+                context.fillStyle = "#131311";
+                context.fillRect(width * 0.35, 54, width * 0.3, 69);
+                context.fillStyle = "#8a6e45";
+                context.fillRect(width * 0.39, 61, width * 0.22, 57);
+                context.fillStyle = "#24231d";
+                for (index = 0; index < 6; index++) {
+                    context.fillRect(width * 0.4 + index * 11, 65, 5, 49);
+                }
+
+                context.fillStyle = isPlayer2 ? "#353632" : "#2b2c29";
+                context.beginPath();
+                context.moveTo(width * 0.42, height);
+                context.lineTo(width * 0.47, height * 0.71);
+                context.lineTo(width * 0.54, height * 0.69);
+                context.lineTo(width * 0.61, height);
+                context.closePath();
+                context.fill();
+                context.fillStyle = "#8c7754";
+                context.fillRect(width * 0.49, height * 0.72, width * 0.08, height * 0.28);
+            }
+
+            function renderDuelPreviewTacticalMap() {
+                var image = document.getElementById("duel-tactical-map-image");
+                var automap = document.getElementById("duel-player1-automap-canvas");
+                var overlay = document.getElementById("duel-tactical-overlay-canvas");
+                var status = document.getElementById("duel-player1-automap-status");
+
+                if (image) {
+                    image.hidden = false;
+                }
+                if (automap) {
+                    automap.hidden = true;
+                }
+                if (overlay) {
+                    overlay.hidden = true;
+                }
+                if (status) {
+                    status.hidden = true;
+                }
+            }
+
+            function renderDuelPreviewPlayer(participantId, player) {
+                var isPlayer2 = participantId === "player_2";
+                var prefix = isPlayer2 ? "duel-p2" : "duel-p1";
+                var domPrefix = isPlayer2 ? "player-2" : "player-1";
+                var waitingOverlay = document.getElementById(domPrefix + "-command-waiting");
+                var status = document.getElementById(domPrefix + "-pov-status");
+                var quip = document.getElementById(domPrefix + "-battle-quip");
+
+                renderPovAgentIdentity(
+                    domPrefix,
+                    [player.name, player.harness, player.model].join(", "),
+                    isPlayer2 ? "Player 2" : "Player 1",
+                    player.model,
+                    participantId
+                );
+                updatePovConnectionBorder(participantId, player.connected);
+                updateDuelHealthBar(prefix, player.health);
+                renderDuelEquipmentIcons(prefix + "-equipment-icons", player.shotgun, player.healthPacks);
+                setText(prefix + "-log-total", player.decisions);
+                renderLogLines(prefix + "-log", player.waiting ? [
+                    "> Waiting for agent to send command..."
+                ] : [{
+                    kind: "decision",
+                    decisionKey: "preview-" + participantId,
+                    issuedAtMs: 1,
+                    timestamp: "just now",
+                    sequence: String(parseInt(player.decisions, 10) || 1),
+                    lifecycle: player.lifecycle,
+                    statusLabel: player.statusLabel,
+                    objective: player.objective,
+                    reasoning: player.reasoning,
+                    route: player.route,
+                    engagement: player.engagement,
+                    error: player.error || "",
+                    decisionLatency: player.latency,
+                    showDecisionLatency: true
+                }]);
+                if (waitingOverlay) {
+                    waitingOverlay.hidden = !player.waiting;
+                }
+                if (status) {
+                    status.hidden = true;
+                }
+                if (quip) {
+                    quip.textContent = player.quip;
+                    quip.hidden = !!player.waiting;
+                    quip.classList.toggle("is-visible", !player.waiting);
+                }
+                paintDuelPreviewPovCanvas(domPrefix + "-canvas", isPlayer2);
+            }
+
+            function renderDuelPreviewBreakdown(fixture) {
+                var breakdown = document.getElementById("duel-breakdown");
+                var summary = document.getElementById("duel-breakdown-summary");
+
+                if (!breakdown || !summary) {
+                    return;
+                }
+                breakdown.hidden = fixture.phase !== "finished";
+                summary.innerHTML = "";
+                if (fixture.phase === "finished") {
+                    appendBreakdownStat(summary, "Winner", fixture.players.player_2.name);
+                    appendBreakdownStat(summary, "Elapsed", fixture.elapsed + "s");
+                    appendBreakdownStat(summary, "Final score", fixture.score);
+                }
+            }
+
+            function initializeDuelPreview(requestedState) {
+                var state = normalizeDuelPreviewState(requestedState);
+                var fixture = duelPreviewFixtures()[state];
+                var launcher = document.getElementById("arena-launcher");
+                var deathOverlay = document.getElementById("player-1-death-overlay");
+                var deathDetail = document.getElementById("player-1-death-detail");
+
+                document.documentElement.dataset.duelPreviewState = state;
+                document.title = "Duel UI Preview · " + state;
+                moveDuelPreviewControlsOutsideFrame();
+                syncDuelPreviewStreamFrame();
+                window.addEventListener("resize", syncDuelPreviewStreamFrame);
+                currentArenaMode = "duel";
+                currentArenaRound = parseInt(fixture.progress, 10) || 1;
+                currentArenaTotalRounds = parseInt(fixture.progress.split("/")[1], 10) || 1;
+                participantReadyById = {
+                    player_1: fixture.players.player_1.connected,
+                    player_2: fixture.players.player_2.connected
+                };
+                if (launcher) {
+                    launcher.style.display = "none";
+                }
+                setDuelPovActive(true);
+                setDuelTacticalPanelVisible(true);
+                setText("duel-tactical-elapsed", fixture.elapsed + "s");
+                setText("duel-tactical-match-progress", fixture.progress);
+                setText("duel-tactical-match-score", fixture.score);
+                renderDuelPreviewPlayer("player_1", fixture.players.player_1);
+                renderDuelPreviewPlayer("player_2", fixture.players.player_2);
+                renderDuelPreviewTacticalMap();
+                renderDuelPreviewBreakdown(fixture);
+
+                if (deathOverlay) {
+                    deathOverlay.hidden = fixture.loser !== "player_1";
+                }
+                if (deathDetail && fixture.loser === "player_1") {
+                    deathDetail.textContent = fixture.players.player_2.name + " won | player_1_dead";
+                }
+            }
+
             function initializeArenaLauncher() {
                 var buttons = document.querySelectorAll("[data-arena-mode]");
                 var queryParams = new URLSearchParams(window.location.search);
@@ -8864,6 +10228,16 @@
                 });
 
                 document.getElementById("arena-start-game").addEventListener("click", function () {
+                    // Unlock browser audio while this direct user gesture is
+                    // active, but do not connect or speak over the setup view.
+                    if (
+                        elevenAgentsCommentatorAvailable &&
+                        elevenAgentsCommentatorDesired
+                    ) {
+                        prepareElevenAgentsCommentatorFromUserGesture().catch(function (error) {
+                            updateLauncherStatus(error.message || "Unable to prepare the shoutcaster");
+                        });
+                    }
                     var sessionMatchesSettings = currentDuelSession &&
                         currentDuelSession.run_id &&
                         currentDuelSession.scenario_id === selectedStringValue("arena-duel-map", "duel_e1m8_blind_spawn") &&
@@ -8983,6 +10357,12 @@
                 setLauncherMode("choose");
                 installPointerCaptureGuards();
                 disableDoomPointerCapture();
+                initializeElevenAgentsCommentator();
+
+                if (duelPreviewRequestedState) {
+                    initializeDuelPreview(duelPreviewRequestedState);
+                    return;
+                }
 
                 if (queryMenu) {
                     var cleanMenuUrl = new URL(window.location.href);
@@ -9053,7 +10433,7 @@
                     updateMcpSetupStatus();
                     window.setInterval(updateMcpSetupStatus, arenaMcpStatusPollMs);
                     window.setInterval(refreshArenaScore, 1000);
-                    window.setInterval(refreshDuelState, 1000);
+                    scheduleDuelStateRefresh();
                     startDuelPovRefreshLoop();
                     window.setInterval(pollArenaReset, 1000);
                     window.setInterval(disableDoomPointerCapture, 1000);

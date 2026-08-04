@@ -116,6 +116,7 @@ static int arena_duel_start_tick;
 static int arena_duel_timeout_seconds;
 static boolean arena_duel_started;
 static int arena_duel_finished;
+static boolean arena_duel_superseded_players_removed;
 static char arena_duel_winner[16];
 static char arena_duel_terminal_reason[32];
 static int arena_duel_last_player1_health;
@@ -997,30 +998,30 @@ static void ArenaDuel_EnsurePlayer1Label(void)
     mobj->arena_label[sizeof(mobj->arena_label) - 1] = '\0';
 }
 
-static void ArenaDuel_Player1Spawn(int *x, int *y, angle_t *angle)
+void ArenaDuel_Player1SpawnCoordinates(int *x, int *y, int *angle_degrees)
 {
     switch (ArenaDuel_SpawnVariant())
     {
     case ARENA_DUEL_SPAWN_BLIND:
         *x = -960;
         *y = 640;
-        *angle = ANG270 + ANG45;
+        *angle_degrees = 315;
         break;
     case ARENA_DUEL_SPAWN_CORNER:
         *x = -960;
         *y = 640;
-        *angle = ANG270 + ANG45;
+        *angle_degrees = 315;
         break;
     case ARENA_DUEL_SPAWN_CENTER:
         *x = -320;
         *y = -520;
-        *angle = 0;
+        *angle_degrees = 0;
         break;
     case ARENA_DUEL_SPAWN_OPEN:
     default:
         *x = -960;
         *y = 640;
-        *angle = ANG270 + ANG45;
+        *angle_degrees = 315;
         break;
     }
 }
@@ -1031,7 +1032,7 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
     mobj_t *mobj;
     int x;
     int y;
-    angle_t angle;
+    int angle_degrees;
 
     if (arena_duel_player1_health_initialized)
     {
@@ -1045,11 +1046,11 @@ static void ArenaDuel_EnsurePlayer1StartingHealth(void)
     }
 
     mobj = player->mo;
-    ArenaDuel_Player1Spawn(&x, &y, &angle);
+    ArenaDuel_Player1SpawnCoordinates(&x, &y, &angle_degrees);
     P_UnsetThingPosition(mobj);
     mobj->x = x << FRACBITS;
     mobj->y = y << FRACBITS;
-    mobj->angle = angle;
+    mobj->angle = ANG45 * (angle_degrees / 45);
     P_SetThingPosition(mobj);
     mobj->momx = 0;
     mobj->momy = 0;
@@ -2309,6 +2310,14 @@ boolean ArenaDuel_IsEnabled(void)
 
 void ArenaDuel_CachePlayer1Mobj(mobj_t *mobj)
 {
+    // A reborn player also replaces this pointer. Cache replacement must not
+    // destroy the previous actor here: during rebirth that object is the corpse
+    // managed by Doom's normal lifecycle. The one-time level-setup sweep below
+    // removes only bootstrap actors after both live duel participants exist.
+    if (arena_duel_player1_cached_mo != mobj)
+    {
+        arena_duel_player1_health_initialized = false;
+    }
     arena_duel_player1_cached_mo = mobj;
     if (mobj != NULL)
     {
@@ -2369,6 +2378,7 @@ void ArenaDuel_InitLevel(void)
     arena_duel_timeout_seconds = Arena_TimeoutSeconds();
     arena_duel_started = false;
     arena_duel_finished = false;
+    arena_duel_superseded_players_removed = false;
     arena_duel_winner[0] = '\0';
     arena_duel_terminal_reason[0] = '\0';
     arena_duel_last_player1_health = ARENA_DUEL_PARTICIPANT_HEALTH;
@@ -2493,6 +2503,43 @@ static void ArenaDuel_RemoveDisabledWeaponPickups(void)
     }
 }
 
+static void ArenaDuel_RemoveSupersededPlayerActors(void)
+{
+    thinker_t *thinker;
+    thinker_t *next;
+    mobj_t *player1 = ArenaDuel_Player1Mobj();
+
+    if (arena_duel_superseded_players_removed
+        || player1 == NULL
+        || arena_duel_player2 == NULL)
+    {
+        return;
+    }
+
+    // Duel mode has exactly two legitimate MT_PLAYER actors: the console
+    // player and the synthetic opponent. Any other player actor still present
+    // at this point is a level-setup bootstrap artifact.
+    for (thinker = thinkercap.next; thinker != &thinkercap; thinker = next)
+    {
+        mobj_t *mobj;
+        next = thinker->next;
+        if (thinker->function.acp1 != (actionf_p1) P_MobjThinker)
+        {
+            continue;
+        }
+        mobj = (mobj_t *) thinker;
+        if (mobj->type != MT_PLAYER
+            || mobj == player1
+            || mobj == arena_duel_player2)
+        {
+            continue;
+        }
+        mobj->player = NULL;
+        P_RemoveMobj(mobj);
+    }
+    arena_duel_superseded_players_removed = true;
+}
+
 void ArenaDuel_Ticker(void)
 {
     int player1_health;
@@ -2514,6 +2561,7 @@ void ArenaDuel_Ticker(void)
         return;
     }
 
+    ArenaDuel_RemoveSupersededPlayerActors();
     ArenaDuel_EnsurePlayer1Label();
     ArenaDuel_EnsurePlayer1StartingHealth();
     ArenaDuel_EnsurePlayer1CombatState();
@@ -3048,8 +3096,3 @@ ARENA_DUEL_EXPORT uintptr_t ArenaDuel_PalettePointer(void)
 {
     return I_GetPaletteData();
 }
-
-
-
-
-

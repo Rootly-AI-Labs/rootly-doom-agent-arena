@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import secrets
 import shutil
 import subprocess
 import sys
@@ -40,6 +39,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--chrome-path", default=os.environ.get("DOOM_ARENA_BROWSER", ""))
     parser.add_argument("--keep-browser", action="store_true", help="Leave a launched headless browser running for debugging.")
+    parser.add_argument(
+        "--movement-only",
+        action="store_true",
+        help="Stop successfully after proving that both participants change XY position.",
+    )
     return parser.parse_args()
 
 
@@ -54,6 +58,21 @@ def request_text(server_url: str, path: str, timeout: float = 5.0) -> tuple[int,
             return response.status, response.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode("utf-8", errors="replace")
+
+
+def post_json(server_url: str, path: str, payload: dict[str, Any], timeout: float = 5.0) -> dict[str, Any]:
+    request = urllib.request.Request(
+        server_url.rstrip("/") + path,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return parse_json_object(path, response.read().decode("utf-8", errors="replace"))
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"{path} failed with HTTP {exc.code}: {body}") from exc
 
 
 def server_reachable(server_url: str) -> bool:
@@ -119,6 +138,14 @@ def chrome_candidates() -> list[str]:
         found = shutil.which(name)
         if found:
             candidates.append(found)
+
+    for path in (
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    ):
+        if Path(path).exists():
+            candidates.append(path)
 
     env_program_files = [
         os.environ.get("PROGRAMFILES", ""),
@@ -197,23 +224,14 @@ def parse_json_object(label: str, text: str) -> dict[str, Any]:
     return parsed
 
 
-def write_controller_tokens(run_id: str) -> tuple[str, str]:
-    p1_token = secrets.token_urlsafe(18)
-    p2_token = secrets.token_urlsafe(18)
-    CONTROLLER_TOKENS_PATH.write_text(
-        json.dumps(
-            {
-                "run_id": run_id,
-                "player_1": {"model": "codex", "controller_token": p1_token},
-                "player_2": {"model": "claude", "controller_token": p2_token},
-                "enforce_controller_tokens": True,
-            },
-            indent=2,
-        )
-        + "\n",
-        encoding="utf-8",
+def read_controller_tokens(run_id: str) -> tuple[str, str]:
+    payload = json.loads(CONTROLLER_TOKENS_PATH.read_text(encoding="utf-8"))
+    if payload.get("run_id") != run_id:
+        raise RuntimeError(f"controller tokens belong to {payload.get('run_id')}, expected {run_id}")
+    return (
+        str(payload["player_1"]["controller_token"]),
+        str(payload["player_2"]["controller_token"]),
     )
-    return p1_token, p2_token
 
 
 def get_state(client: DoomArenaClient, run_id: str) -> dict[str, Any]:
@@ -252,14 +270,14 @@ def wait_for(predicate: Any, label: str, timeout_seconds: int, poll_seconds: flo
     raise RuntimeError(f"Timed out waiting for {label}; last={json.dumps(last, indent=2)}")
 
 
-def participant_motion_changed(before: dict[str, Any], after: dict[str, Any]) -> bool:
-    for participant_id in ("player_1", "player_2"):
-        before_player = before.get(participant_id, {})
-        after_player = after.get(participant_id, {})
-        for key in ("x", "y", "angle"):
-            if before_player.get(key) != after_player.get(key):
-                return True
-    return False
+def participant_position_changed(
+    before: dict[str, Any],
+    after: dict[str, Any],
+    participant_id: str,
+) -> bool:
+    before_player = before.get(participant_id, {})
+    after_player = after.get(participant_id, {})
+    return any(before_player.get(key) != after_player.get(key) for key in ("x", "y"))
 
 
 def participant_has_active_autopilot(player: dict[str, Any], expected_intent: str) -> bool:
@@ -311,9 +329,17 @@ def fallback_check(client: DoomArenaClient, run_id: str) -> dict[str, Any]:
     }
 
 
-def motion_check(client: DoomArenaClient, run_id: str, before: dict[str, Any]) -> dict[str, Any]:
+def participant_position_check(
+    client: DoomArenaClient,
+    run_id: str,
+    before: dict[str, Any],
+    participant_id: str,
+) -> dict[str, Any]:
     state = get_state(client, run_id)
-    return {"_ok": participant_motion_changed(before, state), "state": state}
+    return {
+        "_ok": participant_position_changed(before, state, participant_id),
+        "state": state,
+    }
 
 
 def low_level_check(client: DoomArenaClient, run_id: str, before_tick: int) -> dict[str, Any]:
@@ -358,13 +384,33 @@ def main() -> int:
     try:
         server_process, server_log = start_server_if_needed(server_url)
         client = DoomArenaClient(server_url)
-        reset = parse_json_object("reset_duel", client.reset_duel("codex", "claude", 1, 42, 120))
+        reset = post_json(
+            server_url,
+            "/api/arena/duel-session",
+            {
+                "arena_mode": "duel",
+                "control_mode": "hierarchical",
+                "scenario_id": "duel_e1m8_blind_spawn",
+                "player_1_model": "codex",
+                "player_2_model": "claude",
+                "rounds": 1,
+                "seed": 42,
+                "timeout_seconds": 120,
+                "decision_cadence_ms": 750,
+                "intent_duration_ms": 25000,
+                "hide_enemy_position": True,
+                "randomize_spawns": False,
+                "enable_map_blueprint": False,
+                "enable_weapon_pickups": True,
+                "enforce_controller_tokens": True,
+            },
+        )
         run_id = str(reset["run_id"])
         if reset.get("arena_mode") != "duel":
             raise RuntimeError(f"reset did not enter duel mode: {reset}")
         log_ok(f"duel reset/start works: {run_id}")
 
-        p1_token, p2_token = write_controller_tokens(run_id)
+        p1_token, p2_token = read_controller_tokens(run_id)
         browser_process, browser_temp_dir = launch_browser(
             server_url,
             args.browser_mode,
@@ -539,10 +585,18 @@ def main() -> int:
         log_ok("state export includes replan recommendation metadata")
 
         wait_for(
-            lambda: motion_check(client, run_id, active_state),
-            "positions or angles change after intents become active",
+            lambda: participant_position_check(client, run_id, active_state, "player_1"),
+            "player_1 position changes after its intent becomes active",
             min(args.timeout_seconds, 20),
         )
+        wait_for(
+            lambda: participant_position_check(client, run_id, active_state, "player_2"),
+            "player_2 position changes after its intent becomes active",
+            min(args.timeout_seconds, 20),
+        )
+        if args.movement_only:
+            log_ok("both participants physically moved in the browser runtime")
+            return 0
 
         stale_state = wait_for(
             lambda: stale_autopilot_check(client, run_id, "search", "search"),
