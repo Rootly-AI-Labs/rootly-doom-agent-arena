@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Rootly Doom Agent Arena — Automation</title>
+        <link rel="icon" href="assets/rootly-favicon.svg" />
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                font-size: 12px;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background: radial-gradient(circle at 50% 28%, #273020 0%, #141614 46%, #090909 100%);
+                color: #f3f0df;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            #arena-launcher {
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 24px 0;
+                text-align: center;
+            }
+
+            .arena-launcher-card {
+                width: min(920px, calc(100% - 32px));
+                margin: auto 0;
+                padding: 32px;
+                border: 1px solid rgba(211, 220, 189, 0.18);
+                background: #141714;
+                box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
+            }
+
+            h1 {
+                margin: 0 0 6px;
+                color: #f3f0df;
+                font: 700 22px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .arena-subtitle {
+                margin: 0 0 18px;
+                color: #b7cf89;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+
+            .arena-config-section {
+                margin: 0 0 16px;
+                border: 1px solid rgba(173, 186, 145, 0.14);
+                border-radius: 6px;
+                background: #181c18;
+            }
+
+            .arena-config-section summary {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 12px 14px;
+                color: #b8e986;
+                cursor: pointer;
+                list-style: none;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                user-select: none;
+            }
+
+            .arena-config-section summary::-webkit-details-marker {
+                display: none;
+            }
+
+            .arena-config-section summary::after {
+                content: "−";
+                font-size: 14px;
+                line-height: 1;
+            }
+
+            .arena-config-section:not([open]) summary::after {
+                content: "+";
+            }
+
+            .arena-config-disclosure-body {
+                padding: 0 14px 14px;
+            }
+
+            .arena-config-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                text-align: left;
+            }
+
+            .arena-model-field label {
+                display: block;
+                margin-bottom: 6px;
+                color: #b7cf89;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            .arena-model-field select,
+            .arena-model-field input {
+                width: 100%;
+                border: 1px solid rgba(204, 212, 183, 0.2);
+                background: #0f120e;
+                color: #f3f0df;
+                padding: 9px 10px;
+                font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                border-radius: 2px;
+                transition: border-color 0.15s ease;
+            }
+
+            .arena-model-field select:focus,
+            .arena-model-field input:focus {
+                outline: none;
+                border-color: rgba(184, 233, 134, 0.55);
+            }
+
+            .arena-mcp-status-panel {
+                margin-top: 12px;
+                border: 1px solid rgba(173, 186, 145, 0.14);
+                border-radius: 6px;
+                background: #181c18;
+                padding: 12px 14px;
+                text-align: left;
+            }
+
+            .arena-preflight-title {
+                margin: 0 0 10px;
+                color: #f7f5d8;
+                font-weight: 700;
+                font-size: 11px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+
+            .arena-check-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 7px;
+                padding: 8px 10px;
+                border: 1px solid rgba(255, 122, 122, 0.35);
+                background: rgba(255, 122, 122, 0.08);
+                color: #f7f5d8;
+                font: 700 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                border-radius: 3px;
+            }
+
+            .arena-check-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .arena-check-row.ok {
+                border-color: rgba(184, 233, 134, 0.35);
+                background: rgba(184, 233, 134, 0.08);
+            }
+
+            .arena-check-row.pending {
+                border-color: rgba(216, 192, 122, 0.32);
+                background: rgba(216, 192, 122, 0.08);
+            }
+
+            .arena-preflight-icon {
+                flex: 0 0 20px;
+                width: 20px;
+                font-size: 14px;
+                line-height: 1;
+                text-align: center;
+            }
+
+            .arena-check-label {
+                flex: 0 0 34px;
+                color: #b7cf89;
+                letter-spacing: 0.08em;
+            }
+
+            .arena-check-text {
+                flex: 1 1 auto;
+                font-style: italic;
+                font-weight: 400;
+                color: rgba(247, 245, 216, 0.86);
+            }
+
+            .automation-banner {
+                margin: 12px 0 0;
+                border: 1px solid rgba(255, 206, 107, 0.28);
+                background: rgba(255, 206, 107, 0.08);
+                color: #f7f5d8;
+                padding: 9px 11px;
+                font: 700 12px/1.35 "Trebuchet MS", Verdana, sans-serif;
+                text-align: left;
+            }
+
+            .automation-banner.error {
+                border-color: rgba(255, 122, 122, 0.45);
+                background: rgba(255, 122, 122, 0.1);
+            }
+
+            .automation-progress {
+                margin-top: 12px;
+                border: 1px solid rgba(173, 186, 145, 0.14);
+                border-radius: 6px;
+                background: #181c18;
+                padding: 12px 14px;
+                text-align: left;
+            }
+
+            .automation-progress-head {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 10px;
+                margin-bottom: 8px;
+            }
+
+            .automation-state {
+                color: #b8e986;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+
+            .automation-state.failed {
+                color: #ff7a7a;
+            }
+
+            .automation-state.idle {
+                color: rgba(247, 245, 216, 0.5);
+            }
+
+            .automation-meta {
+                color: #d8c07a;
+                font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+            }
+
+            .automation-bar {
+                height: 8px;
+                border: 1px solid rgba(204, 212, 183, 0.18);
+                background: #0f120e;
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .automation-bar-fill {
+                height: 100%;
+                width: 0%;
+                background: #4d6b30;
+                transition: width 0.3s ease;
+            }
+
+            .automation-log {
+                margin-top: 12px;
+                height: 260px;
+                overflow-y: auto;
+                border: 1px solid rgba(204, 212, 183, 0.18);
+                background: #0b0d0a;
+                color: #cfe6b3;
+                padding: 10px 12px;
+                text-align: left;
+                font: 11px/1.5 Consolas, "Courier New", monospace;
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+
+            .automation-log:empty::before {
+                content: "No benchmark output yet. Click Start Benchmark.";
+                color: rgba(247, 245, 216, 0.35);
+                font-style: italic;
+            }
+
+            #arena-launcher-status {
+                min-height: 18px;
+                margin-top: 16px;
+                color: #d8c07a;
+                font: 12px/1.4 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-start-actions {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 150px;
+                gap: 10px;
+                margin-top: 12px;
+            }
+
+            #arena-start-benchmark {
+                display: block;
+                width: 100%;
+                cursor: pointer;
+                border: 1px solid rgba(188, 205, 151, 0.22);
+                background: #314124;
+                color: #f3f0df;
+                padding: 14px 12px;
+                font: 700 13px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            #arena-start-benchmark.stop-mode {
+                border-color: rgba(255, 122, 122, 0.35);
+                background: #43241f;
+            }
+
+            #arena-refresh-arena {
+                cursor: pointer;
+                border: 1px solid rgba(216, 192, 122, 0.28);
+                background: #24261f;
+                color: #e4d6a1;
+                padding: 14px 12px;
+                font: 700 12px/1.2 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+
+            button:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+            }
+
+            .arena-launcher-footer {
+                margin-top: 14px;
+                padding-top: 10px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                color: rgba(247, 245, 216, 0.52);
+                font: 10px/1.4 "Trebuchet MS", Verdana, sans-serif;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .arena-launcher-footer a {
+                color: inherit;
+            }
+
+            @media (max-width: 640px) {
+                .arena-config-grid,
+                .arena-start-actions {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="arena-launcher">
+            <div class="arena-launcher-card">
+                <h1>Rootly Doom Agent Arena</h1>
+                <p class="arena-subtitle">Automated benchmark</p>
+
+                <details class="arena-config-section" id="arena-config" open>
+                    <summary>Match setup</summary>
+                    <div class="arena-config-disclosure-body">
+                        <div class="arena-config-grid">
+                            <div class="arena-model-field">
+                                <label for="arena-agent-cli">Agent CLI</label>
+                                <select id="arena-agent-cli">
+                                    <option value="claude" selected>Claude Code</option>
+                                    <option value="codex">Codex</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-bypass-permissions">Bypass permissions</label>
+                                <select id="arena-bypass-permissions">
+                                    <option value="true" selected>On</option>
+                                    <option value="false">Off</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-duel-map">Map / spawn variant</label>
+                                <select id="arena-duel-map">
+                                    <option value="duel_e1m8_blind_spawn" selected>Blind spawn</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-enable-weapon-pickups">Weapon spawn</label>
+                                <select id="arena-enable-weapon-pickups">
+                                    <option value="true" selected>True</option>
+                                    <option value="false">False</option>
+                                </select>
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-matches">Matches in session</label>
+                                <input id="arena-matches" type="number" min="1" max="50" value="1" />
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-p1-model">Player 1 model</label>
+                                <input id="arena-p1-model" type="text" value="claude-opus-5" />
+                            </div>
+                            <div class="arena-model-field">
+                                <label for="arena-p2-model">Player 2 model</label>
+                                <input id="arena-p2-model" type="text" value="claude-sonnet-5" />
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <div class="arena-mcp-status-panel">
+                    <div class="arena-preflight-title">Pre-game checklist</div>
+                    <div class="arena-check-row" id="check-codex">
+                        <span class="arena-preflight-icon">❌</span>
+                        <span class="arena-check-text" id="check-codex-text">Checking for the agent CLI...</span>
+                    </div>
+                    <div class="arena-check-row" id="check-backend">
+                        <span class="arena-preflight-icon">❌</span>
+                        <span class="arena-check-text" id="check-backend-text">Checking the arena backend...</span>
+                    </div>
+                    <div class="arena-check-row" id="check-p1">
+                        <span class="arena-preflight-icon">❌</span>
+                        <span class="arena-check-label">P1</span>
+                        <span class="arena-check-text" id="check-p1-text">Agent not launched</span>
+                    </div>
+                    <div class="arena-check-row" id="check-p2">
+                        <span class="arena-preflight-icon">❌</span>
+                        <span class="arena-check-label">P2</span>
+                        <span class="arena-check-text" id="check-p2-text">Agent not launched</span>
+                    </div>
+                </div>
+
+                <div class="automation-banner" id="automation-banner">
+                    Both Codex agents are launched and driven automatically. No prompt pasting required.
+                </div>
+
+                <div class="automation-progress">
+                    <div class="automation-progress-head">
+                        <span class="automation-state idle" id="automation-state">Idle</span>
+                        <span class="automation-meta" id="automation-meta">0 / 0 matches</span>
+                    </div>
+                    <div class="automation-bar"><div class="automation-bar-fill" id="automation-bar-fill"></div></div>
+                    <pre class="automation-log" id="automation-log"></pre>
+                </div>
+
+                <div id="arena-launcher-status"></div>
+
+                <div class="arena-start-actions">
+                    <button id="arena-start-benchmark" type="button">Start Benchmark</button>
+                    <button id="arena-refresh-arena" type="button">Refresh Arena</button>
+                </div>
+
+                <div class="arena-launcher-footer">
+                    Built with <strong>Codex</strong> by
+                    <a href="https://github.com/Rootly-AI-Labs" target="_blank" rel="noopener"><strong>Rootly AI Labs</strong></a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                "use strict";
+
+                var POLL_MS = 2000;
+                var startButton = document.getElementById("arena-start-benchmark");
+                var refreshButton = document.getElementById("arena-refresh-arena");
+                var statusLine = document.getElementById("arena-launcher-status");
+                var logBox = document.getElementById("automation-log");
+                var stateLabel = document.getElementById("automation-state");
+                var metaLabel = document.getElementById("automation-meta");
+                var barFill = document.getElementById("automation-bar-fill");
+                var banner = document.getElementById("automation-banner");
+                var configSection = document.getElementById("arena-config");
+
+                var isRunning = false;
+                var busy = false;
+                var pinnedToBottom = true;
+
+                logBox.addEventListener("scroll", function () {
+                    var distance = logBox.scrollHeight - logBox.scrollTop - logBox.clientHeight;
+                    pinnedToBottom = distance < 40;
+                });
+
+                function setCheck(id, ok, text, pending) {
+                    var row = document.getElementById(id);
+                    var icon = row.querySelector(".arena-preflight-icon");
+                    row.classList.toggle("ok", !!ok);
+                    row.classList.toggle("pending", !ok && !!pending);
+                    icon.textContent = ok ? "✅" : pending ? "⏳" : "❌";
+                    document.getElementById(id + "-text").textContent = text;
+                }
+
+                function setStatus(message, isError) {
+                    statusLine.textContent = message || "";
+                    statusLine.style.color = isError ? "#ff7a7a" : "#d8c07a";
+                }
+
+                var cliSelect = document.getElementById("arena-agent-cli");
+                var bypassSelect = document.getElementById("arena-bypass-permissions");
+                var p1Model = document.getElementById("arena-p1-model");
+                var p2Model = document.getElementById("arena-p2-model");
+
+                // Filled from the server preflight so the page never hardcodes
+                // model names that drift from the harness defaults.
+                var defaultModels = {
+                    claude: ["claude-opus-5", "claude-sonnet-5"],
+                    codex: ["gpt-5.5", "gpt-5.4"]
+                };
+
+                function readConfig() {
+                    return {
+                        matches: parseInt(document.getElementById("arena-matches").value, 10) || 1,
+                        scenario_id: document.getElementById("arena-duel-map").value,
+                        agent_cli: cliSelect.value,
+                        bypass_permissions: bypassSelect.value === "true",
+                        enable_weapon_pickups:
+                            document.getElementById("arena-enable-weapon-pickups").value === "true",
+                        player_1_model: p1Model.value.trim(),
+                        player_2_model: p2Model.value.trim()
+                    };
+                }
+
+                function applyCliDefaults() {
+                    var models = defaultModels[cliSelect.value] || [];
+                    // Only replace a value the user has not customised.
+                    var known = [];
+                    Object.keys(defaultModels).forEach(function (key) {
+                        known = known.concat(defaultModels[key]);
+                    });
+                    if (models.length === 2) {
+                        if (!p1Model.value.trim() || known.indexOf(p1Model.value.trim()) !== -1) {
+                            p1Model.value = models[0];
+                        }
+                        if (!p2Model.value.trim() || known.indexOf(p2Model.value.trim()) !== -1) {
+                            p2Model.value = models[1];
+                        }
+                    }
+                    // Bypass permissions is a Claude Code flag only.
+                    bypassSelect.disabled = cliSelect.value !== "claude";
+                }
+
+                cliSelect.addEventListener("change", function () {
+                    applyCliDefaults();
+                    poll();
+                });
+
+                function setInputsDisabled(disabled) {
+                    var fields = configSection.querySelectorAll("select, input");
+                    for (var i = 0; i < fields.length; i += 1) {
+                        fields[i].disabled = disabled;
+                    }
+                }
+
+                function cliLabel(name) {
+                    return name === "claude" ? "Claude Code" : "Codex";
+                }
+
+                function renderPreflight(preflight) {
+                    if (preflight.default_models) {
+                        defaultModels = preflight.default_models;
+                    }
+                    var name = preflight.agent_cli || cliSelect.value;
+                    if (preflight.cli_available) {
+                        setCheck("check-codex", true, cliLabel(name) + " CLI is available");
+                    } else {
+                        setCheck(
+                            "check-codex",
+                            false,
+                            preflight.blockers && preflight.blockers.length
+                                ? preflight.blockers[0]
+                                : cliLabel(name) + " CLI not found"
+                        );
+                    }
+                }
+
+                function renderAgents(status) {
+                    if (!status.running) {
+                        var idleText = status.state === "completed" ? "Session finished" : "Agent not launched";
+                        setCheck("check-p1", false, idleText);
+                        setCheck("check-p2", false, idleText);
+                        return;
+                    }
+                    // The harness launches both agents itself; readiness comes from
+                    // the server's MCP ready registry, populated only by
+                    // authenticated MCP tool calls from the agents.
+                    fetch("/api/arena/mcp-presence", { cache: "no-store" })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (presence) {
+                            var ready = presence.ready_agents || {};
+                            var name = cliLabel((status.config && status.config.agent_cli) || cliSelect.value);
+                            setCheck(
+                                "check-p1",
+                                !!ready.player_1,
+                                ready.player_1
+                                    ? name + " agent connected and ready"
+                                    : "Launching " + name + " agent...",
+                                !ready.player_1
+                            );
+                            setCheck(
+                                "check-p2",
+                                !!ready.player_2,
+                                ready.player_2
+                                    ? name + " agent connected and ready"
+                                    : "Launching " + name + " agent...",
+                                !ready.player_2
+                            );
+                        })
+                        .catch(function () {
+                            /* transient; next poll retries */
+                        });
+                }
+
+                function renderStatus(status) {
+                    isRunning = !!status.running;
+
+                    renderPreflight(status.preflight || {});
+                    setCheck("check-backend", true, "Arena backend is healthy");
+                    renderAgents(status);
+
+                    var label = status.state || "idle";
+                    stateLabel.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+                    stateLabel.className = "automation-state " + label;
+
+                    var done = status.completed_matches || 0;
+                    var total = status.total_matches || (status.config && status.config.matches) || 0;
+                    var elapsed = status.elapsed_seconds ? Math.round(status.elapsed_seconds) + "s" : "";
+                    metaLabel.textContent = done + " / " + total + " matches" + (elapsed ? " · " + elapsed : "");
+                    barFill.style.width = total > 0 ? Math.min(100, (done / total) * 100) + "%" : "0%";
+
+                    if (status.log !== logBox.textContent) {
+                        logBox.textContent = status.log || "";
+                        if (pinnedToBottom) {
+                            logBox.scrollTop = logBox.scrollHeight;
+                        }
+                    }
+
+                    startButton.textContent = isRunning ? "Stop Benchmark" : "Start Benchmark";
+                    startButton.classList.toggle("stop-mode", isRunning);
+                    setInputsDisabled(isRunning);
+                    refreshButton.disabled = isRunning;
+
+                    var blockers = (status.preflight && status.preflight.blockers) || [];
+                    if (blockers.length) {
+                        banner.textContent = blockers[0];
+                        banner.classList.add("error");
+                        startButton.disabled = isRunning ? false : true;
+                    } else {
+                        var name = cliLabel((status.config && status.config.agent_cli) || cliSelect.value);
+                        var note =
+                            "Both " + name + " agents are launched and driven automatically. " +
+                            "No prompt pasting required.";
+                        if (cliSelect.value === "claude" && bypassSelect.value === "true") {
+                            note += " Permission prompts are bypassed (--dangerously-skip-permissions).";
+                        }
+                        banner.textContent = note;
+                        banner.classList.remove("error");
+                        startButton.disabled = busy;
+                    }
+
+                    if (status.state === "failed" && status.exit_code !== null) {
+                        setStatus("Benchmark exited with code " + status.exit_code + ". See the log above.", true);
+                    } else if (status.state === "completed") {
+                        setStatus("Benchmark complete.", false);
+                    }
+                }
+
+                function poll() {
+                    fetch("/api/arena/automation/status?agent_cli=" + encodeURIComponent(cliSelect.value), {
+                        cache: "no-store"
+                    })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(renderStatus)
+                        .catch(function () {
+                            setCheck("check-backend", false, "Arena backend is unreachable");
+                        });
+                }
+
+                function startBenchmark() {
+                    busy = true;
+                    startButton.disabled = true;
+                    setStatus("Starting the benchmark. A game tab will open automatically...", false);
+
+                    fetch("/api/arena/automation/start", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(readConfig())
+                    })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            if (!result.ok) {
+                                setStatus(result.error || "Could not start the benchmark.", true);
+                                return;
+                            }
+                            setStatus("Benchmark running (PID " + result.pid + ").", false);
+                        })
+                        .catch(function (error) {
+                            setStatus("Could not start the benchmark: " + error, true);
+                        })
+                        .finally(function () {
+                            busy = false;
+                            poll();
+                        });
+                }
+
+                function stopBenchmark() {
+                    busy = true;
+                    startButton.disabled = true;
+                    setStatus("Stopping the benchmark and its agents...", false);
+
+                    fetch("/api/arena/automation/stop", { method: "POST" })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            setStatus(result.stopped ? "Benchmark stopped." : result.reason || "Nothing to stop.", false);
+                        })
+                        .catch(function (error) {
+                            setStatus("Could not stop the benchmark: " + error, true);
+                        })
+                        .finally(function () {
+                            busy = false;
+                            poll();
+                        });
+                }
+
+                startButton.addEventListener("click", function () {
+                    if (isRunning) {
+                        stopBenchmark();
+                    } else {
+                        startBenchmark();
+                    }
+                });
+
+                refreshButton.addEventListener("click", function () {
+                    refreshButton.disabled = true;
+                    setStatus("Resetting arena state...", false);
+                    fetch("/api/arena/reset", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            arena_mode: "duel",
+                            scenario_id: document.getElementById("arena-duel-map").value,
+                            clear_duel_session: true
+                        })
+                    })
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            setStatus(result.ok ? "Arena reset." : "Arena reset failed.", !result.ok);
+                        })
+                        .catch(function (error) {
+                            setStatus("Arena reset failed: " + error, true);
+                        })
+                        .finally(function () {
+                            refreshButton.disabled = false;
+                            poll();
+                        });
+                });
+
+                applyCliDefaults();
+                poll();
+                setInterval(poll, POLL_MS);
+            })();
+        </script>
+    </body>
+</html>
