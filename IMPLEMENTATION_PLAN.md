@@ -4,9 +4,9 @@
 
 Build a client-neutral MCP sidecar that can be enabled for exactly one Doom Arena
 participant. The sidecar uses deterministic code for legal route generation, Jev
-for fast structured plan selection, and a frontier LLM only for strategic
-handoffs. Doom remains responsible for frame-level movement, aiming, collision,
-and firing.
+for fast structured plan selection through OpenRouter, and a frontier LLM only
+for strategic handoffs. Doom remains responsible for frame-level movement,
+aiming, collision, and firing.
 
 This is a planning-stack experiment, not a claim that Jev performs raw motor
 control or that a hybrid has already beaten an Opus-only agent.
@@ -32,8 +32,9 @@ control or that a hybrid has already beaten an Opus-only agent.
 - Load the selected participant's controller token inside the sidecar from the
   current run's `controller_tokens.json`. Never pass it through a model-visible
   tool argument or record it in telemetry.
-- Pin the Jev model version, initially `jev-1.13.0`, and record the exact version
-  with every run.
+- Use OpenRouter's dedicated Decisions API (`POST /api/alpha/decisions`), not
+  Chat Completions, and pin the model ID to `typesafe/jev-1.13`. Record both
+  the requested model and the canonical model returned with every run.
 - Invoke Jev at most 1–2 times per second, and only following a material state
   trigger. A heartbeat is a maximum time between evaluations, not an unconditional
   per-frame or fixed-rate request.
@@ -55,15 +56,19 @@ control or that a hybrid has already beaten an Opus-only agent.
 
 ### `prepare_jev_player`
 
-Inputs: `participant_id`, optional `agent_name`.
+Inputs: `participant_id`, optional `agent_name`, optional `control_mode`
+(`jev_only` or `jev_hybrid`).
 
-Loads the matching token internally, verifies the arena and TypeSafe connection,
-loads the map graph, registers readiness, and returns a filtered opening
-observation. It does not start an unbounded controller.
+Loads the matching token internally, validates the pinned OpenRouter
+configuration and key presence, loads the map graph, registers readiness, and
+returns a filtered opening observation. It deliberately defers the first paid
+OpenRouter request until `run_jev_player`. It does not start an unbounded
+controller.
 
 ### `run_jev_player`
 
-Inputs: `participant_id`, `strategic_directive`, optional `max_run_ms`.
+Inputs: optional `strategic_directive`, optional `max_run_ms`. The participant is
+owned by the preceding `prepare_jev_player` call.
 
 Starts or joins the supervised controller, submits the opening plan when needed,
 and blocks until match completion, a strategic handoff, cancellation, or the
@@ -105,13 +110,14 @@ must perform the same cleanup.
    - plan rejection;
    - maximum evaluation interval reached.
 5. Generate deterministic, legal candidate plans.
-6. Ask Jev `Choice` to select one candidate or `handoff_to_opus`.
+6. Ask Jev `Choice` through OpenRouter Decisions to select one candidate or
+   `handoff_to_opus`.
 7. Submit a high-confidence choice using the plugin's single sequence allocator.
 8. On low confidence or failure, retain a safe plan and return a compact handoff
    packet to Opus.
 
 Raw arena state, hidden enemy information, controller tokens, environment
-secrets, and absolute local paths must never be sent to TypeSafe.
+secrets, and absolute local paths must never be sent to OpenRouter or TypeSafe.
 
 ## Deterministic candidate generation
 
@@ -152,7 +158,7 @@ Trigger an Opus handoff for:
 - explicit `handoff_to_opus` selection;
 - no legal candidates;
 - repeated stall or plan rejection;
-- TypeSafe timeout, malformed response, rate limit, or outage;
+- OpenRouter/TypeSafe timeout, malformed response, rate limit, or outage;
 - a strategic situation not represented by the candidate library.
 
 The confidence threshold is configuration calibrated from replay evaluation; it
@@ -180,33 +186,36 @@ jev-doom-player/
 The manifest lists only components that exist. V1 requires no application UI or
 lifecycle hook.
 
-The packaged stdio MCP configuration forwards `TYPESAFE_API_KEY` using
-`env_vars`; it never contains the key value. Configure `tool_timeout_sec` with
+The packaged stdio MCP configuration forwards `OPENROUTER_API_KEY` using
+`env_vars`; it never contains the key value. The development launcher may load
+only allowlisted OpenRouter and arena settings from the repository's ignored
+`.env`; installed clients should provide real environment variables. Configure `tool_timeout_sec` with
 enough margin for the 55-second maximum, and set `approval_mode=auto` for the
 run/resume tools through Codex's plugin-specific MCP settings. Validate the exact
 packaged configuration against the installed Codex version before relying on it.
 
 ## Stage 0 — Safety and protocol contract
 
-**Goal:** Freeze the state machine, outbound TypeSafe schema, tool contracts,
+**Goal:** Freeze the state machine, outbound OpenRouter schema, tool contracts,
 handoff reasons, process lifecycle, and telemetry schema.
 
 **Changes:**
 
 - Define controller modes: `idle`, `prepared`, `running`, `awaiting_opus`,
   `stopping`, `finished`, and `failed`.
-- Define the exact filtered outbound payload and maximum sizes.
+- Define the exact filtered outbound payload, OpenRouter Decisions request, and maximum sizes.
 - Specify supervisor cancellation on stop, match completion, stdio EOF, and
   client disconnect.
 - Specify sequence-number recovery from the latest accepted arena plan.
 
-**Success criteria:** No unspecified data can reach TypeSafe, and every controller
+**Success criteria:** No unspecified data can reach OpenRouter, and every controller
 state has a bounded exit or recovery path.
 
 **Tests:** Schema snapshots, token and secret redaction, fog-of-war fixtures,
 state-machine transition tests, and cancellation tests.
 
-**Status:** Not started.
+**Status:** Complete for V1. Contracts, fog filtering, redaction, lifecycle, and
+cancellation behavior are covered by automated tests.
 
 ## Stage 1 — Deterministic route candidate engine
 
@@ -225,24 +234,28 @@ waypoints and every quip is 1–80 characters.
 waypoint hazards, collinear compression, stable ordering, pickup availability,
 and route-validation property tests.
 
-**Status:** Not started.
+**Status:** Implemented and unit verified. The deterministic engine is also
+smoke-tested against the real arena blueprint; the larger replay gate remains a
+benchmark prerequisite.
 
 ## Stage 2 — Jev decision adapter
 
-**Goal:** Add a narrow, testable TypeSafe boundary around Jev `Choice`.
+**Goal:** Add a narrow, testable OpenRouter Decisions boundary around Jev `Choice`.
 
-**Changes:** Pin the model, define the Choice prompt/schema, parse probabilities
-and confidence, implement deadlines and backoff, and provide a fake adapter for
-tests.
+**Changes:** Pin `typesafe/jev-1.13`, define the Choice question/criteria schema,
+parse probabilities and confidence, implement deadlines and backoff, and provide
+a fake adapter for tests. Do not use Chat Completions or `response_format` for Jev.
 
 **Success criteria:** Every response produces either a known candidate ID or an
-explicit handoff; no network request contains fields outside the whitelist.
+explicit handoff; no network request contains fields outside the whitelist; the
+returned canonical model remains inside the pinned Jev 1.13 family.
 
-**Tests:** High and low confidence, explicit handoff, unknown ID, malformed JSON,
-timeout, rate limit, service outage, and pinned-version mismatch. CI uses no live
-TypeSafe calls.
+**Tests:** High and low confidence, optional probabilities/confidence, explicit
+handoff, unknown ID, malformed JSON, timeout, rate limit, service outage, and
+pinned-version mismatch. CI uses no live OpenRouter calls.
 
-**Status:** Not started.
+**Status:** Complete for V1. Offline contract tests pass and a live OpenRouter
+Decisions smoke returned the pinned Jev 1.13 family.
 
 ## Stage 3 — Plugin and MCP server
 
@@ -255,13 +268,15 @@ available even though the public plan tool schema omits that field.
 
 **Success criteria:** Plugin validation passes; the MCP server initializes and
 advertises only its own tools; missing keys and missing run metadata fail during
-preflight; installing the plugin alone sends no arena or TypeSafe requests.
+preflight; installing the plugin alone sends no arena or OpenRouter requests.
 
 **Tests:** Manifest validation, MCP initialize/list/call framing, environment
 forwarding, internal token loading, wrong-participant rejection, and dormant
 installation.
 
-**Status:** Not started.
+**Status:** Complete for V1. The source and cached package validate, the personal
+plugin is installed and enabled, and the installed stdio process advertises
+exactly the five intended tools while remaining dormant before preparation.
 
 ## Stage 4 — Supervised live controller
 
@@ -277,10 +292,13 @@ safe plan while awaiting the next call, stops on MCP shutdown, never writes for
 the other participant, and produces no sequence collisions.
 
 **Tests:** Full local match, 55-second return, handoff wait, client disconnect,
-stdio EOF, match restart, stale run ID, plan rejection, TypeSafe outage, and
+stdio EOF, match restart, stale run ID, plan rejection, OpenRouter outage, and
 plugin-disabled parity.
 
-**Status:** Not started.
+**Status:** Implemented and integration-smoke verified. The installed package
+completed prepare, a real Jev decision, plan submission, handoff, stop, and
+forced intent cleanup. Repeated full two-participant matches are still required
+for the live gate.
 
 ## Stage 5 — Opus handoff and resume
 
@@ -298,7 +316,10 @@ is submitted once and Jev control resumes.
 **Tests:** Low confidence, explicit handoff, repeated stall, invalid and valid
 overrides, delayed response, duplicate resume, and canceled handoff.
 
-**Status:** Not started.
+**Status:** Implemented and unit verified. Low-confidence handoff, sanitized
+packets, validated override submission, directive resume, invalid override, and
+duplicate resume behavior are covered. A full live Opus handoff match remains
+part of the live gate.
 
 ## Stage 6 — Telemetry and run labeling
 
@@ -318,7 +339,9 @@ or absolute local path.
 **Tests:** Trace serialization, redaction, interrupted writes, clock ordering,
 model-field labeling, and joinability with existing match results.
 
-**Status:** Not started.
+**Status:** Implemented and unit verified for sanitized JSONL traces and stable
+state hashes. Manual-run model labeling and result-directory analysis still need
+validation during the repeated live-match gate.
 
 ## Stage 7 — Controlled benchmark
 

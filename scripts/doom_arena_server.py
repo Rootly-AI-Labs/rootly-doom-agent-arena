@@ -2617,11 +2617,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         content_type = self.headers.get("Content-Type", "")
         intent_rows_for_stats: list[dict[str, str]] = []
         rationale_records: list[dict[str, Any]] = []
+        full_replacement = False
 
         try:
             if "application/json" in content_type:
                 payload = json.loads(body.decode("utf-8"))
                 if isinstance(payload, list):
+                    full_replacement = True
                     intent_rows_for_stats = [
                         self.normalize_participant_intent(row)
                         for row in payload
@@ -2641,6 +2643,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 else:
                     raise ValueError("JSON payload must be an object or list")
             else:
+                full_replacement = True
                 text = body.decode("utf-8", errors="replace")
                 intent_rows_for_stats = self.parse_participant_intent_rows(text)
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
@@ -2664,11 +2667,16 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         ARENA_PARTICIPANT_INTENT_TSV.write_bytes(body)
         if rationale_records:
             self.append_rationale_records(rationale_records)
-        if intent_rows_for_stats:
+        if full_replacement or intent_rows_for_stats:
             with self.server.stats_lock:
                 for row in intent_rows_for_stats:
                     self.record_participant_intent_row_locked(row)
-                self.write_mcp_stats_locked()
+                if full_replacement:
+                    self.evict_absent_latest_participant_intents_locked(
+                        intent_rows_for_stats
+                    )
+                if intent_rows_for_stats:
+                    self.write_mcp_stats_locked()
         self.write_json(
             HTTPStatus.OK,
             {
@@ -2882,6 +2890,36 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return candidate_issued > current_issued
 
         return candidate.get("intent_id", "") != current.get("intent_id", "")
+
+    def evict_absent_latest_participant_intents_locked(
+        self,
+        replacement_rows: list[dict[str, str]],
+    ) -> None:
+        """Make a full replacement authoritative over the current-run cache.
+
+        Historical ``intent_records`` remain untouched for sequence recovery and
+        benchmark telemetry.  Only cached latest entries in the active
+        run/scenario are removed when their participant is absent from the
+        replacement payload.
+        """
+
+        replacement_participants = {
+            row.get("participant_id", "")
+            for row in replacement_rows
+            if row.get("run_id", "") == self.server.run_id
+            and row.get("scenario_id", "") == self.server.scenario_id
+            and row.get("participant_id", "") in PARTICIPANTS
+        }
+        for participant_id, intent in list(
+            self.server.latest_intent_by_participant.items()
+        ):
+            if participant_id in replacement_participants:
+                continue
+            if str(intent.get("run_id", "")) != self.server.run_id:
+                continue
+            if str(intent.get("scenario_id", "")) != self.server.scenario_id:
+                continue
+            self.server.latest_intent_by_participant.pop(participant_id, None)
 
     def current_run_participant_intent_rows(self) -> list[dict[str, str]]:
         rows_by_participant: dict[str, dict[str, str]] = {}

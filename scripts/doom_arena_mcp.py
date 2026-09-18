@@ -1415,7 +1415,12 @@ class DoomArenaClient:
         }
         return json.dumps(result, indent=2)
 
-    def stop_participant_intent(self, participant_id: str, controller_token: str | None = None) -> str:
+    def stop_participant_intent(
+        self,
+        participant_id: str,
+        controller_token: str | None = None,
+        preserve_opening_plan: bool = True,
+    ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         phase = ""
@@ -1427,7 +1432,7 @@ class DoomArenaClient:
             phase = str(state.get("phase") or match.get("phase") or "")
         except Exception:
             phase = ""
-        if phase == "waiting_for_agents":
+        if phase == "waiting_for_agents" and preserve_opening_plan:
             return json.dumps(
                 {
                     "accepted": True,

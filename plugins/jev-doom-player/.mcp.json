@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "jev-doom-player": {
+      "command": "python",
+      "args": ["./scripts/jev_doom_mcp.py"],
+      "cwd": ".",
+      "env_vars": [
+        "DOOM_ARENA_REPO_ROOT",
+        "DOOM_ARENA_BASE_URL",
+        "OPENROUTER_API_KEY",
+        "OPENROUTER_BASE_URL",
+        "OPENROUTER_DECISIONS_URL",
+        "OPENROUTER_MODEL",
+        "JEV_DOOM_CONTROL_MODE",
+        "JEV_DOOM_CONFIDENCE_THRESHOLD",
+        "JEV_DOOM_TELEMETRY_PATH"
+      ],
+      "startup_timeout_sec": 10,
+      "tool_timeout_sec": 70,
+      "default_tools_approval_mode": "prompt",
+      "tools": {
+        "run_jev_player": {
+          "approval_mode": "auto"
+        },
+        "resume_jev_player": {
+          "approval_mode": "auto"
+        }
+      }
+    }
+  }
+}

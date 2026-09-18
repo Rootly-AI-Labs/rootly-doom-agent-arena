@@ -87,14 +87,13 @@ def test_participant_prompt_prohibits_hivemind(control_mode):
     assert "Doom Arena MCP tools" in prompt
 
 
-def test_project_instructions_exempt_duel_agents_from_hivemind_startup():
+def test_project_instructions_do_not_require_external_memory():
     project_instructions = (prompts.REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
-    assert "## Doom Arena benchmark-agent exception" in project_instructions
-    assert "prompt begins with `# Doom Arena MCP Instructions:`" in project_instructions
-    assert "Do not call any Hivemind tool, including the startup reads below" in project_instructions
-    assert "A missing or failed Hivemind server is not a blocker" in project_instructions
-    assert "This exception ends when the gameplay task ends" in project_instructions
+    assert "No external project-memory service is required" in project_instructions
+    assert "space_rules" not in project_instructions
+    assert "mid_read_all" not in project_instructions
+    assert "short_read" not in project_instructions
 
 
 def test_participant_prompt_requests_doom_alias_only_for_first_match():
@@ -686,6 +685,49 @@ def test_controller_tokens_raises_on_non_dict_payload(tmp_path, monkeypatch):
     client = _make_client(monkeypatch, host_path)
     with pytest.raises(mcp.DoomArenaError, match="Invalid controller token file"):
         client._controller_tokens()
+
+
+def test_stop_participant_intent_can_force_clear_opening_plan(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(
+        client,
+        "_request",
+        lambda method, path: (
+            "run_id\tscenario_id\tkind\tentity_id\tphase\n"
+            "run_current\tduel_e1m8\tmatch\t\twaiting_for_agents\n"
+        ),
+    )
+    monkeypatch.setattr(
+        client,
+        "_read_participant_intent_rows",
+        lambda: [
+            {
+                "run_id": "run_current",
+                "participant_id": "player_1",
+                "sequence_number": "3",
+                "expires_at_ms": "9999999999999",
+            },
+            {
+                "run_id": "run_current",
+                "participant_id": "player_2",
+                "sequence_number": "4",
+                "expires_at_ms": "9999999999999",
+            },
+        ],
+    )
+    written = []
+    monkeypatch.setattr(client, "_write_participant_intent_rows", lambda rows: written.extend(rows))
+
+    preserved = json.loads(client.stop_participant_intent("player_1", "token"))
+    assert preserved["ignored"] is True
+    assert written == []
+
+    cleared = json.loads(client.stop_participant_intent("player_1", "token", False))
+    assert cleared["cleared"] is True
+    assert [row["participant_id"] for row in written] == ["player_2"]
 
 
 # --------------------------------------------------------------------------- #

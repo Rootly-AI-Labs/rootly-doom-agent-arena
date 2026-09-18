@@ -30,11 +30,44 @@ def make_handler(run_id: str = "run_test", scenario_id: str = "duel_e1m8"):
         run_id=run_id,
         scenario_id=scenario_id,
         stats_lock=threading.Lock(),
+        intent_records=[],
         latest_intent_by_participant={},
         participant_ready_agents={},
         participant_agent_names={},
     )
     return handler
+
+
+def participant_intent_payload(participant_id: str, sequence_number: int) -> dict[str, object]:
+    return {
+        "run_id": "run_test",
+        "scenario_id": "duel_e1m8",
+        "intent_id": f"{participant_id}_intent_{sequence_number}",
+        "issued_at_ms": 9_000 + sequence_number,
+        "expires_at_ms": 34_000 + sequence_number,
+        "participant_id": participant_id,
+        "intent": "hold",
+        "style": "balanced",
+        "target_id": "player_2" if participant_id == "player_1" else "player_1",
+        "preferred_distance": 600,
+        "aggression": 0.5,
+        "duration_ms": 25_000,
+        "sequence_number": sequence_number,
+    }
+
+
+def configure_participant_intent_post(
+    handler,
+    body: bytes,
+    content_type: str,
+) -> list[tuple[object, dict[str, object]]]:
+    responses: list[tuple[object, dict[str, object]]] = []
+    handler.headers = {"Content-Type": content_type}
+    handler.read_body = lambda: body
+    handler.match_is_finished = lambda: False
+    handler.write_mcp_stats_locked = lambda: None
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+    return responses
 
 
 def test_participant_intent_parser_smoke_regressions() -> None:
@@ -218,6 +251,106 @@ def test_current_run_participant_intents_merge_file_and_memory(tmp_path, monkeyp
 
     assert {row["participant_id"] for row in rows} == {"player_1", "player_2"}
     assert next(row for row in rows if row["participant_id"] == "player_2")["intent"] == "strafe_attack"
+
+
+def test_full_replacement_tsv_evicts_absent_latest_cache_but_keeps_history(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 4)
+    )
+    historical = {"history_marker": "kept", **cached}
+    handler.server.latest_intent_by_participant = {"player_1": dict(cached)}
+    handler.server.intent_records = [historical]
+    responses = configure_participant_intent_post(
+        handler,
+        server.PARTICIPANT_INTENT_HEADER.encode("utf-8"),
+        "text/tab-separated-values; charset=utf-8",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert handler.server.latest_intent_by_participant == {}
+    assert handler.server.intent_records == [historical]
+    assert handler.current_run_participant_intent_rows() == []
+
+
+def test_full_replacement_json_list_evicts_only_absent_current_run_cache_entries(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached_p1 = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 4)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(cached_p1)}
+    handler.server.intent_records = [dict(cached_p1)]
+    replacement_p2 = participant_intent_payload("player_2", 5)
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps([replacement_p2]).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert set(handler.server.latest_intent_by_participant) == {"player_2"}
+    assert (
+        handler.server.latest_intent_by_participant["player_2"]["intent_id"]
+        == "player_2_intent_5"
+    )
+    assert [record["participant_id"] for record in handler.server.intent_records] == [
+        "player_1",
+        "player_2",
+    ]
+    assert {
+        row["participant_id"] for row in handler.current_run_participant_intent_rows()
+    } == {"player_2"}
+
+
+def test_incremental_json_dict_preserves_other_latest_cache_entry(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached_p2 = handler.normalize_participant_intent(
+        participant_intent_payload("player_2", 3)
+    )
+    handler.server.latest_intent_by_participant = {"player_2": dict(cached_p2)}
+    handler.server.intent_records = [dict(cached_p2)]
+    incremental_p1 = participant_intent_payload("player_1", 4)
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps(incremental_p1).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert set(handler.server.latest_intent_by_participant) == {
+        "player_1",
+        "player_2",
+    }
+    assert {
+        row["participant_id"] for row in handler.current_run_participant_intent_rows()
+    } == {"player_1", "player_2"}
 
 
 def test_get_participant_intents_endpoint_returns_tsv(tmp_path, monkeypatch) -> None:
