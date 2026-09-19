@@ -212,7 +212,7 @@ class JevPlayerController:
         observation: Mapping[str, Any],
         current_plan: Mapping[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        return list(
+        candidates = list(
             self._route_engine.generate_candidates(
                 observation,
                 scenario_id=self._scenario_id,
@@ -220,6 +220,13 @@ class JevPlayerController:
                 last_seen_cell=self._last_seen_cell or None,
             )
         )
+        if self._control_mode == "jev_only":
+            return [
+                candidate
+                for candidate in candidates
+                if candidate.get("actionable") is True
+            ]
+        return candidates
 
     def _safe_fallback(
         self,
@@ -280,6 +287,8 @@ class JevPlayerController:
         return None
 
     def _decision_handoff_reason(self, decision: JevDecision) -> str:
+        if self._control_mode == "jev_only":
+            return ""
         if decision.selected_id == HANDOFF_CHOICE_ID:
             return "jev_requested_handoff"
         if decision.confidence is None:
@@ -759,8 +768,10 @@ class JevPlayerController:
                 raise ControllerError("Prepare the Jev player before running it")
             if self._mode == "awaiting_opus":
                 return self.status()
-            if strategic_directive:
+            if strategic_directive and self._control_mode == "jev_hybrid":
                 self._strategic_directive = _clean_directive(strategic_directive)
+            elif self._control_mode == "jev_only":
+                self._strategic_directive = ""
             self._mode = "running"
             self._start_thread_locked()
         return self._wait_for_return(max_run_ms)

@@ -18,7 +18,7 @@ control or that a hybrid has already beaten an Opus-only agent.
   configured in Claude Code.
 - Keep the plugin dormant unless it is installed and enabled in the selected
   participant's client.
-- Give the hybrid participant only the plugin MCP server. Do not expose the
+- Give any plugin-controlled participant only the plugin MCP server. Do not expose the
   regular Doom Arena planning MCP server in that client during V1. This makes the
   plugin the operational single writer without adding a new arena authentication
   and lease protocol.
@@ -48,7 +48,8 @@ control or that a hybrid has already beaten an Opus-only agent.
   fallback. Resume Jev decisions after Opus supplies a new directive or a
   validated override.
 - Use the existing `player_1_model` or `player_2_model` run metadata field with
-  the value `jev_hybrid`; do not introduce a parallel `controller_stack` field.
+  the actual arm label (`jev_only` or `jev_hybrid`); do not introduce a parallel
+  `controller_stack` field.
 - Defer launcher and benchmark-harness automation until the manually enabled V1
   is reliable.
 
@@ -70,15 +71,19 @@ controller.
 Inputs: optional `strategic_directive`, optional `max_run_ms`. The participant is
 owned by the preceding `prepare_jev_player` call.
 
+`strategic_directive` is used only by `jev_hybrid`. The `jev_only` baseline
+ignores host-authored strategy so its decisions depend only on the sanitized
+arena state and the fixed candidate criteria.
+
 Starts or joins the supervised controller, submits the opening plan when needed,
-and blocks until match completion, a strategic handoff, cancellation, or the
-bounded return deadline. A deadline return reports `status=running`; the
+and blocks until match completion, a hybrid-only strategic handoff, cancellation,
+or the bounded return deadline. A deadline return reports `status=running`; the
 in-process supervisor continues control until the next call or MCP shutdown.
 
 ### `resume_jev_player`
 
-Inputs: `strategic_directive`, optional validated `override_plan`, optional
-`max_run_ms`.
+Hybrid-only inputs: `strategic_directive`, optional validated `override_plan`,
+optional `max_run_ms`. This tool is never used by `jev_only`.
 
 Resolves a handoff and re-enters the bounded wait. An Opus-authored override is
 never sent directly to the arena: the sidecar normalizes and validates it first.
@@ -110,11 +115,15 @@ must perform the same cleanup.
    - plan rejection;
    - maximum evaluation interval reached.
 5. Generate deterministic, legal candidate plans.
-6. Ask Jev `Choice` through OpenRouter Decisions to select one candidate or
+6. Ask Jev `Choice` through OpenRouter Decisions to select one offered candidate.
+   In `jev_only`, offer only legal actionable plans. In `jev_hybrid`, also offer
    `handoff_to_opus`.
-7. Submit a high-confidence choice using the plugin's single sequence allocator.
-8. On low confidence or failure, retain a safe plan and return a compact handoff
-   packet to Opus.
+7. In `jev_only`, submit Jev's valid returned choice regardless of confidence.
+   In `jev_hybrid`, submit a high-confidence actionable choice using the plugin's
+   single sequence allocator.
+8. In `jev_hybrid`, retain a safe plan and return a compact handoff packet to
+   Opus on low confidence or explicit handoff. In either mode, use deterministic
+   fallback for transport, response, invalid-choice, or stale-choice failures.
 
 Raw arena state, hidden enemy information, controller tokens, environment
 secrets, and absolute local paths must never be sent to OpenRouter or TypeSafe.
@@ -152,7 +161,7 @@ calculations.
 
 ## Failure and handoff policy
 
-Trigger an Opus handoff for:
+In `jev_hybrid`, trigger an Opus handoff for:
 
 - Jev confidence below the configured threshold;
 - explicit `handoff_to_opus` selection;
@@ -160,6 +169,13 @@ Trigger an Opus handoff for:
 - repeated stall or plan rejection;
 - OpenRouter/TypeSafe timeout, malformed response, rate limit, or outage;
 - a strategic situation not represented by the candidate library.
+
+In `jev_only`, confidence is recorded for analysis but never overrides a valid
+Jev selection, and `handoff_to_opus` is not offered. Deterministic fallback is
+reserved for an API/transport failure, malformed or unknown choice, a choice
+that became stale before submission, or the absence of any legal actionable
+plan. Host-authored strategic directives and override plans are not part of this
+standalone arm.
 
 The confidence threshold is configuration calibrated from replay evaluation; it
 is not a hardcoded or advertised 99% guarantee. Failures must not enter a rapid
@@ -326,15 +342,15 @@ part of the live gate.
 **Goal:** Make the experiment reproducible without introducing a parallel run
 metadata schema.
 
-**Changes:** Set the selected participant's existing model field to `jev_hybrid`
-when launching the manual run. Record sanitized sidecar decision traces with run
-ID, participant, plugin and Jev versions, filtered-state hash, trigger, candidate
-IDs, probabilities, confidence, selected plan, latency, submission result, and
-handoff reason.
+**Changes:** Set the selected participant's existing model field to the actual
+arm (`jev_only` or `jev_hybrid`) when launching the manual run. Record sanitized
+sidecar decision traces with run ID, participant, plugin and Jev versions,
+filtered-state hash, trigger, candidate IDs, probabilities, confidence, selected
+plan, latency, submission result, and handoff reason.
 
-**Success criteria:** A result directory can be attributed to the hybrid stack
-and analyzed decision by decision; traces contain no token, key, raw hidden state,
-or absolute local path.
+**Success criteria:** A result directory can be attributed to the correct
+standalone or hybrid stack and analyzed decision by decision; traces contain no
+token, key, raw hidden state, or absolute local path.
 
 **Tests:** Trace serialization, redaction, interrupted writes, clock ordering,
 model-field labeling, and joinability with existing match results.
@@ -356,7 +372,9 @@ Benchmark arms:
 1. Existing Opus-only planner.
 2. Deterministic candidates with Opus selection.
 3. Jev selection with Opus handoffs.
-4. Jev-only selection with deterministic safe fallback.
+4. Jev-only returned-Choice selection (validated as highest-probability when
+   probability metadata is present), with deterministic fallback only on errors
+   or invalid/stale choices.
 5. Deterministic-only controller.
 
 Metrics:

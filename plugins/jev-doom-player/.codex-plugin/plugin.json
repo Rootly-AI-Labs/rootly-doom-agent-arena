@@ -14,13 +14,13 @@
   "interface": {
     "displayName": "Jev Doom Player",
     "shortDescription": "Control one Doom Arena participant with Jev.",
-    "longDescription": "Generates legal deterministic Doom routes, lets TypeSafe Jev select through OpenRouter, and escalates uncertain strategy to the host model.",
+    "longDescription": "Generates legal deterministic Doom routes and lets TypeSafe Jev select through OpenRouter, with optional host-model escalation only in hybrid mode.",
     "developerName": "Rootly AI Labs",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Write"],
     "defaultPrompt": [
-      "Prepare player_1 with the Jev hybrid controller.",
-      "Run the prepared Jev Doom player.",
+      "Prepare and run player_1 as a standalone Jev-only controller without host strategy.",
+      "Prepare player_1 as Jev hybrid and handle strategic handoffs.",
       "Show the Jev player's current status."
     ]
   },

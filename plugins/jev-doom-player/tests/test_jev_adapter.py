@@ -148,7 +148,7 @@ def http_error(status: int, message: str = "upstream failed") -> HTTPError:
 
 
 def complete_probabilities() -> dict[str, float]:
-    return {"seek_health": 0.8, "hold_position": 0.15, HANDOFF_CHOICE_ID: 0.05}
+    return {"seek_health": 0.8, "hold_position": 0.2}
 
 
 def test_builds_exact_decisions_request_and_filters_state_and_candidates() -> None:
@@ -175,10 +175,10 @@ def test_builds_exact_decisions_request_and_filters_state_and_candidates() -> No
     assert set(sent) == {"model", "state", "questions"}
     assert sent["model"] == "typesafe/jev-1.13"
     assert list(sent["questions"]["plan"]["criteria"]) == [
-        HANDOFF_CHOICE_ID,
         "hold_position",
         "seek_health",
     ]
+    assert HANDOFF_CHOICE_ID not in sent["questions"]["plan"]["instructions"]
     serialized = request.data.decode("utf-8")
     for forbidden in (
         "must-not-leak",
@@ -209,8 +209,20 @@ def test_accepts_optional_probabilities_and_confidence() -> None:
     assert decision.confidence is None
 
 
+def test_rejects_choice_that_is_not_the_highest_reported_probability() -> None:
+    payload = response_payload(
+        choice="hold_position",
+        probabilities={"seek_health": 0.8, "hold_position": 0.2},
+    )
+
+    with pytest.raises(JevResponseError, match="highest-probability"):
+        JevAdapter(API_KEY, opener=RecordingOpener(FakeResponse(payload))).choose(
+            state(), candidates()
+        )
+
+
 def test_accepts_direct_stable_id_to_criteria_mapping() -> None:
-    probabilities = {"hold_position": 0.9, HANDOFF_CHOICE_ID: 0.1}
+    probabilities = {"hold_position": 1.0}
     payload = response_payload(
         choice="hold_position",
         probabilities=probabilities,
@@ -226,6 +238,30 @@ def test_accepts_direct_stable_id_to_criteria_mapping() -> None:
     assert sent["questions"]["plan"]["criteria"]["hold_position"] == (
         "criteria: Hold a defensible cell and watch the corridor"
     )
+
+
+def test_includes_handoff_only_when_caller_offers_it() -> None:
+    offered = [
+        *candidates(),
+        {
+            "id": HANDOFF_CHOICE_ID,
+            "summary": "Escalate when no tactical plan safely fits.",
+        },
+    ]
+    probabilities = {
+        "seek_health": 0.7,
+        "hold_position": 0.2,
+        HANDOFF_CHOICE_ID: 0.1,
+    }
+    opener = RecordingOpener(
+        FakeResponse(response_payload(probabilities=probabilities))
+    )
+
+    JevAdapter(API_KEY, opener=opener).choose(state(), offered)
+
+    sent = json.loads(opener.calls[0][0].data)
+    assert HANDOFF_CHOICE_ID in sent["questions"]["plan"]["criteria"]
+    assert HANDOFF_CHOICE_ID in sent["questions"]["plan"]["instructions"]
 
 
 @pytest.mark.parametrize("status", [429, 502, 503, 524, 529])
@@ -288,7 +324,7 @@ def test_transport_error_is_explicit() -> None:
         (response_payload(choice="invented"), JevUnknownChoiceError),
         (
             response_payload(
-                probabilities={"seek_health": 0.6, "hold_position": 0.2, HANDOFF_CHOICE_ID: 0.1}
+                probabilities={"seek_health": 0.6, "hold_position": 0.2}
             ),
             JevResponseError,
         ),
@@ -377,7 +413,7 @@ def test_configuration_does_not_load_dotenv(monkeypatch: pytest.MonkeyPatch) -> 
 def test_fake_adapter_records_filtered_calls_and_repeats_last_decision() -> None:
     expected = JevDecision(
         selected_id="hold_position",
-        probabilities={"hold_position": 0.75, "seek_health": 0.2, HANDOFF_CHOICE_ID: 0.05},
+        probabilities={"hold_position": 0.8, "seek_health": 0.2},
         confidence=0.7,
         provider="fake",
         usage={"input_tokens": 0, "output_tokens": 0},

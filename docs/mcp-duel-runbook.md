@@ -72,7 +72,7 @@ http://127.0.0.1:8001/
 
 Choose the run settings, then click `Start Duel`. The browser/server will reset the duel, write fresh controller tokens, generate both instruction files, and show copyable prompts in the Player 1 and Player 2 panels. The generated prompts identify the agents as `player_1` and `player_2`; model labels are metadata only.
 
-The next step is still manual in the current flow: copy one prompt from the browser into each external MCP chat agent. It does not matter which model or window gets Player 1 versus Player 2; the prompt you paste defines which player that agent controls. This boundary is intentional for now so the arena can work with different MCP-capable clients instead of one built-in agent runner.
+The next step is still manual in the current flow: copy one prompt from the browser into each regular external MCP chat agent. It does not matter which model or window gets Player 1 versus Player 2; the prompt you paste defines which player that agent controls. A Jev sidecar is the exception: give it a token-free participant/mode instruction and never paste the browser controller token. This boundary is intentional for now so the arena can work with different MCP-capable clients instead of one built-in agent runner.
 
 The browser exports WASM state into `src/arena_game_state.local.tsv`.
 
@@ -134,9 +134,35 @@ DOOM_ARENA_MODEL_IDENTITY = "claude-sonnet-5"
 
 If your system exposes Python 3 as `python3` or `py -3`, use that command in your local MCP config instead. If an MCP client needs an absolute command path, keep that in an ignored local config such as `.mcp.local.json`. On Windows, `scripts\doom_arena_mcp.cmd` can be used as a local wrapper.
 
+## Jev-Controlled Participant Exception
+
+For a Jev-controlled side, start a fresh Codex session with the plugin enabled
+and the regular arena MCP disabled. From the repository root in PowerShell:
+
+```powershell
+$repo = (Resolve-Path .).Path
+$env:DOOM_ARENA_REPO_ROOT = $repo
+$env:DOOM_ARENA_BASE_URL = 'http://127.0.0.1:8001'
+Remove-Item Env:JEV_DOOM_CONTROL_MODE -ErrorAction SilentlyContinue
+codex --enable plugins -C $repo -s read-only -a on-request -c 'mcp_servers.doom-arena.enabled=false' --no-alt-screen
+```
+
+Confirm `/mcp` shows `jev-doom-player` and does not expose `doom-arena`. Do not
+paste that participant's generated browser prompt or controller token. For a
+standalone Player 1 baseline, use this token-free instruction:
+
+```text
+Use the jev-doom-player skill. Control only player_1 in the current arena run. Call prepare_jev_player exactly once with participant_id="player_1", agent_name="Jev Jockey", and control_mode="jev_only". Then call run_jev_player with max_run_ms=45000 and no strategic_directive. If status is running, call run_jev_player again with only max_run_ms=45000 until status is finished or failed. Never call resume_jev_player, never provide host-authored tactics or an override plan, never prepare or control player_2, never request/display/pass a controller token, and never use the regular doom-arena MCP.
+```
+
+For `jev_hybrid`, prepare with that mode; strategic directives and
+`resume_jev_player` are permitted only when the sidecar returns
+`status=awaiting_opus`. Run the opposing regular LLM in a separate session with
+the plugin disabled and paste only that opponent's browser-generated prompt.
+
 ## MCP Tool Check
 
-Both agents should see these normal control tools:
+Each regular agent should see these normal control tools:
 
 ```text
 set_participant_ready
@@ -200,7 +226,7 @@ docker compose down
 
 Set `Rounds` before clicking `Start Duel` if you want a multi-round session. After a round reaches `phase=finished`, click `Next Round`. This preserves the same `session_*` parent folder, creates the next `round_NN_run_*` child folder, reuses the same Player 1 and Player 2 prompts/tokens, and returns directly to the duel prompt view.
 
-Keep using the same Player 1 and Player 2 agents after `Next Round` unless the browser shows changed prompt text. Use newly displayed prompts after `Reset` or a new `Start Duel`.
+Keep using the same regular Player 1 and Player 2 agents after `Next Round` unless the browser shows changed prompt text. A Jev sidecar must call `prepare_jev_player` again after every new round because the run ID changes. Use newly displayed regular-player prompts after `Reset` or a new `Start Duel`.
 
 Click `Start Duel` again only when you want a new session.
 

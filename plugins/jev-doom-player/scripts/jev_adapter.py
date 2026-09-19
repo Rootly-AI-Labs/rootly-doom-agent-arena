@@ -221,9 +221,9 @@ class JevDecision:
     """A parsed Jev Choice decision.
 
     OpenRouter declares ``probabilities`` and ``confidence`` as optional on the
-    Decisions route, even though TypeSafe normally returns both.  Callers must
-    therefore treat ``None``/an empty map as an explicit handoff signal rather
-    than manufacturing certainty.
+    Decisions route, even though TypeSafe normally returns both. Callers must
+    preserve that optionality and apply the policy for their configured control
+    mode rather than manufacturing certainty.
     """
 
     selected_id: str
@@ -358,11 +358,6 @@ def _candidate_criteria(candidates: Iterable[Any]) -> tuple[dict[str, str], tupl
 
     if not by_id:
         raise JevCandidateError("at least one candidate is required")
-    by_id.setdefault(
-        HANDOFF_CHOICE_ID,
-        "Escalate when none of the tactical plans safely fits, required information "
-        "is missing, or the decision is genuinely uncertain.",
-    )
     ordered = dict(sorted(by_id.items()))
     return ordered, tuple(ordered)
 
@@ -436,21 +431,27 @@ class JevAdapter:
         self._clock = clock
 
     def choose(self, state: Mapping[str, Any], candidates: Iterable[Any]) -> JevDecision:
-        """Choose a candidate ID, or ``handoff_to_opus``, using Jev Choice."""
+        """Choose exactly one of the caller-provided candidate IDs using Jev Choice."""
 
         filtered_state = filter_outbound_state(state)
         criteria, offered_ids = _candidate_criteria(candidates)
+        instructions = (
+            "Select the single safest and most useful tactical plan for the current "
+            "arena state. Return only the typed Choice."
+        )
+        if HANDOFF_CHOICE_ID in offered_ids:
+            instructions = (
+                "Select the single safest and most useful tactical plan for the current "
+                "arena state. Choose handoff_to_opus if no offered plan safely fits or "
+                "the available state is insufficient. Return only the typed Choice."
+            )
         payload = {
             "model": self.model,
             "state": filtered_state,
             "questions": {
                 QUESTION_ID: {
                     "type": "choice",
-                    "instructions": (
-                        "Select the single safest and most useful tactical plan for the current "
-                        "arena state. Choose handoff_to_opus if no offered plan safely fits or "
-                        "the available state is insufficient. Return only the typed Choice."
-                    ),
+                    "instructions": instructions,
                     "criteria": criteria,
                 }
             },
@@ -565,6 +566,21 @@ class JevAdapter:
             raise JevUnknownChoiceError(f"Jev selected unknown candidate id {selected_id!r}")
 
         probabilities = self._parse_probabilities(answer.get("probabilities"), offered_ids)
+        if probabilities:
+            selected_probability = probabilities.get(selected_id)
+            if selected_probability is None:
+                raise JevResponseError(
+                    "probabilities must include the selected candidate id"
+                )
+            highest_probability = max(probabilities.values())
+            if selected_probability < highest_probability and not math.isclose(
+                selected_probability,
+                highest_probability,
+                abs_tol=1e-9,
+            ):
+                raise JevResponseError(
+                    "Jev choice does not match the highest-probability candidate"
+                )
         confidence = self._parse_optional_probability(answer.get("confidence"), "confidence")
         usage = self._parse_usage(payload.get("usage"))
 

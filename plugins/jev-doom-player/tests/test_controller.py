@@ -432,16 +432,29 @@ def test_production_setup_rejects_non_exact_openrouter_configuration_before_adap
     assert adapter_factory_calls == []
 
 
-def test_run_directive_is_in_the_first_jev_state() -> None:
+def test_hybrid_run_directive_is_in_the_first_jev_state() -> None:
     adapter = RecordingAdapter()
     controller, client = make_controller(adapter)
-    controller.prepare("player_1", control_mode="jev_only")
+    controller.prepare("player_1", control_mode="jev_hybrid")
     assert adapter.states == []
 
     controller.run("Guard the center lane", max_run_ms=100)
 
     assert adapter.states
     assert adapter.states[0]["strategic_directive"] == "Guard the center lane"
+    assert len(client.plan_calls) == 1
+    controller.stop()
+
+
+def test_jev_only_ignores_host_run_directive() -> None:
+    adapter = RecordingAdapter()
+    controller, client = make_controller(adapter)
+    controller.prepare("player_1", control_mode="jev_only")
+
+    controller.run("Guard the center lane", max_run_ms=100)
+
+    assert adapter.states
+    assert adapter.states[0]["strategic_directive"] == ""
     assert len(client.plan_calls) == 1
     controller.stop()
 
@@ -536,7 +549,7 @@ def test_prepare_keeps_strict_token_internal_and_defers_jev_call() -> None:
         assert prepared["status"] == "prepared"
         assert prepared["control_mode"] == "jev_only"
         assert prepared["ready"] is True
-        assert prepared["candidate_ids"] == ["hold_position", "handoff_to_opus"]
+        assert prepared["candidate_ids"] == ["hold_position"]
         assert prepared["opening_handoff_reason"] is None
         assert harness.token_loader.calls == [
             (harness.arena, harness.client, "player_1")
@@ -623,7 +636,7 @@ def test_hybrid_low_confidence_submits_fallback_and_returns_handoff() -> None:
         harness.controller.close()
 
 
-def test_jev_only_low_confidence_uses_fallback_without_handoff() -> None:
+def test_jev_only_low_confidence_uses_jev_choice_without_handoff() -> None:
     harness = make_lifecycle_harness(
         decisions=[lifecycle_decision(confidence=0.2)],
         observations=[
@@ -642,7 +655,13 @@ def test_jev_only_low_confidence_uses_fallback_without_handoff() -> None:
         assert result["handoff"] is None
         assert result["last_plan"]["id"] == "hold_position"
         assert harness.client.plan_calls[0][1] == ["A01"]
-        assert harness.routes.fallback_count == 1
+        assert harness.routes.fallback_count == 0
+        submission = next(
+            payload
+            for event, payload in harness.telemetry.records
+            if event == "plan_submission"
+        )
+        assert submission["source"] == "jev"
         assert_lifecycle_secrets_absent(result)
     finally:
         harness.controller.close()

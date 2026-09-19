@@ -164,13 +164,13 @@ label instead of blocking the duel or guessing another session's model.
 
 The committed `.mcp.json` in this repo uses `python`. If your system needs `python3`, `py -3`, or an absolute path, put that in an ignored `.mcp.local.json`
 
-3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.
+3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Normally each session shows `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`. A Jev sidecar session is the exception: it exposes only `jev-doom-player`, not the regular `doom-arena` tools.
 
 4. In the browser, choose run settings and click `Start Duel`.
 
-5. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one. It does not matter which model or window gets Player 1 versus Player 2.
+5. Paste the generated `player_1` prompt into the first regular MCP chat agent, and the generated `player_2` prompt into the second one. It does not matter which model or window gets Player 1 versus Player 2. For a Jev-controlled side, do not paste the generated prompt or token; give it a token-free instruction naming only its participant and `jev_only` or `jev_hybrid`. The sidecar loads its controller token internally.
 
-The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens. After `Reset` or a new `Start Duel`, use the newly displayed prompts.
+The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same regular-player prompts/tokens, but a Jev sidecar must call `prepare_jev_player` again for the new run ID. After `Reset` or a new `Start Duel`, use the newly displayed regular-player prompts.
 
 ### Optional ElevenAgents shoutcaster
 
