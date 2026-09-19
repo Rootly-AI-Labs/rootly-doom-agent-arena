@@ -553,7 +553,10 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             return
 
         if path == "/api/arena/participant-intents":
-            body = self.participant_intent_rows_to_tsv(self.current_run_participant_intent_rows())
+            body = self.participant_intent_rows_to_tsv(
+                self.current_run_participant_intent_rows(),
+                reject_expired=False,
+            )
             self.write_tsv(body)
             return
 
@@ -2926,9 +2929,24 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         current_ms = now_ms()
         keep_expired_for_start_barrier = True
         try:
-            score = score_from_state(read_arena_state())
+            state_rows = read_arena_state()
+            match_state = next(
+                (row for row in state_rows if row.get("kind") == "match"),
+                {},
+            )
+            state_run_id = str(match_state.get("run_id") or "")
+            if not state_run_id:
+                state_run_id = next(
+                    (
+                        str(row.get("run_id"))
+                        for row in state_rows
+                        if row.get("run_id")
+                    ),
+                    "",
+                )
+            score = score_from_state(state_rows)
             if (
-                score.get("run_id") == self.server.run_id
+                state_run_id == self.server.run_id
                 and score.get("phase") in {"combat", "finished"}
             ):
                 keep_expired_for_start_barrier = False
@@ -2967,7 +2985,11 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             ):
                 continue
 
-            row = self.normalize_participant_intent(intent)
+            row = self.normalize_participant_intent(
+                intent,
+                reject_expired=not keep_expired_for_start_barrier,
+                preserve_lease=True,
+            )
             if self.participant_intent_row_preferred(rows_by_participant.get(participant_id), row):
                 rows_by_participant[participant_id] = row
 
@@ -3005,7 +3027,13 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         )
 
 
-    def normalize_participant_intent(self, payload: dict[str, Any]) -> dict[str, str]:
+    def normalize_participant_intent(
+        self,
+        payload: dict[str, Any],
+        *,
+        reject_expired: bool = True,
+        preserve_lease: bool = False,
+    ) -> dict[str, str]:
         participant_id = str(payload.get("participant_id", ""))
         if participant_id not in PARTICIPANTS:
             raise ValueError("participant_id must be player_1 or player_2")
@@ -3053,14 +3081,14 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         duration = int(payload.get("duration_ms", 7000))
         if duration <= 0:
             raise ValueError("duration_ms must be positive")
-        if server_lease_authoritative:
+        if server_lease_authoritative and not preserve_lease:
             issued = current_ms
             expires = current_ms + duration
         else:
             expires = int(payload.get("expires_at_ms", issued + duration))
         if expires <= issued:
             raise ValueError("expires_at_ms must be after issued_at_ms")
-        if expires <= current_ms:
+        if reject_expired and expires <= current_ms:
             raise ValueError("expired intents are not accepted")
 
         preferred_distance = int(payload.get("preferred_distance", 600))
@@ -3421,11 +3449,19 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             normalize_plan_route_field(row["plan_route"])
         normalize_plan_engagement_policy(row.get("plan_engagement_policy", ""))
 
-    def participant_intent_rows_to_tsv(self, rows: list[dict[str, str]]) -> str:
+    def participant_intent_rows_to_tsv(
+        self,
+        rows: list[dict[str, str]],
+        *,
+        reject_expired: bool = True,
+    ) -> str:
         keys = PARTICIPANT_INTENT_HEADER.strip().split("\t")
         body = PARTICIPANT_INTENT_HEADER
         for row in rows:
-            self.validate_participant_intent_row(row)
+            self.validate_participant_intent_row(
+                row,
+                reject_expired=reject_expired,
+            )
             body += "\t".join(row.get(key, "") for key in keys) + "\n"
         return body
 

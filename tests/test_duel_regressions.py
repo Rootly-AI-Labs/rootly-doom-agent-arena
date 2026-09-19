@@ -253,6 +253,129 @@ def test_current_run_participant_intents_merge_file_and_memory(tmp_path, monkeyp
     assert next(row for row in rows if row["participant_id"] == "player_2")["intent"] == "strafe_attack"
 
 
+def test_current_combat_omits_expired_latest_participant_intent(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 1)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(expired)}
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "combat",
+            }
+        ],
+    )
+
+    assert handler.current_run_participant_intent_rows() == []
+
+
+def test_start_barrier_retains_expired_latest_participant_intent(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 1)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(expired)}
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "waiting_for_agents",
+            }
+        ],
+    )
+
+    handler.path = "/api/arena/participant-intents"
+    handler.wfile = BytesIO()
+    response_meta: dict[str, object] = {}
+    handler.send_response = lambda status: response_meta.__setitem__("status", status)
+    handler.send_header = lambda _name, _value: None
+    handler.end_headers = lambda: None
+
+    handler.do_GET()
+
+    rows = handler.parse_participant_intent_rows(
+        handler.wfile.getvalue().decode("utf-8"),
+        reject_expired=False,
+    )
+    assert response_meta["status"] == server.HTTPStatus.OK
+    assert [row["intent_id"] for row in rows] == ["player_1_intent_1"]
+    assert rows[0]["expires_at_ms"] == expired["expires_at_ms"]
+
+
+def test_waiting_start_barrier_accepts_fresh_opening_after_peer_intent_expires(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired_peer = handler.normalize_participant_intent(
+        participant_intent_payload("player_2", 1)
+    )
+    intent_path.write_text(
+        handler.participant_intent_rows_to_tsv([expired_peer]),
+        encoding="utf-8",
+    )
+    handler.server.latest_intent_by_participant = {
+        "player_2": dict(expired_peer)
+    }
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "waiting_for_agents",
+            }
+        ],
+    )
+    fresh_opening = participant_intent_payload("player_1", 1)
+    fresh_opening["issued_at_ms"] = 40_000
+    fresh_opening["expires_at_ms"] = 65_000
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps(fresh_opening).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    rows = handler.parse_participant_intent_rows(
+        intent_path.read_text(encoding="utf-8"),
+        reject_expired=False,
+    )
+    assert [row["participant_id"] for row in rows] == ["player_1"]
+
+
 def test_full_replacement_tsv_evicts_absent_latest_cache_but_keeps_history(
     tmp_path, monkeypatch
 ) -> None:

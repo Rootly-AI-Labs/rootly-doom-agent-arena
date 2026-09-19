@@ -200,6 +200,79 @@ Local evidence:
 
 These result paths are local and ignored by Git. Never commit controller-token files, generated participant prompts, or `.env`.
 
+## Exact Recorded Jev + LLM Example
+
+This example comes from `run_6cbe2e9e48eb`; it shows how the same Jev decision is handled differently in standalone and hybrid modes.
+
+### Jev-Only
+
+- Receives the filtered game state and legal choices.
+- Returns a choice with probabilities and confidence.
+- The controller executes a valid choice even when confidence is low.
+- There is no `handoff_to_opus`, host strategy, or `resume_jev_player` step.
+
+### Jev + LLM (`jev_hybrid`)
+
+- Receives the same filtered state and legal choices, plus `handoff_to_opus`.
+- If Jev explicitly requests help or confidence is below `0.65`, the controller retains a safe plan and asks the host LLM for guidance.
+- The host LLM can provide a strategic directive, after which Jev decides again.
+- The host LLM can optionally provide a validated `override_plan` when direct intervention is needed.
+
+This recorded run used GPT-5.6-sol directives only. It did not use a direct GPT-authored override plan.
+
+On Player 1's opening evaluation, Jev received:
+
+| Option | Probability |
+|---|---:|
+| `seek_health` | **35%** |
+| `hold_position` | 33% |
+| `handoff_to_opus` | 18% |
+| `seek_shotgun` | 14% |
+
+Jev returned:
+
+```text
+choice: seek_health
+confidence: 0.14
+```
+
+In `jev_only`, the controller would have executed `seek_health` immediately despite the `0.14` confidence.
+
+In `jev_hybrid`, `0.14` was below the `0.65` handoff threshold, so the controller instead:
+
+1. Installed a safe `hold_position` plan.
+2. Sent the sanitized handoff state to GPT-5.6-sol.
+3. Received this strategic directive:
+
+   ```text
+   Prioritize the F17 shotgun while no opponent is visible;
+   avoid unnecessary engagement en route.
+   ```
+
+4. Asked Jev to reconsider its legal choices with that directive included in the filtered state.
+
+Later, after Player 1 collected the F17 shotgun, GPT-5.6-sol repeatedly advised leaving F17 and patrolling toward L10. Jev continued requesting another handoff. Because GPT was restricted to directives and did not submit an `override_plan`, the controller safely refreshed the current F17 plan instead of allowing GPT to directly choose a route.
+
+Across the run:
+
+| Hybrid event | Count |
+|---|---:|
+| Successful Jev decisions | 34 |
+| Jev handoffs | 27 |
+| Explicit GPT-5.6-sol resumes | 27 |
+| Direct GPT override plans | 0 |
+
+The practical distinction is that Jev-only directly follows Jev's valid choice, while hybrid can ask an LLM to advise or override when Jev is uncertain. A directive influences Jev's next decision; it does not force a particular route. Use `override_plan` when the host must directly submit a currently legal plan.
+
+This run ended in a timeout draw. A transient `state_not_ready` snapshot also required Player 1 to be re-prepared, so use it as an implementation example rather than a performance comparison.
+
+Local evidence:
+
+- [`benchmarks/results/run_6cbe2e9e48eb/jev_player_1.jsonl`](benchmarks/results/run_6cbe2e9e48eb/jev_player_1.jsonl)
+- [`benchmarks/results/session_1d61789edf71/round_01_run_6cbe2e9e48eb/summary.json`](benchmarks/results/session_1d61789edf71/round_01_run_6cbe2e9e48eb/summary.json)
+
+These result paths are local and ignored by Git.
+
 ## If Something Fails
 
 - **Missing API key:** confirm `.env` is in the repository root and Window A exported `DOOM_ARENA_REPO_ROOT`.
