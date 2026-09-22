@@ -1,0 +1,452 @@
+{
+  "run_id": "run_ab6e376f017b",
+  "round": 12,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 66.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 210,
+      "damage_taken": 75,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 75
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 210,
+      "shots_fired": 14,
+      "shots_hit": 8,
+      "accuracy": 0.571,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3255",
+      "elapsed_ms": null,
+      "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 5628 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3255",
+      "elapsed_ms": null,
+      "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 49342 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 21
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 3714 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 4028 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 4457 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=52"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 4828 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 5457 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=148"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 5600 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 5628 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 6371 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 38114 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-192,128) An available weapon pickup has a legal route. aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 38142 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-192,128) An available weapon pickup has a legal route. aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 38828 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-192,-128) An available weapon pickup has a legal route. aim_error=-172"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 39657 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,-128) An available weapon pickup has a legal route. aim_error=-109"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 40285 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,-384) An available weapon pickup has a legal route. aim_error=-36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 41028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-138"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 41771 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 49342 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 63400 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(256,64) full health and continuous motion favor the pistol aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 63428 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(256,64) full health and continuous motion favor the pistol aim_error=150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 63485 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(192,64) full health and continuous motion favor the pistol aim_error=152"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 63685 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(192,128) full health and continuous motion favor the pistol aim_error=-15"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 63828 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(192,192) full health and continuous motion favor the pistol aim_error=-96"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64171 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(128,192) full health and continuous motion favor the pistol aim_error=-100"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64200 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/8 target=(128,192) full health and continuous motion favor the pistol aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64342 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/8 target=(64,192) full health and continuous motion favor the pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64600 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/8 target=(0,192) full health and continuous motion favor the pistol aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64828 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(-64,192) full health and continuous motion favor the pistol aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64885 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(-64,192) full health and continuous motion favor the pistol aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 64971 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(-64,192) full health and continuous motion favor the pistol aim_error=-8"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65085 autopilot_action: player_2 action=route_complete+attack reason=full health and continuous motion favor the pistol aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65114 autopilot_action: player_2 action=route_complete reason=full health and continuous motion favor the pistol aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65142 autopilot_action: player_2 action=route_complete+attack reason=full health and continuous motion favor the pistol aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65571 autopilot_action: player_2 action=route_complete reason=full health and continuous motion favor the pistol aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65714 autopilot_action: player_2 action=route_complete+attack reason=full health and continuous motion favor the pistol aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65742 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(-64,192) full health and continuous motion favor the pistol aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65771 autopilot_action: player_2 action=route_complete+attack reason=full health and continuous motion favor the pistol aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3255",
+        "elapsed_ms": null,
+        "event": "run_ab6e376f017b duel_e1m8_blind_spawn 3255 65857 autopilot_action: player_2 action=route_complete reason=full health and continuous motion favor the pistol aim_error=13"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 258,
+        "distance_traveled": 7915.2,
+        "unique_cells_visited": 45,
+        "revisited_cells": 213
+      },
+      "player_2": {
+        "path_points": 258,
+        "distance_traveled": 4849.3,
+        "unique_cells_visited": 34,
+        "revisited_cells": 224
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8023.25,
+    "decision_p95_ms": 9170.0,
+    "decision_max_ms": 9170.0,
+    "mcp_avg_ms": 550.77,
+    "mcp_p95_ms": 1825.0,
+    "mcp_max_ms": 1846.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 29
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 5,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 6674
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1820
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 12086,
+    "stale_intent_extension_max_ms": 7412
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the offset combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route produced seventy damage last round",
+      "plan_summary": "Same intern, now with a reversible benefits plan."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the offset northbound lane",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the approach remains uncontested",
+      "plan_summary": "I\u2019m commuting to a hazardous open-plan office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "cross north at offset range",
+      "route": "R22;Q22;P22;O22;N22;M22;L22;K22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lane creates reliable pistol damage",
+      "plan_summary": "Hostility remains six cubicles away."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "heal and reverse into the firing lane",
+      "route": "K22;L22;L23;L24;L23;L22;K22;K21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the alcove has one safe doorway",
+      "plan_summary": "Benefits grabbed; reversing out with no eye contact."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "sweep west while trading at range",
+      "route": "K21;K20;J20;I20;I19;I18;I17;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "full health and continuous motion favor the pistol",
+      "plan_summary": "Wellness restored; memo delivery resumes."
+    }
+  ]
+}

@@ -1,0 +1,389 @@
+{
+  "run_id": "run_5c9924fdaf80",
+  "round": 44,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 16.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 30,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 155,
+      "shots_fired": 9,
+      "shots_hit": 3,
+      "accuracy": 0.333,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3080",
+      "elapsed_ms": null,
+      "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 5571 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-48"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 3685 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 3971 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-140"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 4485 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 4771 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 5400 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=154"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 5542 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=77"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 5571 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_5c9924fdaf80 duel_e1m8_blind_spawn 3080 6314 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=0"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 14
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 6
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 2,
+      "route_diagonal_segment": 4
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 63,
+        "distance_traveled": 3422.4,
+        "unique_cells_visited": 33,
+        "revisited_cells": 30
+      },
+      "player_2": {
+        "path_points": 63,
+        "distance_traveled": 2229.9,
+        "unique_cells_visited": 22,
+        "revisited_cells": 41
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 44.43,
+    "decision_p95_ms": 51.0,
+    "decision_max_ms": 78.0,
+    "mcp_avg_ms": 327.68,
+    "mcp_p95_ms": 1608.0,
+    "mcp_max_ms": 2991.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 2,
+    "route_diagonal_segment": 4
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 14
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 6018
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2920
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 50128,
+    "stale_intent_extension_max_ms": 50128
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern choke is the known contact lane",
+      "plan_summary": "I\u2019m rolling my nacho cart into this duel."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north of the approach",
+      "plan_summary": "I\u2019m steering my spicy cart toward center."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "engage the opponent on the live lane",
+      "route": [
+        "T25",
+        "N25",
+        "N20",
+        "N25",
+        "T25"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "engage the opponent on the live lane",
+      "route": [
+        "R23",
+        "N23",
+        "N20",
+        "N23",
+        "R23"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "engage the opponent on the live lane",
+      "route": "R22;N22;N20;N22;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "engage the opponent on the live lane",
+      "route": "Q22;N22;N20;N22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "engage the opponent on the live lane",
+      "route": "N22;N20;N22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "engage the opponent on the live lane",
+      "route": [
+        "N22",
+        "N20",
+        "N22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "engage the opponent on the live lane",
+      "route": "N22;N17;N22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "10",
+      "objective": "engage the opponent on the live lane",
+      "route": "N21;N18;N21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route targets the current last-seen cell and returns along the same",
+      "plan_summary": "I\u2019m delivering this tray directly and coming back fast."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the combat route",
+      "route": [
+        "V32",
+        "V31",
+        "V30",
+        "V29",
+        "V28",
+        "V27",
+        "V26",
+        "V25"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern choke is the known contact lane",
+      "plan_summary": "I\u2019m rolling my nacho cart into this duel."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the central doorway",
+      "route": [
+        "V25",
+        "U25",
+        "T25",
+        "S25",
+        "R25",
+        "R24",
+        "R23",
+        "R22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north of the approach",
+      "plan_summary": "I\u2019m steering my spicy cart toward center."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the combat route",
+      "route": [
+        "V32",
+        "V31",
+        "V30",
+        "V29",
+        "V28",
+        "V27",
+        "V26",
+        "V25"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern choke is the known contact lane",
+      "plan_summary": "I\u2019m rolling my nacho cart into this duel."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the central doorway",
+      "route": [
+        "V25",
+        "U25",
+        "T25",
+        "S25",
+        "R25",
+        "R24",
+        "R23",
+        "R22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north of the approach",
+      "plan_summary": "I\u2019m steering my spicy cart toward center."
+    }
+  ]
+}

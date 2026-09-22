@@ -1,0 +1,266 @@
+{
+  "run_id": "run_3dffbd06c9cd",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 39.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 45,
+      "shots_fired": 16,
+      "shots_hit": 16,
+      "accuracy": 1.0,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "4760",
+      "elapsed_ms": null,
+      "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 29400 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-384) both shotguns remain available so speed can secure one aim_error=-3"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 14,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 29400 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-384) both shotguns remain available so speed can secure one aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 29485 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-320) both shotguns remain available so speed can secure one aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 29628 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-256) both shotguns remain available so speed can secure one aim_error=-23"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 29885 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,-192) both shotguns remain available so speed can secure one aim_error=-32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 30200 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(256,-192) both shotguns remain available so speed can secure one aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 30342 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(192,-192) both shotguns remain available so speed can secure one aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 30571 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(128,-192) both shotguns remain available so speed can secure one aim_error=56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 30828 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(64,-192) both shotguns remain available so speed can secure one aim_error=61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 31057 autopilot_action: player_2 action=route_complete reason=both shotguns remain available so speed can secure one aim_error=60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 31800 autopilot_action: player_2 action=route_complete reason=both shotguns remain available so speed can secure one aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 32171 autopilot_action: player_2 action=route_complete+attack reason=both shotguns remain available so speed can secure one aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 33657 autopilot_action: player_2 action=route_complete reason=both shotguns remain available so speed can secure one aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 34114 autopilot_action: player_2 action=route_complete+attack reason=both shotguns remain available so speed can secure one aim_error=8"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4760",
+        "elapsed_ms": null,
+        "event": "run_3dffbd06c9cd duel_e1m8_blind_spawn 4760 34342 autopilot_action: player_2 action=route_complete reason=both shotguns remain available so speed can secure one aim_error=-7"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 154,
+        "distance_traveled": 7626.9,
+        "unique_cells_visited": 29,
+        "revisited_cells": 125
+      },
+      "player_2": {
+        "path_points": 154,
+        "distance_traveled": 3023.4,
+        "unique_cells_visited": 22,
+        "revisited_cells": 132
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7036.33,
+    "decision_p95_ms": 7289.0,
+    "decision_max_ms": 7289.0,
+    "mcp_avg_ms": 4018.27,
+    "mcp_p95_ms": 30114.0,
+    "mcp_max_ms": 30114.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 21
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2326
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2326
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 47727,
+    "stale_intent_extension_max_ms": 47727
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the central combat corridor",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last round lacked enough engagement",
+      "plan_summary": "I\u2019m exchanging job security for immediate contact."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "push into central contact",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct verified lane forces an early fight",
+      "plan_summary": "I\u2019m skipping orientation and meeting the danger."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "flank into the lower shotgun pocket",
+      "route": "R22;Q22;P22;O22;O21;O20;O19;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "both shotguns remain available so speed can secure one",
+      "plan_summary": "The buffet is unattended; I\u2019m making a terrible plate."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the shotgun during the pistol fight",
+      "route": "O18;O17;P17;Q17;R17",
+      "engagement_policy": "",
+      "reasoning": "the opponent is exposed and the weapon is five cells away",
+      "plan_summary": "I\u2019m upgrading this awkward lunch conversation."
+    }
+  ]
+}

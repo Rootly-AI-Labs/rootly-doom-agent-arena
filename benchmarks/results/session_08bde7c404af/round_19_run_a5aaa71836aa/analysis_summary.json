@@ -1,0 +1,344 @@
+{
+  "run_id": "run_a5aaa71836aa",
+  "round": 19,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 56.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 25,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 125
+    },
+    "player_2": {
+      "damage_dealt": 25,
+      "damage_taken": 160,
+      "shots_fired": 7,
+      "shots_hit": 3,
+      "accuracy": 0.429,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2940",
+      "elapsed_ms": null,
+      "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 3114 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=-42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 3428 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 4257 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 4885 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5371 autopilot_action: player_1 action=route_complete+attack reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5400 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 5800 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 9428 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 9457 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=-114"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 9742 autopilot_action: player_1 action=route_waypoint reason=wp=2/6 target=(-64,192) An available weapon pickup has a legal route. aim_error=-115"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 10371 autopilot_action: player_1 action=route_waypoint reason=wp=3/6 target=(-192,192) An available weapon pickup has a legal route. aim_error=-36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 10800 autopilot_action: player_1 action=route_waypoint reason=wp=4/6 target=(-192,-128) An available weapon pickup has a legal route. aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 11114 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 11657 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-192,192) An available weapon pickup has a legal route. aim_error=96"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 12085 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-192,-128) An available weapon pickup has a legal route. aim_error=-130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 13114 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-192,192) An available weapon pickup has a legal route. aim_error=-55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 14114 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-192,-128) An available weapon pickup has a legal route. aim_error=141"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 15114 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,-128) An available weapon pickup has a legal route. aim_error=-54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 15200 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-192,-128) An available weapon pickup has a legal route. aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 15285 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(0,-128) An available weapon pickup has a legal route. aim_error=-131"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 15885 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,-384) An available weapon pickup has a legal route. aim_error=45"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 16628 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a5aaa71836aa duel_e1m8_blind_spawn 2940 17371 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=0"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 219,
+        "distance_traveled": 8704.5,
+        "unique_cells_visited": 37,
+        "revisited_cells": 182
+      },
+      "player_2": {
+        "path_points": 218,
+        "distance_traveled": 4451.5,
+        "unique_cells_visited": 24,
+        "revisited_cells": 194
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9154.33,
+    "decision_p95_ms": 11653.0,
+    "decision_max_ms": 11653.0,
+    "mcp_avg_ms": 210.9,
+    "mcp_p95_ms": 1332.0,
+    "mcp_max_ms": 1332.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 26
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 5,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 30900,
+    "stale_intent_extension_max_ms": 15230
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the direct combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent repeatedly occupies the central lane",
+      "plan_summary": "I\u2019m heading to the cubicle with the loud complaint."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the offset northbound lane",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center route supports ranged pistol fire",
+      "plan_summary": "Thirty damage cannot cancel lunch."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep toward the last seen enemy",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N19",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains near the central west lane",
+      "plan_summary": "I\u2019m walking the complaint to its owner."
+    }
+  ]
+}

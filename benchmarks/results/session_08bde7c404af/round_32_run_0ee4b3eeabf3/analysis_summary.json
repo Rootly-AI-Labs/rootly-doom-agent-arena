@@ -1,0 +1,260 @@
+{
+  "run_id": "run_0ee4b3eeabf3",
+  "round": 32,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 49.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 40,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 110
+    },
+    "player_2": {
+      "damage_dealt": 40,
+      "damage_taken": 150,
+      "shots_fired": 17,
+      "shots_hit": 4,
+      "accuracy": 0.235,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2695",
+      "elapsed_ms": null,
+      "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 3428 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 4200 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 4257 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 4885 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5371 autopilot_action: player_1 action=route_complete+attack reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5400 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 5800 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 16628 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 16657 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=-40"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 17371 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2695",
+        "elapsed_ms": null,
+        "event": "run_0ee4b3eeabf3 duel_e1m8_blind_spawn 2695 18142 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 190,
+        "distance_traveled": 6709.5,
+        "unique_cells_visited": 37,
+        "revisited_cells": 153
+      },
+      "player_2": {
+        "path_points": 190,
+        "distance_traveled": 3742.6,
+        "unique_cells_visited": 21,
+        "revisited_cells": 169
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8722.33,
+    "decision_p95_ms": 9271.0,
+    "decision_max_ms": 9271.0,
+    "mcp_avg_ms": 445.6,
+    "mcp_p95_ms": 2124.0,
+    "mcp_max_ms": 2124.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 17
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4149
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2076
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 17645,
+    "stale_intent_extension_max_ms": 7636
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the winning combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last probe eliminated the opponent",
+      "plan_summary": "NachoIntern arrives with one promotion."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the winning probe begins beyond it",
+      "plan_summary": "Thirty damage is acceptable promotion tax."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "probe the last seen cell and reverse",
+      "route": "R22;Q22;P22;O22;N22;N21;N22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route just won the prior duel",
+      "plan_summary": "Same knock, newly promoted nachos."
+    }
+  ]
+}

@@ -1,0 +1,598 @@
+{
+  "run_id": "run_de0be0c7903d",
+  "round": 40,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "timeout_health",
+    "elapsed_time_seconds": 180.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 40,
+      "damage_taken": 15,
+      "shots_fired": 1,
+      "shots_hit": 1,
+      "accuracy": 1.0,
+      "final_health": 135
+    },
+    "player_2": {
+      "damage_dealt": 15,
+      "damage_taken": 40,
+      "shots_fired": 1,
+      "shots_hit": 1,
+      "accuracy": 1.0,
+      "final_health": 110
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "7945",
+      "elapsed_ms": null,
+      "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "7945",
+      "elapsed_ms": null,
+      "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 32028 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-128) the choke volley connected and health remains sufficient to disengage"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 21
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 60
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 3200 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=-42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 3428 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 4257 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 4885 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=146"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 5028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=73"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 5800 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 14000 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 14028 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=-60"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 14742 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-97"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 15514 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 32028 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-128) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 32057 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-128) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 32771 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-192) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 32885 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-256) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 33142 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,-320) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 33371 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(320,-384) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 33714 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(384,-384) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 33857 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(448,-384) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 34085 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-384) the choke volley connected and health remains sufficient to disengage"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 34342 autopilot_action: player_2 action=route_complete reason=the choke volley connected and health remains sufficient to disengage aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 35028 autopilot_action: player_2 action=route_complete reason=the choke volley connected and health remains sufficient to disengage aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 72200 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-192,128) An available weapon pickup has a legal route. aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 72228 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-192,128) An available weapon pickup has a legal route. aim_error=-124"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 72914 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-192,-128) An available weapon pickup has a legal route. aim_error=-135"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 73742 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,-128) An available weapon pickup has a legal route. aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74000 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-192,-128) An available weapon pickup has a legal route. aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74314 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(0,-128) An available weapon pickup has a legal route. aim_error=-142"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74428 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(576,-640) the disengagement succeeded with 110 health remaining aim_error=-60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74457 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(640,-640) the disengagement succeeded with 110 health remaining aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74571 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(704,-640) the disengagement succeeded with 110 health remaining aim_error=-144"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74800 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the disengagement succeeded with 110 health remaining aim_error=-144"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 74942 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,-384) An available weapon pickup has a legal route. aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 75057 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(832,-640) the disengagement succeeded with 110 health remaining aim_error=-147"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 75285 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(896,-640) the disengagement succeeded with 110 health remaining aim_error=-153"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 75542 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(960,-640) the disengagement succeeded with 110 health remaining aim_error=-160"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 75685 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-71"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7945",
+        "elapsed_ms": null,
+        "event": "run_de0be0c7903d duel_e1m8_blind_spawn 7945 75857 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(896,-640) the disengagement succeeded with 110 health remaining aim_error=-164"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 18
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 700,
+        "distance_traveled": 28688.6,
+        "unique_cells_visited": 39,
+        "revisited_cells": 661
+      },
+      "player_2": {
+        "path_points": 700,
+        "distance_traveled": 12876.8,
+        "unique_cells_visited": 24,
+        "revisited_cells": 676
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8747.47,
+    "decision_p95_ms": 12697.0,
+    "decision_max_ms": 12935.0,
+    "mcp_avg_ms": 767.56,
+    "mcp_p95_ms": 3120.0,
+    "mcp_max_ms": 4688.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 92
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 5,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 11795
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4614
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 35112,
+    "stale_intent_extension_max_ms": 23926
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "break contact after the probe",
+      "route": [
+        "N21",
+        "N22",
+        "O22",
+        "P22",
+        "Q22",
+        "R22",
+        "R23",
+        "R24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is exposed at N20 and the return lane is clear",
+      "plan_summary": "I\u2019m taking the cart out before the bill arrives."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the winning combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern choke offers the best engagement lane",
+      "plan_summary": "I\u2019m rolling the nacho cart back into the arena."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north of the approach",
+      "plan_summary": "I\u2019m steering the spicy cart toward center."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "fire from the choke and withdraw",
+      "route": "R22;Q22;P22;O22;N22;O22;P22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the prior point-blank probe left no time for a separate retreat",
+      "plan_summary": "I\u2019m serving one volley and rolling away."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "retry the choke volley and withdraw",
+      "route": "R22;Q22;P22;O22;N22;O22;P22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the first pass stalled before entering the firing lane",
+      "plan_summary": "The cart hit a curb; I\u2019m trying the serving lane again."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "withdraw after landing damage",
+      "route": "N22;O22;P22;Q22;R22;R23;R24;R25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the choke volley connected and health remains sufficient to disengage",
+      "plan_summary": "The nachos landed; I\u2019m collecting the empty tray."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "extend the disengagement south",
+      "route": "R23;S23;T23;U23;V23;V24;V25;V26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the volley landed and survival now protects the damage advantage",
+      "plan_summary": "I\u2019m parking the cart behind the safest wall I can find."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "return to the southern spawn corridor",
+      "route": [
+        "R23",
+        "R24",
+        "R25",
+        "S25",
+        "T25",
+        "U25",
+        "V25",
+        "V26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct southern path is obstructed, so use the known doorway route",
+      "plan_summary": "I found the right aisle for the escape cart."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "hold the distant southern corridor",
+      "route": "V26;V27;V28;V29;V30;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the disengagement succeeded with 110 health remaining",
+      "plan_summary": "I\u2019m guarding the pantry until the clock runs out."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "8",
+      "objective": "keep distance in the southern corridor",
+      "route": "V28;V29;V30;V31;V32;V31;V30;V29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent has not followed the successful disengagement",
+      "plan_summary": "I\u2019m pacing the pantry with one eye on the clock."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "keep distance until the duel expires",
+      "route": "V29;V30;V31;V32;V31;V30;V29;V28",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north while this corridor is secure",
+      "plan_summary": "I\u2019m making one more quiet lap with the cart."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "10",
+      "objective": "stay mobile in the safe corridor",
+      "route": "V28;V27;V26;V25;V26;V27;V28;V29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains distant and the clock favors survival",
+      "plan_summary": "I\u2019m keeping the wheels moving and the salsa covered."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "11",
+      "objective": "stay beyond pursuit range",
+      "route": "V26;V27;V28;V29;V30;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the safe corridor remains uncontested",
+      "plan_summary": "The cart is still rolling and the clock is still cooking."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "12",
+      "objective": "maintain the southern hold",
+      "route": "V26;V27;V28;V29;V30;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "no enemy contact makes continued separation optimal",
+      "plan_summary": "I\u2019m holding the pantry line with fifty seconds left."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "13",
+      "objective": "run out the remaining clock",
+      "route": "V28;V29;V30;V31;V32;V31;V30;V29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent has not entered the southern corridor",
+      "plan_summary": "I\u2019m keeping the last tray safely out of reach."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "14",
+      "objective": "survive the final half-minute",
+      "route": "V28;V27;V26;V25;V26;V27;V28;V29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "distance has preserved health since the successful volley",
+      "plan_summary": "I\u2019m circling the cart until the kitchen closes."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "15",
+      "objective": "survive the final seconds",
+      "route": "V27;V28;V29;V30;V31;V32;V31;V30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains outside contact range",
+      "plan_summary": "Last lap for the nacho cart\u2014keep the lid shut."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "16",
+      "objective": "hold through expiration",
+      "route": "V27;V28;V29;V30;V31;V32;V31;V30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "only seconds remain and health is stable",
+      "plan_summary": "I\u2019m closing the kitchen with the cart intact."
+    }
+  ]
+}

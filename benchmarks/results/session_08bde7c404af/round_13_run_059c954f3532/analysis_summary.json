@@ -1,0 +1,454 @@
+{
+  "run_id": "run_059c954f3532",
+  "round": 13,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 48.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 20,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 130
+    },
+    "player_2": {
+      "damage_dealt": 20,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 2,
+      "accuracy": 0.333,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5142 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 19342 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(512,-640) the nearby health route can recover opening damage aim_error=-42"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 54
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 3485 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 3542 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-115"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 4228 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 4342 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 4971 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5114 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5142 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5457 autopilot_action: player_1 action=route_complete+attack reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5485 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 5885 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 14514 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=-104"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 15257 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 15971 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 19342 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(512,-640) the nearby health route can recover opening damage aim_error=-42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 19400 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(512,-576) the nearby health route can recover opening damage aim_error=19"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 19571 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(512,-512) the nearby health route can recover opening damage aim_error=-60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 19800 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(512,-448) the nearby health route can recover opening damage aim_error=-72"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 20057 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(512,-384) the nearby health route can recover opening damage aim_error=-81"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 20371 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(448,-384) the nearby health route can recover opening damage aim_error=-91"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 20514 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(384,-384) the nearby health route can recover opening damage aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 20742 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 21000 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 21742 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 22114 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 22142 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=175"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 22885 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 23085 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 23114 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 23857 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 24057 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 24085 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=175"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 24828 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 25028 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 25057 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 25800 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 26000 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the nearby health route can recover opening damage aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_059c954f3532 duel_e1m8_blind_spawn 2730 26028 autopilot_action: player_2 action=route_complete reason=the nearby health route can recover opening damage aim_error=175"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 186,
+        "distance_traveled": 6197.5,
+        "unique_cells_visited": 37,
+        "revisited_cells": 149
+      },
+      "player_2": {
+        "path_points": 186,
+        "distance_traveled": 3738.8,
+        "unique_cells_visited": 22,
+        "revisited_cells": 164
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6709.33,
+    "decision_p95_ms": 7109.0,
+    "decision_max_ms": 7109.0,
+    "mcp_avg_ms": 446.55,
+    "mcp_p95_ms": 1570.0,
+    "mcp_max_ms": 1570.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 23
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4594
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1540
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 13044,
+    "stale_intent_extension_max_ms": 6087
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the offset combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route nearly won the prior exchange",
+      "plan_summary": "The intern smells a promotion and gunpowder."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the offset northbound lane",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the nearby health route can recover opening damage",
+      "plan_summary": "Thirty damage goes straight to HR."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "cross north at offset range",
+      "route": "R22;Q22;P22;O22;N22;M22;L22;K22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lane avoids the opponent last seen column",
+      "plan_summary": "I\u2019m keeping the awkward six-cubicle buffer."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "heal and reverse into the firing lane",
+      "route": "K22;L22;L23;L24;L23;L22;K22;K21",
+      "engagement_policy": "",
+      "reasoning": "the one-door alcove restores the damage buffer",
+      "plan_summary": "Benefits grabbed; reverse gear engaged."
+    }
+  ]
+}

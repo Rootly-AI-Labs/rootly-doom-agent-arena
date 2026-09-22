@@ -1,0 +1,170 @@
+{
+  "run_id": "run_c68936696a08",
+  "round": 42,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 16.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 75,
+      "shots_fired": 16,
+      "shots_hit": 16,
+      "accuracy": 1.0,
+      "final_health": 75
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 160,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": null,
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": []
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 66,
+        "distance_traveled": 3598.5,
+        "unique_cells_visited": 32,
+        "revisited_cells": 34
+      },
+      "player_2": {
+        "path_points": 66,
+        "distance_traveled": 1442.4,
+        "unique_cells_visited": 20,
+        "revisited_cells": 46
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 2453.6,
+    "decision_p95_ms": 11964.0,
+    "decision_max_ms": 11964.0,
+    "mcp_avg_ms": 662.53,
+    "mcp_p95_ms": 2420.0,
+    "mcp_max_ms": 2636.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4105
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2565
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 13100,
+    "stale_intent_extension_max_ms": 10638
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern choke is the known contact lane",
+      "plan_summary": "I\u2019m rolling the nacho cart into round forty-two."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy remains north of the approach",
+      "plan_summary": "I\u2019m steering the spicy cart toward center."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "force contact in the enemy lane",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a decisive probe can finish the duel",
+      "plan_summary": "I\u2019m serving the hot tray at their doorway."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "press the revealed lane",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N19",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "contact is active and the duel should be resolved",
+      "plan_summary": "I\u2019m pushing the last tray straight through."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the last-seen opponent",
+      "route": "O21;N21;N20;N19;N18;N17;N18;N19",
+      "engagement_policy": "",
+      "reasoning": "the enemy is directly north of the current lane",
+      "plan_summary": "I\u2019m carrying the final tray up the north aisle."
+    }
+  ]
+}

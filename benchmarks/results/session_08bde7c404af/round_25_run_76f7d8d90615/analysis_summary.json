@@ -1,0 +1,254 @@
+{
+  "run_id": "run_76f7d8d90615",
+  "round": 25,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 48.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 80,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 70
+    },
+    "player_2": {
+      "damage_dealt": 80,
+      "damage_taken": 150,
+      "shots_fired": 9,
+      "shots_hit": 9,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3185",
+      "elapsed_ms": null,
+      "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 6028 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 3914 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=51"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 4428 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-132"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 4600 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=49"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 5228 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 5857 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=150"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 6000 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=73"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 6028 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_76f7d8d90615 duel_e1m8_blind_spawn 3185 6771 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=4"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 189,
+        "distance_traveled": 9823.2,
+        "unique_cells_visited": 37,
+        "revisited_cells": 152
+      },
+      "player_2": {
+        "path_points": 189,
+        "distance_traveled": 4078.5,
+        "unique_cells_visited": 22,
+        "revisited_cells": 167
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8567.0,
+    "decision_p95_ms": 9056.0,
+    "decision_max_ms": 9056.0,
+    "mcp_avg_ms": 340.36,
+    "mcp_p95_ms": 2085.0,
+    "mcp_max_ms": 2085.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 21
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2041
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2041
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 32607,
+    "stale_intent_extension_max_ms": 20004
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "kite southeast while returning fire",
+      "route": [
+        "N21",
+        "N22",
+        "O22",
+        "P22",
+        "Q22",
+        "R22",
+        "R23",
+        "R24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "seventy health requires extending the range",
+      "plan_summary": "The complaint is following me; excellent."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the direct combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains in the central lane",
+      "plan_summary": "Halfway lunch, full-time bad decisions."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the offset lane offers the cleanest approach",
+      "plan_summary": "The corridor celebrates no anniversaries."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "probe contact and reverse at range",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is five cells west of the probe",
+      "plan_summary": "Quick memo, faster retreat."
+    }
+  ]
+}
