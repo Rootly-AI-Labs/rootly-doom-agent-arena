@@ -1,0 +1,484 @@
+{
+  "run_id": "run_99ab0ea8c480",
+  "round": 4,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 93.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 0,
+      "damage_taken": 150,
+      "shots_fired": 0,
+      "shots_hit": 0,
+      "accuracy": null,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 0,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 150
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "4550",
+      "elapsed_ms": null,
+      "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 5200 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 62,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=51"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-53"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 3514 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 3600 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 4200 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 4400 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 5028 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=138"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 5171 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=62"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 5200 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 5942 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 74714 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(0,-320) the shotgun is within reach before the next fight aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 74742 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(0,-320) the shotgun is within reach before the next fight aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 74800 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(0,-384) the shotgun is within reach before the next fight aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 74914 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 75000 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(0,-320) the shotgun is within reach before the next fight aim_error=-176"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 75114 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(0,-256) the shotgun is within reach before the next fight aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 75371 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(0,-192) the shotgun is within reach before the next fight aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 75714 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(64,-192) the shotgun is within reach before the next fight aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 75857 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(128,-192) the shotgun is within reach before the next fight aim_error=-85"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 76085 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=-99"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 76342 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 77085 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 77371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 77400 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 78142 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 78342 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 78371 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 79114 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 79314 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 79342 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 80085 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 80285 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 80314 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 81057 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 81257 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 81285 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 82028 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 82228 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,-192) the shotgun is within reach before the next fight aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4550",
+        "elapsed_ms": null,
+        "event": "run_99ab0ea8c480 duel_e1m8_blind_spawn 4550 82257 autopilot_action: player_2 action=route_complete reason=the shotgun is within reach before the next fight aim_error=-112"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 360,
+        "distance_traveled": 3140.8,
+        "unique_cells_visited": 30,
+        "revisited_cells": 330
+      },
+      "player_2": {
+        "path_points": 360,
+        "distance_traveled": 6303.7,
+        "unique_cells_visited": 38,
+        "revisited_cells": 322
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9195.71,
+    "decision_p95_ms": 18403.0,
+    "decision_max_ms": 18403.0,
+    "mcp_avg_ms": 540.41,
+    "mcp_p95_ms": 1842.0,
+    "mcp_max_ms": 2317.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 5,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 8704
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2290
+    },
+    "stale_intent_extension_count": 5,
+    "stale_intent_extension_total_ms": 81182,
+    "stale_intent_extension_max_ms": 50130
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the south shotgun",
+      "route": "V32;U32;T32;T31;T30;T29;T28;T27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open southern lane is the shortest weapon route",
+      "plan_summary": "I finally read the menu correctly."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the south chamber flank",
+      "route": "T27;T26;T25;T24;T23;T22;T21;T20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "column twenty bypasses the southern wall",
+      "plan_summary": "Straight west, like a burrito with purpose."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the south shotgun chamber",
+      "route": [
+        "T20",
+        "S20",
+        "R20",
+        "Q20",
+        "P20",
+        "O20",
+        "O19",
+        "O18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber entrance is one turn away",
+      "plan_summary": "The loud snack is practically plated."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the south shotgun chamber",
+      "route": "T20;S20;R20;Q20;Q21;Q22;P22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "column twenty-two bypasses the wall at P20",
+      "plan_summary": "One wall complained; I found its supervisor."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "take the south shotgun",
+      "route": "O22;O21;O20;O19;O18;O17;P17;Q17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is directly below this entry",
+      "plan_summary": "I can hear the appetizer clicking."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "arm and pursue the opponent",
+      "route": "Q17;R17;Q17;P17;O17;O18;O19;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is within reach before the next fight",
+      "plan_summary": "Now I am the dangerous leftovers."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "hunt the opponent at center",
+      "route": "O20;N20;M20;L20;K20;J20;I20;I19",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun advantage should decide close contact",
+      "plan_summary": "I am armed, seasoned, and socially unavailable."
+    }
+  ]
+}

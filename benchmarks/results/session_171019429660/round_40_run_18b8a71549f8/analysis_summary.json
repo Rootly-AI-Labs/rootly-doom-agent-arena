@@ -1,0 +1,257 @@
+{
+  "run_id": "run_18b8a71549f8",
+  "round": 40,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 32.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 35,
+      "damage_taken": 150,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 35,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 115
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-640) the east loop just produced a full-health win aim_error=-11"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 14
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-640) the east loop just produced a full-health win aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 2000 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-192) the east loop just produced a full-health win aim_error=63"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 3428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(0,-192) the east loop just produced a full-health win aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 4457 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(0,-384) the east loop just produced a full-health win aim_error=55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 5085 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(0,-192) the east loop just produced a full-health win aim_error=154"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 5514 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/8 target=(0,-192) the east loop just produced a full-health win aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 5685 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/8 target=(320,-192) the east loop just produced a full-health win aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 6714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(320,-320) the east loop just produced a full-health win aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 6857 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-320) the east loop just produced a full-health win aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 7057 autopilot_action: player_2 action=route_complete reason=the east loop just produced a full-health win aim_error=122"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 7800 autopilot_action: player_2 action=route_complete reason=the east loop just produced a full-health win aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 31400 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-192) the medikit can erase the opening damage during the loop aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 31428 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-192) the medikit can erase the opening damage during the loop aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_18b8a71549f8 duel_e1m8_blind_spawn 2625 31857 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/8 target=(320,-192) the medikit can erase the opening damage during the loop aim_e"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 124,
+        "distance_traveled": 2149.4,
+        "unique_cells_visited": 26,
+        "revisited_cells": 98
+      },
+      "player_2": {
+        "path_points": 124,
+        "distance_traveled": 2187.5,
+        "unique_cells_visited": 23,
+        "revisited_cells": 101
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 11112.0,
+    "decision_p95_ms": 12852.0,
+    "decision_max_ms": 12852.0,
+    "mcp_avg_ms": 35.0,
+    "mcp_p95_ms": 86.0,
+    "mcp_max_ms": 86.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 7
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 34979,
+    "stale_intent_extension_max_ms": 19495
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and stage behind cover",
+      "route": "V32;V22;O22;O17;R17;O17;O22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east loop just produced a full-health win",
+      "plan_summary": "The house special is undefeated today."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "trade heal and finish at O22",
+      "route": "Q22;O22;O26;O22;O26;Q26;O26;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the medikit can erase the opening damage during the loop",
+      "plan_summary": "A refill for me, a complaint for everyone else."
+    }
+  ]
+}

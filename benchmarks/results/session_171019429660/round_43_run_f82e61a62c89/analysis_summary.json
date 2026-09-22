@@ -1,0 +1,243 @@
+{
+  "run_id": "run_f82e61a62c89",
+  "round": 43,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 30.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 215,
+      "damage_taken": 145,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 5
+    },
+    "player_2": {
+      "damage_dealt": 145,
+      "damage_taken": 215,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 26342 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 3800 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 4200 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-132"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 4485 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=61"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5000 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=83"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5628 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=172"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5771 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=94"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 5800 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 6542 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f82e61a62c89 duel_e1m8_blind_spawn 2030 26342 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 116,
+        "distance_traveled": 5913.6,
+        "unique_cells_visited": 40,
+        "revisited_cells": 76
+      },
+      "player_2": {
+        "path_points": 116,
+        "distance_traveled": 3492.7,
+        "unique_cells_visited": 29,
+        "revisited_cells": 87
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8967.5,
+    "decision_p95_ms": 10142.0,
+    "decision_max_ms": 10142.0,
+    "mcp_avg_ms": 424.38,
+    "mcp_p95_ms": 1611.0,
+    "mcp_max_ms": 1611.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 17
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3076
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1539
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 18566,
+    "stale_intent_extension_max_ms": 12488
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and stage behind cover",
+      "route": "V32;V22;O22;O17;R17;O17;O22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east loop has won four consecutive rounds",
+      "plan_summary": "The streak special is served dangerously hot."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "trade heal and finish at O22",
+      "route": "Q22;O22;O26;O22;O26;Q26;O26;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east loop continues to dominate this route",
+      "plan_summary": "The booth is booked for one final argument."
+    }
+  ]
+}
