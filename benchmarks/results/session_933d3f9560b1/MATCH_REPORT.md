@@ -6,7 +6,7 @@ Generated from the completed 50-round arena session `session_933d3f9560b1` on 20
 
 **Jev Hybrid + GPT-5.6 Sol won 36-14 (72% to 28%) against GPT-5.6 Sol alone.** Every match ended by elimination: there were no draws, timeout decisions, or incomplete rounds.
 
-The hybrid side produced 74.6 Jev decisions per minute, about 9.5x the GPT-only side's 7.9 inferred decisions per minute. Jev inference averaged 258 ms versus 7.08 seconds for GPT-only decision turns. The hybrid side dealt 1.74x as much damage, achieved 91.3% registered-shot accuracy versus 70.8%, and traveled 1.94x as far.
+The hybrid side produced 74.6 Jev decisions per minute, about 9.5x the GPT-only side's 7.9 inferred decisions per minute. Jev inference averaged 258 ms versus 7.08 seconds for GPT-only decision turns. Recovered usage logs put the hybrid's combined reported/estimated model cost at $5.51 versus an estimated $20.41 for Player 2, or 73.0% lower. The hybrid side also dealt 1.74x as much damage, achieved 91.3% registered-shot accuracy versus 70.8%, and traveled 1.94x as far.
 
 The main Jev concern is repetition rather than raw speed. Only 14.1% of consecutive Jev decisions changed action, 830 exact active plans were locally deduplicated, and the longest action streak was 81 consecutive `patrol_center` selections. The new deduplication layer prevented those repeated choices from becoming 830 redundant arena plan writes.
 
@@ -26,8 +26,10 @@ The main benchmark confound is resource access: Player 1 collected a shotgun in 
 | Weapon pickups | Enabled |
 | Randomized spawns | Disabled |
 | Jev model | `typesafe/jev-1.13-20260917` through TypeSafe |
+| Hybrid GPT host | `gpt-5.6-sol`, medium reasoning |
+| Player 2 controller | `gpt-5.6-sol`; benchmark turn began at high reasoning, with medium applied about four minutes later |
 
-The matchup labels above follow the operator-supplied configuration. Arena summaries recorded Player 1 as `Jev Hybrid` and Player 2 as `Taco Apologist`, but reported the coding assistant and host model as unavailable. Therefore, the files do not independently prove the GPT-5.6 Sol model slug. The internal Jev choice name `handoff_to_opus` is legacy wording; hybrid handoffs went to the model hosting the Jev Codex session, which was configured here as GPT-5.6 Sol.
+Arena summaries recorded Player 1 as `Jev Hybrid` and Player 2 as `Taco Apologist`, but reported the coding assistant and host model as unavailable. Correlated local Codex rollout logs identify both controller sessions as `gpt-5.6-sol`. The hybrid host used medium reasoning throughout. Player 2's long benchmark turn began at high reasoning, but a medium setting was applied about four minutes into that same turn; because later requests lack per-request effort markers, its exact reasoning-effort mix cannot be reconstructed. This difference and ambiguity are important cost and latency confounds. The internal Jev choice name `handoff_to_opus` is legacy wording; the handoffs went to the GPT-5.6 Sol model hosting the Jev session.
 
 ## Match result
 
@@ -76,30 +78,38 @@ These totals come from explicit `pickup:` events, not textual references to pick
 
 ## Decision and latency comparison
 
-| Metric | Jev + GPT-5.6 Sol | GPT-5.6 Sol only |
-|---|---:|---:|
-| Decision cycles | 2,313 Jev decisions + 262 host handoffs | 244 inferred GPT decisions |
-| Decisions per minute | **74.6** | 7.9 |
-| Average decision latency | **258 ms Jev** | 7.08 s |
-| Median / P95 latency | **246 / 360 ms Jev** | 3.05 / 22.56 s |
-| Cumulative measured decision time | 596.9 s Jev only | 1,727.8 s |
-| Arena plan writes | 894 submitted, 894 accepted | 275 attempted, 209 accepted |
-| Rejected plans | 0 | 66 (24.0%) |
-| Exact active plans deduplicated locally | 830 | 0 |
+| Metric | Jev tactical inference | GPT-5.6 Sol hybrid host | Jev + GPT-5.6 Sol hybrid | GPT-5.6 Sol only (Player 2) |
+|---|---:|---:|---:|---:|
+| Recorded decision events | 2,313 decisions | 262 handoff events | 2,313 Jev cycles; 262 handoff events | 244 inferred decisions |
+| Event rate per combat minute | **74.6 decisions** | 8.45 handoffs | 74.6 Jev cycles; 8.45 host handoffs | 7.9 decisions |
+| Average decision / inference latency | **258 ms direct** | Not isolated | Not fully captured | 7.08 s inferred |
+| Median / P95 latency | **246 / 360 ms direct** | Not isolated | Not fully captured | 3.05 / 22.56 s inferred |
+| Cumulative measured decision time | 596.9 s | Not isolated | At least 596.9 s measured | 1,727.8 s |
+| Arena plan writes | — | — | 894 submitted, 894 accepted | 275 attempted, 209 accepted |
+| Rejected plans | — | — | 0 | 66 (24.0%) |
+| Exact active plans deduplicated locally | 830 | — | 830 | 0 |
 
-Jev produced 9.48x as many decision cycles per combat minute. Its average inference was 27.4x faster and its P95 was 62.8x faster than the inferred GPT-only decision interval. The Jev column excludes unrecorded GPT-5.6 Sol host inference during handoffs, so it is not the full hybrid wall-clock or billing total.
+Jev produced 9.48x as many tactical decision cycles per combat minute as Player 2. Its directly measured average inference was 27.4x faster and its P95 was 62.8x faster than the inferred GPT-only decision interval. Those ratios compare Jev endpoint latency with Player 2's operational decision interval; they do not represent full hybrid latency because GPT-5.6 Sol handoff latency was not separately timestamped.
 
 ### Usage and cost coverage
 
-| Metric | Jev inference | GPT-5.6 Sol only |
-|---|---:|---:|
-| Input tokens | 3,566,869 | Not captured as model usage |
-| Output tokens | 194,949 | Not captured as model usage |
-| Tokens per Jev decision | 1,542 input / 84 output | — |
-| Telemetry-reported cost | **$0.149808** | Unavailable |
-| Cost per Jev decision | $0.0000648 | Unavailable |
+| Metric | Jev inference | GPT-5.6 Sol hybrid host | Jev + GPT-5.6 Sol hybrid total | GPT-5.6 Sol only (Player 2) |
+|---|---:|---:|---:|---:|
+| Decisions / handoffs | 2,313 decisions | 262 handoffs | 2,313 Jev decisions + 262 handoffs | 244 inferred decisions |
+| Total input tokens | 3,566,869 | 10,617,850 | 14,184,719 across providers | 41,415,093 |
+| Cached input tokens | Not separately reported | 10,416,256 | 10,416,256 GPT tokens; Jev cache split unavailable | 40,918,656 |
+| Uncached input tokens | Not separately reported | 201,594 | 201,594 GPT tokens; Jev cache split unavailable | 496,437 |
+| Output tokens | 194,949 | 19,455 | 214,404 across providers | 102,986 |
+| Reasoning tokens (included in output tokens) | Not separately reported | 5,906 | 5,906 GPT tokens | 19,864 |
+| Tokens per event | 1,542 input / 84 output per decision | 40,526 input / 74 output per handoff | Mixed event types | 169,734 input / 422 output per inferred decision |
+| Model cost | **$0.149808 provider-reported** | **$5.361978 API-equivalent** | **$5.511787 reported + estimated** | **$20.412930 API-equivalent** |
+| Session cost amortized per event | $0.0000648 / decision | $0.02047 / recorded handoff | $0.002383 / Jev decision cycle | $0.08366 / inferred decision |
+| Cost per match | $0.002996 Jev layer | $0.1072 host session | **$0.1102 total** | **$0.4083** |
+| Overall cost comparison | — | — | **73.0% lower ($14.901 less)** | **3.70x the hybrid total** |
 
-The arena recorded 33,117 request-token-equivalent and 337,536 response-token-equivalent units for Player 2's MCP traffic. Those are character-derived MCP payload estimates, not GPT model billing tokens, so they are intentionally excluded from the model-usage comparison. GPT-5.6 Sol host usage for the 262 hybrid handoffs was also not recorded.
+The GPT figures come from `token_count` events in the two correlated local Codex rollout logs. They cover each dedicated controller session in full, including system context, cached context, tool orchestration, and round-control overhead; the $5.361978 hybrid-host amount is therefore the host session's total allocated across 262 handoffs, not an isolated price for the handoff payloads alone. The API-equivalent estimates apply the official GPT-5.6 Sol rates of $4.00 per million uncached input tokens, $0.40 per million cached input tokens, and $20.00 per million output tokens. They are reproducible estimates, not invoice or subscription-billing totals. See [GPT-5.6 Sol pricing](https://developers.openai.com/api/docs/models/gpt-5.6-sol).
+
+The hybrid token total is an arithmetic sum across two providers and may combine different tokenizers, so cost is the more meaningful aggregate comparison. The arena also recorded 33,117 request-token-equivalent and 337,536 response-token-equivalent units for Player 2's MCP traffic. Those character-derived payload estimates are not model billing tokens and are excluded from the table.
 
 ## Jev-specific metrics
 
@@ -215,15 +225,18 @@ Handoff and dedup rates were almost identical between wins and losses. The clear
 1. **The hybrid won decisively without timeout artifacts.** All 50 rounds ended in an elimination, eliminating the previous draw-heavy failure mode from this session.
 2. **The result is heavily confounded by shotgun access.** Player 1 collected the shotgun in 50/50 rounds; Player 2 did so in only 2/50. A mirrored side-swap is required before treating 36-14 as Jev's isolated lift.
 3. **Inference speed translated into much higher control frequency.** Jev evaluated state 9.48x as often as the GPT-only controller, without imposing comparable-decision gating.
-4. **The hybrid converted combat more efficiently.** It dealt 73.7% more damage with 67.4% fewer registered shots and a 20.5-point accuracy advantage, though universal shotgun access explains part of that gap.
-5. **Health eligibility worked but was rarely preferred or completed.** Health was offered on every Jev decision, selected 1.38% of the time, and resulted in three confirmed Player 1 pickups.
-6. **Handoffs were mostly threshold-driven.** Only one actual handoff was caused by an explicit Jev request; 239 were caused by low confidence.
-7. **Repetition remains the main Jev behavior issue.** Deduplication protected the arena from redundant writes, but long `patrol_center` and `continue_current` decision streaks remain visible in Jev telemetry.
-8. **The GPT-only controller had a route-validity cost.** It submitted 66 rejected plans, or 24.0% of its 275 plan attempts, while all 894 Jev-side arena submissions were accepted.
+4. **Recovered usage showed lower reported/estimated spend.** Jev inference plus the GPT host totaled $5.51 versus $20.41 for Player 2, a 73.0% reduction, although Player 2's ambiguous reasoning-effort mix prevents a controlled cost attribution.
+5. **The hybrid converted combat more efficiently.** It dealt 73.7% more damage with 67.4% fewer registered shots and a 20.5-point accuracy advantage, though universal shotgun access explains part of that gap.
+6. **Health eligibility worked but was rarely preferred or completed.** Health was offered on every Jev decision, selected 1.38% of the time, and resulted in three confirmed Player 1 pickups.
+7. **Handoffs were mostly threshold-driven.** Only one actual handoff was caused by an explicit Jev request; 239 were caused by low confidence.
+8. **Repetition remains the main Jev behavior issue.** Deduplication protected the arena from redundant writes, but long `patrol_center` and `continue_current` decision streaks remain visible in Jev telemetry.
+9. **The GPT-only controller had a route-validity cost.** It submitted 66 rejected plans, or 24.0% of its 275 plan attempts, while all 894 Jev-side arena submissions were accepted.
 
 ## Limitations
 
-- The arena did not capture GPT-5.6 Sol model tokens, billing cost, or the latency of host reasoning during hybrid handoffs.
+- Arena artifacts did not contain GPT-5.6 Sol model usage. Token counts were recovered from correlated local Codex rollout logs, while costs are API-equivalent estimates rather than confirmed billing totals.
+- The hybrid host ran at medium reasoning. Player 2's benchmark turn began at high reasoning, but medium was applied about four minutes later and the log does not expose per-request effort thereafter. Cost, output-token, and latency differences may therefore combine controller architecture with an unknown reasoning-effort mix.
+- GPT-5.6 Sol host latency during the 262 hybrid handoffs was not separately recorded, so a complete combined hybrid-latency distribution cannot be reported.
 - GPT-only decision latency is inferred from observation completion to the next plan call; it includes model reasoning and client/tool orchestration.
 - Jev latency is direct TypeSafe decision-endpoint latency. The two latency measures are operationally useful but not perfectly identical.
 - The fixed seed, fixed role assignment, non-randomized spawns, and single map produced a severe resource asymmetry: Player 1 obtained the shotgun in every round and Player 2 in only two. A mirrored side-swap session is needed to isolate controller quality from Player 1/map advantage.
@@ -293,6 +306,8 @@ All terminal reasons were elimination. Health and damage columns are Player 1–
 - Confirmed resource pickups: explicit `pickup:` records in each round's `events.jsonl`.
 - Route, movement, and reliability totals: each round's `analysis_summary.json` and `stats.json`.
 - Jev selections, confidence, latency, usage, costs, handoffs, and local deduplication: `benchmarks/results/run_def23db9c8aa/jev_player_1.jsonl`, filtered to the 50 session run IDs.
+- GPT model identity, reasoning effort, and token usage: cumulative `token_count` events from the two correlated local Codex rollout logs.
+- GPT API-equivalent cost: uncached input, cached input, and output token totals multiplied by the published [GPT-5.6 Sol pricing](https://developers.openai.com/api/docs/models/gpt-5.6-sol).
 - Percentiles use the nearest-rank method.
 - Decisions per minute divide decision count by summed in-match combat duration.
 - Accuracy is total registered hits divided by total registered shots, not the unweighted mean of per-round percentages.
