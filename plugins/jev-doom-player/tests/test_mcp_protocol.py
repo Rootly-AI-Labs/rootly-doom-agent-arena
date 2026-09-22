@@ -197,6 +197,8 @@ def test_initialize_lists_exact_strict_tool_surface():
         limit = by_name[name]["inputSchema"]["properties"]["max_run_ms"]
         assert limit["minimum"] == 100
         assert limit["maximum"] == 55_000
+        directive = by_name[name]["inputSchema"]["properties"]["strategic_directive"]
+        assert directive["maxLength"] == 512
     override = by_name["resume_jev_player"]["inputSchema"]["properties"]["override_plan"]
     assert override["additionalProperties"] is False
 

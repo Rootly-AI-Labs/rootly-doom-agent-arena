@@ -502,15 +502,24 @@ def test_hybrid_run_directive_is_in_the_first_jev_state() -> None:
     controller.stop()
 
 
-def test_jev_only_ignores_host_run_directive() -> None:
+def test_jev_only_run_directive_is_in_the_first_jev_state() -> None:
     adapter = RecordingAdapter()
     controller, client = make_controller(adapter)
     controller.prepare("player_1", control_mode="jev_only")
+    directive = (
+        "Primary objective: eliminate the opponent. Prioritize establishing contact, "
+        "acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not "
+        "camp, repeatedly hold the same location, or retreat merely to preserve health. "
+        "Use health and cover only when they improve the chance of winning the fight. "
+        "If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. "
+        "In the final 20 seconds, force engagement unless protecting a meaningful lead."
+    )
+    assert len(directive) > 320
 
-    controller.run("Guard the center lane", max_run_ms=100)
+    controller.run(directive, max_run_ms=100)
 
     assert adapter.states
-    assert adapter.states[0]["strategic_directive"] == ""
+    assert adapter.states[0]["strategic_directive"] == directive
     assert len(client.plan_calls) == 1
     controller.stop()
 

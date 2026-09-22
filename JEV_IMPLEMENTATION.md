@@ -83,10 +83,10 @@ Now choose exactly one prompt.
 Paste this into Window A:
 
 ```text
-Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Jockey", and control_mode="jev_only". Then call run_jev_player with max_run_ms=45000 and no strategic_directive. If status is running, call run_jev_player again until status is finished or failed. Never call resume_jev_player, never provide strategy, never control player_2, never request or display a controller token, and never use doom-arena tools.
+Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Jockey", and control_mode="jev_only". Then call run_jev_player with strategic_directive="Primary objective: eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight. If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. In the final 20 seconds, force engagement unless protecting a meaningful lead." and max_run_ms=45000. If status is running, call run_jev_player again with the same directive until status is finished or failed. Never call resume_jev_player, never replace the fixed directive with adaptive host tactics, never control player_2, never request or display a controller token, and never use doom-arena tools.
 ```
 
-That is the standalone baseline. The host Codex session only keeps the plugin running; it does not supply tactics.
+That is the standalone baseline. The fixed combat objective is supplied to Jev, but the host Codex session only keeps the plugin running; it does not adapt tactics or handle decisions.
 
 ### Option B: Jev + LLM
 

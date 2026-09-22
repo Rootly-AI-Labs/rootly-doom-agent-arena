@@ -5556,8 +5556,8 @@
                     );
                 } else {
                     lines.push(
-                        "Call run_jev_player with max_run_ms=45000 and no strategic_directive. If status is running, call run_jev_player again with only max_run_ms=45000 until the match is finished or failed.",
-                        "Never call resume_jev_player, never provide host-authored tactics, and never provide an override plan. The combat directive used by model-controlled modes is intentionally not injected into this Jev-only baseline. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
+                        "Call run_jev_player with strategic_directive=\"" + combatDirective + "\" and max_run_ms=45000. If status is running, call run_jev_player again with the same directive and max_run_ms=45000 until the match is finished or failed.",
+                        "Never call resume_jev_player, never replace the fixed benchmark directive with adaptive host-authored tactics, and never provide an override plan. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
                     );
                 }
 

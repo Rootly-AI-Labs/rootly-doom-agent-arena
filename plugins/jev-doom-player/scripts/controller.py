@@ -22,7 +22,7 @@ from arena_bridge import (
     verify_active_sequence,
 )
 from candidate_routes import CandidateRouteEngine, CandidateRouteError
-from contracts import CONTROLLER_MODES, build_outbound_state, make_handoff_packet
+from contracts import MAX_DIRECTIVE_CHARS, CONTROLLER_MODES, build_outbound_state, make_handoff_packet
 from jev_adapter import (
     DEFAULT_ENDPOINT,
     DEFAULT_MODEL,
@@ -64,7 +64,7 @@ def _clamp_run_ms(value: Any) -> int:
 
 
 def _clean_directive(value: Any) -> str:
-    return " ".join(str(value or "").replace("\t", " ").split())[:320]
+    return " ".join(str(value or "").replace("\t", " ").split())[:MAX_DIRECTIVE_CHARS]
 
 
 def _safe_error_text(error: BaseException, *secrets: str | None) -> str:
@@ -998,10 +998,8 @@ class JevPlayerController:
                 raise ControllerError("Prepare the Jev player before running it")
             if self._mode == "awaiting_opus":
                 return self.status()
-            if strategic_directive and self._control_mode == "jev_hybrid":
+            if strategic_directive:
                 self._strategic_directive = _clean_directive(strategic_directive)
-            elif self._control_mode == "jev_only":
-                self._strategic_directive = ""
             self._mode = "running"
             self._start_thread_locked()
         return self._wait_for_return(max_run_ms)

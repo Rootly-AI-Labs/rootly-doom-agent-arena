@@ -926,7 +926,8 @@ def test_duel_launcher_offers_prompt_only_jev_modes_for_each_player() -> None:
     assert "click only Next Round" in index
     assert "Never use the regular doom-arena MCP." in index
     assert "Primary objective: eliminate the opponent." in index
-    assert "The combat directive used by model-controlled modes is intentionally not injected into this Jev-only baseline." in index
+    assert index.count('Call run_jev_player with strategic_directive=\\"" + combatDirective + "\\" and max_run_ms=45000.') == 2
+    assert "never replace the fixed benchmark directive with adaptive host-authored tactics" in index
     assert "jev" not in duel_payload_builder.lower()
 
 

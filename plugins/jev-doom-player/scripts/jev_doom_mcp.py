@@ -32,8 +32,11 @@ _PARTICIPANT_SCHEMA = {
 }
 _DIRECTIVE_SCHEMA = {
     "type": "string",
-    "maxLength": 320,
-    "description": "Host strategy for jev_hybrid; ignored in jev_only.",
+    "maxLength": 512,
+    "description": (
+        "Fixed strategic objective supplied to Jev in either control mode; "
+        "jev_hybrid may also update it after a handoff."
+    ),
 }
 _MAX_RUN_SCHEMA = {
     "type": "integer",
@@ -107,7 +110,7 @@ TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
                     "type": "string",
                     "enum": ["jev_only", "jev_hybrid"],
                     "description": (
-                        "jev_only executes Jev choices without host strategy; "
+                        "jev_only executes Jev choices without host handoffs; "
                         "jev_hybrid permits host-model handoffs."
                     ),
                 },
@@ -120,7 +123,7 @@ TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
         "description": (
             "Run or join the supervised Jev controller until completion, "
             "hybrid-only handoff, cancellation, or a bounded return deadline. "
-            "Host strategy is ignored in jev_only."
+            "A fixed strategic directive is passed to Jev in either mode."
         ),
         "inputSchema": _object_schema(
             {
