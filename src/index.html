@@ -244,6 +244,89 @@
                 font-size: 10px;
             }
 
+            .arena-jev-setup {
+                margin-top: 12px;
+                border: 1px solid rgba(125, 220, 255, 0.16);
+                background: linear-gradient(135deg, rgba(19, 29, 27, 0.92), rgba(15, 18, 14, 0.98));
+                padding: 11px 12px 12px;
+            }
+
+            .arena-jev-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .arena-jev-player {
+                min-width: 0;
+                border: 1px solid rgba(204, 212, 183, 0.12);
+                background: rgba(10, 14, 11, 0.68);
+                padding: 10px;
+            }
+
+            .arena-jev-player-title {
+                margin-bottom: 9px;
+                color: #f3f0df;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .arena-jev-options {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px 14px;
+            }
+
+            .arena-jev-option {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #c9c6b7;
+                cursor: pointer;
+                font: 700 11px/1.2 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-jev-option:hover {
+                color: #f7f5d8;
+            }
+
+            .arena-jev-option input {
+                appearance: none;
+                width: 14px;
+                height: 14px;
+                margin: 0;
+                border: 1px solid rgba(184, 233, 134, 0.58);
+                border-radius: 50%;
+                background: #0b0e0b;
+                cursor: pointer;
+                box-shadow: inset 0 0 0 3px #0b0e0b;
+            }
+
+            .arena-jev-option input:checked {
+                background: #b8e986;
+                border-color: #d7ffae;
+                box-shadow: inset 0 0 0 3px #172015, 0 0 7px rgba(184, 233, 134, 0.34);
+            }
+
+            .arena-jev-option input:focus-visible {
+                outline: 2px solid #ffce6b;
+                outline-offset: 2px;
+            }
+
+            .arena-jev-hint {
+                margin: 9px 0 0;
+                color: #737c6b;
+                font: 400 10px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            @media (max-width: 700px) {
+                .arena-jev-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
             .arena-toggle-stack {
                 display: flex;
                 flex-direction: column;
@@ -2488,6 +2571,38 @@
                                     <input id="arena-round" type="number" min="1" value="1" />
                                 </div>
                             </div>
+                            <div class="arena-jev-setup" id="arena-jev-setup">
+                                <div class="arena-config-section-title">Jev</div>
+                                <div class="arena-jev-grid">
+                                    <div class="arena-jev-player" aria-labelledby="arena-jev-player-1-title">
+                                        <div class="arena-jev-player-title" id="arena-jev-player-1-title">Player 1</div>
+                                        <div class="arena-jev-options">
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-1-only" data-jev-participant="player_1" data-jev-mode="jev_only" />
+                                                <span>Jev only</span>
+                                            </label>
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-1-hybrid" data-jev-participant="player_1" data-jev-mode="jev_hybrid" />
+                                                <span>Jev + model</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="arena-jev-player" aria-labelledby="arena-jev-player-2-title">
+                                        <div class="arena-jev-player-title" id="arena-jev-player-2-title">Player 2</div>
+                                        <div class="arena-jev-options">
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-2-only" data-jev-participant="player_2" data-jev-mode="jev_only" />
+                                                <span>Jev only</span>
+                                            </label>
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-2-hybrid" data-jev-participant="player_2" data-jev-mode="jev_hybrid" />
+                                                <span>Jev + model</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="arena-jev-hint">Optional prompt helper only. Selecting a mode replaces that player's copyable prompt; it does not configure or start a controller.</p>
+                            </div>
                             <div class="duel-commentator-panel arena-commentator-setup">
                                 <div class="arena-config-section-title">Live shoutcaster</div>
                                 <div class="duel-commentator-controls">
@@ -2819,6 +2934,7 @@
             var arenaDuelSessionEndpoint = "/api/arena/duel-session";
             var arenaDuelInstructionsEndpoint = "/api/arena/run-instructions";
             var duelSessionStorageKey = "doomArenaDuelSessionPayload";
+            var jevPromptModeStorageKey = "doomArenaJevPromptModes";
             var arenaScoreEndpoint = "/api/arena/score";
             var arenaRunStatsEndpoint = "/api/arena/run-stats";
             var arenaEventsPath = "arena_duel_events.local.tsv";
@@ -5211,6 +5327,7 @@
                 var url = new URL(window.location.href);
 
                 url.searchParams.set("duel", "1");
+                url.searchParams.set("arenaRun", currentArenaRunId || String(Date.now()));
                 url.searchParams.delete("arenaData");
                 if (autoStart) {
                     url.searchParams.set("autoStart", "1");
@@ -5218,7 +5335,7 @@
                     url.searchParams.delete("autoStart");
                 }
 
-                window.location.href = url.toString();
+                window.location.replace(url.toString());
             }
 
             function syncArenaRunMetadataNow() {
@@ -5378,6 +5495,141 @@
                 }
             }
 
+            function selectedJevPromptMode(participantId) {
+                var selected = document.querySelector(
+                    '[data-jev-participant="' + participantId + '"]:checked'
+                );
+                return selected ? String(selected.getAttribute("data-jev-mode") || "") : "";
+            }
+
+            function persistJevPromptSelections() {
+                if (!window.sessionStorage) {
+                    return;
+                }
+                try {
+                    window.sessionStorage.setItem(jevPromptModeStorageKey, JSON.stringify({
+                        player_1: selectedJevPromptMode("player_1"),
+                        player_2: selectedJevPromptMode("player_2")
+                    }));
+                } catch (error) {
+                    console.warn("Doom Agent Arena: failed to persist Jev prompt selections", error);
+                }
+            }
+
+            function restoreJevPromptSelections() {
+                var stored;
+
+                try {
+                    stored = window.sessionStorage
+                        ? JSON.parse(window.sessionStorage.getItem(jevPromptModeStorageKey) || "null")
+                        : null;
+                } catch (error) {
+                    stored = null;
+                }
+                ["player_1", "player_2"].forEach(function (participantId) {
+                    var mode = stored && (stored[participantId] === "jev_only" || stored[participantId] === "jev_hybrid")
+                        ? stored[participantId]
+                        : "";
+                    document.querySelectorAll('[data-jev-participant="' + participantId + '"]').forEach(function (input) {
+                        input.checked = String(input.getAttribute("data-jev-mode") || "") === mode;
+                    });
+                });
+            }
+
+            function buildJevPlayerPrompt(participantId, mode) {
+                var matchCount = Math.max(1, selectedNumberValue("arena-round", 1));
+                var otherParticipant = participantId === "player_2" ? "player_1" : "player_2";
+                var isHybrid = mode === "jev_hybrid";
+                var controlMode = isHybrid ? "jev_hybrid" : "jev_only";
+                var agentName = isHybrid ? "Jev Hybrid" : "Jev Solo";
+                var modeLabel = isHybrid ? "Jev + model" : "Jev only";
+                var combatDirective = "Primary objective: eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight. If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. In the final 20 seconds, force engagement unless protecting a meaningful lead.";
+                var lines = [
+                    "Use the jev-doom-player skill and only its MCP tools for gameplay. Control only " + participantId + " as " + modeLabel + " across all " + matchCount + " match" + (matchCount === 1 ? "" : "es") + " in the current arena benchmark session.",
+                    "Track completed matches by unique run_id. For every distinct active run, call prepare_jev_player exactly once with participant_id=\"" + participantId + "\", agent_name=\"" + agentName + "\", and control_mode=\"" + controlMode + "\". Exactly once applies to each distinct run_id, not to the whole multi-match session."
+                ];
+
+                if (isHybrid) {
+                    lines.push(
+                        "Call run_jev_player with strategic_directive=\"" + combatDirective + "\" and max_run_ms=45000. If status is running, call run_jev_player again with the same directive and max_run_ms=45000.",
+                        "If status is awaiting_opus, inspect only the sanitized handoff packet, choose a concise directive grounded only in that packet, and call resume_jev_player with that directive and max_run_ms=45000. Omit override_plan. If resume returns status=running, continue run_jev_player with the most recently chosen directive."
+                    );
+                } else {
+                    lines.push(
+                        "Call run_jev_player with max_run_ms=45000 and no strategic_directive. If status is running, call run_jev_player again with only max_run_ms=45000 until the match is finished or failed.",
+                        "Never call resume_jev_player, never provide host-authored tactics, and never provide an override plan. The combat directive used by model-controlled modes is intentionally not injected into this Jev-only baseline. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
+                    );
+                }
+
+                lines.push(
+                    "For each run, continue until the arena match has an actual terminal result. Record its run_id, winner, terminal reason, and result for " + participantId + ". Count a run only once. A controller error, state_not_ready response, or repeated terminal snapshot is not a newly completed match."
+                );
+
+                if (matchCount > 1) {
+                    lines.push(
+                        "After every terminal match, if fewer than " + matchCount + " unique runs have completed, do not finish the task and do not declare yourself blocked because get_jev_player_status still shows the previous terminal run. Keep the arena browser tab open and allow its configured multi-match session to advance automatically. When a different run_id becomes available, prepare " + participantId + " exactly once for that new run and repeat the controller loop.",
+                        "If automatic advancement does not occur after the terminal summary delay and computer-use is available, you are authorized to click only Next Round on the existing arena page. Never click Start Benchmark, Start Duel, Refresh Arena, or Reset. If a preparation attempt still references the completed run_id, do not run or count it again; wait for the next run and retry discovery."
+                    );
+                }
+
+                lines.push(
+                    "Treat state_not_ready as transitional: inspect get_jev_player_status and keep waiting for the active or next run rather than treating it as match completion. If the supervisor dies while the same arena match is still active, prepare " + participantId + " again only as recovery, then continue without creating a second live controller.",
+                    "Continue until " + matchCount + " unique arena run" + (matchCount === 1 ? " has" : "s have") + " actual terminal results, or until an unrecoverable tool failure prevents further control. Then report wins, losses, draws, terminal reasons, and controller failures.",
+                    "Never prepare or control " + otherParticipant + ". Never request, display, or pass a controller token. Never use the regular doom-arena MCP. Never reset or replace the benchmark session."
+                );
+
+                return lines.join("\n\n");
+            }
+
+            function baseDuelPromptForParticipant(participantId) {
+                if (!currentDuelSession) {
+                    return "";
+                }
+                return participantId === "player_2"
+                    ? (currentDuelSession.player_2_prompt || "")
+                    : (currentDuelSession.player_1_prompt || "");
+            }
+
+            function renderSelectedDuelPrompt(participantId) {
+                var mode = selectedJevPromptMode(participantId);
+                var promptId = participantId === "player_2" ? "duel-p2-prompt" : "duel-p1-prompt";
+                setPromptText(
+                    promptId,
+                    mode ? buildJevPlayerPrompt(participantId, mode) : baseDuelPromptForParticipant(participantId)
+                );
+            }
+
+            function renderSelectedDuelPrompts() {
+                renderSelectedDuelPrompt("player_1");
+                renderSelectedDuelPrompt("player_2");
+            }
+
+            function updateJevPromptSelection(input) {
+                var participantId = String(input.getAttribute("data-jev-participant") || "");
+                var mode = String(input.getAttribute("data-jev-mode") || "");
+                var playerLabel = participantId === "player_2" ? "Player 2" : "Player 1";
+
+                if (input.checked) {
+                    document.querySelectorAll('[data-jev-participant="' + participantId + '"]').forEach(function (candidate) {
+                        if (candidate !== input) {
+                            candidate.checked = false;
+                        }
+                    });
+                }
+                persistJevPromptSelections();
+                renderSelectedDuelPrompt(participantId);
+                if (selectedJevPromptMode("player_1") || selectedJevPromptMode("player_2")) {
+                    setPromptChangeIndicator("Jev prompt active", false);
+                } else {
+                    markPromptSettingsSynced();
+                }
+                updateLauncherStatus(
+                    input.checked
+                        ? playerLabel + " copy prompt set to " + (mode === "jev_hybrid" ? "Jev + model." : "Jev only.")
+                        : playerLabel + " copy prompt restored to the default model prompt."
+                );
+            }
+
             function setPromptChangeIndicator(text, changed) {
                 var node = document.getElementById("duel-prompt-change-indicator");
 
@@ -5442,9 +5694,7 @@
                     "flank_lower",
                     "STATIC MAP FACTS",
                     "STATIC RESOURCES",
-                    "ASCII MAP",
-                    "engagement_policy",
-                    "plan_summary"
+                    "ASCII MAP"
                 ];
                 var text = String(prompt || "");
 
@@ -5509,6 +5759,7 @@
 
             function restoreDuelSessionFromReload() {
                 var stored = storedDuelSessionPayload();
+                var roundsInput;
 
                 if (!stored) {
                     return null;
@@ -5518,6 +5769,10 @@
                     return null;
                 }
 
+                roundsInput = document.getElementById("arena-round");
+                if (roundsInput && stored.total_rounds) {
+                    roundsInput.value = String(stored.total_rounds);
+                }
                 renderDuelSessionPrompts(stored);
                 currentArenaRunId = stored.run_id || currentArenaRunId;
                 currentArenaScenarioId = stored.scenario_id || currentArenaScenarioId;
@@ -5548,10 +5803,11 @@
                     currentDuelSession.player_2_prompt = duelPromptHasStaleMapWording(previousSession.player_2_prompt) ? "" : previousSession.player_2_prompt;
                 }
 
-                setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
-                setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+                renderSelectedDuelPrompts();
                 setPromptText("duel-map-reference", currentDuelSession.map_reference || "");
-                if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
+                if (selectedJevPromptMode("player_1") || selectedJevPromptMode("player_2")) {
+                    setPromptChangeIndicator("Jev prompt active", false);
+                } else if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
                     markPromptSettingsSynced();
                 }
                 updateReadinessPanel();
@@ -5606,21 +5862,39 @@
                     return Promise.resolve(false);
                 }
 
-                return fetch(
-                    "/api/arena/duel-session-results?duel_session_id=" + encodeURIComponent(sessionId),
-                    { cache: "no-store" }
-                )
-                    .then(function (response) {
+                return Promise.all([
+                    fetch(
+                        "/api/arena/duel-session-results?duel_session_id=" + encodeURIComponent(sessionId),
+                        { cache: "no-store" }
+                    ).then(function (response) {
                         return response.ok ? response.json() : null;
-                    })
-                    .then(function (payload) {
-                        return !!(
+                    }),
+                    fetch(agenticStateEndpoint + "?run_id=" + encodeURIComponent(runId), {
+                        cache: "no-store",
+                    }).then(function (response) {
+                        return response.ok ? response.text() : "";
+                    }),
+                ])
+                    .then(function (results) {
+                        var payload = results[0];
+                        var stateRows = parseTsv(results[1]);
+                        var match = stateRows.find(function (row) {
+                            return row.kind === "match";
+                        });
+                        var recorded = !!(
                             payload &&
                             payload.ok &&
                             Array.isArray(payload.rounds) &&
                             payload.rounds.some(function (round) {
                                 return round.run_id === runId;
                             })
+                        );
+
+                        return !!(
+                            recorded &&
+                            match &&
+                            match.run_id === runId &&
+                            match.phase === "finished"
                         );
                     })
                     .catch(function () {
@@ -5667,8 +5941,7 @@
                 currentMapBlueprintScenarioId = "";
                 duelAutoStartAfterReloadPending = false;
                 clearStoredDuelSessionForReload();
-                setPromptText("duel-p1-prompt", "");
-                setPromptText("duel-p2-prompt", "");
+                renderSelectedDuelPrompts();
                 setPromptText("duel-map-reference", "");
                 renderLogLines("duel-p1-log", []);
                 renderLogLines("duel-p2-log", []);
@@ -9341,6 +9614,7 @@
                 } catch (error) {
                     console.warn("Doom Agent Arena: failed to consume menu reload flag", error);
                 }
+                restoreJevPromptSelections();
 
                 buttons.forEach(function (button) {
                     button.addEventListener("click", function () {
@@ -9422,6 +9696,7 @@
                     var pending = null;
                     return function () {
                         markPromptSettingsChanged();
+                        renderSelectedDuelPrompts();
                         if (pending !== null) {
                             window.clearTimeout(pending);
                         }
@@ -9442,6 +9717,11 @@
                     roundsInput.addEventListener("change", schedulePromptPreview);
                     roundsInput.addEventListener("input", schedulePromptPreview);
                 }
+                document.querySelectorAll("[data-jev-participant][data-jev-mode]").forEach(function (input) {
+                    input.addEventListener("change", function () {
+                        updateJevPromptSelection(input);
+                    });
+                });
 
                 document.querySelectorAll("[data-player-command]").forEach(function (button) {
                     button.addEventListener("click", function () {

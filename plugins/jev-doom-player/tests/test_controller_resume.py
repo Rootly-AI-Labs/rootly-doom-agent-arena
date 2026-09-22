@@ -263,3 +263,19 @@ def test_duplicate_resume_is_rejected_without_an_extra_submission() -> None:
     assert controller.status()["status"] == "running"
     controller.stop()
 
+
+def test_resume_arms_cooldown_and_requires_confident_rearm(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    controller, _client, _arena = _controller(ScriptedAdapter(_decision(0.2)))
+    controller._mode = "awaiting_opus"
+    monkeypatch.setattr(controller, "_start_thread_locked", lambda: None)
+    monkeypatch.setattr(controller, "_wait_for_return", lambda _max_run_ms: controller.status())
+    before = controller._clock()
+
+    result = controller.resume(strategic_directive="Continue safely", max_run_ms=100)
+
+    assert result["status"] == "running"
+    assert controller._handoff_cooldown_until >= before + 15.0
+    assert controller._handoff_rearmed is False
+

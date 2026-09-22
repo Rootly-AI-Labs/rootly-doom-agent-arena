@@ -87,6 +87,26 @@ def test_participant_prompt_prohibits_hivemind(control_mode):
     assert "Doom Arena MCP tools" in prompt
 
 
+@pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
+def test_participant_prompt_requires_current_client_model(control_mode):
+    prompt = prompts.instructions(
+        participant_id="player_2",
+        model="",
+        opponent_id="player_1",
+        controller_token="token-123",
+        enforce_tokens=True,
+        control_mode=control_mode,
+    )
+
+    assert "MODEL CONTROL" in prompt
+    assert "current/default model selected in this MCP client session" in prompt
+    assert "do not delegate gameplay decisions" in prompt
+    assert "Do not use the Jev model" in prompt
+    assert "`jev-doom-player` skill" in prompt
+    assert "`prepare_jev_player`" in prompt
+    assert "unless the benchmark prompt explicitly identifies this participant as a Jev baseline" in prompt
+
+
 def test_project_instructions_do_not_require_external_memory():
     project_instructions = (prompts.REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
@@ -172,6 +192,24 @@ def test_participant_prompt_makes_goal_and_reason_sentence_compatible():
     assert "fits after `is trying to`" in prompt
     assert "fits after `because`" in prompt
     assert "Do not begin it with `because`" in prompt
+
+
+def test_participant_prompt_prioritizes_eliminating_the_opponent():
+    for control_mode in ("hierarchical", "intent"):
+        prompt = prompts.instructions(
+            participant_id="player_1",
+            model="",
+            opponent_id="player_2",
+            controller_token="token-123",
+            enforce_tokens=True,
+            control_mode=control_mode,
+        )
+
+        assert "PRIMARY COMBAT OBJECTIVE" in prompt
+        assert "Eliminate the opponent" in prompt
+        assert "Do not camp" in prompt
+        assert "If no contact occurs for 15-20 seconds" in prompt
+        assert "In the final 20 seconds, force engagement" in prompt
 
 
 # --------------------------------------------------------------------------- #
@@ -728,6 +766,141 @@ def test_stop_participant_intent_can_force_clear_opening_plan(tmp_path, monkeypa
     cleared = json.loads(client.stop_participant_intent("player_1", "token", False))
     assert cleared["cleared"] is True
     assert [row["participant_id"] for row in written] == ["player_2"]
+
+
+def test_plan_rejects_accidental_current_cell_noop_but_allows_explicit_hold(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    current_position = mcp.grid_cell_to_xy("A01")
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(client, "current_participant_position", lambda *_args, **_kwargs: current_position)
+    monkeypatch.setattr(client, "_read_participant_observation_and_plan", lambda *_args: ({}, {}))
+
+    rejected = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A01"],
+            objective="move somewhere",
+            engagement_policy="engage_if_visible",
+            plan_note="I appear to have misplaced movement.",
+            controller_token="token",
+            sequence_number=1,
+        )
+    )
+    assert rejected["accepted"] is False
+    assert rejected["error_type"] == "route_noop"
+    assert rejected["route_diagnostics"]["last_valid_cell"] == "A01"
+    assert rejected["route_diagnostics"]["legal_adjacent_cells"]
+
+    monkeypatch.setattr(
+        client,
+        "set_participant_intent",
+        lambda *_args, **_kwargs: json.dumps({"accepted": True, "intent_id": "hold_1"}),
+    )
+    held = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A01"],
+            objective="hold this position",
+            engagement_policy="hold_fire",
+            plan_note="I am guarding this extremely important tile.",
+            controller_token="token",
+            sequence_number=1,
+        )
+    )
+    assert held["accepted"] is True
+
+
+def test_exact_active_plan_is_acknowledged_without_replacement(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(
+        client,
+        "current_participant_position",
+        lambda *_args, **_kwargs: mcp.grid_cell_to_xy("A01"),
+    )
+    monkeypatch.setattr(
+        client,
+        "_read_participant_observation_and_plan",
+        lambda *_args: (
+            {},
+            {
+                "status": "active",
+                "intent_id": "intent_4",
+                "sequence_number": "4",
+                "objective": "sweep center",
+                "route_cells": ["A03"],
+                "engagement_policy": "engage_if_visible",
+            },
+        ),
+    )
+
+    result = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A03"],
+            objective="sweep center",
+            engagement_policy="engage_if_visible",
+            plan_note="I am still sweeping center.",
+            controller_token="token",
+            sequence_number=5,
+        )
+    )
+
+    assert result["accepted"] is True
+    assert result["deduplicated"] is True
+    assert result["intent_id"] == "intent_4"
+    assert result["active_sequence_number"] == "4"
+
+
+def test_observation_wait_wakes_on_tactical_change(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    states = [
+        {
+            "self": {"health": 100, "damage_dealt": 0},
+            "opponent": {"visible": False},
+            "map": {"pickups": []},
+            "match": {"phase": "combat", "time_left_seconds": 100},
+            "tactical_context": {"replan_recommended": False, "replan_reasons": []},
+        },
+        {
+            "self": {"health": 75, "damage_dealt": 0},
+            "opponent": {"visible": False},
+            "map": {"pickups": []},
+            "match": {"phase": "combat", "time_left_seconds": 99},
+            "tactical_context": {"replan_recommended": False, "replan_reasons": []},
+        },
+    ]
+    active = {
+        "status": "active",
+        "intent_id": "intent_1",
+        "current_waypoint_index": 1,
+        "current_waypoint_cell": "A02",
+        "waypoints_reached": 0,
+        "distance_to_waypoint": 100,
+        "expires_at_ms": 9999999999999,
+    }
+    monkeypatch.setattr(
+        client,
+        "_read_participant_observation_and_plan",
+        lambda *_args: (states.pop(0) if len(states) > 1 else states[0], active),
+    )
+    clock = {"value": 10_000}
+
+    def advancing_now():
+        clock["value"] += 100
+        return clock["value"]
+
+    monkeypatch.setattr(mcp, "now_ms", advancing_now)
+    monkeypatch.setattr(mcp.time, "sleep", lambda *_args: None)
+
+    result = client._wait_for_previous_plan_before_observation("player_1")
+
+    assert result["reason"] == "tactical_change"
+    assert "health" in result["tactical_changes"]
 
 
 # --------------------------------------------------------------------------- #

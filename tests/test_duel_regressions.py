@@ -34,8 +34,145 @@ def make_handler(run_id: str = "run_test", scenario_id: str = "duel_e1m8"):
         latest_intent_by_participant={},
         participant_ready_agents={},
         participant_agent_names={},
+        nonterminal_state_runs=set(),
     )
     return handler
+
+
+def finished_state_text(run_id: str) -> str:
+    return (
+        "run_id\tscenario_id\tkind\tmode\tphase\twinner\tterminal_reason\n"
+        f"{run_id}\tduel_e1m8\tmatch\tduel\tfinished\tplayer_1\tplayer_2_dead\n"
+    )
+
+
+def active_state_text(run_id: str, phase: str = "combat") -> str:
+    return (
+        "run_id\tscenario_id\tkind\tentity_id\tmode\tphase\thealth\talive\n"
+        f"{run_id}\tduel_e1m8\tmatch\tduel\tduel\t{phase}\t\t\n"
+        f"{run_id}\tduel_e1m8\tparticipant\tplayer_1\tduel\t{phase}\t150\t1\n"
+        f"{run_id}\tduel_e1m8\tparticipant\tplayer_2\tduel\t{phase}\t150\t1\n"
+    )
+
+
+def test_match_is_finished_requires_state_for_active_run(monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: server.parse_tsv_rows(finished_state_text("run_previous")),
+    )
+    assert handler.match_is_finished() is False
+
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: server.parse_tsv_rows(finished_state_text("run_current")),
+    )
+    assert handler.match_is_finished() is False
+
+    handler.server.nonterminal_state_runs.add("run_current")
+    assert handler.match_is_finished() is True
+
+
+def test_participant_intent_sequence_retries_are_idempotent_or_conflicting(monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+    keys = server.PARTICIPANT_INTENT_HEADER.strip().split("\t")
+    existing = {key: "" for key in keys}
+    existing.update(
+        {
+            "run_id": "run_current",
+            "scenario_id": "duel_e1m8",
+            "intent_id": "intent_original",
+            "issued_at_ms": "1000",
+            "expires_at_ms": "17000",
+            "participant_id": "player_1",
+            "intent": "search",
+            "style": "balanced",
+            "target_id": "player_2",
+            "preferred_distance": "650",
+            "aggression": "0.550",
+            "duration_ms": "16000",
+            "sequence_number": "4",
+            "plan_objective": "sweep center",
+            "plan_route_cells": "N14;N17",
+            "plan_engagement_policy": "engage_if_visible",
+        }
+    )
+    monkeypatch.setattr(handler, "read_participant_intent_rows", lambda: [existing])
+
+    replay = dict(existing, intent_id="intent_retry", issued_at_ms="2000", expires_at_ms="18000")
+    assert handler.participant_intent_sequence_retry(replay) == ("replay", existing)
+
+    conflict = dict(replay, plan_objective="hold corner")
+    assert handler.participant_intent_sequence_retry(conflict) == ("conflict", existing)
+
+
+def test_finished_artifacts_ignore_stale_run_state(tmp_path, monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+    handler.server.summary_written_runs = set()
+    handler.server.run_results_dirs = {"run_current": tmp_path / "run_current"}
+    handler.server.current_run_results_dir = tmp_path / "run_current"
+
+    handler.maybe_write_finished_run_artifacts(finished_state_text("run_previous"))
+
+    assert not (tmp_path / "run_current" / "summary.json").exists()
+    assert handler.server.summary_written_runs == set()
+
+
+def test_stale_state_upload_does_not_replace_current_state_file(tmp_path, monkeypatch) -> None:
+    state_path = tmp_path / "arena_game_state.local.tsv"
+    current_state = finished_state_text("run_current").replace("finished", "waiting_for_agents")
+    state_path.write_text(current_state, encoding="utf-8")
+    monkeypatch.setattr(server, "ARENA_STATE_TSV", state_path)
+
+    handler = make_handler(run_id="run_current")
+    handler.server.latest_arena_state_by_run_id = {}
+    handler.server.latest_arena_state_at_ms_by_run_id = {}
+    handler.read_body = lambda: finished_state_text("run_previous").encode("utf-8")
+    responses = []
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+
+    handler.write_file(state_path, "arena state")
+
+    assert state_path.read_text(encoding="utf-8") == current_state
+    assert responses[0][0] == server.HTTPStatus.CONFLICT
+    assert responses[0][1]["state_run_id"] == "run_previous"
+    assert "run_previous" in handler.server.latest_arena_state_by_run_id
+
+
+def test_terminal_state_requires_prior_active_state_for_same_run(tmp_path, monkeypatch) -> None:
+    state_path = tmp_path / "arena_game_state.local.tsv"
+    initial_state = active_state_text("run_current", "waiting_for_agents")
+    state_path.write_text(initial_state, encoding="utf-8")
+    monkeypatch.setattr(server, "ARENA_STATE_TSV", state_path)
+
+    handler = make_handler(run_id="run_current")
+    handler.server.latest_arena_state_by_run_id = {}
+    handler.server.latest_arena_state_at_ms_by_run_id = {}
+    responses = []
+    finalized = []
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+    handler.maybe_write_finished_run_artifacts = lambda text: (
+        finalized.append(text) if "\tfinished\t" in text else None
+    )
+
+    handler.read_body = lambda: finished_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+
+    assert responses[-1][0] == server.HTTPStatus.CONFLICT
+    assert "before this run became active" in responses[-1][1]["error"]
+    assert state_path.read_text(encoding="utf-8") == initial_state
+    assert finalized == []
+
+    handler.read_body = lambda: active_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+    assert "run_current" in handler.server.nonterminal_state_runs
+
+    handler.read_body = lambda: finished_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+    assert finalized == [finished_state_text("run_current")]
 
 
 def participant_intent_payload(participant_id: str, sequence_number: int) -> dict[str, object]:
@@ -762,6 +899,70 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "#duel-p2-prompt-card .duel-prompt-title" in index
     assert 'playerClass: "player-1"' in index
     assert 'playerClass: "player-2"' in index
+
+
+def test_duel_launcher_offers_prompt_only_jev_modes_for_each_player() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    duel_payload_builder = index.split("function buildDuelSessionPayload", 1)[1].split(
+        "function buildDuelResetPayload", 1
+    )[0]
+
+    assert 'class="arena-config-section-title">Jev</div>' in index
+    assert 'id="arena-jev-player-1-only"' in index
+    assert 'id="arena-jev-player-1-hybrid"' in index
+    assert 'id="arena-jev-player-2-only"' in index
+    assert 'id="arena-jev-player-2-hybrid"' in index
+    assert index.count('data-jev-mode="jev_only"') == 2
+    assert index.count('data-jev-mode="jev_hybrid"') == 2
+    assert "Optional prompt helper only." in index
+    assert "function buildJevPlayerPrompt(participantId, mode)" in index
+    assert 'var jevPromptModeStorageKey = "doomArenaJevPromptModes";' in index
+    assert "function persistJevPromptSelections()" in index
+    assert "function restoreJevPromptSelections()" in index
+    assert 'roundsInput.value = String(stored.total_rounds);' in index
+    assert 'control_mode=\\"" + controlMode + "\\"' in index
+    assert 'candidate.checked = false;' in index
+    assert 'input.checked' in index
+    assert "click only Next Round" in index
+    assert "Never use the regular doom-arena MCP." in index
+    assert "Primary objective: eliminate the opponent." in index
+    assert "The combat directive used by model-controlled modes is intentionally not injected into this Jev-only baseline." in index
+    assert "jev" not in duel_payload_builder.lower()
+
+
+def test_current_plan_schema_terms_do_not_clear_copyable_duel_prompts() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    stale_prompt_detector = index.split(
+        "function duelPromptHasStaleMapWording", 1
+    )[1].split("function duelSessionHasStalePromptText", 1)[0]
+
+    assert '"Map blueprint:"' in stale_prompt_detector
+    assert '"engagement_policy"' not in stale_prompt_detector
+    assert '"plan_summary"' not in stale_prompt_detector
+
+
+def test_reload_completion_requires_finished_state_for_the_same_run() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    completion_check = index.split(
+        "function duelRunAlreadyRecordedAsComplete", 1
+    )[1].split("function showRecordedDuelCompletion", 1)[0]
+
+    assert 'agenticStateEndpoint + "?run_id=" + encodeURIComponent(runId)' in completion_check
+    assert 'var agenticStateEndpoint = "/api/arena/state";' in index
+    assert "arenaStateEndpoint" not in index
+    assert "var stateRows = parseTsv(results[1]);" in completion_check
+    assert 'match.run_id === runId' in completion_check
+    assert 'match.phase === "finished"' in completion_check
+
+
+def test_round_reload_url_is_unique_per_active_run() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    reload_body = index.split("function reloadIntoDuelRun", 1)[1].split(
+        "function syncArenaRunMetadataNow", 1
+    )[0]
+
+    assert 'url.searchParams.set("arenaRun", currentArenaRunId' in reload_body
+    assert "window.location.replace(url.toString());" in reload_body
 
 
 def test_duel_pov_refresh_loop_recovers_from_individual_render_errors() -> None:

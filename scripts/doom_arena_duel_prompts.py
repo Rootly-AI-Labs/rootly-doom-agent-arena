@@ -289,6 +289,18 @@ def instructions(
 - Do not call Hivemind tools or read, search, write, note, or consolidate Hivemind memory.
 - Make decisions using only this prompt, the supplied map reference, and Doom Arena MCP tools.
 
+MODEL CONTROL
+- Make every gameplay decision directly with the current/default model selected in this MCP client session.
+- Use the normal Doom Arena MCP tools listed in this prompt; do not delegate gameplay decisions to another model, sub-agent, or controller sidecar.
+- Do not use the Jev model, the `jev-doom-player` skill, or any `prepare_jev_player`, `run_jev_player`, `resume_jev_player`, or `stop_jev_player` tool unless the benchmark prompt explicitly identifies this participant as a Jev baseline.
+
+"""
+    combat_objective_section = """PRIMARY COMBAT OBJECTIVE
+- Eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage.
+- Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight.
+- If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations.
+- In the final 20 seconds, force engagement unless you are protecting a meaningful lead.
+
 """
     if str(control_mode).strip().lower() == "hierarchical":
         strategy_token_line = (
@@ -323,6 +335,7 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {session_line}
 {identity_section}
 {benchmark_isolation_section}
+{combat_objective_section}
 ROLE AND LOOP
 - Control only `{participant_id}`. Never control `{opponent_id}`.
 - Use only `set_participant_plan` for normal play.
@@ -355,12 +368,16 @@ ROUTE FACTS
 - `route` is up to 8 grid cells like `A01`.
 - Consecutive cells must be horizontal or vertical; diagonals are rejected.
 - Do not route through `#` wall cells.
+- A route that only names your current cell is rejected unless the objective explicitly says to hold, wait, defend, guard, protect, or take cover and `engagement_policy` is `hold_fire`.
+- Retrying the exact same payload with the same `sequence_number` is idempotent. Reusing a sequence number for different content is rejected.
+- An exact duplicate of the currently active plan is acknowledged without replacing or extending it.
 - Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `get the shotgun`.
 - Write `reasoning` as a causal phrase that fits after `because`, such as `a stronger close-range weapon could turn the fight`. Do not begin it with `because`; it is optional and capped to 12 words.
 - `plan_note` is required on every decision. Write a short, funny, first-person battle quip that matches your actual intent.
 - Keep it under 80 characters. Examples: `I need to find this bastard!` or `Ouch, medkit time.`
 - Doom executes accepted routes literally and handles frame-level movement/firing.
 - The default behavior is to shoot if visible while following the route.
+- A waiting observation returns early for meaningful tactical changes such as contact, damage, pickup availability, endgame, or a stalled route.
 
 {_static_map_summary_section(scenario_id, participant_id, enable_weapon_pickups)}
 
@@ -378,6 +395,7 @@ You control only `{participant_id}`.
 {session_line}
 {identity_section}
 {benchmark_isolation_section}
+{combat_objective_section}
 Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.
@@ -478,7 +496,7 @@ Stable mode:
 Full-control decision rule:
 - Use observations and your own reasoning to choose one valid high-level intent and parameters each turn.
 - Treat all tactical parameters as available controls, not recommendations.
-- The prompt intentionally does not prescribe what to do for specific combat situations.
+- Follow the primary combat objective while using your own judgment for specific combat situations.
 - Stop only according to the stop rules below.
 
 Tactical parameter meanings:

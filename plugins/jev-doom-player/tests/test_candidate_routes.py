@@ -233,7 +233,13 @@ def test_generate_candidates_is_complete_bounded_and_deterministic() -> None:
     second = engine.generate_candidates(observation, scenario_id="test_map")
 
     assert first == second
-    assert [candidate["id"] for candidate in first] == list(routes.CANDIDATE_ORDER)
+    candidate_ids = [candidate["id"] for candidate in first]
+    assert candidate_ids == [
+        candidate_id
+        for candidate_id in routes.CANDIDATE_ORDER
+        if candidate_id in candidate_ids
+    ]
+    assert {"protect_lead", "force_fight", "patrol_center"}.isdisjoint(candidate_ids)
     shotgun = next(candidate for candidate in first if candidate["id"] == "seek_shotgun")
     assert shotgun["target_cell"] == "E01"
     actionable = [candidate for candidate in first if candidate["actionable"]]
@@ -257,6 +263,273 @@ def test_generate_candidates_is_complete_bounded_and_deterministic() -> None:
         "objective": "Request strategic handoff",
         "reasoning": "Use a strategic handoff when deterministic choices are insufficient.",
         "summary": "Escalate this decision to the frontier model.",
+    }
+
+
+def test_seek_health_is_offered_whenever_health_is_available_and_reachable() -> None:
+    engine, _arena, _calls = make_engine(".....")
+    base = {
+        "self": {"cell": "A01", "health": 150},
+        "opponent": {"visible": False},
+        "map": {
+            "pickups": [
+                {"id": "health_a05", "type": "health", "cell": "A05", "available": True},
+            ]
+        },
+    }
+
+    healthy_ids = {
+        candidate["id"]
+        for candidate in engine.generate_candidates(base, scenario_id="health_gate")
+    }
+    injured = dict(base)
+    injured["self"] = {"cell": "A01", "health": 125}
+    injured_ids = {
+        candidate["id"]
+        for candidate in engine.generate_candidates(injured, scenario_id="health_gate")
+    }
+
+    assert "seek_health" in healthy_ids
+    assert "seek_health" in injured_ids
+
+
+def test_patrol_center_appears_after_no_contact_threshold() -> None:
+    engine, _arena, _calls = make_engine(
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        "....."
+    )
+    observation = {
+        "self": {"cell": "A01", "health": 150},
+        "opponent": {"visible": False},
+        "map": {"pickups": []},
+        "match": {"elapsed_time_seconds": 10, "timeout_seconds": 180},
+    }
+
+    before = engine.generate_candidates(
+        observation,
+        scenario_id="patrol",
+        seconds_since_contact=17.9,
+    )
+    after = engine.generate_candidates(
+        observation,
+        scenario_id="patrol",
+        seconds_since_contact=18.0,
+    )
+
+    assert "patrol_center" not in {candidate["id"] for candidate in before}
+    patrol = next(candidate for candidate in after if candidate["id"] == "patrol_center")
+    assert patrol["target_cell"] == "C03"
+    assert patrol["engagement_policy"] == "engage_if_visible"
+
+
+def test_patrol_center_keeps_the_supplied_sweep_target_while_replanning() -> None:
+    engine, _arena, _calls = make_engine(
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        "....."
+    )
+    observation = {
+        "self": {"cell": "A01", "health": 100},
+        "opponent": {"visible": False},
+        "map": {"pickups": []},
+        "match": {"elapsed_time_seconds": 30, "timeout_seconds": 180},
+    }
+
+    candidates = engine.generate_candidates(
+        observation,
+        scenario_id="patrol_state",
+        seconds_since_contact=30,
+        center_patrol_target="E05",
+    )
+
+    patrol = next(candidate for candidate in candidates if candidate["id"] == "patrol_center")
+    assert patrol["target_cell"] == "E05"
+    assert patrol["route"][-1] == "E05"
+
+
+@pytest.mark.parametrize(
+    ("health_delta", "expected", "unexpected"),
+    [
+        (25, "protect_lead", "force_fight"),
+        (0, "force_fight", "protect_lead"),
+        (-25, "force_fight", "protect_lead"),
+    ],
+)
+def test_final_twenty_seconds_offer_score_aware_endgame_candidate(
+    health_delta: int,
+    expected: str,
+    unexpected: str,
+) -> None:
+    engine, _arena, _calls = make_engine(
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        ".....\n"
+        "....."
+    )
+    observation = {
+        "self": {"cell": "A01", "health": 150},
+        "opponent": {"visible": False},
+        "tactical_context": {"health_delta": health_delta},
+        "map": {"pickups": []},
+        "match": {"elapsed_time_seconds": 80, "timeout_seconds": 100},
+    }
+
+    candidate_ids = {
+        candidate["id"]
+        for candidate in engine.generate_candidates(
+            observation,
+            scenario_id="endgame",
+            seconds_since_contact=30,
+        )
+    }
+
+    assert expected in candidate_ids
+    assert unexpected not in candidate_ids
+    assert "patrol_center" not in candidate_ids
+
+
+def test_take_cover_is_conditioned_on_low_health_or_reloading() -> None:
+    engine, _arena, _calls = make_engine(
+        ".....\n"
+        "..#..\n"
+        "....."
+    )
+    base = {
+        "self": {"cell": "C01", "health": 100, "last_action": "firing"},
+        "opponent": {"visible": True, "cell": "C05", "health": 100},
+        "map": {"pickups": []},
+    }
+
+    healthy = engine.generate_candidates(base, scenario_id="cover")
+    injured_observation = dict(base)
+    injured_observation["self"] = {**base["self"], "health": 60}
+    injured = engine.generate_candidates(injured_observation, scenario_id="cover")
+    reloading_observation = dict(base)
+    reloading_observation["self"] = {**base["self"], "last_action": "reloading"}
+    reloading = engine.generate_candidates(reloading_observation, scenario_id="cover")
+
+    assert "take_cover" not in {candidate["id"] for candidate in healthy}
+    for offered in (injured, reloading):
+        cover = next(candidate for candidate in offered if candidate["id"] == "take_cover")
+        assert cover["target_cell"] == "A01"
+        assert cover["engagement_policy"] == "hold_fire"
+
+
+def test_hold_chokepoint_targets_a_central_constrained_doorway() -> None:
+    engine, _arena, _calls = make_engine(
+        ".......\n"
+        "###.###\n"
+        "......."
+    )
+    observation = {
+        "self": {"cell": "A01", "health": 150},
+        "opponent": {"visible": False},
+        "map": {"pickups": []},
+        "match": {"elapsed_time_seconds": 10, "timeout_seconds": 180},
+    }
+
+    candidates = engine.generate_candidates(observation, scenario_id="chokepoint")
+
+    chokepoint = next(
+        candidate for candidate in candidates if candidate["id"] == "hold_chokepoint"
+    )
+    assert chokepoint["target_cell"] == "B04"
+    assert chokepoint["engagement_policy"] == "engage_if_visible"
+
+
+def test_deny_pickup_requires_a_visible_opponent_and_a_winnable_race() -> None:
+    engine, _arena, _calls = make_engine(".......")
+    base = {
+        "self": {"cell": "A01", "health": 150, "ammo_bullets": 20},
+        "opponent": {"visible": True, "cell": "A07", "health": 50},
+        "map": {
+            "pickups": [
+                {"id": "health_mid", "type": "health", "cell": "A04", "available": True},
+            ]
+        },
+    }
+
+    contestable = engine.generate_candidates(base, scenario_id="pickup_race")
+    losing_race_observation = dict(base)
+    losing_race_observation["map"] = {
+        "pickups": [
+            {"id": "health_enemy", "type": "health", "cell": "A06", "available": True},
+        ]
+    }
+    losing_race = engine.generate_candidates(
+        losing_race_observation,
+        scenario_id="pickup_race",
+    )
+
+    denial = next(candidate for candidate in contestable if candidate["id"] == "deny_pickup")
+    assert denial["target_cell"] == "A04"
+    assert "deny_pickup" not in {candidate["id"] for candidate in losing_race}
+
+
+def test_finish_opponent_uses_equipped_weapon_ammo_and_health_gates() -> None:
+    engine, _arena, _calls = make_engine(".....")
+    base = {
+        "self": {
+            "cell": "A01",
+            "health": 75,
+            "ready_weapon": "2",
+            "ammo_bullets": 50,
+            "ammo_shells": 8,
+        },
+        "opponent": {"visible": True, "cell": "A05", "health": 35},
+        "map": {"pickups": []},
+    }
+
+    enough = engine.generate_candidates(base, scenario_id="finish")
+    low_shells_observation = dict(base)
+    low_shells_observation["self"] = {**base["self"], "ammo_shells": 7}
+    low_shells = engine.generate_candidates(low_shells_observation, scenario_id="finish")
+    healthy_opponent_observation = dict(base)
+    healthy_opponent_observation["opponent"] = {**base["opponent"], "health": 36}
+    healthy_opponent = engine.generate_candidates(
+        healthy_opponent_observation,
+        scenario_id="finish",
+    )
+
+    finisher = next(candidate for candidate in enough if candidate["id"] == "finish_opponent")
+    assert finisher["engagement_policy"] == "force_fight"
+    assert "finish_opponent" not in {candidate["id"] for candidate in low_shells}
+    assert "finish_opponent" not in {candidate["id"] for candidate in healthy_opponent}
+
+
+def test_emergency_retreat_requires_critical_health_and_no_reachable_health() -> None:
+    engine, _arena, _calls = make_engine(".....")
+    base = {
+        "self": {"cell": "A03", "health": 35},
+        "opponent": {"visible": True, "cell": "A05", "health": 100},
+        "map": {"pickups": []},
+    }
+
+    no_health = engine.generate_candidates(base, scenario_id="emergency")
+    health_available_observation = dict(base)
+    health_available_observation["map"] = {
+        "pickups": [
+            {"id": "health_a02", "type": "health", "cell": "A02", "available": True},
+        ]
+    }
+    health_available = engine.generate_candidates(
+        health_available_observation,
+        scenario_id="emergency",
+    )
+
+    retreat = next(
+        candidate for candidate in no_health if candidate["id"] == "emergency_retreat"
+    )
+    assert retreat["target_cell"] == "A01"
+    assert retreat["engagement_policy"] == "hold_fire"
+    assert "emergency_retreat" not in {
+        candidate["id"] for candidate in health_available
     }
 
 
@@ -298,6 +571,35 @@ def test_safe_fallback_prefers_a_valid_current_plan() -> None:
 
     assert fallback["id"] == "continue_current"
     assert fallback["route"] == ["A03"]
+
+
+def test_continue_current_is_omitted_for_a_completed_route() -> None:
+    engine, _arena, _calls = make_engine("...")
+    observation = {
+        "self": {"cell": "A01"},
+        "opponent": {"visible": False},
+        "map": {"pickups": []},
+        "active_plan": {"route_cells": ["A03"]},
+        "last_plan_result": {"status": "complete"},
+    }
+
+    candidates = engine.generate_candidates(observation, scenario_id="test_map")
+
+    assert "continue_current" not in {candidate["id"] for candidate in candidates}
+
+
+def test_continue_current_is_omitted_when_already_at_the_goal() -> None:
+    engine, _arena, _calls = make_engine("...")
+    observation = {
+        "self": {"cell": "A03"},
+        "opponent": {"visible": False},
+        "map": {"pickups": []},
+        "active_plan": {"route_cells": ["A01", "A02", "A03"], "status": "active"},
+    }
+
+    candidates = engine.generate_candidates(observation, scenario_id="test_map")
+
+    assert "continue_current" not in {candidate["id"] for candidate in candidates}
 
 
 def test_missing_current_cell_produces_only_handoff_and_no_fallback() -> None:

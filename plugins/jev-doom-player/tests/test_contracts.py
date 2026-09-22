@@ -10,7 +10,18 @@ def sample_observation(*, visible: bool = False):
         "participant_id": "player_1",
         "opponent_id": "player_2",
         "state_mode": "fog_of_war",
-        "self": {"health": 75, "alive": True, "cell": "M06", "x": -700, "y": 20, "ammo_bullets": 40},
+        "self": {
+            "health": 75,
+            "alive": True,
+            "cell": "M06",
+            "x": -700,
+            "y": 20,
+            "ready_weapon": "shotgun",
+            "ammo_bullets": 40,
+            "ammo_shells": 12,
+            "ammo_cells": 6,
+            "ammo_rockets": 2,
+        },
         "opponent": {
             "participant_id": "player_2",
             "alive": True,
@@ -37,6 +48,10 @@ def test_outbound_state_hides_coordinates_and_hidden_opponent_details():
     outbound = build_outbound_state(sample_observation(visible=False), strategic_directive="Stay safe")
 
     assert outbound["self"]["cell"] == "M06"
+    assert outbound["self"]["ready_weapon"] == "shotgun"
+    assert outbound["self"]["ammo_shells"] == 12
+    assert outbound["self"]["ammo_cells"] == 6
+    assert outbound["self"]["ammo_rockets"] == 2
     assert "x" not in outbound["self"]
     assert outbound["opponent"] == {"participant_id": "player_2", "alive": True, "visible": False}
     assert "controller_token" not in outbound
@@ -77,4 +92,26 @@ def test_handoff_packet_is_compact_and_sanitized():
     assert packet["reason"] == "low_confidence"
     assert packet["candidates"][0]["id"] == "hold"
     assert packet["confidence"] == 0.2
+
+
+def test_handoff_packet_keeps_the_full_current_candidate_set():
+    state = build_outbound_state(sample_observation())
+    candidates = [
+        {
+            "id": f"candidate_{index}",
+            "objective": "Test candidate",
+            "route": ["M06"],
+            "engagement_policy": "hold_fire",
+        }
+        for index in range(18)
+    ]
+
+    packet = make_handoff_packet(
+        reason="test",
+        state=state,
+        current_plan=None,
+        candidates=candidates,
+    )
+
+    assert len(packet["candidates"]) == 18
 

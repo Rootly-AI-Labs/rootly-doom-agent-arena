@@ -22,7 +22,7 @@ CONTROLLER_MODES = frozenset(
 )
 MAX_OUTBOUND_BYTES = 16_000
 MAX_DIRECTIVE_CHARS = 320
-MAX_CANDIDATES = 10
+MAX_CANDIDATES = 20
 MAX_ROUTE_WAYPOINTS = 8
 
 _SENSITIVE_KEYS = {
@@ -131,7 +131,11 @@ def build_outbound_state(
                 "alive",
                 "cell",
                 "angle",
+                "ready_weapon",
                 "ammo_bullets",
+                "ammo_shells",
+                "ammo_cells",
+                "ammo_rockets",
                 "command_status",
                 "last_action",
                 "damage_dealt",

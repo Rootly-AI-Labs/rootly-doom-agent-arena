@@ -43,6 +43,9 @@ DEFAULT_POLL_SECONDS = 0.25
 DEFAULT_EVALUATION_SECONDS = 2.0
 MIN_EVALUATION_SECONDS = 0.5
 DEFAULT_SAFE_REFRESH_SECONDS = 12.0
+DEFAULT_HANDOFF_COOLDOWN_SECONDS = 15.0
+DEFAULT_HANDOFF_DEDUPE_SECONDS = 30.0
+DEFAULT_HANDOFF_REARM_THRESHOLD = 0.45
 _SECRET_VALUE_PATTERN = re.compile(r"(?:sk-or-v1-|sk-ant-|sk-proj-)[A-Za-z0-9_-]{8,}")
 
 
@@ -102,6 +105,9 @@ class JevPlayerController:
         poll_seconds: float = DEFAULT_POLL_SECONDS,
         evaluation_seconds: float = DEFAULT_EVALUATION_SECONDS,
         safe_refresh_seconds: float = DEFAULT_SAFE_REFRESH_SECONDS,
+        handoff_cooldown_seconds: float = DEFAULT_HANDOFF_COOLDOWN_SECONDS,
+        handoff_dedupe_seconds: float = DEFAULT_HANDOFF_DEDUPE_SECONDS,
+        handoff_rearm_threshold: float = DEFAULT_HANDOFF_REARM_THRESHOLD,
     ) -> None:
         self._arena = arena_module
         self._client = client
@@ -119,6 +125,14 @@ class JevPlayerController:
         self._poll_seconds = max(0.05, float(poll_seconds))
         self._evaluation_seconds = max(MIN_EVALUATION_SECONDS, float(evaluation_seconds))
         self._safe_refresh_seconds = max(1.0, float(safe_refresh_seconds))
+        self._handoff_cooldown_seconds = max(0.0, float(handoff_cooldown_seconds))
+        self._handoff_dedupe_seconds = max(
+            self._handoff_cooldown_seconds,
+            float(handoff_dedupe_seconds),
+        )
+        self._handoff_rearm_threshold = float(handoff_rearm_threshold)
+        if not 0.0 <= self._handoff_rearm_threshold <= 1.0:
+            raise ControllerError("handoff_rearm_threshold must be between 0 and 1")
 
         self._condition = threading.Condition(threading.RLock())
         self._submission_lock = threading.Lock()
@@ -134,6 +148,9 @@ class JevPlayerController:
         self._sequence_number = 1
         self._strategic_directive = ""
         self._last_seen_cell = ""
+        self._last_contact_at = 0.0
+        self._last_health: int | None = None
+        self._last_damage_dealt: int | None = None
         self._last_observation: dict[str, Any] = {}
         self._last_outbound_state: dict[str, Any] = {}
         self._current_plan: dict[str, Any] = {}
@@ -150,6 +167,10 @@ class JevPlayerController:
         self._last_submission_at = 0.0
         self._failure_count = 0
         self._retry_after = 0.0
+        self._last_handoff_signature: tuple[Any, ...] | None = None
+        self._last_handoff_at = 0.0
+        self._handoff_cooldown_until = 0.0
+        self._handoff_rearmed = True
 
     # Dependencies remain lazy so installing/enabling the plugin is dormant.
     def _ensure_dependencies(self) -> None:
@@ -203,9 +224,30 @@ class JevPlayerController:
         return observation
 
     def _update_last_seen(self, observation: Mapping[str, Any]) -> None:
+        now = self._clock()
         opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
         if opponent.get("visible") and opponent.get("cell"):
             self._last_seen_cell = str(opponent["cell"])
+            self._last_contact_at = now
+        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+        try:
+            health = int(self_state.get("health"))
+        except (TypeError, ValueError):
+            health = None
+        try:
+            damage_dealt = int(self_state.get("damage_dealt"))
+        except (TypeError, ValueError):
+            damage_dealt = None
+        if self._last_health is not None and health is not None and health < self._last_health:
+            self._last_contact_at = now
+        if (
+            self._last_damage_dealt is not None
+            and damage_dealt is not None
+            and damage_dealt > self._last_damage_dealt
+        ):
+            self._last_contact_at = now
+        self._last_health = health
+        self._last_damage_dealt = damage_dealt
 
     def _generate_candidates(
         self,
@@ -218,6 +260,8 @@ class JevPlayerController:
                 scenario_id=self._scenario_id,
                 current_plan=current_plan,
                 last_seen_cell=self._last_seen_cell or None,
+                seconds_since_contact=max(0.0, self._clock() - self._last_contact_at),
+                center_patrol_target=self._center_patrol_target or None,
             )
         )
         if self._control_mode == "jev_only":
@@ -293,9 +337,60 @@ class JevPlayerController:
             return "jev_requested_handoff"
         if decision.confidence is None:
             return "jev_confidence_missing"
-        if decision.confidence < self._confidence_threshold():
+        threshold = self._confidence_threshold()
+        if not self._handoff_rearmed:
+            threshold = min(threshold, self._handoff_rearm_threshold)
+        if decision.confidence < threshold:
             return "jev_low_confidence"
         return ""
+
+    def _note_actionable_decision(self, decision: JevDecision) -> None:
+        if (
+            decision.confidence is not None
+            and decision.confidence >= self._confidence_threshold()
+        ):
+            self._handoff_rearmed = True
+
+    def _handoff_signature(
+        self,
+        reason: str,
+        observation: Mapping[str, Any],
+        candidates: Sequence[Mapping[str, Any]],
+        decision: JevDecision | None,
+    ) -> tuple[Any, ...]:
+        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
+        try:
+            health_bucket = int(self_state.get("health")) // 25
+        except (TypeError, ValueError):
+            health_bucket = None
+        return (
+            reason,
+            decision.selected_id if decision else None,
+            self_state.get("cell"),
+            health_bucket,
+            bool(opponent.get("visible")),
+            opponent.get("cell") if opponent.get("visible") else self._last_seen_cell,
+            tuple(candidate.get("id") for candidate in candidates),
+        )
+
+    def _handoff_suppression(
+        self,
+        reason: str,
+        observation: Mapping[str, Any],
+        candidates: Sequence[Mapping[str, Any]],
+        decision: JevDecision | None,
+    ) -> tuple[str, tuple[Any, ...]]:
+        signature = self._handoff_signature(reason, observation, candidates, decision)
+        now = self._clock()
+        if now < self._handoff_cooldown_until:
+            return "cooldown", signature
+        if (
+            signature == self._last_handoff_signature
+            and now - self._last_handoff_at < self._handoff_dedupe_seconds
+        ):
+            return "duplicate", signature
+        return "", signature
 
     def _build_handoff(
         self,
@@ -405,9 +500,14 @@ class JevPlayerController:
         self._sequence_number = 1
         self._strategic_directive = ""
         self._last_seen_cell = ""
+        self._last_contact_at = self._clock()
+        self._last_health = None
+        self._last_damage_dealt = None
         self._last_observation = {}
+        self._last_active_plan = {}
         self._last_outbound_state = {}
         self._current_plan = {}
+        self._center_patrol_target = ""
         self._last_decision = {}
         self._handoff = {}
         self._last_error = ""
@@ -421,6 +521,10 @@ class JevPlayerController:
         self._last_submission_at = 0.0
         self._failure_count = 0
         self._retry_after = 0.0
+        self._last_handoff_signature = None
+        self._last_handoff_at = 0.0
+        self._handoff_cooldown_until = 0.0
+        self._handoff_rearmed = True
 
     def _submit_candidate(self, candidate: Mapping[str, Any], *, source: str) -> dict[str, Any]:
         with self._submission_lock:
@@ -428,6 +532,29 @@ class JevPlayerController:
                 raise ControllerError("Jev controller is stopping")
             if candidate.get("actionable") is not True:
                 raise ControllerError("Cannot submit a non-actionable candidate")
+            if (
+                self._current_plan
+                and str(self._last_active_plan.get("status") or "")
+                not in {"complete", "completed", "route_complete", "stalled", "rejected"}
+                and self._plan_signature(candidate) == self._plan_signature(self._current_plan)
+            ):
+                self._telemetry.record(
+                    "plan_deduplicated",
+                    {
+                        "run_id": self._run_id,
+                        "participant_id": self._participant_id,
+                        "candidate_id": candidate.get("id"),
+                        "active_sequence_number": self._current_plan.get("sequence_number"),
+                        "source": source,
+                        "reason": "exact_active_plan",
+                    },
+                )
+                return {
+                    "accepted": True,
+                    "deduplicated": True,
+                    "intent_id": self._current_plan.get("intent_id"),
+                    "sequence_number": self._current_plan.get("sequence_number"),
+                }
             sequence = self._sequence_number
             text = self._client.set_participant_plan(
                 self._participant_id,
@@ -462,6 +589,13 @@ class JevPlayerController:
                 "intent_id": result.get("intent_id"),
                 "submission_source": source,
             }
+            if candidate.get("id") == "patrol_center":
+                route = list(candidate.get("route") or [])
+                self._center_patrol_target = str(
+                    candidate.get("target_cell") or (route[-1] if route else "")
+                )
+            else:
+                self._center_patrol_target = ""
             self._telemetry.record(
                 "plan_submission",
                 {
@@ -475,20 +609,39 @@ class JevPlayerController:
             )
             return dict(result)
 
+    @staticmethod
+    def _plan_signature(candidate: Mapping[str, Any]) -> tuple[Any, ...]:
+        return (
+            str(candidate.get("id") or candidate.get("candidate_id") or ""),
+            str(candidate.get("objective") or ""),
+            tuple(str(cell) for cell in (candidate.get("route") or [])),
+            str(candidate.get("target_cell") or ""),
+            str(candidate.get("engagement_policy") or ""),
+        )
+
     def _set_handoff(
         self,
         reason: str,
         observation: Mapping[str, Any],
         candidates: Sequence[Mapping[str, Any]],
         decision: JevDecision | None = None,
+        signature: tuple[Any, ...] | None = None,
     ) -> None:
         if self._stop_event.is_set():
             return
         handoff = self._build_handoff(reason, observation, candidates, decision)
+        handoff_signature = signature or self._handoff_signature(
+            reason,
+            observation,
+            candidates,
+            decision,
+        )
         with self._condition:
             if self._stop_event.is_set() or self._mode == "stopping":
                 return
             self._handoff = handoff
+            self._last_handoff_signature = handoff_signature
+            self._last_handoff_at = self._clock()
             self._mode = "awaiting_opus"
             self._telemetry.record(
                 "handoff",
@@ -535,6 +688,8 @@ class JevPlayerController:
                         "opening_plan_rejection",
                         decision,
                     )
+                else:
+                    self._note_actionable_decision(decision)
         finally:
             self._prepared_candidates = []
             self._prepared_decision = None
@@ -558,17 +713,46 @@ class JevPlayerController:
             health_bucket = int(health) // 25
         except (TypeError, ValueError):
             health_bucket = None
+        match = observation.get("match") if isinstance(observation.get("match"), Mapping) else {}
+        try:
+            endgame = (
+                float(match.get("timeout_seconds"))
+                - float(match.get("elapsed_time_seconds"))
+                <= 20.0
+            )
+        except (TypeError, ValueError):
+            endgame = False
+        active_status = str(active_plan.get("status") or "")
+        route_terminal = active_status in {
+            "complete",
+            "completed",
+            "route_complete",
+            "stalled",
+            "rejected",
+        }
+        # Normal cell and waypoint progress is execution, not a new tactical
+        # event. Position becomes material again when no plan is active or the
+        # plan reaches a terminal state.
+        position_event = self_state.get("cell") if not active_plan or route_terminal else None
+        ammo_buckets = tuple(
+            (key, int(self_state.get(key)) // 5)
+            for key in ("ammo_bullets", "ammo_shells", "ammo_cells", "ammo_rockets")
+            if str(self_state.get(key, "")).lstrip("-").isdigit()
+        )
         return (
-            self_state.get("cell"),
+            position_event,
             health_bucket,
+            self_state.get("damage_dealt"),
+            self_state.get("ready_weapon"),
+            ammo_buckets,
             bool(opponent.get("visible")),
             opponent.get("cell") if opponent.get("visible") else self._last_seen_cell,
+            opponent.get("health") if opponent.get("visible") else None,
             bool(tactical.get("replan_recommended")),
             tuple(tactical.get("replan_reasons") or []),
             available_pickups,
-            active_plan.get("status"),
-            active_plan.get("current_waypoint_cell"),
-            active_plan.get("waypoints_remaining"),
+            active_status if route_terminal else "active",
+            endgame,
         )
 
     def _match_finished(self, observation: Mapping[str, Any]) -> bool:
@@ -590,6 +774,16 @@ class JevPlayerController:
         observation = self._with_spawn_fallback(observation)
         self._update_last_seen(observation)
         self._last_observation = dict(observation)
+        self._last_active_plan = dict(active_plan or {})
+        if self._center_patrol_target:
+            self_block = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+            active_status = str(active_plan.get("status") or "")
+            if (
+                str(self_block.get("cell") or "") == self._center_patrol_target
+                or active_status
+                in {"complete", "completed", "route_complete", "stalled", "rejected"}
+            ):
+                self._center_patrol_target = ""
         finished = self._match_finished(observation)
         if finished:
             self._mark_match_finished()
@@ -632,12 +826,47 @@ class JevPlayerController:
                 self._set_handoff(reason, observation, candidates, decision)
                 return
             raise
+        suppression = ""
+        signature: tuple[Any, ...] | None = None
+        if self._control_mode == "jev_hybrid":
+            suppression, signature = self._handoff_suppression(
+                reason,
+                observation,
+                candidates,
+                decision,
+            )
+        if suppression:
+            selected = self._find_candidate(candidates, decision.selected_id) if decision else None
+            recovery = selected or fallback
+            if self._current_plan.get("id") != recovery.get("id") or (
+                self._clock() - self._last_submission_at >= self._safe_refresh_seconds
+            ):
+                self._submit_candidate(recovery, source="jev_handoff_suppressed")
+            if decision is not None:
+                self._note_actionable_decision(decision)
+            self._telemetry.record(
+                "handoff_suppressed",
+                {
+                    "run_id": self._run_id,
+                    "participant_id": self._participant_id,
+                    "reason": reason,
+                    "suppression": suppression,
+                    "selected_id": decision.selected_id if decision else None,
+                },
+            )
+            return
         if self._current_plan.get("id") != fallback.get("id") or (
             self._clock() - self._last_submission_at >= self._safe_refresh_seconds
         ):
             self._submit_candidate(fallback, source="deterministic_fallback")
         if self._control_mode == "jev_hybrid":
-            self._set_handoff(reason, observation, candidates, decision)
+            self._set_handoff(
+                reason,
+                observation,
+                candidates,
+                decision,
+                signature=signature,
+            )
         else:
             self._failure_count += 1
             self._retry_after = self._clock() + min(30.0, float(2 ** min(self._failure_count, 5)))
@@ -718,6 +947,7 @@ class JevPlayerController:
                                 ):
                                     return
                             else:
+                                self._note_actionable_decision(decision)
                                 self._failure_count = 0
                                 self._retry_after = 0.0
                     except (JevError, CandidateRouteError, ControllerError) as exc:
@@ -829,6 +1059,8 @@ class JevPlayerController:
             self._last_fingerprint = None
             self._retry_after = 0.0
             self._failure_count = 0
+            self._handoff_cooldown_until = self._clock() + self._handoff_cooldown_seconds
+            self._handoff_rearmed = False
             self._mode = "running"
             self._start_thread_locked()
             self._condition.notify_all()

@@ -209,6 +209,17 @@ def lifecycle_decision(*, confidence: float) -> JevDecision:
     )
 
 
+class FakeClock:
+    def __init__(self, value: float = 100.0) -> None:
+        self.value = value
+
+    def __call__(self) -> float:
+        return self.value
+
+    def advance(self, seconds: float) -> None:
+        self.value += seconds
+
+
 class LifecycleClient(FakeClient):
     def __init__(
         self,
@@ -395,6 +406,51 @@ def assert_lifecycle_secrets_absent(value: Any) -> None:
     assert LIFECYCLE_CONTROLLER_TOKEN not in encoded
     assert LIFECYCLE_OBSERVATION_TOKEN not in encoded
     assert "controller_token" not in encoded
+
+
+def test_fingerprint_ignores_normal_cell_and_waypoint_progress() -> None:
+    controller, _client = make_controller(RecordingAdapter())
+    first = observation()
+    second = copy.deepcopy(first)
+    second["self"]["cell"] = "A02"
+    active_first = {
+        "status": "active",
+        "current_waypoint_cell": "A02",
+        "waypoints_remaining": 3,
+    }
+    active_second = {
+        "status": "active",
+        "current_waypoint_cell": "A03",
+        "waypoints_remaining": 2,
+    }
+
+    assert controller._fingerprint(first, active_first) == controller._fingerprint(second, active_second)
+
+    second["self"]["health"] = 50
+    assert controller._fingerprint(first, active_first) != controller._fingerprint(second, active_second)
+
+
+def test_exact_active_candidate_is_deduplicated_without_consuming_sequence() -> None:
+    harness = make_lifecycle_harness()
+    candidate = candidates()[0]
+    harness.controller._mode = "running"
+    harness.controller._participant_id = "player_1"
+    harness.controller._controller_token = LIFECYCLE_CONTROLLER_TOKEN
+    harness.controller._sequence_number = 8
+    harness.controller._current_plan = {
+        **candidate,
+        "sequence_number": 7,
+        "intent_id": "intent_7",
+    }
+    harness.controller._last_active_plan = {"status": "active"}
+
+    result = harness.controller._submit_candidate(candidate, source="jev")
+
+    assert result["accepted"] is True
+    assert result["deduplicated"] is True
+    assert harness.controller._sequence_number == 8
+    assert harness.client.plan_calls == []
+    assert any(event == "plan_deduplicated" for event, _payload in harness.telemetry.records)
 
 
 @pytest.mark.parametrize(
@@ -634,6 +690,62 @@ def test_hybrid_low_confidence_submits_fallback_and_returns_handoff() -> None:
         assert_lifecycle_secrets_absent(result)
     finally:
         harness.controller.close()
+
+
+def test_handoff_hysteresis_cooldown_and_duplicate_suppression() -> None:
+    clock = FakeClock()
+    controller = JevPlayerController(
+        arena_module=FakeArena(),
+        client=FakeClient(),
+        adapter=RecordingAdapter(),
+        route_engine=FakeRouteEngine(),
+        clock=clock,
+        handoff_cooldown_seconds=15,
+        handoff_dedupe_seconds=30,
+        handoff_rearm_threshold=0.45,
+    )
+    controller._control_mode = "jev_hybrid"
+    current_observation = observation()
+    offered = candidates()
+    moderate = lifecycle_decision(confidence=0.5)
+    low = lifecycle_decision(confidence=0.4)
+
+    assert controller._decision_handoff_reason(moderate) == "jev_low_confidence"
+
+    reason = controller._decision_handoff_reason(low)
+    signature = controller._handoff_signature(reason, current_observation, offered, low)
+    controller._last_handoff_signature = signature
+    controller._last_handoff_at = clock()
+    controller._handoff_cooldown_until = clock() + 15
+    controller._handoff_rearmed = False
+
+    assert controller._decision_handoff_reason(moderate) == ""
+    assert controller._decision_handoff_reason(low) == "jev_low_confidence"
+    assert controller._handoff_suppression(
+        reason,
+        current_observation,
+        offered,
+        low,
+    )[0] == "cooldown"
+
+    clock.advance(15)
+    assert controller._handoff_suppression(
+        reason,
+        current_observation,
+        offered,
+        low,
+    )[0] == "duplicate"
+
+    clock.advance(15)
+    assert controller._handoff_suppression(
+        reason,
+        current_observation,
+        offered,
+        low,
+    )[0] == ""
+
+    controller._note_actionable_decision(lifecycle_decision(confidence=0.9))
+    assert controller._decision_handoff_reason(moderate) == "jev_low_confidence"
 
 
 def test_jev_only_low_confidence_uses_jev_choice_without_handoff() -> None:

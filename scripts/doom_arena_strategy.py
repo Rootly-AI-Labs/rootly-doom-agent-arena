@@ -775,7 +775,7 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
                 or result,
         }
 
-    return {
+    compact = {
         "match": {
             "phase": match_raw.get("phase"),
             "time_left_seconds": max(0.0, float(match_raw.get("timeout_seconds") or 0) - float(match_raw.get("elapsed_time_seconds") or 0)),
@@ -799,6 +799,9 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
             "pickups": pickups,
         },
     }
+    if isinstance(full_observation.get("observation_wait"), dict):
+        compact["observation_wait"] = dict(full_observation["observation_wait"])
+    return compact
 
 def validate_strategy_context(objective: Any = "", target_zone: Any = "", reasoning: Any = "") -> tuple[str, str, str]:
     objective_text = str(objective or "").strip().lower()

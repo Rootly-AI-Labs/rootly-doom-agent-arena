@@ -15,15 +15,31 @@ from typing import Any, Callable, Mapping, Sequence
 
 WALL_CLEARANCE_UNITS = 24
 DEFAULT_MAX_WAYPOINTS = 8
+DEFAULT_HEALTH_SEEK_THRESHOLD = 125
+DEFAULT_PATROL_AFTER_SECONDS = 18.0
+DEFAULT_ENDGAME_SECONDS = 20.0
+DEFAULT_BADLY_HURT_HEALTH = 60
+DEFAULT_CRITICAL_HEALTH = 35
+DEFAULT_FINISH_OPPONENT_HEALTH = 35
+DEFAULT_FINISH_MIN_HEALTH = 75
+DEFAULT_FINISH_MIN_AMMO = 8
 
 CANDIDATE_ORDER = (
     "continue_current",
+    "emergency_retreat",
+    "take_cover",
+    "protect_lead",
+    "finish_opponent",
+    "force_fight",
+    "deny_pickup",
     "pursue_visible",
     "pursue_last_seen",
     "flank_left",
     "flank_right",
     "seek_health",
     "seek_shotgun",
+    "hold_chokepoint",
+    "patrol_center",
     "disengage",
     "hold_position",
     "handoff_to_opus",
@@ -143,6 +159,14 @@ class CandidateRouteEngine:
         blueprint_loader: Callable[[str], Mapping[str, Any]] | None = None,
         route_normalizer: Callable[..., Any] | None = None,
         clearance_checker: Callable[[str, str, int], bool] | None = None,
+        health_seek_threshold: int = DEFAULT_HEALTH_SEEK_THRESHOLD,
+        patrol_after_seconds: float = DEFAULT_PATROL_AFTER_SECONDS,
+        endgame_seconds: float = DEFAULT_ENDGAME_SECONDS,
+        badly_hurt_health: int = DEFAULT_BADLY_HURT_HEALTH,
+        critical_health: int = DEFAULT_CRITICAL_HEALTH,
+        finish_opponent_health: int = DEFAULT_FINISH_OPPONENT_HEALTH,
+        finish_min_health: int = DEFAULT_FINISH_MIN_HEALTH,
+        finish_min_ammo: int = DEFAULT_FINISH_MIN_AMMO,
     ) -> None:
         self.arena = arena_module
         self.blueprint_loader = blueprint_loader or self._required_helper("load_geometry_blueprint")
@@ -154,6 +178,26 @@ class CandidateRouteEngine:
         )
         if self.max_waypoints <= 0:
             raise CandidateRouteError("arena route waypoint limit must be positive")
+        self.health_seek_threshold = int(health_seek_threshold)
+        self.patrol_after_seconds = max(0.0, float(patrol_after_seconds))
+        self.endgame_seconds = max(0.0, float(endgame_seconds))
+        self.badly_hurt_health = int(badly_hurt_health)
+        self.critical_health = int(critical_health)
+        self.finish_opponent_health = int(finish_opponent_health)
+        self.finish_min_health = int(finish_min_health)
+        self.finish_min_ammo = int(finish_min_ammo)
+        thresholds = (
+            self.health_seek_threshold,
+            self.badly_hurt_health,
+            self.critical_health,
+            self.finish_opponent_health,
+            self.finish_min_health,
+            self.finish_min_ammo,
+        )
+        if any(value < 0 for value in thresholds):
+            raise CandidateRouteError("health and ammo thresholds cannot be negative")
+        if self.critical_health > self.badly_hurt_health:
+            raise CandidateRouteError("critical_health cannot exceed badly_hurt_health")
         self._graph_cache: dict[str, GridGraph] = {}
         self._clearance_cache: dict[tuple[str, str], bool] = {}
 
@@ -343,7 +387,7 @@ class CandidateRouteEngine:
         self,
         observation: Mapping[str, Any],
         current_plan: Mapping[str, Any] | None,
-    ) -> tuple[str, str]:
+    ) -> tuple[str, str, bool]:
         plan = current_plan
         if not isinstance(plan, Mapping):
             for key in ("active_plan", "last_plan"):
@@ -352,7 +396,7 @@ class CandidateRouteEngine:
                     plan = candidate
                     break
         if not isinstance(plan, Mapping):
-            return "", "engage_if_visible"
+            return "", "engage_if_visible", False
 
         raw_route = plan.get("route_cells") or plan.get("route") or []
         cells: list[str] = []
@@ -370,7 +414,12 @@ class CandidateRouteEngine:
         allowed = set(getattr(self.arena, "PLAN_ENGAGEMENT_POLICIES", ()))
         if allowed and engagement not in allowed:
             engagement = "engage_if_visible"
-        return (cells[-1] if cells else ""), engagement
+
+        result = observation.get("last_plan_result")
+        result_status = result.get("status") if isinstance(result, Mapping) else ""
+        status = str(plan.get("status") or result_status or "").strip().lower()
+        route_complete = status in {"complete", "completed", "route_complete"}
+        return (cells[-1] if cells else ""), engagement, route_complete
 
     def _flank_target(self, graph: GridGraph, threat_cell: str, side: str) -> str:
         if threat_cell not in graph.neighbors:
@@ -443,6 +492,216 @@ class CandidateRouteEngine:
                 return cell
         return ""
 
+    def _center_patrol_target(self, graph: GridGraph, start_cell: str) -> str:
+        """Choose a reachable central cell that produces an actual sweep."""
+
+        if start_cell not in graph.neighbors:
+            return ""
+        center_row = (len(graph.rows) - 1) / 2.0
+        center_col = (max((len(row) for row in graph.rows), default=1) - 1) / 2.0
+        _previous, path_distances = _shortest_path_tree(graph, start_cell)
+        options: list[tuple[float, int, str]] = []
+        for cell in graph.walkable_cells:
+            if cell == start_cell or cell not in path_distances:
+                continue
+            row, col = _row_col(cell)
+            center_distance = abs(row - center_row) + abs(col - center_col)
+            # Prefer the center first, then the farther reachable option among
+            # equally central cells so a completed patrol does not become a hold.
+            options.append((center_distance, -path_distances[cell], cell))
+        for _center_distance, _negative_path_distance, cell in sorted(options):
+            if self.route_to(graph, start_cell, cell) is not None:
+                return cell
+        return ""
+
+    @staticmethod
+    def _integer(value: Any) -> int | None:
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return None
+
+    def _combat_ammo(self, self_block: Mapping[str, Any]) -> int | None:
+        ready_weapon = str(self_block.get("ready_weapon") or "").lower()
+        numeric_weapon_ammo = {
+            "0": None,  # fist
+            "1": "ammo_bullets",
+            "2": "ammo_shells",
+            "3": "ammo_bullets",
+            "4": "ammo_rockets",
+            "5": "ammo_cells",
+            "6": "ammo_cells",
+            "7": None,  # chainsaw
+            "8": "ammo_shells",
+        }
+        if ready_weapon in numeric_weapon_ammo:
+            field = numeric_weapon_ammo[ready_weapon]
+            if field is None:
+                return self.finish_min_ammo
+            ammo = self._integer(self_block.get(field))
+            if ammo is not None:
+                return ammo
+        weapon_ammo_fields = (
+            (("shotgun",), "ammo_shells"),
+            (("rocket",), "ammo_rockets"),
+            (("plasma", "bfg"), "ammo_cells"),
+            (("pistol", "chaingun"), "ammo_bullets"),
+        )
+        for weapon_names, field in weapon_ammo_fields:
+            if any(name in ready_weapon for name in weapon_names):
+                ammo = self._integer(self_block.get(field))
+                if ammo is not None:
+                    return ammo
+        known_ammo = [
+            ammo
+            for field in ("ammo_bullets", "ammo_shells", "ammo_cells", "ammo_rockets")
+            if (ammo := self._integer(self_block.get(field))) is not None
+        ]
+        return max(known_ammo) if known_ammo else None
+
+    @staticmethod
+    def _is_reloading(
+        self_block: Mapping[str, Any],
+        tactical: Mapping[str, Any],
+    ) -> bool:
+        status = " ".join(
+            str(block.get(key) or "")
+            for block, key in (
+                (self_block, "command_status"),
+                (self_block, "last_action"),
+                (tactical, "requested_fire_policy"),
+                (tactical, "executed_fire_action"),
+            )
+        ).lower()
+        return "reload" in status
+
+    @staticmethod
+    def _line_crosses_wall(graph: GridGraph, start_cell: str, end_cell: str) -> bool:
+        """Approximate map occlusion with a deterministic Bresenham grid ray."""
+
+        start_row, start_col = _row_col(start_cell)
+        end_row, end_col = _row_col(end_cell)
+        col = start_col
+        row = start_row
+        delta_col = abs(end_col - start_col)
+        step_col = 1 if start_col < end_col else -1
+        delta_row = -abs(end_row - start_row)
+        step_row = 1 if start_row < end_row else -1
+        error = delta_col + delta_row
+        while (row, col) != (end_row, end_col):
+            doubled = 2 * error
+            if doubled >= delta_row:
+                error += delta_row
+                col += step_col
+            if doubled <= delta_col:
+                error += delta_col
+                row += step_row
+            if (row, col) == (end_row, end_col):
+                break
+            if _cell_label(row, col) not in graph.neighbors:
+                return True
+        return False
+
+    def _cover_target(
+        self,
+        graph: GridGraph,
+        start_cell: str,
+        threat_cell: str,
+    ) -> str:
+        if threat_cell not in graph.neighbors:
+            return ""
+        threat_row, threat_col = _row_col(threat_cell)
+        start_row, start_col = _row_col(start_cell)
+        start_threat_distance = abs(start_row - threat_row) + abs(start_col - threat_col)
+        _previous, path_distances = _shortest_path_tree(graph, start_cell)
+        options: list[tuple[int, int, str]] = []
+        for cell, path_distance in path_distances.items():
+            if cell == start_cell or not self._line_crosses_wall(graph, cell, threat_cell):
+                continue
+            row, col = _row_col(cell)
+            threat_distance = abs(row - threat_row) + abs(col - threat_col)
+            if threat_distance < start_threat_distance:
+                continue
+            options.append((path_distance, -threat_distance, cell))
+        for _path_distance, _negative_threat_distance, cell in sorted(options):
+            if self.route_to(graph, start_cell, cell) is not None:
+                return cell
+        return ""
+
+    def _chokepoint_target(self, graph: GridGraph, start_cell: str) -> str:
+        """Prefer a reachable central corridor cell with constrained approaches."""
+
+        center_row = (len(graph.rows) - 1) / 2.0
+        center_col = (max((len(row) for row in graph.rows), default=1) - 1) / 2.0
+        max_row = len(graph.rows) - 1
+        max_col = max((len(row) for row in graph.rows), default=1) - 1
+        _previous, path_distances = _shortest_path_tree(graph, start_cell)
+        options: list[tuple[int, float, int, str]] = []
+        for cell, path_distance in path_distances.items():
+            row, col = _row_col(cell)
+            if row in {0, max_row} or col in {0, max_col}:
+                continue
+            neighbors = graph.neighbors[cell]
+            neighbor_positions = {_row_col(neighbor) for neighbor in neighbors}
+            vertical = {(row - 1, col), (row + 1, col)}
+            horizontal = {(row, col - 1), (row, col + 1)}
+            if len(neighbors) == 2 and (
+                neighbor_positions == vertical or neighbor_positions == horizontal
+            ):
+                tier = 0
+            elif len(neighbors) == 3:
+                tier = 1
+            else:
+                continue
+            center_distance = abs(row - center_row) + abs(col - center_col)
+            options.append((tier, center_distance, path_distance, cell))
+        for _tier, _center_distance, _path_distance, cell in sorted(options):
+            if self.route_to(graph, start_cell, cell) is not None:
+                return cell
+        return ""
+
+    def _deny_pickup_target(
+        self,
+        graph: GridGraph,
+        start_cell: str,
+        opponent_cell: str,
+        opponent_health: int | None,
+        pickups: Any,
+    ) -> str:
+        if not isinstance(pickups, list) or opponent_cell not in graph.neighbors:
+            return ""
+        _self_previous, self_distances = _shortest_path_tree(graph, start_cell)
+        _opponent_previous, opponent_distances = _shortest_path_tree(graph, opponent_cell)
+        options: list[tuple[int, int, int, str]] = []
+        for pickup in pickups:
+            if not isinstance(pickup, Mapping) or pickup.get("available") is False:
+                continue
+            pickup_type = str(pickup.get("type") or "").lower()
+            descriptor = " ".join(
+                str(pickup.get(key) or "").lower() for key in ("id", "name", "type")
+            )
+            is_health = pickup_type == "health"
+            is_weapon = pickup_type == "weapon" or "shotgun" in descriptor
+            if not is_weapon and not (
+                is_health
+                and opponent_health is not None
+                and opponent_health <= self.health_seek_threshold
+            ):
+                continue
+            target = self._walkable_target(graph, pickup.get("cell"))
+            self_distance = self_distances.get(target)
+            opponent_distance = opponent_distances.get(target)
+            if (
+                self_distance is None
+                or opponent_distance is None
+                or self_distance > opponent_distance
+                or self.route_to(graph, start_cell, target) is None
+            ):
+                continue
+            priority = 0 if is_health and opponent_health <= self.badly_hurt_health else 1
+            options.append((priority, self_distance - opponent_distance, self_distance, target))
+        return min(options, default=(0, 0, 0, ""))[3]
+
     def _actionable_candidate(
         self,
         *,
@@ -489,6 +748,8 @@ class CandidateRouteEngine:
         scenario_id: str = "duel_e1m8",
         current_plan: Mapping[str, Any] | None = None,
         last_seen_cell: str | None = None,
+        seconds_since_contact: float = 0.0,
+        center_patrol_target: str | None = None,
     ) -> list[dict[str, Any]]:
         """Return deterministic candidates in ``CANDIDATE_ORDER`` order."""
 
@@ -496,12 +757,18 @@ class CandidateRouteEngine:
         self_block = observation.get("self", {})
         opponent = observation.get("opponent", {})
         map_block = observation.get("map", {})
+        tactical = observation.get("tactical_context", {})
+        match = observation.get("match", {})
         if not isinstance(self_block, Mapping):
             self_block = {}
         if not isinstance(opponent, Mapping):
             opponent = {}
         if not isinstance(map_block, Mapping):
             map_block = {}
+        if not isinstance(tactical, Mapping):
+            tactical = {}
+        if not isinstance(match, Mapping):
+            match = {}
 
         start_cell = self._observation_cell(self_block)
         if start_cell not in graph.neighbors:
@@ -535,8 +802,11 @@ class CandidateRouteEngine:
                 )
             )
 
-        current_goal, current_engagement = self._current_plan_goal(observation, current_plan)
-        if current_goal:
+        current_goal, current_engagement, current_route_complete = self._current_plan_goal(
+            observation,
+            current_plan,
+        )
+        if current_goal and not current_route_complete and current_goal != start_cell:
             add_target(
                 "continue_current",
                 current_goal,
@@ -577,6 +847,139 @@ class CandidateRouteEngine:
             )
 
         threat_cell = visible_cell or remembered_cell
+
+        pickups = map_block.get("pickups")
+        current_health = self._integer(self_block.get("health"))
+        opponent_health = self._integer(opponent.get("health"))
+        combat_ammo = self._combat_ammo(self_block)
+        is_reloading = self._is_reloading(self_block, tactical)
+        health_target = self._pickup_target(graph, start_cell, pickups, "health")
+
+        try:
+            elapsed_seconds = float(match.get("elapsed_time_seconds"))
+            timeout_seconds = float(match.get("timeout_seconds"))
+            remaining_seconds = max(0.0, timeout_seconds - elapsed_seconds)
+        except (TypeError, ValueError):
+            remaining_seconds = None
+        try:
+            health_delta = float(tactical.get("health_delta"))
+        except (TypeError, ValueError):
+            health_delta = None
+        in_endgame = (
+            remaining_seconds is not None
+            and remaining_seconds <= self.endgame_seconds
+        )
+
+        persisted_center_target = self._walkable_target(graph, center_patrol_target)
+        center_target = (
+            persisted_center_target
+            if persisted_center_target and persisted_center_target != start_cell
+            else self._center_patrol_target(graph, start_cell)
+        )
+        if (
+            current_health is not None
+            and current_health <= self.critical_health
+            and not health_target
+            and threat_cell
+        ):
+            emergency_target = (
+                self._cover_target(graph, start_cell, visible_cell)
+                if visible_cell
+                else ""
+            ) or self._disengage_target(graph, start_cell, threat_cell)
+            if emergency_target:
+                add_target(
+                    "emergency_retreat",
+                    emergency_target,
+                    "Emergency retreat without available health",
+                    "hold_fire",
+                    "Health is critical and no reachable health pickup is available.",
+                    "Break contact along the safest legal route instead of accepting a fatal fight.",
+                    "I am critically hurt and getting out now.",
+                )
+
+        if visible_cell and (
+            is_reloading
+            or (current_health is not None and current_health <= self.badly_hurt_health)
+        ):
+            cover_target = self._cover_target(graph, start_cell, visible_cell)
+            if cover_target:
+                add_target(
+                    "take_cover",
+                    cover_target,
+                    "Break line of sight behind cover",
+                    "hold_fire",
+                    "The opponent is visible while health is low or the weapon is reloading.",
+                    "Reach the nearest legal cell occluded by map geometry.",
+                    "I am breaking sight and taking cover.",
+                )
+
+        if in_endgame and health_delta is not None and health_delta > 0:
+            protect_target = (
+                self._disengage_target(graph, start_cell, threat_cell)
+                if threat_cell
+                else ""
+            ) or health_target or start_cell
+            add_target(
+                "protect_lead",
+                protect_target,
+                "Protect the endgame health lead",
+                "hold_fire",
+                "The final seconds favor preserving the current health advantage.",
+                "Deny a late equalizer while the health lead is decisive.",
+                "I am protecting this lead until time expires.",
+            )
+        elif in_endgame:
+            force_target = threat_cell or center_target
+            if force_target:
+                add_target(
+                    "force_fight",
+                    force_target,
+                    "Force a final engagement",
+                    "force_fight",
+                    "Time is nearly over and the current health state does not secure a win.",
+                    "Push the best known contact route before the timeout.",
+                    "I need a fight before the clock runs out.",
+                )
+
+        if (
+            visible_cell
+            and current_health is not None
+            and current_health >= self.finish_min_health
+            and opponent_health is not None
+            and opponent_health <= self.finish_opponent_health
+            and combat_ammo is not None
+            and combat_ammo >= self.finish_min_ammo
+        ):
+            add_target(
+                "finish_opponent",
+                visible_cell,
+                "Finish the weakened opponent",
+                "force_fight",
+                "The visible opponent is low while current health and equipped ammunition are sufficient.",
+                "Commit to the reachable opponent before they can recover.",
+                "They are weak, and I have enough to finish this.",
+            )
+
+        if visible_cell:
+            deny_target = self._deny_pickup_target(
+                graph,
+                start_cell,
+                visible_cell,
+                opponent_health,
+                pickups,
+            )
+            if deny_target:
+                add_target(
+                    "deny_pickup",
+                    deny_target,
+                    "Deny a valuable pickup",
+                    "engage_if_visible",
+                    "A valuable health or weapon pickup is reachable no later than the opponent can reach it.",
+                    "Contest the pickup to deny the opponent a recovery or weapon upgrade.",
+                    "I am cutting them off from that pickup.",
+                )
+
         if threat_cell:
             left_target = self._flank_target(graph, threat_cell, "left")
             right_target = self._flank_target(graph, threat_cell, "right")
@@ -601,8 +1004,6 @@ class CandidateRouteEngine:
                     "I am wrapping around the right side.",
                 )
 
-        pickups = map_block.get("pickups")
-        health_target = self._pickup_target(graph, start_cell, pickups, "health")
         if health_target:
             add_target(
                 "seek_health",
@@ -624,6 +1025,39 @@ class CandidateRouteEngine:
                 "An available weapon pickup has a legal route.",
                 "Reposition to the nearest reachable shotgun.",
                 "I am grabbing the shotgun first.",
+            )
+
+        if not visible_cell and not in_endgame:
+            chokepoint_target = self._chokepoint_target(graph, start_cell)
+            if chokepoint_target:
+                add_target(
+                    "hold_chokepoint",
+                    chokepoint_target,
+                    "Hold a central chokepoint",
+                    "engage_if_visible",
+                    "A reachable central corridor constrains the opponent's approach.",
+                    "Defend a strong doorway instead of waiting in an arbitrary cell.",
+                    "I am locking down this central doorway.",
+                )
+
+        try:
+            contact_gap_seconds = max(0.0, float(seconds_since_contact))
+        except (TypeError, ValueError):
+            contact_gap_seconds = 0.0
+        if (
+            not in_endgame
+            and not visible_cell
+            and contact_gap_seconds >= self.patrol_after_seconds
+            and center_target
+        ):
+            add_target(
+                "patrol_center",
+                center_target,
+                "Patrol the center after lost contact",
+                "engage_if_visible",
+                "No opponent contact has occurred recently, so sweep the central lanes.",
+                "Move through center to restore contact and prevent a passive timeout.",
+                "I am sweeping center to find this opponent.",
             )
 
         if threat_cell:
@@ -703,6 +1137,7 @@ def generate_candidates(
     scenario_id: str = "duel_e1m8",
     current_plan: Mapping[str, Any] | None = None,
     last_seen_cell: str | None = None,
+    seconds_since_contact: float = 0.0,
     **engine_kwargs: Any,
 ) -> list[dict[str, Any]]:
     """Convenience wrapper returning deterministic JSON-ready candidates."""
@@ -712,6 +1147,7 @@ def generate_candidates(
         scenario_id=scenario_id,
         current_plan=current_plan,
         last_seen_cell=last_seen_cell,
+        seconds_since_contact=seconds_since_contact,
     )
 
 

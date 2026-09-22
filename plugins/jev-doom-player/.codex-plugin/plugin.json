@@ -1,6 +1,6 @@
 {
   "name": "jev-doom-player",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260922044556",
   "description": "Run one Doom Agent Arena participant with deterministic routes and Jev decisions through OpenRouter.",
   "author": {
     "name": "Rootly AI Labs",
@@ -9,7 +9,12 @@
   "homepage": "https://github.com/Rootly-AI-Labs/rootly-doom-agent-arena",
   "repository": "https://github.com/Rootly-AI-Labs/rootly-doom-agent-arena",
   "license": "GPL-2.0-or-later",
-  "keywords": ["doom", "jev", "openrouter", "benchmark"],
+  "keywords": [
+    "doom",
+    "jev",
+    "openrouter",
+    "benchmark"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Jev Doom Player",
@@ -17,7 +22,10 @@
     "longDescription": "Generates legal deterministic Doom routes and lets TypeSafe Jev select through OpenRouter, with optional host-model escalation only in hybrid mode.",
     "developerName": "Rootly AI Labs",
     "category": "Developer Tools",
-    "capabilities": ["Interactive", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "defaultPrompt": [
       "Prepare and run player_1 as a standalone Jev-only controller without host strategy.",
       "Prepare player_1 as Jev hybrid and handle strategic handoffs.",
