@@ -1,0 +1,12 @@
+{
+  "run_id": "run_7a6c4b3c62d6",
+  "player_1": {
+    "model": "",
+    "controller_token": "<redacted>"
+  },
+  "player_2": {
+    "model": "",
+    "controller_token": "<redacted>"
+  },
+  "enforce_controller_tokens": true
+}

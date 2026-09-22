@@ -1,0 +1,219 @@
+{
+  "run_id": "run_4d83281c85da",
+  "round": 13,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 39.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 50,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 100
+    },
+    "player_2": {
+      "damage_dealt": 50,
+      "damage_taken": 160,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2240",
+      "elapsed_ms": null,
+      "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 6657 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 3571 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=45"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 3742 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_4d83281c85da duel_e1m8_blind_spawn 2240 6657 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 151,
+        "distance_traveled": 4600.8,
+        "unique_cells_visited": 32,
+        "revisited_cells": 119
+      },
+      "player_2": {
+        "path_points": 151,
+        "distance_traveled": 3402.7,
+        "unique_cells_visited": 23,
+        "revisited_cells": 128
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 13202.33,
+    "decision_p95_ms": 22557.0,
+    "decision_max_ms": 22557.0,
+    "mcp_avg_ms": 569.22,
+    "mcp_p95_ms": 2341.0,
+    "mcp_max_ms": 2341.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 14
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3862
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2313
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 6034,
+    "stale_intent_extension_max_ms": 5515
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "pursue the last seen enemy",
+      "route": [
+        "P22",
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "N18",
+        "N17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen directly ahead in the center",
+      "plan_summary": "I am following the sound of someone regretting my persistence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the center entrance",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the same route just produced a clean elimination",
+      "plan_summary": "I found a winning door and now I live here."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "enter the eastern center",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the doorway preserves the winning contact timing",
+      "plan_summary": "I am reenacting my one successful life choice."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "force the center fight",
+      "route": "R22;Q22;P22;O22;O21;O20;O19;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the prior elimination came from this exact push",
+      "plan_summary": "I am returning to the scene of my competence."
+    }
+  ]
+}

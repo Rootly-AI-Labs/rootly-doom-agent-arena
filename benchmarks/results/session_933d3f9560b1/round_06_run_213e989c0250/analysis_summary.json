@@ -1,0 +1,333 @@
+{
+  "run_id": "run_213e989c0250",
+  "round": 6,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 24.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 5,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 145
+    },
+    "player_2": {
+      "damage_dealt": 5,
+      "damage_taken": 160,
+      "shots_fired": 10,
+      "shots_hit": 1,
+      "accuracy": 0.1,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2765",
+      "elapsed_ms": null,
+      "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5628 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2765",
+      "elapsed_ms": null,
+      "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 20742 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) survival requires both the pickup and immediate movement aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) survival requires both the pickup and immediate movement aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) survival requires both the pickup and immediate movement aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) survival requires both the pickup and immediate movement aim_error=40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) survival requires both the pickup and immediate movement aim_error=43"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) survival requires both the pickup and immediate movement aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 1485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(576,-576) survival requires both the pickup and immediate movement aim_error=51"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 1628 autopilot_action: player_2 action=route_complete reason=survival requires both the pickup and immediate movement aim_error=-33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 1800 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=53"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 2400 autopilot_action: player_2 action=route_complete reason=survival requires both the pickup and immediate movement aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-49"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 4257 autopilot_action: player_1 action=route_waypoint reason=wp=4/5 target=(-64,384) An available weapon pickup has a legal route. aim_error=48"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 4514 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=140"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 4828 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=-36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5457 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=146"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5600 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=64"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5628 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5657 autopilot_action: player_2 action=route_complete+attack reason=survival requires both the pickup and immediate movement aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 5800 autopilot_action: player_2 action=route_complete reason=survival requires both the pickup and immediate movement aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 6371 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 7914 autopilot_action: player_2 action=route_complete+attack reason=survival requires both the pickup and immediate movement aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 8028 autopilot_action: player_2 action=route_complete reason=survival requires both the pickup and immediate movement aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_213e989c0250 duel_e1m8_blind_spawn 2765 20742 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 94,
+        "distance_traveled": 4878.3,
+        "unique_cells_visited": 40,
+        "revisited_cells": 54
+      },
+      "player_2": {
+        "path_points": 94,
+        "distance_traveled": 783.5,
+        "unique_cells_visited": 13,
+        "revisited_cells": 81
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 12199.0,
+    "decision_p95_ms": 20715.0,
+    "decision_max_ms": 20715.0,
+    "mcp_avg_ms": 425.11,
+    "mcp_p95_ms": 1563.0,
+    "mcp_max_ms": 1563.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 15
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1538
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1538
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 18076,
+    "stale_intent_extension_max_ms": 18076
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the health approach",
+      "route": "V32;V31;V30;V29;V28;V27;V26;U26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "survival requires both the pickup and immediate movement",
+      "plan_summary": "I am returning to the pharmacy with better cardio."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "enter the health pocket",
+      "route": "U26;T26;S26;S25;R25;Q25;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the first pass positions a precise collection loop",
+      "plan_summary": "I am threading the needle with all the dignity available."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect health and run north",
+      "route": "Q26;Q25;Q26;P26;O26;N26;M26;L26",
+      "engagement_policy": "",
+      "reasoning": "the loop secures the pickup while the corridor preserves range",
+      "plan_summary": "Medicine acquired; now begins the tactical power walk."
+    }
+  ]
+}
