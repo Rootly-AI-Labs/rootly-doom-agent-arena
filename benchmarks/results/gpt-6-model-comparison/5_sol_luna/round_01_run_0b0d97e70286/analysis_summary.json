@@ -1,0 +1,368 @@
+{
+  "run_id": "run_0b0d97e70286",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 47.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 195,
+      "damage_taken": 30,
+      "shots_fired": 7,
+      "shots_hit": 7,
+      "accuracy": 1.0,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 195,
+      "shots_fired": 10,
+      "shots_hit": 3,
+      "accuracy": 0.3,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2345",
+      "elapsed_ms": null,
+      "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) the lower right health is close and the shotgun improves damage aim_error"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2345",
+      "elapsed_ms": null,
+      "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 32371 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 9,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) the lower right health is close and the shotgun improves damage aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-512) the lower right health is close and the shotgun improves damage aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-448) the lower right health is close and the shotgun improves damage aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-384) the lower right health is close and the shotgun improves damage aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(960,-320) the lower right health is close and the shotgun improves damage aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 1228 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(896,-320) the lower right health is close and the shotgun improves damage aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(832,-320) the lower right health is close and the shotgun improves damage aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 1600 autopilot_action: player_2 action=route_complete reason=the lower right health is close and the shotgun improves damage aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 2342 autopilot_action: player_2 action=route_complete reason=the lower right health is close and the shotgun improves damage aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 32371 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 34885 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is close and accessible from below aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 34914 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(-128,192) the pickup is close and accessible from below aim_error=166"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 35028 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(-64,192) the pickup is close and accessible from below aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 35371 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-64,256) the pickup is close and accessible from below aim_error=-12"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 35514 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-64,320) the pickup is close and accessible from below aim_error=75"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 35857 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(0,320) the pickup is close and accessible from below aim_error=86"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 36114 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(0,384) the pickup is close and accessible from below aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 36257 autopilot_action: player_1 action=route_complete reason=the pickup is close and accessible from below aim_error=87"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 36285 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2345",
+        "elapsed_ms": null,
+        "event": "run_0b0d97e70286 duel_e1m8_blind_spawn 2345 37000 autopilot_action: player_1 action=route_complete reason=the pickup is close and accessible from below aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 182,
+        "distance_traveled": 2805.6,
+        "unique_cells_visited": 32,
+        "revisited_cells": 150
+      },
+      "player_2": {
+        "path_points": 182,
+        "distance_traveled": 1968.2,
+        "unique_cells_visited": 21,
+        "revisited_cells": 161
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7978.7,
+    "decision_p95_ms": 15076.0,
+    "decision_max_ms": 15076.0,
+    "mcp_avg_ms": 579.44,
+    "mcp_p95_ms": 2089.0,
+    "mcp_max_ms": 4189.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5184,
+      "player_2": 1564
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2080,
+      "player_2": 1564
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 5353,
+    "stale_intent_extension_max_ms": 4048
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the close-range upgrade will help win first contact",
+      "plan_summary": "I have promoted myself to shotgun procurement."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "sweep toward the nearest health and shotgun",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower right health is close and the shotgun improves damage",
+      "plan_summary": "I'm awkwardly sprinting for snacks and a shotgun!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upper wall blocks a direct approach",
+      "plan_summary": "This stapler has a meeting with the armory."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "close in on the opponent through the east lane",
+      "route": "Q30;P30;O30;N30;M30;L30;K30;J30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen near the center and this lane avoids",
+      "plan_summary": "No snack break; I'm making this awkward duel happen!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the wall requires a southern approach",
+      "plan_summary": "The armory put me on a scenic performance plan."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "cut across the east side toward the center",
+      "route": "J30;J29;J28;J27;J26;I26;H26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains near midmap and I need a clear approach",
+      "plan_summary": "I'm taking the long way around my own embarrassment."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is close and accessible from below",
+      "plan_summary": "I'm filing a very loud equipment request."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last position lies beyond the central wall",
+      "plan_summary": "I brought the stapler and the loud attachment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "push around the east wall toward the opponent",
+      "route": "G26;H26;I26;J26;K26;L26;M26;N26",
+      "engagement_policy": "",
+      "reasoning": "I dealt damage and should keep closing through the open lane",
+      "plan_summary": "That hit was an icebreaker; now I'm coming over!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close on the visible opponent",
+      "route": "J20;I20;I21;I22;I23;I24;I25;I26",
+      "engagement_policy": "",
+      "reasoning": "shotgun damage improves at shorter range",
+      "plan_summary": "I'm escalating this to an in-person meeting."
+    }
+  ]
+}

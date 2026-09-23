@@ -1,0 +1,513 @@
+{
+  "run_id": "run_385d54e7a522",
+  "round": 4,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 34.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 85,
+      "shots_fired": 20,
+      "shots_hit": 13,
+      "accuracy": 0.65,
+      "final_health": 65
+    },
+    "player_2": {
+      "damage_dealt": 85,
+      "damage_taken": 160,
+      "shots_fired": 19,
+      "shots_hit": 8,
+      "accuracy": 0.421,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1960",
+      "elapsed_ms": null,
+      "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) quick center contact cuts off the shotgun route aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 49,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) quick center contact cuts off the shotgun route aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) quick center contact cuts off the shotgun route aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) quick center contact cuts off the shotgun route aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) quick center contact cuts off the shotgun route aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) quick center contact cuts off the shotgun route aim_error=42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) quick center contact cuts off the shotgun route aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 1628 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 2371 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 2628 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 3371 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 3600 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 4342 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 4571 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 5314 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 5542 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 6285 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 6485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 6514 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 7257 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 7457 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 7485 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=51"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 8228 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 8428 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 8457 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 9200 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 9400 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 9428 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=48"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 10171 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 10371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 10400 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-126"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 26428 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,-128) the opponent is south of me near the shotgun corridor aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 26457 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,-128) the opponent is south of me near the shotgun corridor aim_error=-83"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 26514 autopilot_action: player_1 action=route_waypoint+attack reason=wp=2/8 target=(-320,-128) the opponent is south of me near the shotgun corridor aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 26714 autopilot_action: player_1 action=route_waypoint+attack reason=wp=3/8 target=(-256,-128) the opponent is south of me near the shotgun corridor aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1960",
+        "elapsed_ms": null,
+        "event": "run_385d54e7a522 duel_e1m8_blind_spawn 1960 26857 autopilot_action: player_1 action=route_waypoint+attack reason=wp=4/8 target=(-192,-128) the opponent is south of me near the shotgun corridor aim_err"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 134,
+        "distance_traveled": 2503.7,
+        "unique_cells_visited": 28,
+        "revisited_cells": 106
+      },
+      "player_2": {
+        "path_points": 134,
+        "distance_traveled": 2068.2,
+        "unique_cells_visited": 22,
+        "revisited_cells": 112
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5834.8,
+    "decision_p95_ms": 8285.0,
+    "decision_max_ms": 8285.0,
+    "mcp_avg_ms": 575.18,
+    "mcp_p95_ms": 3116.0,
+    "mcp_max_ms": 3904.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 2049,
+      "player_2": 4636
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2049,
+      "player_2": 3092
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "an early weapon upgrade won the opening matches",
+      "plan_summary": "I am a nacho with a schedule."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the open eastern lane toward the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "quick center contact cuts off the shotgun route",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the shotgun entrance",
+      "route": "V25;U25;T25;S25;S24;S23;S22;S21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber opens through the center lane",
+      "plan_summary": "The nacho is taking the same shortcut."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push down the open center lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent's last sighting is on the southern side",
+      "plan_summary": "Time to audit the downstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the center passage",
+      "route": "S21;R21;Q21;Q22;P22;O22;O21;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern bend bypasses the walls",
+      "plan_summary": "I know this hallway better than my kitchen."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the middle lane",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen enemy position is south of center",
+      "plan_summary": "I am walking straight into the agenda."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "close on the visible opponent while taking the weapon lane",
+      "route": "M12;N12;N13;N14;N15;N16;N17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is south of me near the shotgun corridor",
+      "plan_summary": "I am bringing the whole filing cabinet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the chamber",
+      "route": [
+        "R21",
+        "Q21",
+        "Q22",
+        "P22",
+        "O22",
+        "O21",
+        "O20",
+        "O19"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is west of the central lane",
+      "plan_summary": "I am here for the loud lunch special."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "take the shotgun under fire",
+      "route": "O20;O19;O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is needed to finish this fight",
+      "plan_summary": "Sixty health and one extremely urgent appetizer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "take the southern shotgun before the opponent",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "",
+      "reasoning": "the nearby weapon can decide this close exchange",
+      "plan_summary": "I am grabbing the fire extinguisher."
+    }
+  ]
+}

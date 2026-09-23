@@ -1,0 +1,217 @@
+{
+  "run_id": "run_c94bca35dc9b",
+  "round": 9,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 22.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 40,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 110
+    },
+    "player_2": {
+      "damage_dealt": 40,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1995",
+      "elapsed_ms": null,
+      "event": "run_c94bca35dc9b duel_e1m8_blind_spawn 1995 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c94bca35dc9b duel_e1m8_blind_spawn 1995 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 88,
+        "distance_traveled": 3723.8,
+        "unique_cells_visited": 49,
+        "revisited_cells": 39
+      },
+      "player_2": {
+        "path_points": 88,
+        "distance_traveled": 1707.7,
+        "unique_cells_visited": 19,
+        "revisited_cells": 69
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7121.29,
+    "decision_p95_ms": 9951.0,
+    "decision_max_ms": 9951.0,
+    "mcp_avg_ms": 885.27,
+    "mcp_p95_ms": 2605.0,
+    "mcp_max_ms": 11970.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 2572,
+      "player_2": 3710
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2572,
+      "player_2": 2175
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 15452,
+    "stale_intent_extension_max_ms": 14049
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the shotgun and attack the southern lane",
+      "route": "B12;I12;I16;F16;F17;I17;I22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am submitting my quarterly damage report."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "push toward the last known enemy position",
+      "route": "U32;T32;S32;R32;Q32;P32;O32;N32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "contact near Q22 is the fastest route to the fight",
+      "plan_summary": "I am delivering myself to the danger zone."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "close the distance while approaching the medikit",
+      "route": "N31;N30;N29;N28;N27;N26;M26;L26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is west and the open lane gets me closer",
+      "plan_summary": "I am heading into this with a crumb trail."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "arm up and pursue the opponent",
+      "route": [
+        "I12",
+        "I16",
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "Q22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am advancing my highly questionable career."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "pursue the opponent in the eastern lane",
+      "route": "T22;T29;N29;N32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking this complaint to their doorstep."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "pursue the opponent in the eastern lane",
+      "route": [
+        "T22",
+        "T29",
+        "N29",
+        "N32"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking this complaint to their doorstep."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the nearby medikit before pushing west",
+      "route": "K26;J26;I26;H26;G26",
+      "engagement_policy": "",
+      "reasoning": "115 health is vulnerable and the pickup is only five cells away",
+      "plan_summary": "I am making a medically approved snack run."
+    }
+  ]
+}

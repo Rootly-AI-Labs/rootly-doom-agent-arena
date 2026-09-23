@@ -1,0 +1,379 @@
+{
+  "run_id": "run_99eaf5ce3398",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 51.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 255,
+      "damage_taken": 60,
+      "shots_fired": 7,
+      "shots_hit": 6,
+      "accuracy": 0.857,
+      "final_health": 90
+    },
+    "player_2": {
+      "damage_dealt": 60,
+      "damage_taken": 255,
+      "shots_fired": 14,
+      "shots_hit": 8,
+      "accuracy": 0.571,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3430",
+      "elapsed_ms": null,
+      "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to reach contact before their shotgun wins another duel aim_error="
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3430",
+      "elapsed_ms": null,
+      "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 43685 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 17,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to reach contact before their shotgun wins another duel aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-512) I need to reach contact before their shotgun wins another duel aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-448) I need to reach contact before their shotgun wins another duel aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-384) I need to reach contact before their shotgun wins another duel aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(960,-320) I need to reach contact before their shotgun wins another duel aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 1228 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(896,-320) I need to reach contact before their shotgun wins another duel aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(832,-320) I need to reach contact before their shotgun wins another duel aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 1600 autopilot_action: player_2 action=route_complete reason=I need to reach contact before their shotgun wins another duel aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 2342 autopilot_action: player_2 action=route_complete reason=I need to reach contact before their shotgun wins another duel aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 28885 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 42485 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(320,320) the medikit can sustain me through the shotgun exchange aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 42800 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(384,320) the medikit can sustain me through the shotgun exchange aim_error=-150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 42942 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(448,320) the medikit can sustain me through the shotgun exchange aim_error=141"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 43171 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(512,320) the medikit can sustain me through the shotgun exchange aim_error=150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 43428 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(576,320) the medikit can sustain me through the shotgun exchange aim_error=157"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 43657 autopilot_action: player_2 action=route_complete reason=the medikit can sustain me through the shotgun exchange aim_error=161"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 43685 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 44400 autopilot_action: player_2 action=route_complete reason=the medikit can sustain me through the shotgun exchange aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3430",
+        "elapsed_ms": null,
+        "event": "run_99eaf5ce3398 duel_e1m8_blind_spawn 3430 47228 autopilot_action: player_2 action=route_complete+attack reason=the medikit can sustain me through the shotgun exchange aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 197,
+        "distance_traveled": 3152.0,
+        "unique_cells_visited": 40,
+        "revisited_cells": 157
+      },
+      "player_2": {
+        "path_points": 197,
+        "distance_traveled": 2674.6,
+        "unique_cells_visited": 33,
+        "revisited_cells": 164
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4901.92,
+    "decision_p95_ms": 6594.0,
+    "decision_max_ms": 8815.0,
+    "mcp_avg_ms": 1256.28,
+    "mcp_p95_ms": 1576.0,
+    "mcp_max_ms": 20211.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4588,
+      "player_2": 1544
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1535,
+      "player_2": 1544
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 26323,
+    "stale_intent_extension_max_ms": 26323
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon advantage remains valuable",
+      "plan_summary": "I have a recurring supply emergency."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "push toward the opponent's last seen column",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I need to reach contact before their shotgun wins another duel",
+      "plan_summary": "Round seven: I promise less wandering and more yelling."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upper wall requires a detour",
+      "plan_summary": "The supply run needs a travel budget."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "move through the east lane to the center",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this path avoids blocked cells and closes on the enemy",
+      "plan_summary": "I'm following the map like it owes me rent."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "approach the enemy column from the east",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I will pass through O22 and push north to their position",
+      "plan_summary": "I know where they are; now to prove it."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern corridor leads around the wall",
+      "plan_summary": "The armory is hidden behind bad architecture."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is available in F17",
+      "plan_summary": "I found the special office supply."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "advance north toward the opponent",
+      "route": "O22;N22;M22;L22;K22;J22;I22;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen position lies directly up this open column",
+      "plan_summary": "Here I come, with slightly better directions."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;I21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting was east of the central wall",
+      "plan_summary": "I'm conducting a very direct office inspection."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "sweep through the enemy lane and grab nearby health",
+      "route": "H22;G22;G23;G24;G25;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the medikit can sustain me through the shotgun exchange",
+      "plan_summary": "I'm ducking past them for a health snack."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "push into the right flank",
+      "route": "I21;I22;H22;G22;G21;F21;E21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last cell is just beyond the wall",
+      "plan_summary": "The stapler has found the correct department."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the opponent on the flank",
+      "route": "E21;E22;F22;G22;G23;G24;G25;G26",
+      "engagement_policy": "",
+      "reasoning": "they are visible near the right medikit",
+      "plan_summary": "I found the person responsible for this meeting."
+    }
+  ]
+}

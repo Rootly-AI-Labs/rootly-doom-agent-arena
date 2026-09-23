@@ -1,0 +1,537 @@
+{
+  "run_id": "run_d0f5605f28c5",
+  "round": 10,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 53.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 60,
+      "damage_taken": 155,
+      "shots_fired": 3,
+      "shots_hit": 2,
+      "accuracy": 0.667,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 60,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 90
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3850",
+      "elapsed_ms": null,
+      "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13114 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(832,-320) it is the closest shotgun that remains available aim_error=-3"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 33,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the central pickup enables a decisive attack aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) the central pickup enables a decisive attack aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) the central pickup enables a decisive attack aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) the central pickup enables a decisive attack aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) the central pickup enables a decisive attack aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) the central pickup enables a decisive attack aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 1628 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 2371 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 2628 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 3371 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 3600 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 4342 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 4571 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 5314 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 5542 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 6285 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 6485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 6514 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 7257 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 7457 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 7485 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 8228 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 8428 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the central pickup enables a decisive attack aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 8457 autopilot_action: player_1 action=route_complete reason=the central pickup enables a decisive attack aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13114 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(832,-320) it is the closest shotgun that remains available aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13142 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(832,-320) it is the closest shotgun that remains available aim_error=-148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13200 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,-256) it is the closest shotgun that remains available aim_error=-148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13342 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-192) it is the closest shotgun that remains available aim_error=-65"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13600 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(832,-128) it is the closest shotgun that remains available aim_error=-62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 13828 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(832,-64) it is the closest shotgun that remains available aim_error=-62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 14171 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(768,-64) it is the closest shotgun that remains available aim_error=-65"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 14314 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(704,-64) it is the closest shotgun that remains available aim_error=20"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 14542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(640,-64) it is the closest shotgun that remains available aim_error=25"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 14800 autopilot_action: player_2 action=route_complete reason=it is the closest shotgun that remains available aim_error=28"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3850",
+        "elapsed_ms": null,
+        "event": "run_d0f5605f28c5 duel_e1m8_blind_spawn 3850 15542 autopilot_action: player_2 action=route_complete reason=it is the closest shotgun that remains available aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 207,
+        "distance_traveled": 3019.2,
+        "unique_cells_visited": 38,
+        "revisited_cells": 169
+      },
+      "player_2": {
+        "path_points": 207,
+        "distance_traveled": 2807.1,
+        "unique_cells_visited": 32,
+        "revisited_cells": 175
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4658.92,
+    "decision_p95_ms": 6882.0,
+    "decision_max_ms": 7716.0,
+    "mcp_avg_ms": 964.46,
+    "mcp_p95_ms": 2355.0,
+    "mcp_max_ms": 20212.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4656,
+      "player_2": 5398
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1572,
+      "player_2": 2326
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 31455,
+    "stale_intent_extension_max_ms": 27401
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "chase the visible opponent with the shotgun",
+      "route": [
+        "O21",
+        "N21",
+        "M21",
+        "L21",
+        "K21",
+        "K22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "we traded damage and I have the weapon advantage now",
+      "plan_summary": "Now we both have shotguns; let's make it awkward."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central pickup enables a decisive attack",
+      "plan_summary": "One last supply run for the bossy stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the east lane and claim the lower shotgun",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "matching the opponent's weapon improves my odds in the final duel",
+      "plan_summary": "Final round: I packed courage and a snack-sized plan."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern wall blocks the straight line",
+      "plan_summary": "The last supply run still has a detour."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "approach the lower weapon on the east side",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "it is the closest shotgun that remains available",
+      "plan_summary": "I'm going around the block for a very loud tool."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower corridor reaches the pickup",
+      "plan_summary": "I know where the supply room really is."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "move around the wall toward the lower shotgun",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open route approaches the weapon without crossing obstacles",
+      "plan_summary": "I'm taking the long corner with short patience."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is directly ahead through the passage",
+      "plan_summary": "The final requisition is approved."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "circle around the opponent to the lower shotgun",
+      "route": "O22;O21;O20;O19;O18;O17;O16;P16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is only a few cells away and remains available",
+      "plan_summary": "A quick detour for maximum volume."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last position lies south of center",
+      "plan_summary": "Time for the final in-person review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "take the lower shotgun pickup",
+      "route": "P16;Q16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "it will boost damage for the upcoming close-range fight",
+      "plan_summary": "The loud tool is just around the corner."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep south for contact",
+      "route": "J20;K20;L20;M20;N20;O20;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen near O21",
+      "plan_summary": "I'm searching every desk on this floor."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "sweep north toward the opponent with my shotgun",
+      "route": "R17;Q17;P17;O17;O18;O19;O20;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I have the weapon and need to reach their central lane",
+      "plan_summary": "Shotgun secured; now I can make eye contact."
+    }
+  ]
+}

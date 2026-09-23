@@ -1,0 +1,520 @@
+{
+  "run_id": "run_ca8d11d50cc5",
+  "round": 6,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 34.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 135,
+      "damage_taken": 160,
+      "shots_fired": 19,
+      "shots_hit": 10,
+      "accuracy": 0.526,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 135,
+      "shots_fired": 20,
+      "shots_hit": 14,
+      "accuracy": 0.7,
+      "final_health": 15
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2170",
+      "elapsed_ms": null,
+      "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun can overcome the opponent's early push aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 22,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 30,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun can overcome the opponent's early push aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) the shotgun can overcome the opponent's early push aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the shotgun can overcome the opponent's early push aim_error=37"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) the shotgun can overcome the opponent's early push aim_error=39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) the shotgun can overcome the opponent's early push aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) the shotgun can overcome the opponent's early push aim_error=44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=47"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 1628 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 2371 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 2628 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 3371 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 3600 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 4342 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 4571 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 5314 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 5542 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 6285 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 6485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 6514 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 7257 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 7457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 7485 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 8228 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 8428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun can overcome the opponent's early push aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 8457 autopilot_action: player_2 action=route_complete reason=the shotgun can overcome the opponent's early push aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 28600 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-320,-64) their last position is close to the southern shotgun aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 28628 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-320,-64) their last position is close to the southern shotgun aim_error=-136"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 28685 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,-128) their last position is close to the southern shotgun aim_error=-137"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 28742 autopilot_action: player_1 action=route_waypoint+attack reason=wp=2/8 target=(-320,-128) their last position is close to the southern shotgun aim_erro"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 28942 autopilot_action: player_1 action=route_waypoint+attack reason=wp=3/8 target=(-256,-128) their last position is close to the southern shotgun aim_erro"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 29085 autopilot_action: player_1 action=route_waypoint+attack reason=wp=4/8 target=(-192,-128) their last position is close to the southern shotgun aim_erro"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 29314 autopilot_action: player_1 action=route_waypoint+attack reason=wp=5/8 target=(-128,-128) their last position is close to the southern shotgun aim_erro"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 29542 autopilot_action: player_1 action=route_waypoint+attack reason=wp=6/8 target=(-64,-128) their last position is close to the southern shotgun aim_error"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 29800 autopilot_action: player_1 action=route_waypoint+attack reason=wp=7/8 target=(0,-128) their last position is close to the southern shotgun aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 30142 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(0,-192) their last position is close to the southern shotgun aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_ca8d11d50cc5 duel_e1m8_blind_spawn 2170 30285 autopilot_action: player_1 action=route_complete+attack reason=their last position is close to the southern shotgun aim_error=-1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 131,
+        "distance_traveled": 3219.7,
+        "unique_cells_visited": 28,
+        "revisited_cells": 103
+      },
+      "player_2": {
+        "path_points": 131,
+        "distance_traveled": 2919.0,
+        "unique_cells_visited": 26,
+        "revisited_cells": 105
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5457.11,
+    "decision_p95_ms": 8079.0,
+    "decision_max_ms": 8079.0,
+    "mcp_avg_ms": 1166.0,
+    "mcp_p95_ms": 2791.0,
+    "mcp_max_ms": 16569.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4847,
+      "player_2": 1575
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2547,
+      "player_2": 1575
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 10414,
+    "stale_intent_extension_max_ms": 10414
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the eastern medikit",
+      "route": [
+        "O20",
+        "O21",
+        "O22",
+        "P22",
+        "Q22",
+        "Q23",
+        "Q24",
+        "Q25"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing will support another close-range exchange",
+      "plan_summary": "The nacho needs a napkin and a medikit."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the open eastern lane toward the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "quick center contact cuts off a weapon race",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern weapon",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun can overcome the opponent's early push",
+      "plan_summary": "Nacho diplomacy has officially failed."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push down the open center lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is approaching from the southern side",
+      "plan_summary": "Time to audit the downstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central approach",
+      "route": "V26;V25;U25;T25;S25;S24;S23;S22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center path leads to the weapon",
+      "plan_summary": "I am taking the fast lane to trouble."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the central approach",
+      "route": [
+        "V26",
+        "V25",
+        "U25",
+        "T25",
+        "S25",
+        "S24",
+        "S23",
+        "S22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center path leads to the weapon",
+      "plan_summary": "I am taking the fast lane to trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the middle lane",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen enemy position is south of center",
+      "plan_summary": "I am walking straight into the agenda."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the center lane",
+      "route": "S22;S21;R21;Q21;Q22;P22;O22;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the wall gap lies east",
+      "plan_summary": "I am the chip nobody ordered."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "close on the opponent and contest the weapon lane",
+      "route": "M12;N12;N13;N14;N15;N16;N17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last position is close to the southern shotgun",
+      "plan_summary": "I am bringing the whole filing cabinet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "O21;O20;O19;O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is near but the weapon is within reach",
+      "plan_summary": "I am diving into the loud snack aisle."
+    }
+  ]
+}

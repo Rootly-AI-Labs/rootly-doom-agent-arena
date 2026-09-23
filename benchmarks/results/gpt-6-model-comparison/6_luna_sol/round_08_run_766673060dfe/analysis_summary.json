@@ -1,0 +1,333 @@
+{
+  "run_id": "run_766673060dfe",
+  "round": 8,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 33.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 35,
+      "damage_taken": 155,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 35,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 115
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3010",
+      "elapsed_ms": null,
+      "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 14914 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 9,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 14914 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 21200 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,320) the southern shotgun is still available aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 21400 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-320,256) the southern shotgun is still available aim_error=-21"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 21628 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-320,192) the southern shotgun is still available aim_error=-23"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 21885 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-320,128) the southern shotgun is still available aim_error=-25"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 22114 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-320,64) the southern shotgun is still available aim_error=-27"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 22371 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-320,0) the southern shotgun is still available aim_error=-31"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 22600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-320,-64) the southern shotgun is still available aim_error=-34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 22828 autopilot_action: player_1 action=route_complete reason=the southern shotgun is still available aim_error=-39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_766673060dfe duel_e1m8_blind_spawn 3010 23571 autopilot_action: player_1 action=route_complete reason=the southern shotgun is still available aim_error=-1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 128,
+        "distance_traveled": 2890.8,
+        "unique_cells_visited": 28,
+        "revisited_cells": 100
+      },
+      "player_2": {
+        "path_points": 128,
+        "distance_traveled": 2713.0,
+        "unique_cells_visited": 28,
+        "revisited_cells": 100
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5840.8,
+    "decision_p95_ms": 8576.0,
+    "decision_max_ms": 8576.0,
+    "mcp_avg_ms": 1544.3,
+    "mcp_p95_ms": 2107.0,
+    "mcp_max_ms": 36281.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3612,
+      "player_2": 1580
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2078,
+      "player_2": 1580
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 34207,
+    "stale_intent_extension_max_ms": 32713
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "push into the armed opponent's lane",
+      "route": [
+        "M12",
+        "N12",
+        "N13",
+        "N14",
+        "N15",
+        "N16",
+        "N17",
+        "O17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy has the shotgun so I must take the fight at",
+      "plan_summary": "I am bringing the whole filing cabinet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V32;V25;S25;S21;Q21;Q22;O22;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this short route secured the last victory",
+      "plan_summary": "The nacho has memorized the shortcut."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the open eastern lane toward the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "quick center pressure interrupts their weapon route",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "rush the southern shotgun",
+      "route": [
+        "V32",
+        "V25",
+        "S25",
+        "S21",
+        "Q21",
+        "Q22",
+        "O22",
+        "O18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this short route secured the last victory",
+      "plan_summary": "The nacho has memorized the shortcut."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push down the open center lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is waiting along the southern side",
+      "plan_summary": "Time to audit the downstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the southern shotgun",
+      "route": "O18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber is immediately south",
+      "plan_summary": "Early bird nacho gets the shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the middle lane toward the weapon",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern shotgun is still available",
+      "plan_summary": "I am walking straight into the agenda."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the southern shotgun",
+      "route": [
+        "O18",
+        "Q18",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber is immediately south",
+      "plan_summary": "Early bird nacho gets the shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "close on the armed opponent before they can heal",
+      "route": "M12;N12;N13;N14;N15;N16;N17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last sighting is immediately south of the center lane",
+      "plan_summary": "I am bringing the whole filing cabinet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep the center with shotgun",
+      "route": "R17;R18;O18;N18;N14;M14;L14;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent's last position is north of this chamber",
+      "plan_summary": "The snack has become the hunter."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the center with shotgun",
+      "route": [
+        "R17",
+        "R18",
+        "O18",
+        "N18",
+        "N14",
+        "M14",
+        "L14",
+        "K14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent's last position is north of this chamber",
+      "plan_summary": "The snack has become the hunter."
+    }
+  ]
+}

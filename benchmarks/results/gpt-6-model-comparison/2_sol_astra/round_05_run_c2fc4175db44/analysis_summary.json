@@ -1,0 +1,205 @@
+{
+  "run_id": "run_c2fc4175db44",
+  "round": 5,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 14.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 20,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 3,
+      "accuracy": 0.6,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 20,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 145
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1190",
+      "elapsed_ms": null,
+      "event": "run_c2fc4175db44 duel_e1m8_blind_spawn 1190 5085 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1190",
+      "elapsed_ms": null,
+      "event": "run_c2fc4175db44 duel_e1m8_blind_spawn 1190 13114 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1190",
+        "elapsed_ms": null,
+        "event": "run_c2fc4175db44 duel_e1m8_blind_spawn 1190 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1190",
+        "elapsed_ms": null,
+        "event": "run_c2fc4175db44 duel_e1m8_blind_spawn 1190 13114 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 53,
+        "distance_traveled": 866.5,
+        "unique_cells_visited": 13,
+        "revisited_cells": 40
+      },
+      "player_2": {
+        "path_points": 53,
+        "distance_traveled": 3156.4,
+        "unique_cells_visited": 40,
+        "revisited_cells": 13
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4101.4,
+    "decision_p95_ms": 6591.0,
+    "decision_max_ms": 6591.0,
+    "mcp_avg_ms": 617.53,
+    "mcp_p95_ms": 3612.0,
+    "mcp_max_ms": 5461.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1536,
+      "player_2": 3587
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1536,
+      "player_2": 3587
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "get armed and attack the center",
+      "route": "V25;O25;O18;R18;R17;O17;O20;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am reheating my most questionable idea."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "push toward the center",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am here to staple the agenda."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "hunt across the north corridor",
+      "route": "I20;I11;I08;G08;G12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking attendance with a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push into firing range",
+      "route": "C10;D10;E10;F10;G10;H10;I10;I11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "The stapler wants an in-person meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the western contact",
+      "route": [
+        "I11",
+        "I08",
+        "G08",
+        "G12",
+        "I12",
+        "I17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am delivering the spicy course."
+    }
+  ]
+}

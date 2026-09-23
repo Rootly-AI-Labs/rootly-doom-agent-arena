@@ -1,0 +1,215 @@
+{
+  "run_id": "run_016bb2b3a285",
+  "round": 7,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 22.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 15,
+      "damage_taken": 210,
+      "shots_fired": 3,
+      "shots_hit": 1,
+      "accuracy": 0.333,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 210,
+      "damage_taken": 15,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 135
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1400",
+      "elapsed_ms": null,
+      "event": "run_016bb2b3a285 duel_e1m8_blind_spawn 1400 5085 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "1400",
+      "elapsed_ms": null,
+      "event": "run_016bb2b3a285 duel_e1m8_blind_spawn 1400 19000 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1400",
+        "elapsed_ms": null,
+        "event": "run_016bb2b3a285 duel_e1m8_blind_spawn 1400 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1400",
+        "elapsed_ms": null,
+        "event": "run_016bb2b3a285 duel_e1m8_blind_spawn 1400 19000 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 84,
+        "distance_traveled": 1015.2,
+        "unique_cells_visited": 15,
+        "revisited_cells": 69
+      },
+      "player_2": {
+        "path_points": 84,
+        "distance_traveled": 4653.4,
+        "unique_cells_visited": 54,
+        "revisited_cells": 30
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4715.43,
+    "decision_p95_ms": 8285.0,
+    "decision_max_ms": 8285.0,
+    "mcp_avg_ms": 661.48,
+    "mcp_p95_ms": 2343.0,
+    "mcp_max_ms": 7780.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1526,
+      "player_2": 2320
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1526,
+      "player_2": 2320
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 2500,
+    "stale_intent_extension_max_ms": 2500
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "get armed and attack the center",
+      "route": "V25;O25;O18;R18;R17;O17;O20;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am back with a fork and a grudge."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the western corridor",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "The stapler is back on the clock."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "fight through the western medikit",
+      "route": "C10;D10;E10;F10;G10;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am filing a very hostile expense report."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "pursue contact in the northeast",
+      "route": "I20;I22;G22;G26;G22;I22;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing dinner directly to the suspect."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep the western combat lanes",
+      "route": "F17;I17;I11;I08;G08;G12;I12;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am looking for someone to split this chaos."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "push through the center",
+      "route": "G09;G10;H10;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I brought the stapler to the conference room."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep south and reenter the center",
+      "route": "O12;O17;R17;O17;O22;L22;I22;G22",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am touring every bad table in this restaurant."
+    }
+  ]
+}

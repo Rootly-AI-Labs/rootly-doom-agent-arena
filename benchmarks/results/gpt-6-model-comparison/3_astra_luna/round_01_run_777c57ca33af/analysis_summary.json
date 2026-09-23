@@ -1,0 +1,478 @@
+{
+  "run_id": "run_777c57ca33af",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 36.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 170,
+      "damage_taken": 15,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 135
+    },
+    "player_2": {
+      "damage_dealt": 15,
+      "damage_taken": 170,
+      "shots_fired": 1,
+      "shots_hit": 1,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 24000 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13171 autopilot_action: player_2 action=route_waypoint reason=wp=1/7 target=(576,-64) the open corridor leads closer to the enemy side and useful health aim"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 12
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 2742 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-384) I can approach the pickup from the open southern lane aim_error=-65"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 3400 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(960,-320) I can approach the pickup from the open southern lane aim_error=120"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 3514 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(960,-256) I can approach the pickup from the open southern lane aim_error=-61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13171 autopilot_action: player_2 action=route_waypoint reason=wp=1/7 target=(576,-64) the open corridor leads closer to the enemy side and useful health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13200 autopilot_action: player_2 action=route_waypoint reason=wp=1/7 target=(576,-64) the open corridor leads closer to the enemy side and useful health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13342 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(576,0) the open corridor leads closer to the enemy side and useful health aim_e"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13571 autopilot_action: player_2 action=route_waypoint reason=wp=3/7 target=(576,64) the open corridor leads closer to the enemy side and useful health aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 13828 autopilot_action: player_2 action=route_waypoint reason=wp=4/7 target=(576,128) the open corridor leads closer to the enemy side and useful health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14057 autopilot_action: player_2 action=route_waypoint reason=wp=5/7 target=(576,192) the open corridor leads closer to the enemy side and useful health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14314 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/7 target=(576,256) the open corridor leads closer to the enemy side and useful hea"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14542 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/7 target=(576,320) the open corridor leads closer to the enemy side and useful hea"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14600 autopilot_action: player_2 action=route_waypoint reason=wp=7/7 target=(576,320) the open corridor leads closer to the enemy side and useful health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14800 autopilot_action: player_2 action=route_complete reason=the open corridor leads closer to the enemy side and useful health aim_error=-97"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 14800 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 15457 autopilot_action: player_2 action=route_complete reason=the open corridor leads closer to the enemy side and useful health aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_777c57ca33af duel_e1m8_blind_spawn 1925 24000 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 13,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 1,
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 140,
+        "distance_traveled": 2606.1,
+        "unique_cells_visited": 33,
+        "revisited_cells": 107
+      },
+      "player_2": {
+        "path_points": 140,
+        "distance_traveled": 1724.8,
+        "unique_cells_visited": 21,
+        "revisited_cells": 119
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 13232.62,
+    "decision_p95_ms": 30980.0,
+    "decision_max_ms": 38213.0,
+    "mcp_avg_ms": 1009.53,
+    "mcp_p95_ms": 2860.0,
+    "mcp_max_ms": 13757.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 1,
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 9,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 7,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 13208,
+      "player_2": 7709
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2852,
+      "player_2": 1558
+    },
+    "stale_intent_extension_count": 9,
+    "stale_intent_extension_total_ms": 127270,
+    "stale_intent_extension_max_ms": 25754
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "push toward the opponent",
+      "route": "U32;T32;S32;R32;Q32;P32;O32;N32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen north and close-range contact is the goal",
+      "plan_summary": "I'm taking the scenic route to an awkward ambush."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "get the northern shotgun",
+      "route": "B06;B07;B08;B09;B10;B11;B12;C12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I have scheduled a mandatory shotgun meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern medikit and sweep toward the opponent",
+      "route": [
+        "R32",
+        "Q32",
+        "P32",
+        "P31",
+        "P30",
+        "P29",
+        "P28",
+        "P27"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is nearby and the last sighting lies across the arena",
+      "plan_summary": "I packed snacks for this questionable hike."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance toward the shotgun",
+      "route": "B06;C06;D06;D07;D08;D09;D10;D11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the scenic route to upper management."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "get the shotgun",
+      "route": "C06;D06;D07;D08;D09;D10;D11;D12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am marching toward my promotion."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "advance toward the nearby medikit",
+      "route": "R32;Q32;P32;P31;P30;P29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I can approach the pickup from the open southern lane",
+      "plan_summary": "My nacho confidence is finally kicking in."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "get the shotgun",
+      "route": "D06;D07;D08;D09;D10;D11;D12;E12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am filing this route under urgent."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get the shotgun",
+      "route": [
+        "D06",
+        "D07",
+        "D08",
+        "D09",
+        "D10",
+        "D11",
+        "D12",
+        "E12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am filing this route under urgent."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "close in on the opponent's last seen area",
+      "route": "N32;M32;L32;K32;J32;I32;H32;G32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they were last spotted north and direct pressure should find them",
+      "plan_summary": "I have misplaced my map and my manners."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "reach the northern shotgun",
+      "route": "D06;D07;D08;D09;D10;D11;D12;E12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am still waiting for the elevator to violence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "sweep west toward the shotgun and last sighting",
+      "route": "N32;N31;N30;N29;N28;N27;N26;N26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a weapon upgrade and the opponent are both toward the center",
+      "plan_summary": "I'm bringing nachos to a knife fight."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "round the wall and push toward the fight",
+      "route": [
+        "O31",
+        "O30",
+        "O29",
+        "N29",
+        "N28",
+        "N27",
+        "N26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent and shotgun are west of my current lane",
+      "plan_summary": "I am taking a wrong turn with purpose."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "reach the northern shotgun",
+      "route": [
+        "D06",
+        "D07",
+        "D08",
+        "D09",
+        "D10",
+        "D11",
+        "D12",
+        "E12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am still waiting for the elevator to violence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "reach the medikit and press toward the opponent",
+      "route": "M26;L26;K26;J26;I26;H26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open corridor leads closer to the enemy side and useful health",
+      "plan_summary": "I have found the buffet and the battlefield."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "get the northern shotgun",
+      "route": "F12;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am circling the cubicle of doom."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get the northern shotgun",
+      "route": [
+        "F12",
+        "G12",
+        "H12",
+        "I12",
+        "I13",
+        "I14",
+        "I15",
+        "I16"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am circling the cubicle of doom."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "get the shotgun",
+      "route": "I15;I16;H16;G16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am upgrading my complaint department."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "arm up and pursue the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;I21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing a shotgun to the staff meeting."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "hunt the opponent",
+      "route": "I19;I20;I21;I22;H22;G22;G23;G24",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am conducting an aggressive performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "push west around the central wall toward the enemy",
+      "route": "G25;G24;G23;G22;G21;G20;F20",
+      "engagement_policy": "",
+      "reasoning": "the opponent is within fighting distance beyond the central obstacle",
+      "plan_summary": "My lunch break has become a pursuit."
+    }
+  ]
+}

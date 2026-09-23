@@ -1,0 +1,538 @@
+{
+  "run_id": "run_3cde0105fef6",
+  "round": 5,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 46.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 45,
+      "shots_fired": 25,
+      "shots_hit": 6,
+      "accuracy": 0.24,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 155,
+      "shots_fired": 25,
+      "shots_hit": 4,
+      "accuracy": 0.16,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2310",
+      "elapsed_ms": null,
+      "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun gives the strongest close-range damage aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 41,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 29,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun gives the strongest close-range damage aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) quick center contact cuts off the shotgun route aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) the shotgun gives the strongest close-range damage aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) quick center contact cuts off the shotgun route aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the shotgun gives the strongest close-range damage aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) quick center contact cuts off the shotgun route aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) quick center contact cuts off the shotgun route aim_error=39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) the shotgun gives the strongest close-range damage aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) quick center contact cuts off the shotgun route aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) the shotgun gives the strongest close-range damage aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) the shotgun gives the strongest close-range damage aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) quick center contact cuts off the shotgun route aim_error=44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun gives the strongest close-range damage aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1628 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 1628 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2371 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2371 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun gives the strongest close-range damage aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2628 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 2628 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3371 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3371 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun gives the strongest close-range damage aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3600 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 3600 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4342 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4342 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun gives the strongest close-range damage aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4571 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 4571 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5314 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5314 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) quick center contact cuts off the shotgun route aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun gives the strongest close-range damage aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5542 autopilot_action: player_2 action=route_complete reason=the shotgun gives the strongest close-range damage aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2310",
+        "elapsed_ms": null,
+        "event": "run_3cde0105fef6 duel_e1m8_blind_spawn 2310 5542 autopilot_action: player_1 action=route_complete reason=quick center contact cuts off the shotgun route aim_error=50"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 178,
+        "distance_traveled": 3568.2,
+        "unique_cells_visited": 34,
+        "revisited_cells": 144
+      },
+      "player_2": {
+        "path_points": 178,
+        "distance_traveled": 2657.1,
+        "unique_cells_visited": 21,
+        "revisited_cells": 157
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5563.75,
+    "decision_p95_ms": 6272.0,
+    "decision_max_ms": 11240.0,
+    "mcp_avg_ms": 677.58,
+    "mcp_p95_ms": 2075.0,
+    "mcp_max_ms": 3893.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5149,
+      "player_2": 6837
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2043,
+      "player_2": 3747
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 3800,
+    "stale_intent_extension_max_ms": 3732
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the open eastern lane toward the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "quick center contact cuts off the shotgun route",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "approach the center weapon",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun gives the strongest close-range damage",
+      "plan_summary": "The nacho is back, with fewer excuses."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push down the open center lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is approaching from the south",
+      "plan_summary": "Time to audit the downstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central approach",
+      "route": "V26;V25;U25;T25;S25;S24;S23;S22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon chamber is northwest",
+      "plan_summary": "I am speed walking into a bad decision."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the middle lane",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen enemy position is south of center",
+      "plan_summary": "I am walking straight into the agenda."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the chamber entrance",
+      "route": [
+        "V25",
+        "U25",
+        "T25",
+        "S25",
+        "S24",
+        "S23",
+        "S22",
+        "S21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern lane is open",
+      "plan_summary": "My cheese is sliding off at this speed."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the chamber passage",
+      "route": "S22;S21;R21;Q21;Q22;P22;O22;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east bend is the safe opening",
+      "plan_summary": "I am following the smell of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "close on the opponent and contest the weapon lane",
+      "route": "M12;N12;N13;N14;N15;N16;N17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen position is close to the southern shotgun",
+      "plan_summary": "I am bringing the whole filing cabinet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "take the shotgun and keep the pressure on",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is nearby but the weapon is still available",
+      "plan_summary": "I am grabbing the fire extinguisher."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the chamber passage",
+      "route": [
+        "S22",
+        "S21",
+        "R21",
+        "Q21",
+        "Q22",
+        "P22",
+        "O22",
+        "O21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east bend is the safe opening",
+      "plan_summary": "I am following the smell of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "hunt the opponent from the weapon lane",
+      "route": "R17;Q17;P17;O17;O18;O19;O20;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last sighting is only a few cells north",
+      "plan_summary": "The intern is taking the scenic chase."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "grab the shotgun while fighting",
+      "route": "O21;O20;O19;O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon will improve damage before the next exchange",
+      "plan_summary": "I am one hallway from a very loud sandwich."
+    }
+  ]
+}

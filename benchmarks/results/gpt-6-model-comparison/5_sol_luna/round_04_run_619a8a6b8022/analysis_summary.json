@@ -1,0 +1,313 @@
+{
+  "run_id": "run_619a8a6b8022",
+  "round": 4,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 35.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 55,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 95
+    },
+    "player_2": {
+      "damage_dealt": 55,
+      "damage_taken": 150,
+      "shots_fired": 10,
+      "shots_hit": 4,
+      "accuracy": 0.4,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2205",
+      "elapsed_ms": null,
+      "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 1600 autopilot_action: player_2 action=route_complete reason=the lower weapon is available and counters the opponent's likely shotgun rush aim_error=32"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 2,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 1600 autopilot_action: player_2 action=route_complete reason=the lower weapon is available and counters the opponent's likely shotgun rush aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 2342 autopilot_action: player_2 action=route_complete reason=the lower weapon is available and counters the opponent's likely shotgun rush aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21200 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is still available aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21228 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is still available aim_error=-156"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21285 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(-128,192) the pickup is still available aim_error=-156"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21400 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(-64,192) the pickup is still available aim_error=29"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21742 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-64,256) the pickup is still available aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 21885 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-64,320) the pickup is still available aim_error=123"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 22228 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(0,320) the pickup is still available aim_error=139"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 22485 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(0,384) the pickup is still available aim_error=64"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 22628 autopilot_action: player_1 action=route_complete reason=the pickup is still available aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 22657 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_619a8a6b8022 duel_e1m8_blind_spawn 2205 23371 autopilot_action: player_1 action=route_complete reason=the pickup is still available aim_error=2"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 133,
+        "distance_traveled": 2503.5,
+        "unique_cells_visited": 32,
+        "revisited_cells": 101
+      },
+      "player_2": {
+        "path_points": 133,
+        "distance_traveled": 2032.7,
+        "unique_cells_visited": 23,
+        "revisited_cells": 110
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5088.3,
+    "decision_p95_ms": 15053.0,
+    "decision_max_ms": 15053.0,
+    "mcp_avg_ms": 656.3,
+    "mcp_p95_ms": 1569.0,
+    "mcp_max_ms": 10902.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3081
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1545
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 6776,
+    "stale_intent_extension_max_ms": 3389
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the same weapon route has won three rounds",
+      "plan_summary": "My quarterly target is one very loud purchase."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the lower shotgun through the east lane",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower weapon is available and counters the opponent's likely shotgun rush",
+      "plan_summary": "I'm getting my own boomstick before the reunion."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern wall blocks direct entry",
+      "plan_summary": "The supply closet has a ridiculous commute."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep around the wall toward the lower shotgun",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east side is the accessible path toward the weapon",
+      "plan_summary": "I'm taking the scenic route to loud confidence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the passage bends below the central wall",
+      "plan_summary": "I signed the wrong requisition form again."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "move west to the lower shotgun approach",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is still available near the center",
+      "plan_summary": "I'm trying confidence on for size."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is still available",
+      "plan_summary": "Finally, the correct aisle."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting was southeast of the central room",
+      "plan_summary": "I'm bringing the paperwork to them."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the opponent",
+      "route": "J20;K20;L20;M20;N20;O20;O21;O22",
+      "engagement_policy": "",
+      "reasoning": "the visible target is directly south",
+      "plan_summary": "Your performance review is now in person."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "circle to the available lower shotgun",
+      "route": "O22;O21;O20;O19;O18;O17;O16;P16",
+      "engagement_policy": "",
+      "reasoning": "the stronger weapon could even the close fight",
+      "plan_summary": "A quick weapon detour is totally not procrastinating."
+    }
+  ]
+}

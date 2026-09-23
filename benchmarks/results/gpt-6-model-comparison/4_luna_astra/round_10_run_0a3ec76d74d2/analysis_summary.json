@@ -1,0 +1,585 @@
+{
+  "run_id": "run_0a3ec76d74d2",
+  "round": 10,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 66.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 120,
+      "damage_taken": 155,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 120,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 30
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3605",
+      "elapsed_ms": null,
+      "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 24800 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-576,128) the shotgun is essential for the last fight aim_error=5"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 85,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 24800 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-576,128) the shotgun is essential for the last fight aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 24828 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-576,128) the shotgun is essential for the last fight aim_error=-161"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 24857 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-576,192) the shotgun is essential for the last fight aim_error=-161"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 25114 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-512,192) the shotgun is essential for the last fight aim_error=121"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 25257 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-448,192) the shotgun is essential for the last fight aim_error=28"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 25485 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-384,192) the shotgun is essential for the last fight aim_error=27"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 25714 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-320,192) the shotgun is essential for the last fight aim_error=27"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 25971 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-256,192) the shotgun is essential for the last fight aim_error=30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 26200 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 26457 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 27200 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=7"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 27571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 27600 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-112"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 28342 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 28514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 28542 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=65"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 29285 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 29485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 29514 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-110"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 30257 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 30457 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 30485 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=65"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 31228 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 31428 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 31457 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-110"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 32200 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 32400 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 32428 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=65"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 33171 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 33371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 33400 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-110"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 34142 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 34342 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the shotgun is essential for the last fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 34371 autopilot_action: player_1 action=route_complete reason=the shotgun is essential for the last fight aim_error=65"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 36285 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 37971 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 45685 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(0,320) we have the shotgun and full health aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 45714 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(0,320) we have the shotgun and full health aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 45885 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(0,256) we have the shotgun and full health aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_0a3ec76d74d2 duel_e1m8_blind_spawn 3605 46142 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(0,192) we have the shotgun and full health aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 9
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 260,
+        "distance_traveled": 4082.1,
+        "unique_cells_visited": 45,
+        "revisited_cells": 215
+      },
+      "player_2": {
+        "path_points": 260,
+        "distance_traveled": 2563.1,
+        "unique_cells_visited": 33,
+        "revisited_cells": 227
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6689.94,
+    "decision_p95_ms": 10017.0,
+    "decision_max_ms": 10682.0,
+    "mcp_avg_ms": 689.71,
+    "mcp_p95_ms": 1625.0,
+    "mcp_max_ms": 9993.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 5,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 8551,
+      "player_2": 6217
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2317,
+      "player_2": 1569
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 15937,
+    "stale_intent_extension_max_ms": 13002
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm cooking one last comeback."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the central shotgun for the final fight",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon route is our strongest opening",
+      "plan_summary": "Final round: this cowboy means business!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep the southern center",
+      "route": "U24;T24;S24;R24;Q24;P24;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm making the last course count."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep toward the opponent and weapon",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is last seen beyond the center",
+      "plan_summary": "The final appointment is non-negotiable!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the center passage",
+      "route": [
+        "T24",
+        "S24",
+        "R24",
+        "Q24",
+        "P24",
+        "O24",
+        "O23",
+        "O22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm bringing dinner to the danger zone."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "cross toward the central weapon",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is essential for the last fight",
+      "plan_summary": "Fast lane to my final-round upgrade!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "get the southern shotgun",
+      "route": "O22;O21;O20;O19;O18;P18;Q18;R18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm grabbing the final argument."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun before the final engagement",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "it is close and improves close-range damage",
+      "plan_summary": "Last call at the central tool crib!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "arm for the final fight",
+      "route": "O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm about to become an acquired taste."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm and engage the center",
+      "route": [
+        "Q18",
+        "R18",
+        "R17",
+        "Q17",
+        "P17",
+        "O17",
+        "N17",
+        "N18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm serving the loud course now."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "push toward the opponent's last seen southeast position",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "we have the shotgun and full health",
+      "plan_summary": "Final-round buckshot is en route!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "attack across the center",
+      "route": "Q17;P17;O17;N17;N18;N19;N20;M20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm demanding a rematch with the menu."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "pursue the last seen opponent into the south lane",
+      "route": "J14;J13;J12;K12;L12;M12;N12;N13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is east and south of the center",
+      "plan_summary": "I can see the final meeting from here!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "force the final engagement",
+      "route": [
+        "O17",
+        "N17",
+        "N18",
+        "N19",
+        "N20",
+        "M20",
+        "L20",
+        "K20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm bringing this dinner to a loud conclusion."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "force the final fight at the opponent's last seen cell",
+      "route": "N13;N14;N15;N16;N17;N18;N19;N20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "we have full health and the shotgun",
+      "plan_summary": "Final meeting begins now!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the northern center",
+      "route": "L20;K20;J20;J19;J18;J17;J16;J15",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I'm checking every table for my rival."
+    }
+  ]
+}

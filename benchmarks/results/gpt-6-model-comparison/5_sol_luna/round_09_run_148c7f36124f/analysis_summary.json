@@ -1,0 +1,268 @@
+{
+  "run_id": "run_148c7f36124f",
+  "round": 9,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 71.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 65,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 85
+    },
+    "player_2": {
+      "damage_dealt": 65,
+      "damage_taken": 160,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3920",
+      "elapsed_ms": null,
+      "event": "run_148c7f36124f duel_e1m8_blind_spawn 3920 26742 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3920",
+        "elapsed_ms": null,
+        "event": "run_148c7f36124f duel_e1m8_blind_spawn 3920 26742 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3920",
+        "elapsed_ms": null,
+        "event": "run_148c7f36124f duel_e1m8_blind_spawn 3920 42914 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 273,
+        "distance_traveled": 3890.0,
+        "unique_cells_visited": 49,
+        "revisited_cells": 224
+      },
+      "player_2": {
+        "path_points": 272,
+        "distance_traveled": 2890.9,
+        "unique_cells_visited": 33,
+        "revisited_cells": 239
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5538.36,
+    "decision_p95_ms": 6314.0,
+    "decision_max_ms": 20059.0,
+    "mcp_avg_ms": 937.68,
+    "mcp_p95_ms": 1590.0,
+    "mcp_max_ms": 17516.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 6,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 9312,
+      "player_2": 6144
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1581,
+      "player_2": 1542
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 21010,
+    "stale_intent_extension_max_ms": 12064
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon has won every prior duel",
+      "plan_summary": "The stapler wants its annual equipment budget."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "head toward the lower shotgun",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower weapon is available and needed for this fight",
+      "plan_summary": "I'm fetching the boomstick before they do."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upper wall forces a detour",
+      "plan_summary": "This office needs a direct hallway."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the east route toward the lower shotgun",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open lower weapon is my best answer to their rush",
+      "plan_summary": "I'm finding the shotgun before they find me."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower passage bypasses blocked cells",
+      "plan_summary": "I am filing a complaint about this floor plan."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach the open lower shotgun",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a weapon upgrade is more useful than trading pistol shots",
+      "plan_summary": "I'm bringing hardware to this awkward meeting."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is close through the passage",
+      "plan_summary": "The supplies are finally within reach."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "sweep to the lower shotgun pickup",
+      "route": "O22;O21;O20;O19;O18;O17;O16;P16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the nearby upgrade can close the damage gap",
+      "plan_summary": "I'm taking the boomstick while the coast is clear."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "sweep toward the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting was on the east side",
+      "plan_summary": "I'm moving this discussion to their desk."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "grab the lower shotgun now",
+      "route": "P16;Q16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is one short route away and will strengthen my attack",
+      "plan_summary": "I see the boomstick; this is my big moment."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep the right flank",
+      "route": "J20;I20;I21;I22;I23;I24;I25;I26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen by G26",
+      "plan_summary": "Every department gets an inspection today."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "clear the opponent's last position",
+      "route": "I26;H26;G26;G25;G24;G23;G22;F22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last cell is directly north",
+      "plan_summary": "I found the department; now where's the manager?"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "approach the opponent with my new shotgun",
+      "route": "R17;Q17;P17;O17;O18;O19;O20;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I now have the weapon upgrade and can take the fight",
+      "plan_summary": "Now I have a boomstick and a terrible greeting."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "sweep the south center",
+      "route": "F22;G22;H22;I22;J22;K22;L22;M22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the flank is empty and contact is overdue",
+      "plan_summary": "I'm checking the break room for fugitives."
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "run_id": "run_d27b4921349b",
+  "round": 10,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 20.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 50,
+      "damage_taken": 155,
+      "shots_fired": 7,
+      "shots_hit": 5,
+      "accuracy": 0.714,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 50,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 110
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1750",
+      "elapsed_ms": null,
+      "event": "run_d27b4921349b duel_e1m8_blind_spawn 1750 5085 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1750",
+      "elapsed_ms": null,
+      "event": "run_d27b4921349b duel_e1m8_blind_spawn 1750 14142 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_d27b4921349b duel_e1m8_blind_spawn 1750 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_d27b4921349b duel_e1m8_blind_spawn 1750 14142 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 80,
+        "distance_traveled": 1693.5,
+        "unique_cells_visited": 23,
+        "revisited_cells": 57
+      },
+      "player_2": {
+        "path_points": 80,
+        "distance_traveled": 4564.0,
+        "unique_cells_visited": 52,
+        "revisited_cells": 28
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5663.43,
+    "decision_p95_ms": 7003.0,
+    "decision_max_ms": 7003.0,
+    "mcp_avg_ms": 572.77,
+    "mcp_p95_ms": 2348.0,
+    "mcp_max_ms": 7826.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2321
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2321
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 3214,
+    "stale_intent_extension_max_ms": 1269
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "get armed and attack the center",
+      "route": "V25;O25;O18;R18;R17;O17;O20;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I saved my worst table manners for dessert."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "reach the eastern route",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my final performance review outside."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "press through the north lane",
+      "route": "B11;B12;B13;B14;B15;B16;B17;B18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "The stapler has left the building."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "press the opponent across the north",
+      "route": "I20;I11;I08;G08;G12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering the final course personally."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "find the opponent in the northern lanes",
+      "route": "F17;I17;I22;G22;G26;G22;I22;L22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am chasing the last crumb of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the eastern flank",
+      "route": "B19;B20;B21;B22;B23;C23;D23;E23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I found a side door to management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "pursue the opponent to the north edge",
+      "route": [
+        "L22",
+        "I22",
+        "B22",
+        "B23"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking dessert to your hiding place."
+    }
+  ]
+}
