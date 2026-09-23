@@ -1,6 +1,18 @@
 # GPT-6 Model Comparison: Astra, Sol and Luna in Doom
 
-60 completed Doom Agent Arena matches across GPT-6 Astra, Sol, and Luna. Each model played 40 matches: 20 as Player 1 and 20 as Player 2. Each pair played ten matches in each orientation. All matches ended in elimination; there were no draws.
+## TL;DR
+
+We benchmarked GPT-6 Astra, Sol and Luna in **60 head-to-head Doom matches**, all at medium reasoning effort.
+
+- **Luna delivered the most wins per dollar.** It won 25% of its matches, but cost about **$0.02 per match**. Across the benchmark, that worked out to **5.6× as many wins per dollar as Sol and 9.8× as many as Astra**.
+- **Astra won the most matches:** 33 out of 40 (**82.5%**), at about **$0.63 per match**.
+- **Sol made the fastest decisions:** **5.34 seconds** from observation to plan on average. It won **42.5%** of its matches, at about **$0.19 per match**.
+
+The model that wins most often can be different from the one that gives you the most wins for your money. Which matters more depends on what a failed attempt costs you.
+
+**How the matches worked:** Astra played Sol, Astra played Luna, and Sol played Luna. Each pair played 20 matches, swapping player positions after 10. That gives 60 matches total and 40 appearances per model. Every match ended in elimination; there were no draws.
+
+Costs are estimates at Standard API rates for all logged session requests, including losing matches. Wins per dollar means total wins divided by that full-session cost. Decision times include host/orchestration time, not just model inference.
 
 ## Leaderboard
 
