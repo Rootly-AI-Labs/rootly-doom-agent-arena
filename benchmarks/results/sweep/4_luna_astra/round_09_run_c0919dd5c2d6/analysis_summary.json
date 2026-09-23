@@ -1,0 +1,556 @@
+{
+  "run_id": "run_c0919dd5c2d6",
+  "round": 9,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 49.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 100,
+      "damage_taken": 155,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 100,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 50
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) the central shotgun route keeps beating the opponent aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 36,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) the central shotgun route keeps beating the opponent aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 142 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,512) the central shotgun route keeps beating the opponent aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,448) the central shotgun route keeps beating the opponent aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 628 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,384) the central shotgun route keeps beating the opponent aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,320) the central shotgun route keeps beating the opponent aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 1228 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-896,320) the central shotgun route keeps beating the opponent aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-832,320) the central shotgun route keeps beating the opponent aim_error=26"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 1600 autopilot_action: player_1 action=route_complete reason=the central shotgun route keeps beating the opponent aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 2342 autopilot_action: player_1 action=route_complete reason=the central shotgun route keeps beating the opponent aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 19600 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-576,128) the upgrade counters the southern shotgun aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 19628 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-576,128) the upgrade counters the southern shotgun aim_error=-161"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 19657 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-576,192) the upgrade counters the southern shotgun aim_error=-161"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 19914 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-512,192) the upgrade counters the southern shotgun aim_error=121"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 20057 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-448,192) the upgrade counters the southern shotgun aim_error=28"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 20285 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-384,192) the upgrade counters the southern shotgun aim_error=27"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 20514 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-320,192) the upgrade counters the southern shotgun aim_error=27"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 20771 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-256,192) the upgrade counters the southern shotgun aim_error=29"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 21000 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=31"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 21257 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 22000 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 22371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 22400 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 23142 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 23314 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 23342 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 24085 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 24285 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 24314 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 25057 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 25257 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 25285 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 26028 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 26228 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) the upgrade counters the southern shotgun aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 26257 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 27000 autopilot_action: player_1 action=route_complete reason=the upgrade counters the southern shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 28571 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c0919dd5c2d6 duel_e1m8_blind_spawn 2625 43857 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "Controller token file is for run_id run_fffa1e1134e3, but MCP client is on run_c0919dd5c2d6.": 1,
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 193,
+        "distance_traveled": 3682.0,
+        "unique_cells_visited": 39,
+        "revisited_cells": 154
+      },
+      "player_2": {
+        "path_points": 193,
+        "distance_traveled": 2232.4,
+        "unique_cells_visited": 32,
+        "revisited_cells": 161
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6276.71,
+    "decision_p95_ms": 8061.0,
+    "decision_max_ms": 11853.0,
+    "mcp_avg_ms": 522.13,
+    "mcp_p95_ms": 1576.0,
+    "mcp_max_ms": 5215.0
+  },
+  "errors": {
+    "Controller token file is for run_id run_fffa1e1134e3, but MCP client is on run_c0919dd5c2d6.": 1,
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1547,
+      "player_2": 4624
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1547,
+      "player_2": 1554
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 8796,
+    "stale_intent_extension_max_ms": 5847
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the opponent",
+      "route": "Q17;P17;O17;O16;O15;O14;O13;N13",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I'm arriving from the wrong side of dinner."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the central shotgun",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central shotgun route keeps beating the opponent",
+      "plan_summary": "Cowboy\u2019s tenth-round paperwork starts early!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm reheating the comeback."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "enter the center",
+      "route": "U24;T24;S24;R24;Q24;P24;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm delivering trouble while hot."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep into the central lane",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen southeast",
+      "plan_summary": "The cowboy is on schedule for once!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the southern passage",
+      "route": [
+        "R24",
+        "Q24",
+        "P24",
+        "O24",
+        "O23",
+        "O22",
+        "O21",
+        "O20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm looking for the table of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "cross center toward the shotgun",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upgrade counters the southern shotgun",
+      "plan_summary": "Heading back to the tool crib!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "get the central shotgun before engaging",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this weapon route has produced consistent wins",
+      "plan_summary": "I\u2019m staying loyal to my shotgun!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "get the shotgun",
+      "route": "O22;O21;O20;O19;O18;P18;Q18;R18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm one angry noodle away from armed."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "advance toward the opponent southeast",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last seen position is O13",
+      "plan_summary": "Delivery route southeast, express service!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm for the fight",
+      "route": [
+        "O20",
+        "O19",
+        "O18",
+        "P18",
+        "Q18",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm ready to argue in shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "arm and attack east center",
+      "route": "R17;Q17;P17;O17;N17;N18;N19;N20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm coming up with a very loud plan."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "close on the opponent's last seen area",
+      "route": "J14;J13;J12;K12;L12;M12;N12;N13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they were spotted around O13",
+      "plan_summary": "I\u2019m two rows from the conference room!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "secure the shotgun and engage",
+      "route": [
+        "R16",
+        "R17",
+        "Q17",
+        "P17",
+        "O17",
+        "N17",
+        "N18",
+        "N19"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm making sure the fork is actually in my hand."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the visible opponent",
+      "route": "N13;N14;N15;N16;N17;N18;N19;N20",
+      "engagement_policy": "",
+      "reasoning": "the opponent is close and my shotgun is ready",
+      "plan_summary": "I\u2019m going straight to the final review!"
+    }
+  ]
+}

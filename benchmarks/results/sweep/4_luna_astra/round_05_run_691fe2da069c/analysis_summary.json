@@ -1,0 +1,281 @@
+{
+  "run_id": "run_691fe2da069c",
+  "round": 5,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 48.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 125,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 25
+    },
+    "player_2": {
+      "damage_dealt": 125,
+      "damage_taken": 155,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2380",
+      "elapsed_ms": null,
+      "event": "run_691fe2da069c duel_e1m8_blind_spawn 2380 32514 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_691fe2da069c duel_e1m8_blind_spawn 2380 32514 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_691fe2da069c duel_e1m8_blind_spawn 2380 39285 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 187,
+        "distance_traveled": 3226.0,
+        "unique_cells_visited": 38,
+        "revisited_cells": 149
+      },
+      "player_2": {
+        "path_points": 187,
+        "distance_traveled": 2888.6,
+        "unique_cells_visited": 32,
+        "revisited_cells": 155
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5508.54,
+    "decision_p95_ms": 8331.0,
+    "decision_max_ms": 8852.0,
+    "mcp_avg_ms": 477.51,
+    "mcp_p95_ms": 1579.0,
+    "mcp_max_ms": 2439.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1538,
+      "player_2": 3955
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1538,
+      "player_2": 2400
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm back and still undercooked."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the central shotgun",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is racing for the southern weapon",
+      "plan_summary": "I\u2019m heading to the tool crib first!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep into the center",
+      "route": "V24;U24;T24;S24;R24;Q24;P24;O24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm invading the lunch queue."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep east toward the opponent",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center gives the fastest route to the southern fight",
+      "plan_summary": "Let\u2019s get this meeting over with!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "push toward the weapon alcove",
+      "route": "R24;Q24;P24;O24;O23;O22;O21;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm following the smell of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the upper center",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this route leads to both the weapon and opponent",
+      "plan_summary": "Taking the corridor, please hold my calls!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach the shotgun",
+      "route": "O23;O22;O21;O20;O19;O18;P18;Q18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm hungry for better equipment."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "claim the center shotgun",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is likely carrying the southern weapon",
+      "plan_summary": "I\u2019m getting the one tool they forgot!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the southern weapon",
+      "route": [
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "P18",
+        "Q18",
+        "R18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm ready for a louder personality."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "push toward the opponent's side",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is last seen south of center",
+      "plan_summary": "I\u2019m charging this under urgent business!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "arm and hunt west",
+      "route": "R18;R17;Q17;P17;O17;N17;N16;N15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm turning dinner into a confrontation."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "pursue the enemy into the southern center",
+      "route": "J14;J13;J12;K12;L12;M12;N12;N13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last known cell is close to this lane",
+      "plan_summary": "I\u2019m taking the stairs to the other department!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the western center",
+      "route": [
+        "O17",
+        "N17",
+        "N16",
+        "N15",
+        "N14",
+        "M14",
+        "L14",
+        "L13"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm checking the usual trouble table."
+    }
+  ]
+}

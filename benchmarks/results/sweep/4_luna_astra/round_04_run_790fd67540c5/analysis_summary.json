@@ -1,0 +1,382 @@
+{
+  "run_id": "run_790fd67540c5",
+  "round": 4,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 52.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 80,
+      "damage_taken": 160,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 80,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 70
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2555",
+      "elapsed_ms": null,
+      "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 23914 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 10,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 23914 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 39914 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-192,128) keep moving while the shotgun lands damage aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 39942 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-192,128) keep moving while the shotgun lands damage aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 40028 autopilot_action: player_1 action=route_waypoint reason=wp=2/6 target=(-256,128) keep moving while the shotgun lands damage aim_error=48"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 40171 autopilot_action: player_1 action=route_waypoint reason=wp=3/6 target=(-320,128) keep moving while the shotgun lands damage aim_error=-137"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 40485 autopilot_action: player_1 action=route_waypoint reason=wp=4/6 target=(-320,192) keep moving while the shotgun lands damage aim_error=-145"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 40628 autopilot_action: player_1 action=route_waypoint reason=wp=5/6 target=(-320,256) keep moving while the shotgun lands damage aim_error=139"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 40885 autopilot_action: player_1 action=route_waypoint reason=wp=6/6 target=(-320,320) keep moving while the shotgun lands damage aim_error=136"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 41114 autopilot_action: player_1 action=route_complete reason=keep moving while the shotgun lands damage aim_error=138"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 41857 autopilot_action: player_1 action=route_complete reason=keep moving while the shotgun lands damage aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2555",
+        "elapsed_ms": null,
+        "event": "run_790fd67540c5 duel_e1m8_blind_spawn 2555 43228 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 202,
+        "distance_traveled": 3792.8,
+        "unique_cells_visited": 37,
+        "revisited_cells": 165
+      },
+      "player_2": {
+        "path_points": 203,
+        "distance_traveled": 4010.1,
+        "unique_cells_visited": 35,
+        "revisited_cells": 168
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5751.19,
+    "decision_p95_ms": 7425.0,
+    "decision_max_ms": 11774.0,
+    "mcp_avg_ms": 491.49,
+    "mcp_p95_ms": 1832.0,
+    "mcp_max_ms": 2368.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 7734
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2341
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 553,
+    "stale_intent_extension_max_ms": 553
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the center shotgun",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent tends to fight near the middle",
+      "plan_summary": "No more paperwork, only buckshot!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern weapon",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm back for thirds."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep toward the center and enemy",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a direct center approach reduces search time",
+      "plan_summary": "I\u2019m expediting this meeting!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cut toward the shotgun",
+      "route": "V23;V22;V21;V20;U20;T20;S20;R20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm taking a shortcut to the food fight."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "cross the upper lane toward the shotgun",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this approach reaches the upgrade efficiently",
+      "plan_summary": "The shortcut is approved by management!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the southern center",
+      "route": [
+        "V22",
+        "V21",
+        "V20",
+        "U20",
+        "T20",
+        "S20",
+        "R20",
+        "Q20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm a fast carb with slow judgment."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun for the approaching fight",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "damage output matters against a strong opponent",
+      "plan_summary": "I\u2019m upgrading before the budget meeting!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "round the wall toward the shotgun",
+      "route": "Q20;Q21;Q22;P22;O22;O21;O20;O19",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm negotiating with architecture."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "push toward the opponent's last seen lane",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the enemy is near the southern center",
+      "plan_summary": "I\u2019m bringing the new tool to the old meeting!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "get into the shotgun alcove",
+      "route": [
+        "P22",
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "P18",
+        "Q18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm here for the kitchen upgrade."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "push through the opponent's last seen lane",
+      "route": "J14;J13;J12;I12;H12;G12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "keep moving while the shotgun lands damage",
+      "plan_summary": "One more aisle and I\u2019ll find them!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "take the shotgun",
+      "route": "O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm about to get loudly impolite."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "push to the opponent's last known cell",
+      "route": "G12;H12;I12;J12;K12;L12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern center is our best contact point",
+      "plan_summary": "I\u2019m advancing to the meeting room!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "arm and push west",
+      "route": "R17;Q17;P17;O17;N17;N16;N15;N14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm taking my fork to the fight."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "take the nearby medkit while engaging",
+      "route": "L12;L11;L10",
+      "engagement_policy": "",
+      "reasoning": "the medkit may keep me alive through this exchange",
+      "plan_summary": "I\u2019m grabbing a first-aid promotion!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "press the western opponent",
+      "route": [
+        "O17",
+        "N17",
+        "N16",
+        "N15",
+        "N14",
+        "M14",
+        "L14",
+        "L13"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm chasing the main course."
+    }
+  ]
+}

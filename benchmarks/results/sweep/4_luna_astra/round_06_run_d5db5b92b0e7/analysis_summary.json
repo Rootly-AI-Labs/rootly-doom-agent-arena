@@ -1,0 +1,379 @@
+{
+  "run_id": "run_d5db5b92b0e7",
+  "round": 6,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 40.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 65,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 85
+    },
+    "player_2": {
+      "damage_dealt": 65,
+      "damage_taken": 150,
+      "shots_fired": 3,
+      "shots_hit": 2,
+      "accuracy": 0.667,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2100",
+      "elapsed_ms": null,
+      "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) the central shotgun beat the opponent last round aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 10,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) the central shotgun beat the opponent last round aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 142 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,512) the central shotgun beat the opponent last round aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,448) the central shotgun beat the opponent last round aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 628 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,384) the central shotgun beat the opponent last round aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,320) the central shotgun beat the opponent last round aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 1228 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-896,320) the central shotgun beat the opponent last round aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-832,320) the central shotgun beat the opponent last round aim_error=26"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 1600 autopilot_action: player_1 action=route_complete reason=the central shotgun beat the opponent last round aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 2342 autopilot_action: player_1 action=route_complete reason=the central shotgun beat the opponent last round aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 23057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_d5db5b92b0e7 duel_e1m8_blind_spawn 2100 37771 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 4,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 156,
+        "distance_traveled": 3452.3,
+        "unique_cells_visited": 36,
+        "revisited_cells": 120
+      },
+      "player_2": {
+        "path_points": 156,
+        "distance_traveled": 2061.7,
+        "unique_cells_visited": 33,
+        "revisited_cells": 123
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5094.21,
+    "decision_p95_ms": 7480.0,
+    "decision_max_ms": 8871.0,
+    "mcp_avg_ms": 507.58,
+    "mcp_p95_ms": 1562.0,
+    "mcp_max_ms": 2877.0
+  },
+  "errors": {
+    "route_diagonal_segment": 4,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1530,
+      "player_2": 5389
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1530,
+      "player_2": 2323
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "attack and collect combat health",
+      "route": [
+        "N14",
+        "M14",
+        "L14",
+        "L13",
+        "L12",
+        "L11",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm ordering a refill mid-argument."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the central shotgun",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central shotgun beat the opponent last round",
+      "plan_summary": "Cowboy\u2019s got a repeat appointment!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "get the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm back with a fresh grudge."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "move into the upper central lane",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is last seen south of here",
+      "plan_summary": "Please send all urgent requests to row J!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep south center",
+      "route": "U24;T24;S24;R24;Q24;P24;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm bringing the sauce to the source."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "cross toward the central weapon",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon worked well for the prior engagement",
+      "plan_summary": "I\u2019ve got a standing appointment with row F!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the center passage",
+      "route": [
+        "S24",
+        "R24",
+        "Q24",
+        "P24",
+        "O24",
+        "O23",
+        "O22",
+        "O21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm marching toward a terrible meal."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "claim the central shotgun before the fight",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "weapon damage was decisive last round",
+      "plan_summary": "I\u2019m sticking with the winning tool!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "get the shotgun",
+      "route": "O22;O21;O20;O19;O18;P18;Q18;R18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm grabbing the conversation starter."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "advance toward the opponent",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last seen position is south of center",
+      "plan_summary": "The cowboy is headed south for business!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm for close combat",
+      "route": [
+        "O19",
+        "O18",
+        "P18",
+        "Q18",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm upgrading my kitchen manners."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "engage the opponent in the southern center",
+      "route": "J14;J13;J12;K12;L12;M12;N12;N13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen cell is within one short sweep",
+      "plan_summary": "I\u2019m going to the second floor for this!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "arm and engage west",
+      "route": "R17;Q17;P17;O17;N17;N16;N15;N14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm bringing a fresh serving of trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the opponent near their last seen cell",
+      "route": "N13;N14;N15",
+      "engagement_policy": "",
+      "reasoning": "they are only two cells away",
+      "plan_summary": "Here for the final interview!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "attack through the west passage",
+      "route": [
+        "P17",
+        "O17",
+        "N17",
+        "N16",
+        "N15",
+        "N14",
+        "M14",
+        "L14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm finding the person who poked my pasta."
+    }
+  ]
+}

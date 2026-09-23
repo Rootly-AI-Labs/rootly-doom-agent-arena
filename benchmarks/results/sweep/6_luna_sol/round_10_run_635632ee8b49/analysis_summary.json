@@ -1,0 +1,537 @@
+{
+  "run_id": "run_635632ee8b49",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 39.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 130,
+      "shots_fired": 15,
+      "shots_hit": 15,
+      "accuracy": 1.0,
+      "final_health": 20
+    },
+    "player_2": {
+      "damage_dealt": 130,
+      "damage_taken": 150,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3185",
+      "elapsed_ms": null,
+      "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 16571 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 34,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 19,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 16571 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 30714 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(64,-384) the shotgun is ready and the opponent was last northwest aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 30742 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(64,-384) the shotgun is ready and the opponent was last northwest aim_error=-10"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 31057 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(64,-192) the shotgun is ready and the opponent was last northwest aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 31600 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(64,-128) the shotgun is ready and the opponent was last northwest aim_error=-34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 31942 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(-192,-128) the shotgun is ready and the opponent was last northwest aim_error=-"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 32771 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(-192,-64) the shotgun is ready and the opponent was last northwest aim_error=75"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 32914 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(-192,0) the shotgun is ready and the opponent was last northwest aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 33171 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(-192,64) the shotgun is ready and the opponent was last northwest aim_error=-13"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 33400 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-18"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 33800 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-320,384) the opponent is near and has already taken the southern shotgun aim_e"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 33857 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,320) the opponent is near and has already taken the southern shotgun aim_e"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 33971 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-320,256) the opponent is near and has already taken the southern shotgun aim_e"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34142 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34200 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-320,192) the opponent is near and has already taken the southern shotgun aim_e"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34314 autopilot_action: player_1 action=route_waypoint+attack reason=wp=4/8 target=(-320,192) the opponent is near and has already taken the southern shotgu"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34342 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is ready and the opponent was last northwest aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34457 autopilot_action: player_1 action=route_waypoint+attack reason=wp=5/8 target=(-320,128) the opponent is near and has already taken the southern shotgu"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34685 autopilot_action: player_1 action=route_waypoint+attack reason=wp=6/8 target=(-320,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34742 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34771 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is ready and the opponent was last northwest aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34800 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34828 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is ready and the opponent was last northwest aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 34971 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35028 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is ready and the opponent was last northwest aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35028 autopilot_action: player_1 action=route_waypoint+attack reason=wp=7/8 target=(-256,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35171 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35371 autopilot_action: player_2 action=route_complete reason=the shotgun is ready and the opponent was last northwest aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35400 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35657 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35685 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 35971 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36000 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36257 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36285 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36571 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36600 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36857 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 36885 autopilot_action: player_1 action=route_complete+attack reason=the opponent is near and has already taken the southern shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_635632ee8b49 duel_e1m8_blind_spawn 3185 37171 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,64) the opponent is near and has already taken the southern shotgun"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 153,
+        "distance_traveled": 3217.9,
+        "unique_cells_visited": 22,
+        "revisited_cells": 131
+      },
+      "player_2": {
+        "path_points": 153,
+        "distance_traveled": 3070.2,
+        "unique_cells_visited": 32,
+        "revisited_cells": 121
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8418.82,
+    "decision_p95_ms": 14775.0,
+    "decision_max_ms": 14775.0,
+    "mcp_avg_ms": 933.42,
+    "mcp_p95_ms": 1840.0,
+    "mcp_max_ms": 21115.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 5,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3829,
+      "player_2": 3346
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2288,
+      "player_2": 1812
+    },
+    "stale_intent_extension_count": 5,
+    "stale_intent_extension_total_ms": 49499,
+    "stale_intent_extension_max_ms": 20010
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V32;V25;S25;S21;Q21;Q22;O22;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct route secures the weapon before contact",
+      "plan_summary": "Final round, final nacho."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the eastern lane to intercept the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting moved closer to the northern center",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "rush the southern shotgun",
+      "route": [
+        "V32",
+        "V25",
+        "S25",
+        "S21",
+        "Q21",
+        "Q22",
+        "O22",
+        "O18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct route secures the weapon before contact",
+      "plan_summary": "Final round, final nacho."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the southern shotgun",
+      "route": "O17;O18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber entrance is just south",
+      "plan_summary": "I am early for the last dinner reservation."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push toward the opponent's last seen lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their position is close to the center corridor",
+      "plan_summary": "Time to audit the downstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the southern shotgun",
+      "route": [
+        "O17",
+        "O18",
+        "Q18",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the chamber entrance is just south",
+      "plan_summary": "I am early for the last dinner reservation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "press the opponent near center",
+      "route": "R17;R18;O18;N18;N14;M14;L14;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is ready and the opponent was last northwest",
+      "plan_summary": "One final awkward introduction."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "push straight to the opponent's last seen cell and engage",
+      "route": "F12;G12;H12;I12;J12;K12;K13;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is near and has already taken the southern shotgun",
+      "plan_summary": "I am skipping straight to the boss's office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "press the opponent near center",
+      "route": [
+        "R17",
+        "R18",
+        "O18",
+        "N18",
+        "N14",
+        "M14",
+        "L14",
+        "K14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is ready and the opponent was last northwest",
+      "plan_summary": "One final awkward introduction."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "finish the opponent at close range",
+      "route": "K14;K13;K12;J12",
+      "engagement_policy": "",
+      "reasoning": "shotgun damage has already landed in the center",
+      "plan_summary": "The last nacho is going down swinging."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "break contact and reach the nearby medikit",
+      "route": "K14;K13;L13;L12;L11;L10",
+      "engagement_policy": "",
+      "reasoning": "my health is critical and the pickup may keep me fighting",
+      "plan_summary": "I need a tiny emergency promotion."
+    }
+  ]
+}

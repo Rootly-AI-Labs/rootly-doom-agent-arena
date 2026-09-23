@@ -1,0 +1,212 @@
+{
+  "run_id": "run_cbca337dee77",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 16.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 45,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 6,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1715",
+      "elapsed_ms": null,
+      "event": "run_cbca337dee77 duel_e1m8_blind_spawn 1715 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_cbca337dee77 duel_e1m8_blind_spawn 1715 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 64,
+        "distance_traveled": 3180.3,
+        "unique_cells_visited": 40,
+        "revisited_cells": 24
+      },
+      "player_2": {
+        "path_points": 64,
+        "distance_traveled": 1376.8,
+        "unique_cells_visited": 17,
+        "revisited_cells": 47
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5277.86,
+    "decision_p95_ms": 7678.0,
+    "decision_max_ms": 7678.0,
+    "mcp_avg_ms": 515.04,
+    "mcp_p95_ms": 2595.0,
+    "mcp_max_ms": 4198.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 2566,
+      "player_2": 1533
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2566,
+      "player_2": 1533
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 8031,
+    "stale_intent_extension_max_ms": 5660
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the shotgun and force engagement",
+      "route": "B12;I12;I16;F16;F17;I17;I22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am finishing this shift with a bang."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "close in on the opponent from the eastern lane",
+      "route": "U32;T32;S32;R32;Q32;P32;O32;N32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting is near Q22 and I can cross toward it",
+      "plan_summary": "I am taking the express lane to trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get armed and force contact",
+      "route": [
+        "I12",
+        "I16",
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "Q22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am preparing my final performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the center and nearby health pickup",
+      "route": "N31;N30;N29;N28;N27;N26;M26;L26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is likely closing from the west",
+      "plan_summary": "I am making a beeline for snacks and trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "pursue the opponent in the eastern lane",
+      "route": "O22;O26;L26;I26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering the final memo personally."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the nearby medikit and continue fighting",
+      "route": "K26;J26;I26;H26;G26",
+      "engagement_policy": "",
+      "reasoning": "health will keep me alive through another attack",
+      "plan_summary": "I am refueling with an emergency burrito."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the opponent",
+      "route": "L26;I26;I22",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am clocking out after this last complaint."
+    }
+  ]
+}

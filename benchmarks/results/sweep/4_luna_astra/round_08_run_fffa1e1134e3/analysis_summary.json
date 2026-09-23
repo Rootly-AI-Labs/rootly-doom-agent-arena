@@ -1,0 +1,270 @@
+{
+  "run_id": "run_fffa1e1134e3",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 44.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 90,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 60
+    },
+    "player_2": {
+      "damage_dealt": 90,
+      "damage_taken": 150,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2450",
+      "elapsed_ms": null,
+      "event": "run_fffa1e1134e3 duel_e1m8_blind_spawn 2450 27171 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_fffa1e1134e3 duel_e1m8_blind_spawn 2450 27171 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_fffa1e1134e3 duel_e1m8_blind_spawn 2450 41171 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 172,
+        "distance_traveled": 3290.1,
+        "unique_cells_visited": 38,
+        "revisited_cells": 134
+      },
+      "player_2": {
+        "path_points": 172,
+        "distance_traveled": 2068.5,
+        "unique_cells_visited": 31,
+        "revisited_cells": 141
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6041.5,
+    "decision_p95_ms": 8081.0,
+    "decision_max_ms": 13713.0,
+    "mcp_avg_ms": 655.42,
+    "mcp_p95_ms": 2185.0,
+    "mcp_max_ms": 5157.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4662,
+      "player_2": 7823
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1577,
+      "player_2": 2600
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 1853,
+    "stale_intent_extension_max_ms": 1540
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the central shotgun",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon has led to wins against this opponent",
+      "plan_summary": "My repeated meeting request is approved!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm not done boiling yet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep into the central lane",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen southeast",
+      "plan_summary": "Priority lane, please move your carts!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep the southern center",
+      "route": "U24;T24;S24;R24;Q24;P24;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm arriving with an unreasonable appetite."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "advance into center",
+      "route": [
+        "U24",
+        "T24",
+        "S24",
+        "R24",
+        "Q24",
+        "P24",
+        "O24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm refusing to cool down."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "approach the central shotgun",
+      "route": "J08;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is entering from the south east",
+      "plan_summary": "I\u2019m walking to the tool crib again!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "get the shotgun",
+      "route": "O22;O21;O20;O19;O18;P18;Q18;R18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm shopping for an indoor voice replacement."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "claim the central shotgun",
+      "route": "I14;I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "it can counter the opponent's southern weapon",
+      "plan_summary": "I\u2019m not leaving without my upgrade!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "advance to the southern weapon",
+      "route": [
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "P18",
+        "Q18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I'm unsticking my pasta feet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "advance toward the opponent's southeast position",
+      "route": "F17;G17;H17;I17;J17;J16;J15;J14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen cell is east of the lower center",
+      "plan_summary": "Buckshot delivery, southeast desk!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "arm and attack west",
+      "route": "R17;Q17;P17;O17;O16;O15;O14;O13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'm taking the wide side of the plate."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "push toward the southeast opponent",
+      "route": "J14;J13;J12;K12;L12;M12;N12;N13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen cell is N20",
+      "plan_summary": "Taking the southern route, no detours!"
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "run_id": "run_1dfabd4316ef",
+  "round": 2,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 60.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 20,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 130
+    },
+    "player_2": {
+      "damage_dealt": 20,
+      "damage_taken": 160,
+      "shots_fired": 9,
+      "shots_hit": 2,
+      "accuracy": 0.222,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2940",
+      "elapsed_ms": null,
+      "event": "run_1dfabd4316ef duel_e1m8_blind_spawn 2940 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_1dfabd4316ef duel_e1m8_blind_spawn 2940 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 11,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 235,
+        "distance_traveled": 7547.6,
+        "unique_cells_visited": 84,
+        "revisited_cells": 151
+      },
+      "player_2": {
+        "path_points": 235,
+        "distance_traveled": 1233.8,
+        "unique_cells_visited": 12,
+        "revisited_cells": 223
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9426.58,
+    "decision_p95_ms": 12253.0,
+    "decision_max_ms": 46335.0,
+    "mcp_avg_ms": 746.8,
+    "mcp_p95_ms": 3363.0,
+    "mcp_max_ms": 4056.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 7960,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3336,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 42843,
+    "stale_intent_extension_max_ms": 36778
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "hunt the opponent",
+      "route": [
+        "I19",
+        "I20",
+        "I21",
+        "I22",
+        "H22",
+        "G22",
+        "G23",
+        "G24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am conducting an aggressive performance review."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the northern shotgun",
+      "route": "B12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am fast-tracking my promotion to shotgun manager."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the southern shotgun and enter the fight",
+      "route": "U32;T32;S32;R32;R31;R30;R29;R28",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon upgrade is reachable along the open southern lane",
+      "plan_summary": "This time I brought a helmet with my nachos."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "arm up and hunt the opponent",
+      "route": [
+        "I16",
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "G22",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am combining training with workplace aggression."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "hunt the opponent",
+      "route": "I17;I22;G22;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my new stapler for a test drive."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "hunt the opponent",
+      "route": [
+        "I17",
+        "I22",
+        "G22",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking my new stapler for a test drive."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "sweep the eastern lane",
+      "route": "I26;I22;O22;O26;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking every cubicle for unpaid violence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "find and eliminate the opponent",
+      "route": [
+        "I22",
+        "O22",
+        "O26",
+        "Q26",
+        "Q22",
+        "O22",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am making surprise visits to the entire department."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep the center for the opponent",
+      "route": "Q22;O22;O17;R17;O17;O12;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am searching the break room with unreasonable confidence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "sweep the center for the opponent",
+      "route": [
+        "Q22",
+        "O22",
+        "O17",
+        "R17",
+        "O17",
+        "O12",
+        "I12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am searching the break room with unreasonable confidence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "wrap around the east wall and find the opponent",
+      "route": "R29;R30;R31;R32;Q32;P32;O32;N32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct center lane is blocked, so this route reaches the opponent's",
+      "plan_summary": "I am circling the block like a lost delivery."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "search the outer eastern lane",
+      "route": "I22;E22;E29;V29;V32;B32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking where the interns hide."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "pursue contact in the eastern lane",
+      "route": "E29;V29;V32;B32",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am taking attendance at shotgun range."
+    }
+  ]
+}

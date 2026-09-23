@@ -1,0 +1,579 @@
+{
+  "run_id": "run_968887ec5ba6",
+  "round": 3,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 49.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 45,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 155,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3815",
+      "elapsed_ms": null,
+      "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun has won the first two fights aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "3815",
+      "elapsed_ms": null,
+      "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 47914 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(0,-384) I now have the weapon and full health for the close fight aim_error=1"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 39,
+        "health": 5
+      },
+      "player_2": {
+        "shotgun": 24,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun has won the first two fights aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) early center contact gives less time for a shotgun ambush aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) the shotgun has won the first two fights aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) early center contact gives less time for a shotgun ambush aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the shotgun has won the first two fights aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) early center contact gives less time for a shotgun ambush aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) early center contact gives less time for a shotgun ambush aim_error=39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) the shotgun has won the first two fights aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) early center contact gives less time for a shotgun ambush aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) the shotgun has won the first two fights aim_error=42"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) the shotgun has won the first two fights aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) early center contact gives less time for a shotgun ambush aim_error=44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun has won the first two fights aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) early center contact gives less time for a shotgun ambush aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1628 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 1628 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2371 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2371 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) early center contact gives less time for a shotgun ambush aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun has won the first two fights aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2628 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 2628 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3371 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3371 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) early center contact gives less time for a shotgun ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun has won the first two fights aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3600 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 3600 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4342 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4342 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) early center contact gives less time for a shotgun ambush aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun has won the first two fights aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4571 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 4571 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5314 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5314 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) early center contact gives less time for a shotgun ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun has won the first two fights aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5542 autopilot_action: player_2 action=route_complete reason=the shotgun has won the first two fights aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3815",
+        "elapsed_ms": null,
+        "event": "run_968887ec5ba6 duel_e1m8_blind_spawn 3815 5542 autopilot_action: player_1 action=route_complete reason=early center contact gives less time for a shotgun ambush aim_error=50"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "route_crosses_blocked_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 190,
+        "distance_traveled": 3762.1,
+        "unique_cells_visited": 31,
+        "revisited_cells": 159
+      },
+      "player_2": {
+        "path_points": 190,
+        "distance_traveled": 2347.5,
+        "unique_cells_visited": 24,
+        "revisited_cells": 166
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7597.31,
+    "decision_p95_ms": 10429.0,
+    "decision_max_ms": 23573.0,
+    "mcp_avg_ms": 1427.97,
+    "mcp_p95_ms": 2333.0,
+    "mcp_max_ms": 39909.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "route_crosses_blocked_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4148,
+      "player_2": 5377
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2595,
+      "player_2": 2308
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 34452,
+    "stale_intent_extension_max_ms": 29514
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "press the visible opponent",
+      "route": [
+        "N16",
+        "N15",
+        "N14",
+        "M14",
+        "L14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun contact is already dealing damage",
+      "plan_summary": "Awkward eye contact has become loud eye contact."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun has won the first two fights",
+      "plan_summary": "Third serving: extra lead."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the open eastern lane toward the opponent",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "early center contact gives less time for a shotgun ambush",
+      "plan_summary": "This intern is skipping the orientation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "close on the southern shotgun",
+      "route": "V29;V28;V27;V26;V25;U25;T25;S25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern weapon remains available",
+      "plan_summary": "I am the office snack with a deadline."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "push down the open center lane",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen south in the central passage",
+      "plan_summary": "I promise this route is in the budget."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern passage",
+      "route": [
+        "V26",
+        "V25",
+        "U25",
+        "T25",
+        "S25",
+        "S24",
+        "S23",
+        "S22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center corridor leads to the shotgun",
+      "plan_summary": "I am not sharing this appetizer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance through the middle lane toward the shotgun route",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent's last sighting is south of the center",
+      "plan_summary": "I am walking straight into the agenda."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach the center passage",
+      "route": "S25;S24;S23;S22;S21;R21;Q21;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern doorway is ahead",
+      "plan_summary": "Nacho navigation is surprisingly competent."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "press directly into the opponent's last known lane",
+      "route": "M12;N12;N13;N14;N15;N16;N17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "reaching the south corridor will force contact",
+      "plan_summary": "The intern found the boss's office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the center passage",
+      "route": [
+        "S23",
+        "S22",
+        "S21",
+        "R21",
+        "Q21",
+        "Q22",
+        "P22",
+        "O22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is beyond the west turn",
+      "plan_summary": "This nacho is taking the scenic route to trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "grab the southern shotgun and press the fight",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon remains available only a few steps away",
+      "plan_summary": "I finally found the supply closet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "enter the shotgun chamber",
+      "route": "Q22;P22;O22;O21;O20;O19;O18;P18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center lane is clear from here",
+      "plan_summary": "I can hear the shotgun calling my name."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "push into the opponent's last seen position with the shotgun",
+      "route": "R17;Q17;P17;O17;O16;N16;N17;N18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I now have the weapon and full health for the close fight",
+      "plan_summary": "Now this intern has the right paperwork."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the southern shotgun",
+      "route": [
+        "P22",
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "P18",
+        "Q18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route is almost through the doorway",
+      "plan_summary": "I am too committed to turn back now."
+    }
+  ]
+}

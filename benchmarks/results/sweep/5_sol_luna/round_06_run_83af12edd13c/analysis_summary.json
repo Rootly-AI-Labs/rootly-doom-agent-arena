@@ -1,0 +1,509 @@
+{
+  "run_id": "run_83af12edd13c",
+  "round": 6,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 58.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 75,
+      "shots_fired": 9,
+      "shots_hit": 5,
+      "accuracy": 0.556,
+      "final_health": 75
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 150,
+      "shots_fired": 15,
+      "shots_hit": 8,
+      "accuracy": 0.533,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3535",
+      "elapsed_ms": null,
+      "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to engage before their shotgun advantage builds aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3535",
+      "elapsed_ms": null,
+      "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 52714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/8 target=(320,320) I am healthy and close enough to force the fight aim_error=3"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 9,
+        "health": 13
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to engage before their shotgun advantage builds aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-512) I need to engage before their shotgun advantage builds aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-448) I need to engage before their shotgun advantage builds aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-384) I need to engage before their shotgun advantage builds aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(960,-320) I need to engage before their shotgun advantage builds aim_error=-58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 1228 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(896,-320) I need to engage before their shotgun advantage builds aim_error=-58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(832,-320) I need to engage before their shotgun advantage builds aim_error=23"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 1600 autopilot_action: player_2 action=route_complete reason=I need to engage before their shotgun advantage builds aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 2342 autopilot_action: player_2 action=route_complete reason=I need to engage before their shotgun advantage builds aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 27600 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is directly through the passage aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 27628 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is directly through the passage aim_error=-142"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 27685 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(-128,192) the pickup is directly through the passage aim_error=-144"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 27800 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(-64,192) the pickup is directly through the passage aim_error=40"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28142 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-64,256) the pickup is directly through the passage aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28285 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-64,320) the pickup is directly through the passage aim_error=129"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28628 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(0,320) the pickup is directly through the passage aim_error=136"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28771 autopilot_action: player_1 action=route_waypoint+attack reason=wp=6/7 target=(0,320) the pickup is directly through the passage aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28885 autopilot_action: player_1 action=route_waypoint+attack reason=wp=7/7 target=(0,384) the pickup is directly through the passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 28971 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(0,384) the pickup is directly through the passage aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 29028 autopilot_action: player_1 action=route_complete reason=the pickup is directly through the passage aim_error=133"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 29057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 29800 autopilot_action: player_1 action=route_complete reason=the pickup is directly through the passage aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 52714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/8 target=(320,320) I am healthy and close enough to force the fight aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 52742 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/8 target=(320,320) I am healthy and close enough to force the fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 52800 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/8 target=(320,384) I am healthy and close enough to force the fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 53057 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/8 target=(256,384) I am healthy and close enough to force the fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 53200 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/8 target=(192,384) I am healthy and close enough to force the fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 53228 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(192,384) I am healthy and close enough to force the fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 53542 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(192,448) I am healthy and close enough to force the fight aim_error=-103"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 53800 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(256,448) I am healthy and close enough to force the fight aim_error=177"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 54028 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(256,384) I am healthy and close enough to force the fight aim_error=90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 54171 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(256,320) I am healthy and close enough to force the fight aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 54400 autopilot_action: player_2 action=route_complete reason=I am healthy and close enough to force the fight aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 55142 autopilot_action: player_2 action=route_complete reason=I am healthy and close enough to force the fight aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_83af12edd13c duel_e1m8_blind_spawn 3535 57171 autopilot_action: player_2 action=route_complete reason=I am healthy and close enough to force the fight aim_error=-4"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 224,
+        "distance_traveled": 3992.1,
+        "unique_cells_visited": 44,
+        "revisited_cells": 180
+      },
+      "player_2": {
+        "path_points": 224,
+        "distance_traveled": 3605.1,
+        "unique_cells_visited": 37,
+        "revisited_cells": 187
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5034.07,
+    "decision_p95_ms": 6801.0,
+    "decision_max_ms": 9742.0,
+    "mcp_avg_ms": 1027.81,
+    "mcp_p95_ms": 1838.0,
+    "mcp_max_ms": 20146.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5629,
+      "player_2": 4645
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2573,
+      "player_2": 1570
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 17457,
+    "stale_intent_extension_max_ms": 17457
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central weapon has consistently provided strong damage",
+      "plan_summary": "Another day, another urgent supply run."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "close on the opponent's last seen lane",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I need to engage before their shotgun advantage builds",
+      "plan_summary": "No more side quests; I'm coming straight at you."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upper wall requires a detour",
+      "plan_summary": "I would like a faster supply elevator."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep around the east wall toward the enemy",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this route reaches the central lane without crossing blocked cells",
+      "plan_summary": "I'm taking the side door to this argument."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern corridor reaches the weapon",
+      "plan_summary": "Someone hid the good equipment behind a maze."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "move to the enemy's last seen column",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct east edge sets up a northward push to F22",
+      "plan_summary": "I'm lining up the shortest awkward conversation."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is directly through the passage",
+      "plan_summary": "I found the deluxe stapling attachment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "push north along the opponent's last seen column",
+      "route": "O22;N22;M22;L22;K22;J22;I22;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last known cell is F22 and this route closes distance directly",
+      "plan_summary": "I've got the coordinates; now I'm walking into the punchline."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last position is southeast of the weapon",
+      "plan_summary": "I'm bringing the stapler to the meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "press the visible opponent with a circling attack",
+      "route": "H22;G22;F22;F21;F20;F21;G21;G22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they are close and I need movement while dealing damage",
+      "plan_summary": "I'm getting close; my social skills have a shotgun now."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep the south passage",
+      "route": "J20;K20;L20;M20;N20;O20;O21;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen near O22",
+      "plan_summary": "I am visiting every cubicle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "continue pressing the last seen enemy position",
+      "route": "G22;F22;F21;F20;E20;E21;F21;G21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I am healthy and close enough to force the fight",
+      "plan_summary": "No retreat; I'm here to make things uncomfortable."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "pursue the visible opponent",
+      "route": "O22;N22;M22;L22;K22;J22;I22;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they moved north through the same passage",
+      "plan_summary": "The meeting changed rooms; I'm still attending."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "grab the nearby medikit and keep fighting",
+      "route": "G21;G22;G23;G24;G25;G26",
+      "engagement_policy": "",
+      "reasoning": "I am down to 40 health and the pickup is one short sprint away",
+      "plan_summary": "Emergency snack, then right back to being annoying."
+    }
+  ]
+}

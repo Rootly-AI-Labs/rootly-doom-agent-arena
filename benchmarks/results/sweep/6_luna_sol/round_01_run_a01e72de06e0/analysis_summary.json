@@ -1,0 +1,536 @@
+{
+  "run_id": "run_a01e72de06e0",
+  "round": 1,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 67.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 0,
+      "damage_taken": 155,
+      "shots_fired": 9,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 0,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 150
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3535",
+      "elapsed_ms": null,
+      "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun will make first contact decisive aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "3535",
+      "elapsed_ms": null,
+      "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) early health and a central approach improve the opening fight aim_error=-"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 9
+      },
+      "player_2": {
+        "shotgun": 61,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) early health and a central approach improve the opening fight aim_error=-"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the shotgun will make first contact decisive aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 142 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,512) early health and a central approach improve the opening fight aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) the shotgun will make first contact decisive aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,448) early health and a central approach improve the opening fight aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the shotgun will make first contact decisive aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 628 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,384) early health and a central approach improve the opening fight aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) the shotgun will make first contact decisive aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) the shotgun will make first contact decisive aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,320) early health and a central approach improve the opening fight aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) the shotgun will make first contact decisive aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1228 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-896,320) early health and a central approach improve the opening fight aim_erro"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-832,320) early health and a central approach improve the opening fight aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1600 autopilot_action: player_1 action=route_complete reason=early health and a central approach improve the opening fight aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 1628 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 2342 autopilot_action: player_1 action=route_complete reason=early health and a central approach improve the opening fight aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 2371 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 2628 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 3371 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 3600 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 4342 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 4571 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 5314 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 5542 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 6285 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 6485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 6514 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 7257 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 7457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 7485 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 8228 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 8428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 8457 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 9200 autopilot_action: player_2 action=route_complete reason=the shotgun will make first contact decisive aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3535",
+        "elapsed_ms": null,
+        "event": "run_a01e72de06e0 duel_e1m8_blind_spawn 3535 9400 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun will make first contact decisive aim_error=-3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 260,
+        "distance_traveled": 2176.9,
+        "unique_cells_visited": 27,
+        "revisited_cells": 233
+      },
+      "player_2": {
+        "path_points": 260,
+        "distance_traveled": 3436.8,
+        "unique_cells_visited": 36,
+        "revisited_cells": 224
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7820.0,
+    "decision_p95_ms": 15128.0,
+    "decision_max_ms": 15972.0,
+    "mcp_avg_ms": 607.35,
+    "mcp_p95_ms": 2210.0,
+    "mcp_max_ms": 5241.0
+  },
+  "errors": {
+    "Invalid controller_token for player_1.": 1,
+    "waypoint_in_wall_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3756,
+      "player_2": 4251
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2200,
+      "player_2": 2707
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 19364,
+    "stale_intent_extension_max_ms": 6731
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the southern shotgun",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun will make first contact decisive",
+      "plan_summary": "I brought nerves to a shotgun interview."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "take the nearby medikit and sweep toward the center",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "early health and a central approach improve the opening fight",
+      "plan_summary": "I filed a panic request for more health."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the shotgun entrance",
+      "route": "V25;U25;T25;S25;S24;S23;S22;S21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern chamber opens from the center lane",
+      "plan_summary": "My nacho legs are chasing the loud stick."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "circle into the shotgun chamber",
+      "route": [
+        "S21",
+        "R21",
+        "Q21",
+        "P21",
+        "O21",
+        "O20",
+        "O19",
+        "O18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central opening bypasses the chamber walls",
+      "plan_summary": "I can almost smell the gunpowder and poor choices."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "sweep around the western barrier toward the opponent",
+      "route": "G04;H04;I04;J04;J05;J06;J07;J08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen near the center",
+      "plan_summary": "This hallway owes me a promotion."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the central lane",
+      "route": "S21;R21;Q21;Q22;P22;O22;O21;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east passage avoids the wall",
+      "plan_summary": "Even this nacho has to respect architecture."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "take the southern shotgun",
+      "route": "O20;O19;O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open center leads directly to the weapon",
+      "plan_summary": "This job interview needs a louder r\u00e9sum\u00e9."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the opponent's last seen position",
+      "route": "J08;I08;I09;I10;I11;I12;J12;K12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a short eastern loop skirts the blocked corridor and closes distance",
+      "plan_summary": "I found the scenic route to trouble."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "push toward the center",
+      "route": "R17;R18;Q18;P18;O18;N18;N17;N16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last reported northwest of me",
+      "plan_summary": "I have the shotgun; now I need a customer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "search the opponent's last seen area and press west",
+      "route": "K12;K13;J13;J14;J15;J16;J17;J18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent was last seen one row north of this route",
+      "plan_summary": "I am bringing very loud paperwork."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "hunt the opponent's last position",
+      "route": "N16;N15;N14;M14;L14;K14;K13;K12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "my shotgun has already dealt damage nearby",
+      "plan_summary": "The appetizer hit; I am serving the main course."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "sweep the northern flank",
+      "route": "K12;J12;I12;I11;I10;I09;I08;H08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last reported position is empty",
+      "plan_summary": "My target has skipped the awkward small talk."
+    }
+  ]
+}

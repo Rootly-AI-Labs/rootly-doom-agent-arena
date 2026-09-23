@@ -1,0 +1,265 @@
+{
+  "run_id": "run_04a68d221fe6",
+  "round": 6,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 37.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 75,
+      "damage_taken": 255,
+      "shots_fired": 10,
+      "shots_hit": 8,
+      "accuracy": 0.8,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 255,
+      "damage_taken": 75,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 115
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2065",
+      "elapsed_ms": null,
+      "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 5085 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2065",
+      "elapsed_ms": null,
+      "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 12257 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 2
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 12257 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 20057 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_04a68d221fe6 duel_e1m8_blind_spawn 2065 30514 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 147,
+        "distance_traveled": 2208.9,
+        "unique_cells_visited": 29,
+        "revisited_cells": 118
+      },
+      "player_2": {
+        "path_points": 147,
+        "distance_traveled": 7853.1,
+        "unique_cells_visited": 69,
+        "revisited_cells": 78
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5494.09,
+    "decision_p95_ms": 7326.0,
+    "decision_max_ms": 7326.0,
+    "mcp_avg_ms": 633.0,
+    "mcp_p95_ms": 2594.0,
+    "mcp_max_ms": 7027.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1546,
+      "player_2": 5423
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1546,
+      "player_2": 2853
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 384,
+    "stale_intent_extension_max_ms": 384
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "get armed and attack the center",
+      "route": "V25;O25;O18;R18;R17;O17;O20;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am a repeat customer of terrible choices."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "cross the northern lane",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the scenic route to payroll."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "hunt through the northern lanes",
+      "route": "I20;I11;I08;G08;G12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am searching for the missing dinner guest."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "approach from the east",
+      "route": "B11;B12;B13;B14;B15;B16;B17;B18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I have changed departments mid-battle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep back through the central lanes",
+      "route": "F17;I17;I22;L22;L24;L20;O20;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking whether trouble takes reservations."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the eastern entrance",
+      "route": "B19;B20;B21;B22;B23;C23;D23;E23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I have survived worse office coffee."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "pursue the western opponent",
+      "route": "O12;L12;L10;L12;I12;I10;F10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making a house call with extra pepper."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the eastern medikit",
+      "route": "F23;G23;G24;G25;G26;G25;G24;G23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing allows a stronger push toward the weapon",
+      "plan_summary": "My health insurance finally approved the claim."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "find and finish the opponent",
+      "route": "F10;G10;G12;I12;I17;F17;I17;I22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am refusing to leave a bad review unfinished."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the southern center for contact",
+      "route": "I22;L22;O22;O17;R17;O17;O12;L12",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am inspecting the basement menu."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "enter the central weapon room",
+      "route": "H23;I23;I22;I21;I20;I19;I18;I17",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am back from sick leave and furious."
+    }
+  ]
+}

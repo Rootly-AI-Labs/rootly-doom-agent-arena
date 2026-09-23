@@ -1,0 +1,546 @@
+{
+  "run_id": "run_9d85413e817a",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 45.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 30,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 160,
+      "shots_fired": 7,
+      "shots_hit": 4,
+      "accuracy": 0.571,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to close on E21 before they claim another shotgun advantage aim_er"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 37600 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-192) they were last seen at E21 and I have full health aim_error=2"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 9,
+        "health": 29
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-576) I need to close on E21 before they claim another shotgun advantage aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-512) I need to close on E21 before they claim another shotgun advantage aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-448) I need to close on E21 before they claim another shotgun advantage aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-384) I need to close on E21 before they claim another shotgun advantage aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(960,-320) I need to close on E21 before they claim another shotgun advantage aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 1228 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(896,-320) I need to close on E21 before they claim another shotgun advantage aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(832,-320) I need to close on E21 before they claim another shotgun advantage aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 1600 autopilot_action: player_2 action=route_complete reason=I need to close on E21 before they claim another shotgun advantage aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 2342 autopilot_action: player_2 action=route_complete reason=I need to close on E21 before they claim another shotgun advantage aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 30514 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is available through the central passage aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 30542 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-192,192) the pickup is available through the central passage aim_error=-145"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 30600 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(-128,192) the pickup is available through the central passage aim_error=-146"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 30714 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(-64,192) the pickup is available through the central passage aim_error=38"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31057 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-64,256) the pickup is available through the central passage aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31200 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-64,320) the pickup is available through the central passage aim_error=130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31542 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(0,320) the pickup is available through the central passage aim_error=143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31800 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(0,384) the pickup is available through the central passage aim_error=66"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31942 autopilot_action: player_1 action=route_complete reason=the pickup is available through the central passage aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 31971 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 32685 autopilot_action: player_1 action=route_complete reason=the pickup is available through the central passage aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 33142 autopilot_action: player_1 action=route_complete+attack reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 33200 autopilot_action: player_1 action=route_complete reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 33914 autopilot_action: player_1 action=route_complete+attack reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 33942 autopilot_action: player_1 action=route_complete reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 35028 autopilot_action: player_1 action=route_complete+attack reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 35085 autopilot_action: player_1 action=route_complete reason=the pickup is available through the central passage aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 37600 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-192) they were last seen at E21 and I have full health aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 37628 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-192) they were last seen at E21 and I have full health aim_error=-93"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 37714 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-128) they were last seen at E21 and I have full health aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 37885 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-64) they were last seen at E21 and I have full health aim_error=-33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 38114 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,0) they were last seen at E21 and I have full health aim_error=-33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 38371 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(320,64) they were last seen at E21 and I have full health aim_error=-36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 38600 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(320,128) they were last seen at E21 and I have full health aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 38857 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(320,192) they were last seen at E21 and I have full health aim_error=-46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 39085 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,256) they were last seen at E21 and I have full health aim_error=-52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 39342 autopilot_action: player_2 action=route_complete reason=they were last seen at E21 and I have full health aim_error=-61"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 40085 autopilot_action: player_2 action=route_complete reason=they were last seen at E21 and I have full health aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 40314 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,256) they were last seen at E21 and I have full health aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 40342 autopilot_action: player_2 action=route_complete reason=they were last seen at E21 and I have full health aim_error=112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_9d85413e817a duel_e1m8_blind_spawn 2485 41085 autopilot_action: player_2 action=route_complete reason=they were last seen at E21 and I have full health aim_error=0"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 177,
+        "distance_traveled": 3294.5,
+        "unique_cells_visited": 33,
+        "revisited_cells": 144
+      },
+      "player_2": {
+        "path_points": 177,
+        "distance_traveled": 3233.7,
+        "unique_cells_visited": 28,
+        "revisited_cells": 149
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5903.27,
+    "decision_p95_ms": 15146.0,
+    "decision_max_ms": 15146.0,
+    "mcp_avg_ms": 624.07,
+    "mcp_p95_ms": 2348.0,
+    "mcp_max_ms": 2595.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 7
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 4,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 7441,
+      "player_2": 6927
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2570,
+      "player_2": 2324
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "press the visible enemy and finish the fight",
+      "route": [
+        "G26",
+        "G25",
+        "G24",
+        "G23",
+        "G22",
+        "G21",
+        "F21",
+        "E21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they are in sight and I have already landed damage",
+      "plan_summary": "The health snack failed; I'm using my last nerve."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central weapon gives reliable pressure",
+      "plan_summary": "Procurement has stopped returning my calls."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "push toward the opponent's last seen position",
+      "route": "V32;U32;T32;S32;R32;Q32;Q31;Q30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I need to close on E21 before they claim another shotgun advantage",
+      "plan_summary": "I'm taking the east lane and skipping the awkward hello."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun",
+      "route": "B09;B10;B11;B12;B13;C13;D13;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the northern wall closes the direct path",
+      "plan_summary": "The shortcut was a lie from management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the open east route to the opponent",
+      "route": "Q30;P30;O30;N30;M30;M29;M28;M27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this bypasses the center wall and reaches their side",
+      "plan_summary": "I'm going around the wall with purpose this time."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun entrance",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower corridor leads around the wall",
+      "plan_summary": "The floor plan was designed by a committee."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach the enemy's last seen column",
+      "route": "M27;N27;O27;O26;O25;O24;O23;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east opening bypasses the wall and points to E21",
+      "plan_summary": "I'm following the breadcrumbs straight into trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "take the shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is available through the central passage",
+      "plan_summary": "My supply order is finally being processed."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "push directly toward the opponent through the open column",
+      "route": "O22;N22;M22;L22;K22;J22;I22;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they were last seen at E21 and I have full health",
+      "plan_summary": "I'm closing in before my courage expires."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "sweep toward the opponent",
+      "route": "F17;G17;H17;I17;I18;I19;I20;I21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "their last sighting was on the right flank",
+      "plan_summary": "I am walking over to settle this."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "break out toward the opponent",
+      "route": [
+        "F17",
+        "G17",
+        "H17",
+        "I17",
+        "I18",
+        "I19",
+        "I20",
+        "J20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the previous route stalled near the pickup",
+      "plan_summary": "The supply closet door has opinions."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "push through the opponent's last seen position",
+      "route": "H22;G22;F22;E22;E21;D21;D20;E20",
+      "engagement_policy": "",
+      "reasoning": "they are just north and I need to keep moving under fire",
+      "plan_summary": "I'm entering the conversation at full volume."
+    }
+  ]
+}

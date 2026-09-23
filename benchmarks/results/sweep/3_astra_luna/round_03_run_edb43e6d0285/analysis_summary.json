@@ -1,0 +1,242 @@
+{
+  "run_id": "run_edb43e6d0285",
+  "round": 3,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 28.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 75,
+      "shots_fired": 7,
+      "shots_hit": 6,
+      "accuracy": 0.857,
+      "final_health": 75
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 150,
+      "shots_fired": 15,
+      "shots_hit": 7,
+      "accuracy": 0.467,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2590",
+      "elapsed_ms": null,
+      "event": "run_edb43e6d0285 duel_e1m8_blind_spawn 2590 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2590",
+        "elapsed_ms": null,
+        "event": "run_edb43e6d0285 duel_e1m8_blind_spawn 2590 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 113,
+        "distance_traveled": 6800.5,
+        "unique_cells_visited": 64,
+        "revisited_cells": 49
+      },
+      "player_2": {
+        "path_points": 113,
+        "distance_traveled": 1181.1,
+        "unique_cells_visited": 17,
+        "revisited_cells": 96
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8313.12,
+    "decision_p95_ms": 19892.0,
+    "decision_max_ms": 19892.0,
+    "mcp_avg_ms": 1397.44,
+    "mcp_p95_ms": 3055.0,
+    "mcp_max_ms": 29465.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4557,
+      "player_2": 1546
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3028,
+      "player_2": 1546
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 35310,
+    "stale_intent_extension_max_ms": 25346
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the opponent from the east flank",
+      "route": [
+        "N31",
+        "N30",
+        "N29",
+        "N28",
+        "N27",
+        "N26",
+        "M26",
+        "L26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last sighting is west across the center and this lane stays",
+      "plan_summary": "I am sneaking up with a very loud lunch."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the shotgun and force contact",
+      "route": "B12;I12;I16;F16;F17;I17;I22;E22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am streamlining the onboarding violence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "sweep west along the bottom toward the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open outer lane avoids the eastern spawn pressure",
+      "plan_summary": "I am making a getaway with nacho crumbs."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get the shotgun and force contact",
+      "route": [
+        "B12",
+        "I12",
+        "I16",
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "E22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am streamlining the onboarding violence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "intercept the opponent",
+      "route": "I22;E22;E29;V29;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing the meeting directly to their desk."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "close in on the opponent",
+      "route": "E29;V29;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am escalating this to upper damage management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "flank around the central wall toward the shotgun",
+      "route": "U24;T24;S24;R24;Q24;Q23;Q22;P22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern weapon is close beyond the wall's northern opening",
+      "plan_summary": "I found the cheese aisle; onward."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "pursue the opponent through the eastern lane",
+      "route": "V29;V32;B32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am touring the branch office with a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close range and eliminate the opponent",
+      "route": [
+        "V22",
+        "Q22",
+        "Q26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am ending this meeting in person."
+    }
+  ]
+}

@@ -1,0 +1,501 @@
+{
+  "pricing_basis": "Standard API-equivalent USD; checked 2026-09-22; not a Codex invoice",
+  "rates_per_million_input_cached_cachewrite_output": {
+    "astra": [
+      10,
+      1,
+      12.5,
+      50
+    ],
+    "sol": [
+      2,
+      0.2,
+      2.5,
+      10
+    ],
+    "luna": [
+      0.1,
+      0.01,
+      0.125,
+      0.5
+    ]
+  },
+  "models": {
+    "astra": {
+      "full_session": {
+        "input_tokens": 19999523,
+        "cached_input_tokens": 19635712,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 42159,
+        "reasoning_output_tokens": 1516,
+        "requests": 344,
+        "cost_usd": 25.381771999999987,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 13949292,
+        "cached_input_tokens": 13743744,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33917,
+        "reasoning_output_tokens": 1356,
+        "requests": 240,
+        "cost_usd": 17.49507400000001,
+        "long_context_requests": 0
+      }
+    },
+    "sol": {
+      "full_session": {
+        "input_tokens": 29505875,
+        "cached_input_tokens": 29076864,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 80886,
+        "reasoning_output_tokens": 16263,
+        "requests": 505,
+        "cost_usd": 7.482254799999994,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 12736152,
+        "cached_input_tokens": 12604544,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 43652,
+        "reasoning_output_tokens": 9397,
+        "requests": 212,
+        "cost_usd": 3.2206448000000014,
+        "long_context_requests": 0
+      }
+    },
+    "luna": {
+      "full_session": {
+        "input_tokens": 62350990,
+        "cached_input_tokens": 61240320,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 120449,
+        "reasoning_output_tokens": 68124,
+        "requests": 581,
+        "cost_usd": 0.7836947000000006,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 21972713,
+        "cached_input_tokens": 21581568,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 65807,
+        "reasoning_output_tokens": 38768,
+        "requests": 205,
+        "cost_usd": 0.28783368000000004,
+        "long_context_requests": 0
+      }
+    }
+  },
+  "sessions": [
+    {
+      "setup": 1,
+      "participant": "player_1",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-15-22-01a0cb67-0880-7b80-ac1f-19857c8eda23.jsonl",
+      "full_session": {
+        "input_tokens": 5065560,
+        "cached_input_tokens": 4976000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9748,
+        "reasoning_output_tokens": 350,
+        "requests": 89,
+        "cost_usd": 6.359000000000003,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3393534,
+        "cached_input_tokens": 3341696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7642,
+        "reasoning_output_tokens": 304,
+        "requests": 59,
+        "cost_usd": 4.2421760000000015,
+        "long_context_requests": 0
+      },
+      "max_request_input": 81675,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 1,
+      "participant": "player_2",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T19-15-23-01a0cb67-0df4-7840-a424-88f391aa8a0b.jsonl",
+      "full_session": {
+        "input_tokens": 5996509,
+        "cached_input_tokens": 5910144,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 20256,
+        "reasoning_output_tokens": 5232,
+        "requests": 111,
+        "cost_usd": 1.5573187999999996,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2567818,
+        "cached_input_tokens": 2537344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10568,
+        "reasoning_output_tokens": 2946,
+        "requests": 47,
+        "cost_usd": 0.6740968000000002,
+        "long_context_requests": 0
+      },
+      "max_request_input": 74805,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 2,
+      "participant": "player_1",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T19-27-38-01a0cb72-4207-7f83-bace-18d6070c60ff.jsonl",
+      "full_session": {
+        "input_tokens": 5238986,
+        "cached_input_tokens": 5097728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14721,
+        "reasoning_output_tokens": 3277,
+        "requests": 110,
+        "cost_usd": 1.4492715999999997,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 1502882,
+        "cached_input_tokens": 1481344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5847,
+        "reasoning_output_tokens": 1673,
+        "requests": 32,
+        "cost_usd": 0.39781479999999997,
+        "long_context_requests": 0
+      },
+      "max_request_input": 60927,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 2,
+      "participant": "player_2",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-27-40-01a0cb72-4ac9-7ef1-84ff-1a11e83c5f74.jsonl",
+      "full_session": {
+        "input_tokens": 3837107,
+        "cached_input_tokens": 3751296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8991,
+        "reasoning_output_tokens": 267,
+        "requests": 66,
+        "cost_usd": 5.058955999999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2617071,
+        "cached_input_tokens": 2580992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6970,
+        "reasoning_output_tokens": 182,
+        "requests": 44,
+        "cost_usd": 3.2902820000000004,
+        "long_context_requests": 0
+      },
+      "max_request_input": 74053,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 3,
+      "participant": "player_1",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-42-27-01a0cb7f-d53b-7e71-85c2-abb556d115d5.jsonl",
+      "full_session": {
+        "input_tokens": 5203915,
+        "cached_input_tokens": 5106816,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9677,
+        "reasoning_output_tokens": 318,
+        "requests": 86,
+        "cost_usd": 6.561655999999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3292474,
+        "cached_input_tokens": 3233792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7425,
+        "reasoning_output_tokens": 302,
+        "requests": 56,
+        "cost_usd": 4.191861999999999,
+        "long_context_requests": 0
+      },
+      "max_request_input": 90351,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 3,
+      "participant": "player_2",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T19-42-29-01a0cb7f-dcd1-7cf3-b40f-4c04c1d6b396.jsonl",
+      "full_session": {
+        "input_tokens": 8326401,
+        "cached_input_tokens": 8067584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 31046,
+        "reasoning_output_tokens": 22209,
+        "requests": 98,
+        "cost_usd": 0.12208054000000003,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2513411,
+        "cached_input_tokens": 2391296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18286,
+        "reasoning_output_tokens": 14000,
+        "requests": 31,
+        "cost_usd": 0.04526746,
+        "long_context_requests": 0
+      },
+      "max_request_input": 136601,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 4,
+      "participant": "player_1",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T19-56-36-01a0cb8c-ca55-7132-8f31-1b0b32c96909.jsonl",
+      "full_session": {
+        "input_tokens": 24955603,
+        "cached_input_tokens": 24610560,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 23067,
+        "reasoning_output_tokens": 5417,
+        "requests": 198,
+        "cost_usd": 0.2921434,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 9063651,
+        "cached_input_tokens": 8953600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13755,
+        "reasoning_output_tokens": 4342,
+        "requests": 73,
+        "cost_usd": 0.1074186,
+        "long_context_requests": 0
+      },
+      "max_request_input": 227725,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 4,
+      "participant": "player_2",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-56-40-01a0cb8c-da54-7530-aac2-5b51e006d4a2.jsonl",
+      "full_session": {
+        "input_tokens": 5892941,
+        "cached_input_tokens": 5801600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13743,
+        "reasoning_output_tokens": 581,
+        "requests": 103,
+        "cost_usd": 7.40216,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4646213,
+        "cached_input_tokens": 4587264,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 11880,
+        "reasoning_output_tokens": 568,
+        "requests": 81,
+        "cost_usd": 5.770754,
+        "long_context_requests": 0
+      },
+      "max_request_input": 82152,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 5,
+      "participant": "player_1",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T20-53-00-01a0cbc0-6b10-77d3-a2d9-dff2d9d48f0b.jsonl",
+      "full_session": {
+        "input_tokens": 11722481,
+        "cached_input_tokens": 11611520,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 21577,
+        "reasoning_output_tokens": 1497,
+        "requests": 177,
+        "cost_usd": 2.759996000000001,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4378060,
+        "cached_input_tokens": 4341120,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10000,
+        "reasoning_output_tokens": 1042,
+        "requests": 66,
+        "cost_usd": 1.0421040000000001,
+        "long_context_requests": 0
+      },
+      "max_request_input": 87988,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 5,
+      "participant": "player_2",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T20-53-06-01a0cbc0-835d-7eb2-a0db-080a1f698fe5.jsonl",
+      "full_session": {
+        "input_tokens": 14645970,
+        "cached_input_tokens": 14386944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 35540,
+        "reasoning_output_tokens": 22378,
+        "requests": 145,
+        "cost_usd": 0.18754204000000002,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 5490853,
+        "cached_input_tokens": 5408512,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 16165,
+        "reasoning_output_tokens": 9095,
+        "requests": 53,
+        "cost_usd": 0.07040172000000003,
+        "long_context_requests": 0
+      },
+      "max_request_input": 177101,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 6,
+      "participant": "player_1",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T21-21-22-01a0cbda-63ed-7c00-9fb5-60980514d779.jsonl",
+      "full_session": {
+        "input_tokens": 14423016,
+        "cached_input_tokens": 14175232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30796,
+        "reasoning_output_tokens": 18120,
+        "requests": 140,
+        "cost_usd": 0.1819287199999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4904798,
+        "cached_input_tokens": 4828160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 17601,
+        "reasoning_output_tokens": 11331,
+        "requests": 48,
+        "cost_usd": 0.0647459,
+        "long_context_requests": 0
+      },
+      "max_request_input": 177995,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 6,
+      "participant": "player_2",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T21-21-19-01a0cbda-58f9-7261-87c1-a4c1536768c5.jsonl",
+      "full_session": {
+        "input_tokens": 6547899,
+        "cached_input_tokens": 6457472,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 24332,
+        "reasoning_output_tokens": 6257,
+        "requests": 107,
+        "cost_usd": 1.7156684,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4287392,
+        "cached_input_tokens": 4244736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 17237,
+        "reasoning_output_tokens": 3736,
+        "requests": 67,
+        "cost_usd": 1.1066292000000002,
+        "long_context_requests": 0
+      },
+      "max_request_input": 83794,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    }
+  ]
+}

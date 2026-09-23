@@ -1,0 +1,193 @@
+{
+  "run_id": "run_fe41cabec18b",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 15.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 0,
+      "shots_fired": 12,
+      "shots_hit": 8,
+      "accuracy": 0.667,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 160,
+      "shots_fired": 26,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1470",
+      "elapsed_ms": null,
+      "event": "run_fe41cabec18b duel_e1m8_blind_spawn 1470 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1470",
+        "elapsed_ms": null,
+        "event": "run_fe41cabec18b duel_e1m8_blind_spawn 1470 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 61,
+        "distance_traveled": 2511.6,
+        "unique_cells_visited": 34,
+        "revisited_cells": 27
+      },
+      "player_2": {
+        "path_points": 61,
+        "distance_traveled": 803.4,
+        "unique_cells_visited": 9,
+        "revisited_cells": 52
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7539.8,
+    "decision_p95_ms": 10716.0,
+    "decision_max_ms": 10716.0,
+    "mcp_avg_ms": 442.26,
+    "mcp_p95_ms": 3363.0,
+    "mcp_max_ms": 3682.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 0
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3325,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3325,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 9410,
+    "stale_intent_extension_max_ms": 8753
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the shotgun and attack the southern lane",
+      "route": "B12;I12;I16;F16;F17;I17;I22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making this shotgun employee of the month."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "use the bottom wall for cover while reaching the southern weapon",
+      "route": "W32;W31;W30;W29;W28;W27;W26;W25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent keeps targeting my exposed southern route",
+      "plan_summary": "I am hiding behind the world's lowest shelf."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "arm up and pursue contact",
+      "route": [
+        "I16",
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "Q22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am heading to the southern branch office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "continue under cover toward the southern weapon",
+      "route": "W24;W23;W22;W21;W20;W19;W18;W17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the bottom lane breaks sight while I circle the central block",
+      "plan_summary": "I am crawling under the snack table."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "finish the opponent in the southern lane",
+      "route": "W22;W25;T25",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am closing this ticket with excessive enthusiasm."
+    }
+  ]
+}

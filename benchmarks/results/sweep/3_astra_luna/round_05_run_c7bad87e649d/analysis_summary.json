@@ -1,0 +1,192 @@
+{
+  "run_id": "run_c7bad87e649d",
+  "round": 5,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 17.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 45,
+      "shots_fired": 7,
+      "shots_hit": 7,
+      "accuracy": 1.0,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 155,
+      "shots_fired": 14,
+      "shots_hit": 5,
+      "accuracy": 0.357,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1225",
+      "elapsed_ms": null,
+      "event": "run_c7bad87e649d duel_e1m8_blind_spawn 1225 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1225",
+        "elapsed_ms": null,
+        "event": "run_c7bad87e649d duel_e1m8_blind_spawn 1225 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 66,
+        "distance_traveled": 2636.0,
+        "unique_cells_visited": 34,
+        "revisited_cells": 32
+      },
+      "player_2": {
+        "path_points": 66,
+        "distance_traveled": 1245.7,
+        "unique_cells_visited": 16,
+        "revisited_cells": 50
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 3448.4,
+    "decision_p95_ms": 5501.0,
+    "decision_max_ms": 5501.0,
+    "mcp_avg_ms": 738.61,
+    "mcp_p95_ms": 1556.0,
+    "mcp_max_ms": 8034.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1530,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1530,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 6196,
+    "stale_intent_extension_max_ms": 6196
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the shotgun and attack through center",
+      "route": "B12;I12;I16;F16;F17;I17;I22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am renewing my license to micromanage."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the southern shotgun quickly",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent keeps winning ranged trades with the northern weapon",
+      "plan_summary": "I am sprinting toward a better lunch."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "push west to the southern shotgun",
+      "route": "V23;V22;V21;V20;V19;V18;V17;U17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the closer weapon can improve my damage before the next exchange",
+      "plan_summary": "I am chasing cheese with tactical urgency."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get armed and pursue the opponent",
+      "route": [
+        "F16",
+        "F17",
+        "I17",
+        "I22",
+        "O22",
+        "V22",
+        "V24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am chasing down an overdue exit interview."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "close range and finish the opponent",
+      "route": "V22;V21;T21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am sprinting toward a very short meeting."
+    }
+  ]
+}
