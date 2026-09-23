@@ -29,7 +29,9 @@ The cost calculation now uses full-session token usage. The older benchmark used
 
 Luna delivered the most wins per dollar: **12.8**, compared with Sol's **2.3** and Astra's **1.3**. Astra won the most matches, while Sol made the fastest decisions.
 
-[![GPT-6 Doom benchmark wins per estimated API dollar: Luna 12.8, Sol 2.3, Astra 1.3](benchmarks/figures/gpt-6-wins-per-dollar.png)](benchmarks/figures/gpt-6-wins-per-dollar.png)
+[![GPT-6 output-token price versus draw-adjusted Doom win score: Astra $50 and 82.5%, Sol $10 and 42.5%, Luna $0.50 and 25%](benchmarks/figures/gpt-6-output-token-price-vs-win-rate.png)](benchmarks/figures/gpt-6-output-token-price-vs-win-rate.png)
+
+The chart uses output-token prices from the benchmark's pricing table; the leaderboard's cost-efficiency column uses full-session costs. With no draws, draw-adjusted scores equal win rates.
 
 Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
 
