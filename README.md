@@ -37,7 +37,26 @@ Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
 
 See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
 
-## Earlier benchmark findings
+## Previous-generation results
+
+Results from the earlier four-model tournament. These models faced different opponents from the GPT-6 models above, so the win rates are not directly comparable across tournaments.
+
+| Rank | Model | Win rate | Wins-Losses | Decision speed | Accuracy | Damage diff | Win rate / cost |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 1 | gpt-5.5 | **66.7% 🏆** | 38-18 | 6.9s | **51% 🎯** | **+22.5 💥** | 0.26× |
+| 2 | gpt-5.4 | 52.5% | 25-22 | 8.1s | 45% | +13.9 | 0.43× |
+| 3 | gpt-5.3-codex-spark | 41.7% | 17-27 | **6.6s ⚡** | 38% | −15.9 | n/a |
+| 4 | gpt-5.4-mini | 39.2% | 19-32 | 11.8s | 40% | −20.5 | **1.00× 💰** |
+
+Each model played 60 rounds. Every pair played 20 rounds, swapping player positions after 10. Win rate counts draws as half a win; the Wins-Losses column excludes draws. Badges mark the leaders within this tournament.
+
+The historical **Win rate / cost** metric divides win rate by output-token price, normalized so the best model = 1.00×. It uses the benchmark's May 2026 prices per 1M output tokens: gpt-5.5 $30, gpt-5.4 $14, and gpt-5.4-mini $4.50; Spark had no public price recorded. These scores use a different cost calculation from the GPT-6 table above.
+
+[![Previous-generation output-token price versus draw-adjusted Doom win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
+
+See the [earlier benchmark analysis](benchmarks/benchmark-analysis-official/analysis.md) and [head-to-head results](benchmarks/benchmark-analysis-official/figures/fig02_head_to_head_heatmap.png).
+
+### Earlier benchmark findings
 
 **Resource control was the clearest winning signal.** GPT-5.5, the top model with a 66.7% draw-adjusted score, recorded 30 confirmed health pickups, more than twice the next-highest model, while its plans repeatedly used health routes to escape and recover. It also won 80.0% of rounds (4 of 5) in which it secured the shotgun.
 
