@@ -738,6 +738,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
     def record_mcp_presence(self, payload: dict[str, Any]) -> dict[str, Any]:
         client_name = str(payload.get("client_name", "")).strip()
+        client_title = str(payload.get("client_title", "")).strip()
         client_version = str(payload.get("client_version", "")).strip()
         client_id = str(payload.get("client_id", "")).strip()
         now = now_ms()
@@ -750,6 +751,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         record = {
             "client_id": client_id,
             "client_name": client_name,
+            "client_title": client_title,
             "client_version": client_version,
             "source_addr": str(payload.get("source_addr", "")),
             "connected_at_ms": int(payload.get("connected_at_ms", now)),
@@ -2199,6 +2201,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 {
                     "client_id": self.new_http_mcp_client_id(),
                     "client_name": str(client_info.get("name", "") or "HTTP MCP client"),
+                    "client_title": str(client_info.get("title", "") or ""),
                     "client_version": str(client_info.get("version", "") or ""),
                     "source_addr": self.client_address[0],
                     "connected_at_ms": now_ms(),
@@ -2259,6 +2262,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 client = DoomArenaClient(f"http://{self.server.args.host}:{self.server.args.port}")
                 presence = self.current_http_mcp_presence()
                 client.client_name = str(presence.get("client_name", "") or "HTTP MCP client")
+                client.client_title = str(presence.get("client_title", "") or "")
                 client.client_version = str(presence.get("client_version", "") or "")
                 text = call_tool(client, tool_name, arguments if isinstance(arguments, dict) else {})
                 result = {"content": [{"type": "text", "text": text}], "isError": False}
@@ -2952,7 +2956,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if participant_id not in PARTICIPANTS:
             raise ValueError("participant_id must be player_1 or player_2")
-        if identity_source not in {"codex_session", "environment", "unavailable"}:
+        if identity_source not in {"codex_session", "environment", "client_reported", "client_info", "unavailable"}:
             raise DoomArenaError(
                 "participant identity must come from automatic session detection"
             )

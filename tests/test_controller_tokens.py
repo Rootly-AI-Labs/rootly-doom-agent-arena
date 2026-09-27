@@ -15,6 +15,11 @@ import doom_arena_duel_prompts as prompts
 import doom_arena_mcp as mcp
 
 
+@pytest.fixture(autouse=True)
+def clear_inherited_codex_session_id(monkeypatch):
+    monkeypatch.delenv("CODEX_SESSION_ID", raising=False)
+
+
 # --------------------------------------------------------------------------- #
 # build_controller_tokens
 # --------------------------------------------------------------------------- #
@@ -44,7 +49,7 @@ def test_build_controller_tokens_passes_enforce_flag_through():
     assert tokens["enforce_controller_tokens"] is False
 
 
-def test_participant_prompt_uses_automatic_session_identity():
+def test_participant_prompt_requests_exact_http_session_identity():
     prompt = prompts.instructions(
         participant_id="player_1",
         model="",
@@ -54,17 +59,19 @@ def test_participant_prompt_uses_automatic_session_identity():
         control_mode="hierarchical",
     )
 
-    assert "IDENTITY (AUTOMATIC)" in prompt
+    assert "IDENTITY" in prompt
     assert "without guessing or asking the user" in prompt
-    assert "reads the current session metadata" in prompt
-    assert '"coding_assistant"' not in prompt
-    assert '"model"' not in prompt
+    assert "read their current session metadata" in prompt
+    assert '"coding_assistant": "Codex"' in prompt
+    assert '"model": "exact current model identity"' in prompt
+    assert "Remote HTTP MCP does not expose the selected model" in prompt
     assert "Never submit an MCP transport package name or version" in prompt
     assert "`agent_name` is only your creative alias" in prompt
-    assert "readiness still succeeds with an explicit unavailable label" in prompt
+    assert "Remote Codex readiness requires exact model identity" in prompt
+    assert "Other unavailable identities still receive an explicit unavailable label" in prompt
     assert "DOOM_ARENA_CODING_ASSISTANT" in prompt
     assert "DOOM_ARENA_MODEL_IDENTITY" in prompt
-    assert "do not loop on reconnects" in prompt
+    assert "Do not loop on reconnects" in prompt
 
 
 @pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
@@ -282,7 +289,7 @@ def test_set_participant_ready_uses_trusted_environment_identity(tmp_path, monke
     assert response["identity_source"] == "environment"
 
 
-def test_ready_tool_schema_exposes_alias_but_no_manual_identity_fields():
+def test_ready_tool_schema_exposes_alias_and_runtime_identity_fields():
     ready_tool = next(tool for tool in mcp.tool_definitions() if tool["name"] == "set_participant_ready")
 
     assert ready_tool["inputSchema"]["properties"]["agent_name"]["maxLength"] == 32
@@ -294,8 +301,8 @@ def test_ready_tool_schema_exposes_alias_but_no_manual_identity_fields():
     assert "unique within the duel" in ready_tool["inputSchema"]["properties"]["agent_name"]["description"]
     assert "without Doom or gaming knowledge" in ready_tool["description"]
     assert "duplicate-name rejection" in ready_tool["description"]
-    assert "coding_assistant" not in ready_tool["inputSchema"]["properties"]
-    assert "model" not in ready_tool["inputSchema"]["properties"]
+    assert ready_tool["inputSchema"]["properties"]["coding_assistant"]["type"] == "string"
+    assert "gpt-6-astra" in ready_tool["inputSchema"]["properties"]["model"]["description"]
     assert set(ready_tool["inputSchema"]["required"]) == {"participant_id", "agent_name"}
 
 
@@ -370,6 +377,94 @@ def test_set_participant_ready_detects_codex_session_identity(tmp_path, monkeypa
         "Expense Goblin, Codex, gpt-5.6-sol low fast"
     )
     assert response["identity_source"] == "codex_session"
+
+
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"])
+def test_detects_gpt6_from_codex_session_id(tmp_path, monkeypatch, model):
+    codex_home = tmp_path / ".codex"
+    sessions_dir = codex_home / "sessions" / "2026" / "09" / "24"
+    sessions_dir.mkdir(parents=True)
+    session_id = "019fb38c-6f2c-7960-834e-025b687b341e"
+    rollout_path = sessions_dir / f"rollout-2026-09-24T11-02-33-{session_id}.jsonl"
+    rollout_path.write_text(
+        json.dumps(
+            {
+                "type": "turn_context",
+                "payload": {
+                    "model": model,
+                    "effort": "medium",
+                    "thread_settings": {"service_tier": "priority"},
+                },
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.setenv("CODEX_SESSION_ID", session_id)
+
+    assert mcp.detect_codex_session_identity() == (
+        "Codex",
+        f"{model} medium fast",
+    )
+
+
+def test_codex_product_title_requires_exact_model_identity(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.note_client_initialized(
+        {
+            "clientInfo": {
+                "name": "codex-mcp-client",
+                "title": "Codex",
+                "version": "0.200.0",
+            }
+        }
+    )
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.delenv("CODEX_SESSION_ID", raising=False)
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    captured = {}
+
+    def fake_request(_method, _path, body=None, _content_type=None):
+        captured.update(json.loads(body.decode("utf-8")))
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+    with pytest.raises(mcp.DoomArenaError, match="requires the exact current model variant"):
+        client.set_participant_ready(
+            "player_1",
+            controller_token="token",
+            agent_name="Release Raccoon",
+        )
+
+    assert captured == {}
+
+
+def test_http_client_can_report_exact_gpt6_identity(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    captured = {}
+
+    def fake_request(_method, _path, body=None, _content_type=None):
+        captured.update(json.loads(body.decode("utf-8")))
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+    response = json.loads(
+        client.set_participant_ready(
+            "player_1",
+            controller_token="token",
+            agent_name="Runtime Raccoon",
+            coding_assistant="Codex",
+            model="gpt-6-astra medium",
+        )
+    )
+
+    assert captured["coding_assistant"] == "Codex"
+    assert captured["model"] == "gpt-6-astra medium"
+    assert captured["identity_source"] == "client_reported"
+    assert "identity_warning" not in response
 
 
 def test_set_participant_ready_detects_codex_identity_from_parent_process(tmp_path, monkeypatch):

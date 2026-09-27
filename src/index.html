@@ -2798,6 +2798,7 @@
             <div id="duel-play-footer">
                 <span class="duel-play-footer-actions">
                     <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
+                    <button type="button" id="duel-commentator-audio" data-commentator-toggle>Enable shoutcaster audio</button>
                     <button type="button" id="duel-menu">Menu</button>
                 </span>
             </div>
@@ -2902,7 +2903,7 @@
             </div>
         </div>
 
-        <script src="elevenagents-commentator.js?v=20260731-team-colors"></script>
+    <script src="elevenagents-commentator.js?v=20260924-eight-word-commentary"></script>
         <script>
             var doomAssetCacheBust = "cache-bust-20260731-lifecycle-safe-player-cache";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
@@ -2951,6 +2952,8 @@
             var elevenAgentsCommentatorConfigResolved = false;
             var elevenAgentsCommentatorAudioPreparedByUser = false;
             var elevenAgentsCommentatorAudioPreparationPromise = null;
+            var elevenAgentsCommentatorRestoreTimer = 0;
+            var elevenAgentsCommentatorRestoreAttempts = 0;
             var duelIntroductionBlockedRunId = "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
@@ -3042,6 +3045,7 @@
             var duelAutoAdvanceTimer = 0;
             var duelNextRoundEnableTimer = 0;
             var duelAutoAdvanceInFlight = false;
+            var duelCommentaryIdleWaitInFlight = false;
             var duelLastAutoAdvancedRunId = "";
             var duelFinishedElapsedByRun = {};
             var duelFinishedSeenAtByRun = {};
@@ -4533,6 +4537,61 @@
                     });
             }
 
+            function restoreElevenAgentsCommentatorAudio() {
+                if (
+                    !duelPlayViewIsDisplayed() ||
+                    !elevenAgentsCommentatorAvailable ||
+                    !elevenAgentsCommentatorDesired ||
+                    elevenAgentsCommentatorRequested ||
+                    elevenAgentsCommentatorEnabled
+                ) {
+                    return Promise.resolve(false);
+                }
+                syncElevenAgentsCommentatorControls("Connecting…", false, true);
+                setElevenAgentsCommentatorStatus("Restoring shoutcaster audio…", "connecting");
+                return prepareElevenAgentsCommentatorFromUserGesture()
+                    .then(function () {
+                        return requestElevenAgentsCommentator();
+                    })
+                    .then(function () {
+                        return true;
+                    })
+                    .catch(function () {
+                        // Browsers that still require a fresh gesture can recover
+                        // through the visible footer control without blocking play.
+                        elevenAgentsCommentatorError = false;
+                        elevenAgentsCommentatorRequested = false;
+                        syncElevenAgentsCommentatorControls("Enable shoutcaster audio", false, false);
+                        setElevenAgentsCommentatorStatus("Click once to enable browser voice audio", "ready");
+                        return false;
+                    });
+            }
+
+            function scheduleElevenAgentsCommentatorRestore(delayMs) {
+                if (
+                    elevenAgentsCommentatorRestoreTimer ||
+                    elevenAgentsCommentatorRequested ||
+                    elevenAgentsCommentatorEnabled
+                ) {
+                    return;
+                }
+                elevenAgentsCommentatorRestoreTimer = window.setTimeout(function () {
+                    elevenAgentsCommentatorRestoreTimer = 0;
+                    elevenAgentsCommentatorRestoreAttempts += 1;
+                    restoreElevenAgentsCommentatorAudio().then(function (restored) {
+                        if (restored || elevenAgentsCommentatorEnabled) {
+                            elevenAgentsCommentatorRestoreAttempts = 0;
+                            return;
+                        }
+                        if (elevenAgentsCommentatorRestoreAttempts < 3) {
+                            scheduleElevenAgentsCommentatorRestore(900);
+                        } else {
+                            elevenAgentsCommentatorRestoreAttempts = 0;
+                        }
+                    });
+                }, Math.max(0, Number(delayMs) || 0));
+            }
+
             function initializeElevenAgentsCommentator() {
                 var toggles = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-toggle]"));
                 var volumes = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-volume]"));
@@ -4550,6 +4609,23 @@
                 });
                 toggles.forEach(function (toggle) {
                     toggle.addEventListener("click", function () {
+                        if (
+                            duelPlayViewIsDisplayed() &&
+                            elevenAgentsCommentatorDesired &&
+                            !elevenAgentsCommentatorRequested &&
+                            !elevenAgentsCommentatorEnabled
+                        ) {
+                            prepareElevenAgentsCommentatorFromUserGesture()
+                                .then(function () {
+                                    return requestElevenAgentsCommentator();
+                                })
+                                .catch(function (error) {
+                                    elevenAgentsCommentatorError = true;
+                                    syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                                    setElevenAgentsCommentatorStatus(error.message || "Unable to enable audio", "error");
+                                });
+                            return;
+                        }
                         if (elevenAgentsCommentatorDesired && !elevenAgentsCommentatorError) {
                             elevenAgentsCommentatorDesired = false;
                             elevenAgentsCommentatorRequested = false;
@@ -4606,8 +4682,12 @@
                         elevenAgentsCommentatorAvailable = true;
                         elevenAgentsCommentatorDesired = true;
                         elevenAgentsCommentatorError = false;
-                        syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
-                        setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                        if (duelPlayViewIsDisplayed()) {
+                            scheduleElevenAgentsCommentatorRestore(750);
+                        } else {
+                            syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                            setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                        }
                     })
                     .catch(function () {
                         elevenAgentsCommentatorAvailable = false;
@@ -5585,9 +5665,18 @@
                 if (!currentDuelSession) {
                     return "";
                 }
-                return participantId === "player_2"
+                var prompt = participantId === "player_2"
                     ? (currentDuelSession.player_2_prompt || "")
                     : (currentDuelSession.player_1_prompt || "");
+                // Older saved sessions have the reference in a separate field.
+                if (prompt && prompt.indexOf("# Doom Arena Map Reference") < 0 && currentDuelSession.map_reference) {
+                    prompt += "\n\n---\n\n" + currentDuelSession.map_reference;
+                }
+                if (prompt.indexOf("# Doom Arena Map Reference") >= 0) {
+                    prompt = prompt.replace("the full ASCII map is separate from this prompt.", "the full map reference is included at the bottom of this prompt.")
+                        .replace("Full ASCII map reference is available separately in the UI.", "The full ASCII map and blocked route cells are included at the bottom of this prompt.");
+                }
+                return prompt;
             }
 
             function renderSelectedDuelPrompt(participantId) {
@@ -6050,22 +6139,51 @@
 
             function copyPromptText(id, button) {
                 var node = document.getElementById(id);
+                var participantId = id === "duel-p1-prompt" ? "player_1" : (id === "duel-p2-prompt" ? "player_2" : "");
+                var text;
+                var mapNode;
 
                 if (node === null || !node.value) {
                     updateLauncherStatus("No prompt generated yet.");
                     return;
                 }
 
-                node.focus();
-                node.select();
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(node.value).catch(function () {
-                        document.execCommand("copy");
-                    });
-                } else {
-                    document.execCommand("copy");
+                text = node.value;
+                if (participantId && !selectedJevPromptMode(participantId) && text.indexOf("# Doom Arena Map Reference") < 0) {
+                    mapNode = document.getElementById("duel-map-reference");
+                    if (!mapNode || !mapNode.value.trim()) {
+                        updateLauncherStatus("Map reference is not ready yet. Please retry copying once it loads.");
+                        return;
+                    }
+                    text += "\n\n---\n\n" + mapNode.value;
                 }
-                markPromptCopied(button || null);
+
+                function fallbackCopy() {
+                    var copyNode = document.createElement("textarea");
+                    copyNode.value = text;
+                    copyNode.style.position = "fixed";
+                    copyNode.style.opacity = "0";
+                    document.body.appendChild(copyNode);
+                    copyNode.focus();
+                    copyNode.select();
+                    try {
+                        if (document.execCommand("copy")) {
+                            markPromptCopied(button || null);
+                        } else {
+                            updateLauncherStatus("Could not copy. Please allow clipboard access and retry.");
+                        }
+                    } finally {
+                        copyNode.remove();
+                    }
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function () {
+                        markPromptCopied(button || null);
+                    }).catch(fallbackCopy);
+                } else {
+                    fallbackCopy();
+                }
             }
 
             function exitPointerLockIfNeeded() {
@@ -6512,6 +6630,13 @@
                     launcher.style.display = "none";
                 }
                 duelLauncherHidePending = false;
+
+                if (
+                    elevenAgentsCommentatorAvailable &&
+                    elevenAgentsCommentatorDesired
+                ) {
+                    scheduleElevenAgentsCommentatorRestore(750);
+                }
 
                 // Wait for two animation frames so the browser paints the
                 // spectator layout before ElevenAgents can emit any audio.
@@ -7584,10 +7709,27 @@
                 );
                 delayMs = Math.max(deathHoldRemainingMs, summaryHoldRemainingMs);
                 duelAutoAdvanceTimer = window.setTimeout(function () {
+                    var finishedRunId = currentArenaRunId;
                     duelAutoAdvanceTimer = 0;
-                    duelAutoAdvanceInFlight = true;
-                    startDuel({ continueSession: true, autoAdvance: true });
+                    waitForElevenAgentsCommentary().then(function () {
+                        if (currentArenaRunId !== finishedRunId) {
+                            return;
+                        }
+                        duelAutoAdvanceInFlight = true;
+                        startDuel({ continueSession: true, autoAdvance: true });
+                    });
                 }, delayMs);
+            }
+
+            function waitForElevenAgentsCommentary() {
+                if (
+                    !elevenAgentsCommentatorEnabled ||
+                    !elevenAgentsCommentator ||
+                    typeof elevenAgentsCommentator.waitUntilIdle !== "function"
+                ) {
+                    return Promise.resolve();
+                }
+                return elevenAgentsCommentator.waitUntilIdle();
             }
 
             function closeBenchmarkResultsModal() {
@@ -8094,6 +8236,7 @@
                 var hasNextRound;
                 var nextRoundNumber;
                 var remainingDeathHoldMs = 0;
+                var commentaryBusy = false;
 
                 if (button === null) {
                     return;
@@ -8121,6 +8264,19 @@
                     ? currentDuelSession.has_next_round
                     : currentRound < totalRounds;
                 nextRoundNumber = Math.min(totalRounds, currentRound + 1);
+                commentaryBusy = !!(
+                    elevenAgentsCommentatorEnabled &&
+                    elevenAgentsCommentator &&
+                    typeof elevenAgentsCommentator.isIdle === "function" &&
+                    !elevenAgentsCommentator.isIdle()
+                );
+                if (commentaryBusy && !duelCommentaryIdleWaitInFlight) {
+                    duelCommentaryIdleWaitInFlight = true;
+                    waitForElevenAgentsCommentary().then(function () {
+                        duelCommentaryIdleWaitInFlight = false;
+                        updateNextRoundButton("finished");
+                    });
+                }
 
                 if (
                     currentArenaRunId &&
@@ -8136,7 +8292,7 @@
                 }
 
                 button.hidden = !hasNextRound;
-                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight || remainingDeathHoldMs > 0;
+                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight || remainingDeathHoldMs > 0 || commentaryBusy;
                 button.textContent = "Next Match (" + nextRoundNumber + "/" + totalRounds + ")";
             }
 
@@ -8589,6 +8745,12 @@
                     launcher.style.display = "none";
                 }
                 duelLauncherHidePending = false;
+                if (
+                    elevenAgentsCommentatorAvailable &&
+                    elevenAgentsCommentatorDesired
+                ) {
+                    scheduleElevenAgentsCommentatorRestore(250);
+                }
             }
 
             function resetDuelPovFrameState() {
@@ -9626,10 +9788,7 @@
                 document.getElementById("arena-start-game").addEventListener("click", function () {
                     // Unlock browser audio while this direct user gesture is
                     // active, but do not connect or speak over the setup view.
-                    if (
-                        elevenAgentsCommentatorAvailable &&
-                        elevenAgentsCommentatorDesired
-                    ) {
+                    if (elevenAgentsCommentator && !elevenAgentsCommentatorError) {
                         prepareElevenAgentsCommentatorFromUserGesture().catch(function (error) {
                             updateLauncherStatus(error.message || "Unable to prepare the shoutcaster");
                         });

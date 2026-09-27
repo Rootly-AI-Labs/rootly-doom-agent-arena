@@ -53,7 +53,20 @@ catch {
 }
 
 $env:DOOM_ARENA_PORT = [string]$Port
-$ComposeFiles = @("-f", "docker/docker-compose.yml")
+$ComposeFiles = @()
+$RootEnvPath = Join-Path $RepoRoot ".env"
+if (Test-Path -LiteralPath $RootEnvPath -PathType Leaf) {
+    # Compose otherwise searches docker/.env because the compose file lives
+    # under docker/, silently dropping repository-level integrations.
+    $ComposeFiles += @("--env-file", $RootEnvPath)
+}
+$ComposeFiles += @("-f", "docker/docker-compose.yml")
+$CodexSessionsPath = Join-Path $env:USERPROFILE ".codex\sessions"
+if (Test-Path -LiteralPath $CodexSessionsPath -PathType Container) {
+    $env:CODEX_SESSIONS_PATH = (Resolve-Path $CodexSessionsPath).Path
+    $env:DOOM_ARENA_HOST_REPO_ROOT = $RepoRoot
+    $ComposeFiles += @("-f", "docker/docker-compose.codex.yml")
+}
 if ($Dev) {
     $ComposeFiles += @("-f", "docker/docker-compose.dev.yml")
 }

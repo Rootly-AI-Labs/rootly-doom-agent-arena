@@ -184,11 +184,11 @@ const waiting = JSON.parse(JSON.stringify(snapshot));
 waiting.match.phase = 'waiting_for_agents';
 const introCue = api.chooseCue(waiting, snapshot);
 assert.equal(introCue.type, 'match_start');
-assert(introCue.facts.includes('Open with: In the Rootly Doom Agent Areeennaaaa'));
+assert(introCue.facts.includes('State that the Rootly Doom Agent Arena match is beginning'));
 assert(introCue.facts.includes('Team Blue is Invoice Badger'));
 assert(introCue.facts.includes('Team Red is Nacho Regrets'));
 const introPayload = new api.Commentator({{}}).commentaryPayload(introCue, snapshot);
-assert.equal(introPayload.delivery.maximum_words, 44);
+assert.equal(introPayload.delivery.maximum_words, 8);
 assert.equal(introPayload.teams.blue.name, 'Invoice Badger');
 assert.equal(introPayload.teams.blue.team, 'Team Blue');
 assert.equal(introPayload.teams.red.name, 'Nacho Regrets');
@@ -196,9 +196,18 @@ assert.equal(introPayload.teams.red.team, 'Team Red');
 assert.equal(introPayload.players, undefined);
 assert(introPayload.delivery.naming.includes('Never say Player 1'));
 assert.equal(api.cueDelayMs({{type: 'round_end'}}, 2500), 0);
-assert.equal(api.cueDelayMs({{type: 'heavy_damage'}}, 2500), 350);
+assert.equal(api.cueDelayMs({{type: 'heavy_damage'}}, 2500), 0);
+assert.equal(api.cueDelayMs({{type: 'damage'}}, 2500), 0);
 assert.equal(api.cueDelayMs({{type: 'plan_change'}}, 2500), 2200);
-assert(introPayload.delivery.format.includes('TEEEAM BLUE'));
+assert(api.cuePriority({{type: 'damage'}}) > api.cuePriority({{type: 'plan_change'}}));
+assert(api.interruptsSpeech({{type: 'first_contact'}}));
+assert(!api.interruptsSpeech({{type: 'plan_change'}}));
+assert(introPayload.delivery.format.includes('8 words or fewer'));
+assert.equal(introPayload.delivery.priorities[0], 'final result and eliminations');
+assert.equal(introPayload.delivery.priorities[1], 'damage and critical health');
+assert.equal(introPayload.delivery.priorities.at(-1), 'plan changes');
+assert(introPayload.delivery.tone.includes('without jokes'));
+assert(introPayload.delivery.avoid.includes('jokes'));
 const finished = JSON.parse(JSON.stringify(snapshot));
 finished.match.phase = 'finished';
 finished.match.winner = 'player_1';
@@ -208,7 +217,7 @@ const resultCue = api.chooseCue(snapshot, finished);
 assert.equal(resultCue.type, 'round_end');
 assert.equal(resultCue.actor, 'Invoice Badger');
 assert(resultCue.facts.join(' ').includes('Nacho Regrets was eliminated'));
-assert.equal(new api.Commentator({{}}).commentaryPayload(resultCue, finished).delivery.maximum_words, 14);
+assert.equal(new api.Commentator({{}}).commentaryPayload(resultCue, finished).delivery.maximum_words, 8);
 """
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
 
@@ -219,11 +228,12 @@ def test_spectator_loads_commentator_controls_and_external_director():
         encoding="utf-8"
     )
 
-    assert 'src="elevenagents-commentator.js?v=20260731-team-colors"' in index
+    assert 'src="elevenagents-commentator.js?v=20260924-eight-word-commentary"' in index
     assert 'id="arena-commentator-toggle"' in index
     assert 'id="arena-commentator-volume"' in index
     assert 'id="duel-commentator-caption"' in index
     assert 'id="duel-commentator-toggle"' not in index
+    assert 'id="duel-commentator-audio"' in index
     assert 'id="duel-commentator-volume"' not in index
     assert 'id="duel-commentator-status"' not in index
     assert "updateElevenAgentsCommentator(" in index
@@ -266,8 +276,12 @@ def test_spectator_loads_commentator_controls_and_external_director():
     assert "function restoreDuelLauncherAfterIntroductionFailure()" in index
     assert "restoreDuelLauncherAfterIntroductionFailure();" in index
     assert "function commentaryCanBlockDuelStart()" in index
+    assert "function waitForElevenAgentsCommentary()" in index
+    assert "return elevenAgentsCommentator.waitUntilIdle();" in index
+    assert "remainingDeathHoldMs > 0 || commentaryBusy" in index
     assert "elevenAgentsCommentatorAudioPreparedByUser" in index
     assert "Browser audio did not unlock in time" in index
+    assert 'syncElevenAgentsCommentatorControls("Enable shoutcaster audio", false, false);' in index
 
 
 def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
@@ -282,7 +296,8 @@ def test_standalone_voice_test_bypasses_the_game_and_reports_each_stage():
     assert "/api/arena/commentator/config" in page
     assert "/api/arena/commentator/signed-url" in page
     assert "Shoutcaster audio test successful" in page
-    assert "elevenagents-commentator.js?v=20260731-team-colors" in page
+    assert "elevenagents-commentator.js?v=20260924-eight-word-commentary" in page
+    assert "releaseTimer" in page
     assert "browser autoplay policies" in page
     assert "Timed out after 15 seconds" in page
     assert "updateDuelDashboard" not in page
@@ -405,6 +420,57 @@ setTimeout(() => {{
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
 
 
+def test_combat_cues_interrupt_playback_and_idle_waits_for_replacement():
+    require_node()
+    module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
+    script = f"""
+const assert = require('assert');
+global.WebSocket = {{OPEN: 1}};
+global.atob = value => Buffer.from(value, 'base64').toString('binary');
+global.window = {{setTimeout, clearTimeout}};
+const api = require({json.dumps(str(module_path))});
+
+(async () => {{
+  const sent = [];
+  let stopped = 0;
+  const source = {{connect: () => {{}}, start: () => {{}}, stop: () => {{ stopped += 1; }}, onended: null}};
+  const commentator = new api.Commentator({{}});
+  commentator.enabled = true;
+  commentator.ready = true;
+  commentator.socket = {{readyState: 1, send: value => sent.push(JSON.parse(value))}};
+  commentator.sampleRate = 16000;
+  commentator.audioContext = {{
+    currentTime: 1,
+    createBuffer: (_channels, length, rate) => ({{duration: length / rate, copyToChannel: () => {{}}}}),
+    createBufferSource: () => source
+  }};
+  commentator.gainNode = {{}};
+  commentator.lastSnapshot = api.buildSnapshot({{
+    runId: 'run_interrupt', phase: 'combat', player1Name: 'Blue', player2Name: 'Red',
+    player1: {{health: '100', alive: '1'}}, player2: {{health: '100', alive: '1'}}
+  }}, 1000);
+  commentator.speaking = true;
+  commentator.queueAudio(Buffer.from([0, 0, 1, 0]).toString('base64'));
+  commentator.update({{
+    runId: 'run_interrupt', phase: 'combat', player1Name: 'Blue', player2Name: 'Red',
+    player1: {{health: '95', alive: '1'}}, player2: {{health: '100', alive: '1'}}
+  }});
+  assert.equal(stopped, 1);
+  const cue = sent.map(message => message.text && JSON.parse(message.text)).find(payload => payload && payload.message_type === 'commentary_cue');
+  assert.equal(cue.event.type, 'damage');
+  assert.equal(commentator.speaking, true);
+  let idleResolved = false;
+  const idle = commentator.waitUntilIdle().then(() => {{ idleResolved = true; }});
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.equal(idleResolved, false);
+  commentator.handleMessage(JSON.stringify({{type: 'agent_response_complete'}}));
+  await idle;
+  assert.equal(commentator.isIdle(), true);
+}})().catch(error => {{ console.error(error); process.exit(1); }});
+"""
+    subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
+
+
 def test_match_introduction_resolves_after_audio_and_suppresses_duplicate_start_cue():
     require_node()
     module_path = REPO_ROOT / "src" / "elevenagents-commentator.js"
@@ -438,7 +504,7 @@ const api = require({json.dumps(str(module_path))});
   assert.equal(sent.length, 1);
   const payload = JSON.parse(sent[0].text);
   assert.equal(payload.event.type, 'match_start');
-  assert(payload.event.facts.includes('Open with: In the Rootly Doom Agent Areeennaaaa'));
+  assert(payload.event.facts.includes('State that the Rootly Doom Agent Arena match is beginning'));
   assert.equal(commentator.introducedRunId, '');
 
   commentator.sampleRate = 16000;
@@ -500,12 +566,13 @@ function snapshot(player1, pickups, visible, shotgun) {{
 const before = snapshot({{health: '100', alive: '1', damage_dealt: '0'}}, 0, false);
 const criticalAndPickup = snapshot({{health: '30', alive: '1', damage_dealt: '0'}}, 1, true);
 assert.equal(api.chooseCue(before, criticalAndPickup).type, 'critical_health');
-const contactAndPickup = snapshot({{health: '90', alive: '1', damage_dealt: '0'}}, 1, true);
+const contactAndPickup = snapshot({{health: '100', alive: '1', damage_dealt: '0'}}, 1, true);
 assert.equal(api.chooseCue(before, contactAndPickup).type, 'first_contact');
-const contactAndShotgun = snapshot({{health: '90', alive: '1', damage_dealt: '0', ready_weapon: '2'}}, 0, true, 1);
+const contactAndShotgun = snapshot({{health: '100', alive: '1', damage_dealt: '0', ready_weapon: '2'}}, 0, true, 1);
 const shotgunCue = api.chooseCue(before, contactAndShotgun);
-assert.equal(shotgunCue.type, 'weapon_pickup');
-assert(shotgunCue.facts.includes('This is first contact'));
+assert.equal(shotgunCue.type, 'first_contact');
+const hit = snapshot({{health: '95', alive: '1', damage_dealt: '0'}}, 0, false);
+assert.equal(api.chooseCue(before, hit).type, 'damage');
 const incomplete = snapshot({{}}, 0, false);
 assert.equal(incomplete.players.player_1.health, null);
 assert.equal(incomplete.players.player_1.alive, null);
@@ -588,6 +655,6 @@ const roundCue = api.chooseCue(api.buildSnapshot({{
 }}, 1000), nextRound);
 assert.equal(roundCue.type, 'match_start');
 assert.equal(roundCue.full_introduction, false);
-assert.equal(new api.Commentator({{}}).commentaryPayload(roundCue, nextRound).delivery.maximum_words, 14);
+assert.equal(new api.Commentator({{}}).commentaryPayload(roundCue, nextRound).delivery.maximum_words, 8);
 """
     subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)

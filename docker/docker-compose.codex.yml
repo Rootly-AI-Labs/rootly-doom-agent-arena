@@ -1,0 +1,10 @@
+services:
+  arena:
+    environment:
+      CODEX_HOME: /codex
+      DOOM_ARENA_HOST_REPO_ROOT: ${DOOM_ARENA_HOST_REPO_ROOT}
+    volumes:
+      - type: bind
+        source: ${CODEX_SESSIONS_PATH}
+        target: /codex/sessions
+        read_only: true
