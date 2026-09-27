@@ -1079,6 +1079,22 @@ def test_server_accepts_explicit_unavailable_identity_without_blocking_ready() -
     )
 
 
+def test_server_accepts_client_reported_gpt6_identity() -> None:
+    handler = make_handler()
+
+    identity = handler.update_participant_ready_agent(
+        {
+            "participant_id": "player_1",
+            "agent_name": "Runtime Raccoon",
+            "coding_assistant": "Codex",
+            "model": "gpt-6-luna medium",
+            "identity_source": "client_reported",
+        }
+    )
+
+    assert identity["agent_label"] == "Runtime Raccoon, Codex, gpt-6-luna medium"
+
+
 def test_restart_duel_session_resets_round_and_alias_lock() -> None:
     handler = make_handler()
     handler.server.duel_session_id = "session_restart"

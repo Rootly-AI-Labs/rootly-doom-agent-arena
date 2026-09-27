@@ -172,7 +172,7 @@ MAP FACTS
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
 - Grid frame: rows `A-W` north/top to south/bottom; columns `01-33` west/left to east/right.
 - Legend: `.` walkable, `#` wall, {resource_legend}.
-- Full ASCII map reference is available separately in the UI.
+- The full ASCII map and blocked route cells are included at the bottom of this prompt.
 - Observations report live pickup `available`, `cell`, and `distance`.
 
 """
@@ -268,16 +268,20 @@ def instructions(
 
 """
         ready_example_agent_name = f'\n  "agent_name": {locked_agent_name_json},'
-    identity_section = f"""{agent_name_section}IDENTITY (AUTOMATIC)
+    identity_section = f"""{agent_name_section}IDENTITY
 - Call `set_participant_ready` without guessing or asking the user for model details.
-- For Codex, the Doom Arena MCP reads the current session metadata or matching parent Codex process metadata and reports the coding assistant, model slug, reasoning level, and speed tier automatically.
+- When the tool schema offers `coding_assistant` and `model`, submit `coding_assistant="Codex"` and the exact model identity from your current session metadata, including reasoning level and speed tier when available (for example, `gpt-6-astra medium`).
+- Remote HTTP MCP does not expose the selected model to the arena automatically, so these readiness fields are required for exact GPT-6 Astra, Sol, and Luna labels.
+- Local stdio Codex clients may omit those fields because the Doom Arena MCP can read their current session metadata or matching parent Codex process metadata.
 - For other harnesses, exact identity comes from `DOOM_ARENA_CODING_ASSISTANT` and `DOOM_ARENA_MODEL_IDENTITY` in the MCP server environment.
 - Never submit an MCP transport package name or version such as `codex-mcp-client 0.145.0`.
-- `agent_name` is only your creative alias; coding-assistant and model identity remain automatic. If exact identity is unavailable, readiness still succeeds with an explicit unavailable label; do not loop on reconnects.
+- `agent_name` is only your creative alias. Remote Codex readiness requires exact model identity; if prompted, retry once with the exact `coding_assistant` and `model` values. Other unavailable identities still receive an explicit unavailable label. Do not loop on reconnects.
 
 ```json
 {{
   "participant_id": "{participant_id}",{ready_example_agent_name}
+  "coding_assistant": "Codex",
+  "model": "exact current model identity",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}"
 }}
 ```
@@ -348,7 +352,7 @@ ROLE AND LOOP
 OBSERVATION
 - Use only the compact fields: `match`, `self`, `opponent`, `map`, `last_plan`, and `previous_rounds` when present.
 - `last_plan` gives neutral execution feedback for your prior public route command.
-- Static map facts are summarized below; the full ASCII map is separate from this prompt.
+- Static map facts are summarized below; the full map reference is included at the bottom of this prompt.
 
 ACTION SCHEMA
 
@@ -384,6 +388,10 @@ ROUTE FACTS
 {stop_rules}
 
 {_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
+
+---
+
+{build_map_reference(scenario_id, enable_weapon_pickups)}
 """
     return f"""# Doom Arena MCP Instructions: {participant_id}
 
@@ -410,7 +418,7 @@ Core rule:
 - Watch `run_id`, `current_round`, `total_rounds`, and `has_next_round` in observations and match results.
 
 Loop template:
-1. Call MCP tool `set_participant_ready` with `participant_id="{participant_id}"`, your controller token, and the arena name instructed above. Coding-assistant and model identity are detected automatically. Use a new name only for a duplicate-name rejection; reuse the quoted name for a locked-name rejection.
+1. Call MCP tool `set_participant_ready` with `participant_id="{participant_id}"`, your controller token, the arena name instructed above, and the exact current coding-assistant/model fields when offered by the tool schema. Use a new name only for a duplicate-name rejection; reuse the quoted name for a locked-name rejection.
 2. Call MCP tool `get_participant_observation` while phase may still be `waiting_for_agents`.
 3. Choose a synchronized opening intent, set `sequence_number=1`, use `duration_ms=60000`, and call `set_participant_intent`. This arms your first policy but Doom will not execute movement until both agents have submitted opening intents. Your opening intent can be `engage_opponent`, `strafe_attack`, `search`, or `hold`; pick the best action from the current observation.
 4. Call MCP tool `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.

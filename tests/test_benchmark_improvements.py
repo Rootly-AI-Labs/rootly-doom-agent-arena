@@ -398,6 +398,26 @@ def test_map_blueprint_absent_when_flag_off():
     assert "Map blueprint" not in prompt
 
 
+def test_route_prompts_include_full_map_for_both_players():
+    from doom_arena_duel_prompts import instructions, build_map_reference
+
+    for participant, opponent in [("player_1", "player_2"), ("player_2", "player_1")]:
+        for weapons in [True, False]:
+            prompt = instructions(
+                participant_id=participant, opponent_id=opponent, model="test",
+                controller_token="test-token", enforce_tokens=True,
+                control_mode="hierarchical", scenario_id="duel_e1m8_blind_spawn",
+                enable_weapon_pickups=weapons,
+            )
+            assert prompt.count("# Doom Arena Map Reference") == 1
+            assert prompt.rstrip().endswith(build_map_reference("duel_e1m8_blind_spawn", weapons).rstrip())
+            assert "Blocked route cells:" in prompt
+            assert "ASCII map:" in prompt
+            assert "separate from this prompt" not in prompt
+            assert "available separately in the UI" not in prompt
+            assert ("shotgun_f17" in prompt) == weapons
+
+
 # ---------- Phase 1: prompt sections ----------
 
 

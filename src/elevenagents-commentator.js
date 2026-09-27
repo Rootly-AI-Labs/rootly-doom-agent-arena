@@ -225,10 +225,11 @@
     function cuePriority(event) {
         return {
             round_end: 100,
-            critical_health: 80,
+            critical_health: 90,
+            heavy_damage: 85,
+            damage: 80,
+            first_contact: 75,
             weapon_pickup: 70,
-            heavy_damage: 65,
-            first_contact: 60,
             match_start: 55,
             broadcast_join: 50,
             health_pickup: 40,
@@ -240,9 +241,10 @@
         return {
             round_end: 0,
             critical_health: 0,
+            heavy_damage: 0,
+            damage: 0,
+            first_contact: 0,
             weapon_pickup: 200,
-            heavy_damage: 350,
-            first_contact: 500,
             match_start: 0,
             broadcast_join: 500,
             health_pickup: 900,
@@ -253,15 +255,21 @@
     function cueMaxAgeMs(event) {
         return {
             round_end: 15000,
-            critical_health: 7000,
+            critical_health: 3000,
+            heavy_damage: 3000,
+            damage: 2500,
+            first_contact: 3000,
             weapon_pickup: 7000,
-            heavy_damage: 5000,
-            first_contact: 5000,
             match_start: 15000,
             broadcast_join: 5000,
             health_pickup: 4500,
             plan_change: 4000
         }[event && event.type] || DEFAULT_CUE_MAX_AGE_MS;
+    }
+
+    function interruptsSpeech(event) {
+        return ["round_end", "critical_health", "heavy_damage", "damage", "first_contact"]
+            .indexOf(event && event.type) !== -1;
     }
 
     function matchIntroductionCue(snapshot) {
@@ -276,7 +284,7 @@
             ], { full_introduction: false });
         }
         return cue("match_start", "", "major", [
-            "Open with: In the Rootly Doom Agent Areeennaaaa",
+            "State that the Rootly Doom Agent Arena match is beginning",
             "Team Blue is " + p1.name,
             "Team Red is " + p2.name,
             "Round " + snapshot.benchmark.current_round + " of " + snapshot.benchmark.total_rounds,
@@ -353,19 +361,6 @@
             ]);
         }
 
-        if (p1.equipment.indexOf("shotgun") !== -1 && old1.equipment.indexOf("shotgun") === -1) {
-            return cue("weapon_pickup", p1.name, "major", [
-                p1.name + " acquired the shotgun",
-                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
-            ]);
-        }
-        if (p2.equipment.indexOf("shotgun") !== -1 && old2.equipment.indexOf("shotgun") === -1) {
-            return cue("weapon_pickup", p2.name, "major", [
-                p2.name + " acquired the shotgun",
-                !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
-            ]);
-        }
-
         damageTaken1 = old1.health === null || p1.health === null ? 0 : Math.max(0, old1.health - p1.health);
         damageTaken2 = old2.health === null || p2.health === null ? 0 : Math.max(0, old2.health - p2.health);
         if (damageTaken1 >= HEAVY_DAMAGE_THRESHOLD || damageTaken2 >= HEAVY_DAMAGE_THRESHOLD) {
@@ -376,11 +371,29 @@
                 !previous.match.combat_active && current.match.combat_active ? "This is first contact" : ""
             ]);
         }
+        if (damageTaken1 > 0 || damageTaken2 > 0) {
+            return cue("damage", damageTaken1 >= damageTaken2 ? p1.name : p2.name, "major", [
+                (damageTaken1 >= damageTaken2 ? p1.name : p2.name) + " took " + Math.max(damageTaken1, damageTaken2) + " damage",
+                p1.name + " has " + p1.health + " health",
+                p2.name + " has " + p2.health + " health"
+            ]);
+        }
 
         if (!previous.match.combat_active && current.match.combat_active) {
             return cue("first_contact", "", "major", [
                 p1.name + " and " + p2.name + " can now see each other",
                 "They are at " + current.match.distance + " range"
+            ]);
+        }
+
+        if (p1.equipment.indexOf("shotgun") !== -1 && old1.equipment.indexOf("shotgun") === -1) {
+            return cue("weapon_pickup", p1.name, "major", [
+                p1.name + " acquired the shotgun"
+            ]);
+        }
+        if (p2.equipment.indexOf("shotgun") !== -1 && old2.equipment.indexOf("shotgun") === -1) {
+            return cue("weapon_pickup", p2.name, "major", [
+                p2.name + " acquired the shotgun"
             ]);
         }
 
@@ -465,6 +478,7 @@
         this.audioOwnershipRelease = null;
         this.audioGeneration = 0;
         this.audioIdleTimer = 0;
+        this.activeAudioSources = new Set();
         this.cooldownMs = this.options.cooldownMs || DEFAULT_COOLDOWN_MS;
         this.contextIntervalMs = this.options.contextIntervalMs || DEFAULT_CONTEXT_INTERVAL_MS;
     }
@@ -630,6 +644,7 @@
             window.clearTimeout(this.audioIdleTimer);
             this.audioIdleTimer = 0;
         }
+        this.clearScheduledAudio();
         if (this.socket) {
             this.socket.close();
             this.socket = null;
@@ -775,6 +790,14 @@
             this.socket.send(JSON.stringify({ type: "pong", event_id: message.ping_event.event_id }));
             return;
         }
+        if (message.type === "interruption") {
+            // A newer combat cue superseded the response ElevenAgents was
+            // producing. Drop any final stale chunks that arrived while the
+            // server processed that interruption, then await the replacement.
+            this.clearScheduledAudio();
+            this.speaking = true;
+            return;
+        }
         if (message.type === "agent_response") {
             this.speaking = true;
             if (typeof this.options.onCaption === "function") {
@@ -811,6 +834,7 @@
         buffer = this.audioContext.createBuffer(1, samples.length, this.sampleRate);
         buffer.copyToChannel(samples, 0);
         source = this.audioContext.createBufferSource();
+        this.activeAudioSources.add(source);
         source.buffer = buffer;
         source.connect(this.gainNode);
         this.nextAudioTime = Math.max(this.audioContext.currentTime + 0.03, this.nextAudioTime);
@@ -819,6 +843,7 @@
         this.audioGeneration += 1;
         generation = this.audioGeneration;
         source.onended = function () {
+            this.activeAudioSources.delete(source);
             // ElevenAgents does not emit agent_response_complete for every
             // configured client event set. Treat the final scheduled PCM
             // buffer as the authoritative end of a spoken response so queued
@@ -849,6 +874,46 @@
         }
     };
 
+    Commentator.prototype.clearScheduledAudio = function () {
+        this.audioGeneration += 1;
+        if (this.audioIdleTimer) {
+            window.clearTimeout(this.audioIdleTimer);
+            this.audioIdleTimer = 0;
+        }
+        this.activeAudioSources.forEach(function (source) {
+            try {
+                if (typeof source.stop === "function") {
+                    source.stop();
+                }
+            } catch (_error) {
+                // The source may have ended between the event and cleanup.
+            }
+        });
+        this.activeAudioSources.clear();
+        this.nextAudioTime = this.audioContext ? this.audioContext.currentTime : 0;
+        this.speaking = false;
+    };
+
+    Commentator.prototype.isIdle = function () {
+        var playbackComplete = !this.audioContext ||
+            this.audioContext.currentTime + 0.05 >= this.nextAudioTime;
+        return !this.speaking && !this.pendingCue && playbackComplete;
+    };
+
+    Commentator.prototype.waitUntilIdle = function () {
+        var self = this;
+        return new Promise(function (resolve) {
+            function check() {
+                if (!self.enabled || self.isIdle()) {
+                    resolve();
+                    return;
+                }
+                window.setTimeout(check, 50);
+            }
+            check();
+        });
+    };
+
     Commentator.prototype.commentaryPayload = function (event, snapshot) {
         var isIntroduction = event && event.type === "match_start" && event.full_introduction !== false;
         return {
@@ -860,14 +925,15 @@
             event: event,
             teams: publicSnapshot(snapshot).teams,
             delivery: {
-                role: "funny American boxing-broadcast shoutcaster",
-                maximum_words: isIntroduction ? 44 : 14,
+                role: "concise, factual esports play-by-play commentator",
+                maximum_words: 8,
                 format: isIntroduction
-                    ? "open with IN THE ROOTLY DOOM AGENT AREEENNAAAA, then use two theatrical ring-announcer sentences: introduce TEEEAM BLUE first and TEEEAM RED second, using each chosen name and one funny epithet"
-                    : "one fast sentence combining the action and a short punchline",
+                    ? "one sentence of 8 words or fewer naming both teams"
+                    : "one sentence of 8 words or fewer describing the freshest event",
                 naming: "Always call the blue competitor Team Blue and the red competitor Team Red. Never say Player 1, Player 2, player one, or player two.",
-                humor: "broad, reactive, varied, and understandable without Doom knowledge",
-                avoid: ["technical jargon", "coordinates", "invented action", "repeated catchphrases"]
+                tone: "factual, direct, and event-focused; describe the match without jokes, roasts, punchlines, or comic comparisons",
+                priorities: ["final result and eliminations", "damage and critical health", "visible combat", "weapon and pickup control", "score and time pressure", "plan changes"],
+                avoid: ["technical jargon", "coordinates", "invented action", "jokes", "roasts", "comic epithets", "punchlines", "comic comparisons", "repeated catchphrases", "quoting battle quips"]
             }
         };
     };
@@ -985,6 +1051,7 @@
         }
         this.pendingCue = null;
         if (this.send("user_message", this.commentaryPayload(pending.event, pending.snapshot))) {
+            this.speaking = true;
             this.lastCueAt = now;
         }
     };
@@ -1016,6 +1083,9 @@
             this.lastContextAt = now;
         }
         if (event) {
+            if (interruptsSpeech(event) && this.speaking) {
+                this.clearScheduledAudio();
+            }
             if (!this.pendingCue || cuePriority(event) >= cuePriority(this.pendingCue.event)) {
                 this.pendingCue = { event: event, snapshot: snapshot, queuedAt: now };
             }
@@ -1032,6 +1102,8 @@
         publicSnapshot: publicSnapshot,
         cueDelayMs: cueDelayMs,
         cueMaxAgeMs: cueMaxAgeMs,
+        cuePriority: cuePriority,
+        interruptsSpeech: interruptsSpeech,
         sampleRateFromFormat: sampleRateFromFormat
     };
 });

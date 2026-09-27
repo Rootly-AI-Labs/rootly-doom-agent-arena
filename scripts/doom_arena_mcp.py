@@ -103,6 +103,7 @@ PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
 PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
 PLAN_QUIP_MAX_CHARS = 80
 CODEX_RESUMED_SESSION_MAX_AGE_SECONDS = 1800
+CODEX_ALIAS_SESSION_MAX_AGE_SECONDS = 21600
 IDENTITY_CONFIGURATION_HINT = (
     "Set DOOM_ARENA_CODING_ASSISTANT and DOOM_ARENA_MODEL_IDENTITY in this "
     "MCP server's environment to record an exact non-Codex identity."
@@ -165,6 +166,7 @@ class DoomArenaClient:
         self.run_id = "run_unknown"
         self.scenario_id = DEFAULT_SCENARIO_ID
         self.client_name = ""
+        self.client_title = ""
         self.client_version = ""
         self.client_id = f"mcp_{os.getpid()}"
         # Keep MCP startup independent from the browser/arena HTTP state. Some
@@ -176,6 +178,7 @@ class DoomArenaClient:
         if not isinstance(client_info, dict):
             client_info = {}
         self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
+        self.client_title = str(client_info.get("title", "") or "").strip()
         self.client_version = str(client_info.get("version", "") or "").strip()
         self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
 
@@ -661,12 +664,39 @@ class DoomArenaClient:
         participant_id: str,
         controller_token: str | None = None,
         agent_name: str | None = None,
+        coding_assistant: str | None = None,
+        model: str | None = None,
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         ready_at = now_ms()
-        assistant_name, model_name, identity_source = resolve_agent_identity()
         selected_agent_name = validate_agent_name(agent_name)
+        reported_assistant = normalize_identity_component(coding_assistant)
+        reported_model = normalize_identity_component(model)
+        reported_identity_is_exact = bool(
+            reported_assistant
+            and reported_model
+            and model_identity_is_specific(reported_model)
+        )
+        if reported_identity_is_exact:
+            validate_agent_identity(reported_assistant, reported_model)
+            assistant_name = reported_assistant
+            model_name = reported_model
+            identity_source = "client_reported"
+        else:
+            assistant_name, model_name, identity_source = resolve_agent_identity(
+                self.client_title,
+                selected_agent_name,
+            )
+            if (
+                normalize_identity_component(self.client_title).lower() == "codex"
+                and not model_identity_is_specific(model_name)
+            ):
+                raise DoomArenaError(
+                    "Codex readiness requires the exact current model variant and reasoning level; "
+                    "retry set_participant_ready with coding_assistant='Codex' and a model such as "
+                    "'gpt-6-astra medium', 'gpt-6-sol medium', or 'gpt-6-luna medium'"
+                )
         identity_label = format_agent_identity_label(
             assistant_name,
             model_name,
@@ -713,7 +743,7 @@ class DoomArenaClient:
             "ready_at_ms": ready_at,
             "server_response": server_response,
         }
-        if identity_source == "unavailable":
+        if model_name == "Model unavailable":
             result["identity_warning"] = IDENTITY_CONFIGURATION_HINT
         return json.dumps(result, indent=2)
 
@@ -2088,6 +2118,16 @@ def normalize_identity_component(value: Any, max_length: int = 80) -> str:
     return " ".join(str(value or "").strip().split())[:max_length]
 
 
+def model_identity_is_specific(model: str) -> bool:
+    normalized = normalize_identity_component(model).lower()
+    if normalized in {"", "unavailable", "model unavailable", "unknown"}:
+        return False
+    return re.fullmatch(
+        r"gpt[- ]?6(?:\s*(?:\((?:low|medium|high|xhigh|max|ultra)\)|(?:low|medium|high|xhigh|max|ultra)))?",
+        normalized,
+    ) is None
+
+
 def codex_sessions_root() -> Path:
     codex_home = os.environ.get("CODEX_HOME", "").strip()
     if codex_home:
@@ -2323,7 +2363,10 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
 
 
 def detect_codex_session_identity() -> tuple[str, str] | None:
-    thread_id = normalize_identity_component(os.environ.get("CODEX_THREAD_ID", ""))
+    thread_id = normalize_identity_component(
+        os.environ.get("CODEX_THREAD_ID", "")
+        or os.environ.get("CODEX_SESSION_ID", "")
+    )
     sessions_root = codex_sessions_root()
     rollout_path = None
     if thread_id and all(character in "0123456789abcdefABCDEF-" for character in thread_id):
@@ -2341,6 +2384,10 @@ def detect_codex_session_identity() -> tuple[str, str] | None:
     if rollout_path is None:
         return None
 
+    return codex_identity_from_rollout(rollout_path)
+
+
+def codex_identity_from_rollout(rollout_path: Path) -> tuple[str, str] | None:
     metadata = codex_rollout_metadata(rollout_path)
     model_name = metadata["model"]
     reasoning_effort = metadata["reasoning_effort"]
@@ -2358,7 +2405,87 @@ def detect_codex_session_identity() -> tuple[str, str] | None:
     return "Codex", " ".join(identity_parts)
 
 
-def resolve_agent_identity() -> tuple[str, str, str]:
+def rollout_has_ready_call_for_agent(rollout_path: Path, agent_name: str) -> bool:
+    try:
+        handle = rollout_path.open("r", encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    with handle:
+        for line in handle:
+            try:
+                event = json.loads(line)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                continue
+            payload = event.get("payload")
+            if not isinstance(payload, dict):
+                continue
+            item = payload.get("item")
+            if isinstance(item, dict):
+                arguments = item.get("arguments")
+                if (
+                    item.get("type") == "McpToolCall"
+                    and item.get("tool") == "set_participant_ready"
+                    and isinstance(arguments, dict)
+                    and normalize_identity_component(arguments.get("agent_name"), 32) == agent_name
+                ):
+                    return True
+            if payload.get("type") == "custom_tool_call":
+                tool_input = str(payload.get("input", ""))
+                escaped_name = re.escape(agent_name)
+                if (
+                    "mcp__doom_arena__set_participant_ready" in tool_input
+                    and re.search(
+                        rf"agent_name\s*[:=]\s*[\\\"']{escaped_name}[\\\"']",
+                        tool_input,
+                    )
+                ):
+                    return True
+    return False
+
+
+def detect_codex_identity_by_agent_name(agent_name: str) -> tuple[str, str] | None:
+    selected_name = normalize_identity_component(agent_name, 32)
+    if not selected_name:
+        return None
+
+    sessions_root = codex_sessions_root()
+    try:
+        rollout_paths = list(sessions_root.rglob("rollout-*.jsonl"))
+    except OSError:
+        return None
+
+    cutoff = time.time() - CODEX_ALIAS_SESSION_MAX_AGE_SECONDS
+    candidates: list[tuple[float, Path]] = []
+    for rollout_path in rollout_paths:
+        try:
+            modified_at = rollout_path.stat().st_mtime
+        except OSError:
+            continue
+        if modified_at < cutoff:
+            continue
+        candidates.append((modified_at, rollout_path))
+
+    candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+    arena_cwd = os.path.normcase(os.path.abspath(
+        os.environ.get("DOOM_ARENA_HOST_REPO_ROOT", "").strip() or os.getcwd()
+    ))
+    for _, rollout_path in candidates:
+        if not rollout_has_ready_call_for_agent(rollout_path, selected_name):
+            continue
+        metadata = codex_rollout_metadata(rollout_path)
+        rollout_cwd = metadata.get("cwd", "")
+        if rollout_cwd and os.path.normcase(os.path.abspath(rollout_cwd)) != arena_cwd:
+            continue
+        identity = codex_identity_from_rollout(rollout_path)
+        if identity is not None:
+            return identity
+    return None
+
+
+def resolve_agent_identity(
+    client_title: str = "",
+    agent_name: str = "",
+) -> tuple[str, str, str]:
     environment_assistant = normalize_identity_component(
         os.environ.get("DOOM_ARENA_CODING_ASSISTANT", "")
     )
@@ -2370,10 +2497,18 @@ def resolve_agent_identity() -> tuple[str, str, str]:
         return environment_assistant, environment_model, "environment"
 
     detected = detect_codex_session_identity()
+    if detected is None and agent_name:
+        detected = detect_codex_identity_by_agent_name(agent_name)
     if detected is not None:
         assistant_name, model_name = detected
         validate_agent_identity(assistant_name, model_name)
         return assistant_name, model_name, "codex_session"
+
+    # Product title is distinct from the transport package name. It keeps the
+    # harness accurate when a long-lived MCP process lacks session metadata.
+    detected_title = normalize_identity_component(client_title)
+    if detected_title.lower() == "codex":
+        return "Codex", "Model unavailable", "client_info"
 
     return "Undetected assistant", "Model unavailable", "unavailable"
 
@@ -3783,8 +3918,10 @@ def tool_definitions() -> list[dict[str, Any]]:
             "description": (
                 "Signal that one MCP participant is connected and ready for the duel start barrier. "
                 "Identity is detected automatically from the current local session metadata or trusted "
-                "harness environment; if exact metadata is unavailable, readiness still succeeds with "
-                "an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
+                "harness environment. HTTP MCP clients should submit their exact coding_assistant and "
+                "model values because the HTTP protocol does not expose the selected runtime model; "
+                "a Codex client without exact model identity is rejected so benchmark labels stay exact. "
+                "Other unavailable identities receive an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
                 "DOOM_ARENA_MODEL_IDENTITY in the MCP server environment for an exact non-Codex identity. "
                 "On the first match, choose a funny arena name that a broad "
                 "audience can understand without Doom or gaming knowledge and pass it as agent_name; "
@@ -3797,6 +3934,14 @@ def tool_definitions() -> list[dict[str, Any]]:
                 "properties": {
                     "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
                     "controller_token": {"type": "string"},
+                    "coding_assistant": {
+                        "type": "string",
+                        "description": "Exact coding assistant product, such as Codex.",
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": "Exact current model slug and settings, such as gpt-6-astra medium.",
+                    },
                     "agent_name": {
                         "type": "string",
                         "minLength": 2,
@@ -4103,6 +4248,8 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments["participant_id"]),
             optional_string(arguments.get("controller_token")),
             optional_string(arguments.get("agent_name")),
+            optional_string(arguments.get("coding_assistant")),
+            optional_string(arguments.get("model")),
         )
     if name == "wait_for_match_start":
         return client.wait_for_match_start(
