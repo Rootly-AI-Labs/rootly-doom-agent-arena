@@ -29,6 +29,36 @@ The cost calculation now uses full-session token usage. The older benchmark used
 
 Luna delivered the most wins per dollar: **12.8**, compared with Sol's **2.3** and Astra's **1.3**. Astra won the most matches, while Sol made the fastest decisions.
 
+[![GPT-6 output-token price versus draw-adjusted Doom win score: Astra $50 and 82.5%, Sol $10 and 42.5%, Luna $0.50 and 25%](benchmarks/figures/gpt-6-output-token-price-vs-win-rate.png)](benchmarks/figures/gpt-6-output-token-price-vs-win-rate.png)
+
+The chart uses output-token prices from the benchmark's pricing table; the leaderboard's cost-efficiency column uses full-session costs. With no draws, draw-adjusted scores equal win rates.
+
+Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
+
+See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
+
+## Previous-generation results
+
+Results from the earlier four-model tournament. These models faced different opponents from the GPT-6 models above, so the win rates are not directly comparable across tournaments.
+
+| Rank | Model | Win rate | Wins-Losses | Decision speed | Accuracy | Damage diff | Win rate / cost |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 1 | GPT-6 Astra | **82.5% 🏆** | 33–7 | 6.33s | **83.2% 🎯** | **+86.25 💥** | 0.10× |
+| 2 | GPT-6 Sol | 42.5% | 17–23 | **5.34s ⚡** | 57.6% | −24.50 | 0.18× |
+| 3 | GPT-6 Luna | 25.0% | 10–30 | 7.57s | 52.4% | −61.75 | **1.00× 💰** |
+
+Badges mark the category leader: 🏆 win rate · ⚡ fastest decisions · 🎯 accuracy · 💥 damage differential · 💰 cost efficiency.
+
+- **Win rate** = wins ÷ matches played.
+- **Decision speed** = average time from observation completion to the next plan submission (lower is faster). Includes host/orchestration time, not just model inference.
+- **Accuracy** = total shots hit ÷ total shots fired.
+- **Damage diff** = average damage dealt minus opponent damage dealt per match.
+- **Win rate / cost** = wins per estimated API dollar, normalized so the best model = 1.00×. Costs include all logged session requests, including losing matches, at Standard API rates. These are API-equivalent estimates, not actual billed charges.
+
+The cost calculation now uses full-session token usage. The older benchmark used output-token prices, so its cost-efficiency scores are not directly comparable.
+
+Luna delivered the most wins per dollar: **12.8**, compared with Sol's **2.3** and Astra's **1.3**. Astra won the most matches, while Sol made the fastest decisions.
+
 [![GPT-6 Doom benchmark wins per estimated API dollar: Luna 12.8, Sol 2.3, Astra 1.3](benchmarks/figures/gpt-6-wins-per-dollar.png)](benchmarks/figures/gpt-6-wins-per-dollar.png)
 
 Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
@@ -36,6 +66,15 @@ Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
 See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
 
 ## Earlier benchmark findings
+Each model played 60 rounds. Every pair played 20 rounds, swapping player positions after 10. Win rate counts draws as half a win; the Wins-Losses column excludes draws. Badges mark the leaders within this tournament.
+
+The historical **Win rate / cost** metric divides win rate by output-token price, normalized so the best model = 1.00×. It uses the benchmark's May 2026 prices per 1M output tokens: gpt-5.5 $30, gpt-5.4 $14, and gpt-5.4-mini $4.50; Spark had no public price recorded. These scores use a different cost calculation from the GPT-6 table above.
+
+[![Previous-generation output-token price versus draw-adjusted Doom win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
+
+See the [earlier benchmark analysis](benchmarks/benchmark-analysis-official/analysis.md) and [head-to-head results](benchmarks/benchmark-analysis-official/figures/fig02_head_to_head_heatmap.png).
+
+### Earlier benchmark findings
 
 **Resource control was the clearest winning signal.** GPT-5.5, the top model with a 66.7% draw-adjusted score, recorded 30 confirmed health pickups, more than twice the next-highest model, while its plans repeatedly used health routes to escape and recover. It also won 80.0% of rounds (4 of 5) in which it secured the shotgun.
 
