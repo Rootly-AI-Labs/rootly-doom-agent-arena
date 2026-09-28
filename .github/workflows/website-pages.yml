@@ -1,0 +1,58 @@
+name: Website — GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['website/**', '.github/workflows/website-pages.yml']
+  pull_request:
+    paths: ['website/**', '.github/workflows/website-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    env:
+      NEXT_PUBLIC_BASE_PATH: /rootly-doom-agent-arena
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked dependencies
+        run: npx --yes pnpm@12.3.4 install --frozen-lockfile
+      - name: Type check
+        run: npx --yes pnpm@12.3.4 exec tsc --noEmit
+      - name: Export static website
+        run: npx --yes pnpm@12.3.4 build
+      - name: Verify export and asset paths
+        run: node scripts/verify-export.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/out
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
