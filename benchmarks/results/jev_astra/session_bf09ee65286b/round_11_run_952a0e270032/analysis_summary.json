@@ -1,0 +1,218 @@
+{
+  "run_id": "run_952a0e270032",
+  "round": 11,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 19.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 205,
+      "damage_taken": 195,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 55
+    },
+    "player_2": {
+      "damage_dealt": 195,
+      "damage_taken": 205,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1820",
+      "elapsed_ms": null,
+      "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 6285 pickup: player_1 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1820",
+      "elapsed_ms": null,
+      "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 12885 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 2
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1820",
+        "elapsed_ms": null,
+        "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 6285 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1820",
+        "elapsed_ms": null,
+        "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 6285 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1820",
+        "elapsed_ms": null,
+        "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 12885 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1820",
+        "elapsed_ms": null,
+        "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 14200 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1820",
+        "elapsed_ms": null,
+        "event": "run_952a0e270032 duel_e1m8_blind_spawn 1820 16571 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 76,
+        "distance_traveled": 3462.3,
+        "unique_cells_visited": 42,
+        "revisited_cells": 34
+      },
+      "player_2": {
+        "path_points": 76,
+        "distance_traveled": 4171.4,
+        "unique_cells_visited": 43,
+        "revisited_cells": 33
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5846.0,
+    "decision_p95_ms": 6667.0,
+    "decision_max_ms": 6667.0,
+    "mcp_avg_ms": 1401.46,
+    "mcp_p95_ms": 3119.0,
+    "mcp_max_ms": 13062.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 7231,
+    "stale_intent_extension_max_ms": 6948
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "N02;N08;O08;O16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am reordering my favorite office supply."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "arm and patrol southwestern health",
+      "route": "R17;O17;O08;Q08;Q12;O12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am combining procurement with a wellness inspection."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "arm and patrol southwestern health",
+      "route": [
+        "R17",
+        "O17",
+        "O08",
+        "Q08",
+        "Q12",
+        "O12",
+        "L12",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am combining procurement with a wellness inspection."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "rotate toward eastern health",
+      "route": "L12;I12;I22;L22;L24",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am transferring to the healthier department."
+    }
+  ]
+}

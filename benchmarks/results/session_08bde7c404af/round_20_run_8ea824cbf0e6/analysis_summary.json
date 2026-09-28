@@ -1,0 +1,472 @@
+{
+  "run_id": "run_8ea824cbf0e6",
+  "round": 20,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 93.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 40,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 110
+    },
+    "player_2": {
+      "damage_dealt": 40,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "4235",
+      "elapsed_ms": null,
+      "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 5971 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "4235",
+      "elapsed_ms": null,
+      "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 33828 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(512,-576) the verified approach preserves health aim_error=-101"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 68
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 3885 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 4371 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-132"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 4685 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 5171 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 5800 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=149"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 5942 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=73"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 5971 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 6714 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 33828 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(512,-576) the verified approach preserves health aim_error=-101"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 33971 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(512,-512) the verified approach preserves health aim_error=-44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 34228 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(512,-448) the verified approach preserves health aim_error=-46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 34457 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(512,-384) the verified approach preserves health aim_error=-49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 34800 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(448,-384) the verified approach preserves health aim_error=-48"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 34942 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(384,-384) the verified approach preserves health aim_error=40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 35171 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 35428 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 36171 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 36457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 36485 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-122"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 37228 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 37428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 37457 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 38200 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 38400 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 38428 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 39171 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 39371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 39400 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 40142 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 40342 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 40371 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-138"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 41114 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 41314 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 41342 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 42085 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 42285 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-384) the verified approach preserves health aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4235",
+        "elapsed_ms": null,
+        "event": "run_8ea824cbf0e6 duel_e1m8_blind_spawn 4235 42314 autopilot_action: player_2 action=route_complete reason=the verified approach preserves health aim_error=-124"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 363,
+        "distance_traveled": 16577.1,
+        "unique_cells_visited": 34,
+        "revisited_cells": 329
+      },
+      "player_2": {
+        "path_points": 363,
+        "distance_traveled": 7028.7,
+        "unique_cells_visited": 28,
+        "revisited_cells": 335
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 14501.2,
+    "decision_p95_ms": 22329.0,
+    "decision_max_ms": 22329.0,
+    "mcp_avg_ms": 483.92,
+    "mcp_p95_ms": 1819.0,
+    "mcp_max_ms": 2088.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 41
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 5354
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2041
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 49826,
+    "stale_intent_extension_max_ms": 17723
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the offset combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the corridor forces timely engagement",
+      "plan_summary": "Twenty lunches in, still no safety training."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the offset northbound lane",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the verified approach preserves health",
+      "plan_summary": "The corridor owes me mileage."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep through nearby health and reverse",
+      "route": "R22;Q22;Q23;Q24;Q25;Q26;Q25;Q24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup route keeps distance from the enemy lane",
+      "plan_summary": "I\u2019m doing a drive-through wellness audit."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "force contact across the central lane",
+      "route": [
+        "Q24",
+        "P24",
+        "O24",
+        "N24",
+        "N23",
+        "N22",
+        "N21",
+        "N20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "full health supports a direct final sweep",
+      "plan_summary": "Wellness declined; I\u2019m choosing violence instead."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "flank around the central wall",
+      "route": "Q24;P24;O24;O23;O22;N22;N21;N20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the west doorway leads toward the enemy",
+      "plan_summary": "The wall rerouted my complaint."
+    }
+  ]
+}

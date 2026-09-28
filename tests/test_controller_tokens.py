@@ -15,6 +15,11 @@ import doom_arena_duel_prompts as prompts
 import doom_arena_mcp as mcp
 
 
+@pytest.fixture(autouse=True)
+def clear_inherited_codex_session_id(monkeypatch):
+    monkeypatch.delenv("CODEX_SESSION_ID", raising=False)
+
+
 # --------------------------------------------------------------------------- #
 # build_controller_tokens
 # --------------------------------------------------------------------------- #
@@ -44,7 +49,7 @@ def test_build_controller_tokens_passes_enforce_flag_through():
     assert tokens["enforce_controller_tokens"] is False
 
 
-def test_participant_prompt_uses_automatic_session_identity():
+def test_participant_prompt_requests_exact_http_session_identity():
     prompt = prompts.instructions(
         participant_id="player_1",
         model="",
@@ -54,17 +59,19 @@ def test_participant_prompt_uses_automatic_session_identity():
         control_mode="hierarchical",
     )
 
-    assert "IDENTITY (AUTOMATIC)" in prompt
+    assert "IDENTITY" in prompt
     assert "without guessing or asking the user" in prompt
-    assert "reads the current session metadata" in prompt
-    assert '"coding_assistant"' not in prompt
-    assert '"model"' not in prompt
+    assert "read their current session metadata" in prompt
+    assert '"coding_assistant": "Codex"' in prompt
+    assert '"model": "exact current model identity"' in prompt
+    assert "Remote HTTP MCP does not expose the selected model" in prompt
     assert "Never submit an MCP transport package name or version" in prompt
     assert "`agent_name` is only your creative alias" in prompt
-    assert "readiness still succeeds with an explicit unavailable label" in prompt
+    assert "Remote Codex readiness requires exact model identity" in prompt
+    assert "Other unavailable identities still receive an explicit unavailable label" in prompt
     assert "DOOM_ARENA_CODING_ASSISTANT" in prompt
     assert "DOOM_ARENA_MODEL_IDENTITY" in prompt
-    assert "do not loop on reconnects" in prompt
+    assert "Do not loop on reconnects" in prompt
 
 
 @pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
@@ -87,14 +94,33 @@ def test_participant_prompt_prohibits_hivemind(control_mode):
     assert "Doom Arena MCP tools" in prompt
 
 
-def test_project_instructions_exempt_duel_agents_from_hivemind_startup():
+@pytest.mark.parametrize("control_mode", ["hierarchical", "full"])
+def test_participant_prompt_requires_current_client_model(control_mode):
+    prompt = prompts.instructions(
+        participant_id="player_2",
+        model="",
+        opponent_id="player_1",
+        controller_token="token-123",
+        enforce_tokens=True,
+        control_mode=control_mode,
+    )
+
+    assert "MODEL CONTROL" in prompt
+    assert "current/default model selected in this MCP client session" in prompt
+    assert "do not delegate gameplay decisions" in prompt
+    assert "Do not use the Jev model" in prompt
+    assert "`jev-doom-player` skill" in prompt
+    assert "`prepare_jev_player`" in prompt
+    assert "unless the benchmark prompt explicitly identifies this participant as a Jev baseline" in prompt
+
+
+def test_project_instructions_do_not_require_external_memory():
     project_instructions = (prompts.REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
-    assert "## Doom Arena benchmark-agent exception" in project_instructions
-    assert "prompt begins with `# Doom Arena MCP Instructions:`" in project_instructions
-    assert "Do not call any Hivemind tool, including the startup reads below" in project_instructions
-    assert "A missing or failed Hivemind server is not a blocker" in project_instructions
-    assert "This exception ends when the gameplay task ends" in project_instructions
+    assert "No external project-memory service is required" in project_instructions
+    assert "space_rules" not in project_instructions
+    assert "mid_read_all" not in project_instructions
+    assert "short_read" not in project_instructions
 
 
 def test_participant_prompt_requests_doom_alias_only_for_first_match():
@@ -175,6 +201,25 @@ def test_participant_prompt_makes_goal_and_reason_sentence_compatible():
     assert "Do not begin it with `because`" in prompt
 
 
+def test_participant_prompt_shares_neutral_mechanics_without_strategy_coaching():
+    for control_mode in ("hierarchical", "intent"):
+        prompt = prompts.instructions(
+            participant_id="player_1",
+            model="",
+            opponent_id="player_2",
+            controller_token="token-123",
+            enforce_tokens=True,
+            control_mode=control_mode,
+        )
+
+        assert prompts.shared_game_prompt() in prompt
+        assert "higher remaining health wins" in prompt
+        assert "Do not camp" not in prompt
+        assert "Prioritize establishing contact" not in prompt
+        assert "If no contact occurs for 15-20 seconds" not in prompt
+        assert "In the final 20 seconds, force engagement" not in prompt
+
+
 # --------------------------------------------------------------------------- #
 # write_controller_tokens
 # --------------------------------------------------------------------------- #
@@ -245,7 +290,7 @@ def test_set_participant_ready_uses_trusted_environment_identity(tmp_path, monke
     assert response["identity_source"] == "environment"
 
 
-def test_ready_tool_schema_exposes_alias_but_no_manual_identity_fields():
+def test_ready_tool_schema_exposes_alias_and_runtime_identity_fields():
     ready_tool = next(tool for tool in mcp.tool_definitions() if tool["name"] == "set_participant_ready")
 
     assert ready_tool["inputSchema"]["properties"]["agent_name"]["maxLength"] == 32
@@ -257,8 +302,8 @@ def test_ready_tool_schema_exposes_alias_but_no_manual_identity_fields():
     assert "unique within the duel" in ready_tool["inputSchema"]["properties"]["agent_name"]["description"]
     assert "without Doom or gaming knowledge" in ready_tool["description"]
     assert "duplicate-name rejection" in ready_tool["description"]
-    assert "coding_assistant" not in ready_tool["inputSchema"]["properties"]
-    assert "model" not in ready_tool["inputSchema"]["properties"]
+    assert ready_tool["inputSchema"]["properties"]["coding_assistant"]["type"] == "string"
+    assert "gpt-6-astra" in ready_tool["inputSchema"]["properties"]["model"]["description"]
     assert set(ready_tool["inputSchema"]["required"]) == {"participant_id", "agent_name"}
 
 
@@ -333,6 +378,94 @@ def test_set_participant_ready_detects_codex_session_identity(tmp_path, monkeypa
         "Expense Goblin, Codex, gpt-5.6-sol low fast"
     )
     assert response["identity_source"] == "codex_session"
+
+
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"])
+def test_detects_gpt6_from_codex_session_id(tmp_path, monkeypatch, model):
+    codex_home = tmp_path / ".codex"
+    sessions_dir = codex_home / "sessions" / "2026" / "09" / "24"
+    sessions_dir.mkdir(parents=True)
+    session_id = "019fb38c-6f2c-7960-834e-025b687b341e"
+    rollout_path = sessions_dir / f"rollout-2026-09-24T11-02-33-{session_id}.jsonl"
+    rollout_path.write_text(
+        json.dumps(
+            {
+                "type": "turn_context",
+                "payload": {
+                    "model": model,
+                    "effort": "medium",
+                    "thread_settings": {"service_tier": "priority"},
+                },
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.setenv("CODEX_SESSION_ID", session_id)
+
+    assert mcp.detect_codex_session_identity() == (
+        "Codex",
+        f"{model} medium fast",
+    )
+
+
+def test_codex_product_title_requires_exact_model_identity(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.note_client_initialized(
+        {
+            "clientInfo": {
+                "name": "codex-mcp-client",
+                "title": "Codex",
+                "version": "0.200.0",
+            }
+        }
+    )
+    monkeypatch.delenv("CODEX_THREAD_ID", raising=False)
+    monkeypatch.delenv("CODEX_SESSION_ID", raising=False)
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    captured = {}
+
+    def fake_request(_method, _path, body=None, _content_type=None):
+        captured.update(json.loads(body.decode("utf-8")))
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+    with pytest.raises(mcp.DoomArenaError, match="requires the exact current model variant"):
+        client.set_participant_ready(
+            "player_1",
+            controller_token="token",
+            agent_name="Release Raccoon",
+        )
+
+    assert captured == {}
+
+
+def test_http_client_can_report_exact_gpt6_identity(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    captured = {}
+
+    def fake_request(_method, _path, body=None, _content_type=None):
+        captured.update(json.loads(body.decode("utf-8")))
+        return '{"ok": true}'
+
+    monkeypatch.setattr(client, "_request", fake_request)
+    response = json.loads(
+        client.set_participant_ready(
+            "player_1",
+            controller_token="token",
+            agent_name="Runtime Raccoon",
+            coding_assistant="Codex",
+            model="gpt-6-astra medium",
+        )
+    )
+
+    assert captured["coding_assistant"] == "Codex"
+    assert captured["model"] == "gpt-6-astra medium"
+    assert captured["identity_source"] == "client_reported"
+    assert "identity_warning" not in response
 
 
 def test_set_participant_ready_detects_codex_identity_from_parent_process(tmp_path, monkeypatch):
@@ -686,6 +819,184 @@ def test_controller_tokens_raises_on_non_dict_payload(tmp_path, monkeypatch):
     client = _make_client(monkeypatch, host_path)
     with pytest.raises(mcp.DoomArenaError, match="Invalid controller token file"):
         client._controller_tokens()
+
+
+def test_stop_participant_intent_can_force_clear_opening_plan(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(
+        client,
+        "_request",
+        lambda method, path: (
+            "run_id\tscenario_id\tkind\tentity_id\tphase\n"
+            "run_current\tduel_e1m8\tmatch\t\twaiting_for_agents\n"
+        ),
+    )
+    monkeypatch.setattr(
+        client,
+        "_read_participant_intent_rows",
+        lambda: [
+            {
+                "run_id": "run_current",
+                "participant_id": "player_1",
+                "sequence_number": "3",
+                "expires_at_ms": "9999999999999",
+            },
+            {
+                "run_id": "run_current",
+                "participant_id": "player_2",
+                "sequence_number": "4",
+                "expires_at_ms": "9999999999999",
+            },
+        ],
+    )
+    written = []
+    monkeypatch.setattr(client, "_write_participant_intent_rows", lambda rows: written.extend(rows))
+
+    preserved = json.loads(client.stop_participant_intent("player_1", "token"))
+    assert preserved["ignored"] is True
+    assert written == []
+
+    cleared = json.loads(client.stop_participant_intent("player_1", "token", False))
+    assert cleared["cleared"] is True
+    assert [row["participant_id"] for row in written] == ["player_2"]
+
+
+def test_plan_rejects_accidental_current_cell_noop_but_allows_explicit_hold(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    current_position = mcp.grid_cell_to_xy("A01")
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(client, "current_participant_position", lambda *_args, **_kwargs: current_position)
+    monkeypatch.setattr(client, "_read_participant_observation_and_plan", lambda *_args: ({}, {}))
+
+    rejected = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A01"],
+            objective="move somewhere",
+            engagement_policy="engage_if_visible",
+            plan_note="I appear to have misplaced movement.",
+            controller_token="token",
+            sequence_number=1,
+        )
+    )
+    assert rejected["accepted"] is False
+    assert rejected["error_type"] == "route_noop"
+    assert rejected["route_diagnostics"]["last_valid_cell"] == "A01"
+    assert rejected["route_diagnostics"]["legal_adjacent_cells"]
+
+    monkeypatch.setattr(
+        client,
+        "set_participant_intent",
+        lambda *_args, **_kwargs: json.dumps({"accepted": True, "intent_id": "hold_1"}),
+    )
+    held = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A01"],
+            objective="hold this position",
+            engagement_policy="hold_fire",
+            plan_note="I am guarding this extremely important tile.",
+            controller_token="token",
+            sequence_number=1,
+        )
+    )
+    assert held["accepted"] is True
+
+
+def test_exact_active_plan_is_acknowledged_without_replacement(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    client.run_id = "run_current"
+    client.scenario_id = "duel_e1m8"
+    monkeypatch.setattr(client, "_verify_controller_token", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(
+        client,
+        "current_participant_position",
+        lambda *_args, **_kwargs: mcp.grid_cell_to_xy("A01"),
+    )
+    monkeypatch.setattr(
+        client,
+        "_read_participant_observation_and_plan",
+        lambda *_args: (
+            {},
+            {
+                "status": "active",
+                "intent_id": "intent_4",
+                "sequence_number": "4",
+                "objective": "sweep center",
+                "route_cells": ["A03"],
+                "engagement_policy": "engage_if_visible",
+            },
+        ),
+    )
+
+    result = json.loads(
+        client.set_participant_plan(
+            "player_1",
+            ["A03"],
+            objective="sweep center",
+            engagement_policy="engage_if_visible",
+            plan_note="I am still sweeping center.",
+            controller_token="token",
+            sequence_number=5,
+        )
+    )
+
+    assert result["accepted"] is True
+    assert result["deduplicated"] is True
+    assert result["intent_id"] == "intent_4"
+    assert result["active_sequence_number"] == "4"
+
+
+def test_observation_wait_wakes_on_tactical_change(tmp_path, monkeypatch):
+    client = _make_client(monkeypatch, tmp_path / "does_not_exist.json")
+    states = [
+        {
+            "self": {"health": 100, "damage_dealt": 0},
+            "opponent": {"visible": False},
+            "map": {"pickups": []},
+            "match": {"phase": "combat", "time_left_seconds": 100},
+            "tactical_context": {"replan_recommended": False, "replan_reasons": []},
+        },
+        {
+            "self": {"health": 75, "damage_dealt": 0},
+            "opponent": {"visible": False},
+            "map": {"pickups": []},
+            "match": {"phase": "combat", "time_left_seconds": 99},
+            "tactical_context": {"replan_recommended": False, "replan_reasons": []},
+        },
+    ]
+    active = {
+        "status": "active",
+        "intent_id": "intent_1",
+        "current_waypoint_index": 1,
+        "current_waypoint_cell": "A02",
+        "waypoints_reached": 0,
+        "distance_to_waypoint": 100,
+        "expires_at_ms": 9999999999999,
+    }
+    monkeypatch.setattr(
+        client,
+        "_read_participant_observation_and_plan",
+        lambda *_args: (states.pop(0) if len(states) > 1 else states[0], active),
+    )
+    clock = {"value": 10_000}
+
+    def advancing_now():
+        clock["value"] += 100
+        return clock["value"]
+
+    monkeypatch.setattr(mcp, "now_ms", advancing_now)
+    monkeypatch.setattr(mcp.time, "sleep", lambda *_args: None)
+
+    result = client._wait_for_previous_plan_before_observation("player_1")
+
+    assert result["reason"] == "tactical_change"
+    assert "health" in result["tactical_changes"]
 
 
 # --------------------------------------------------------------------------- #

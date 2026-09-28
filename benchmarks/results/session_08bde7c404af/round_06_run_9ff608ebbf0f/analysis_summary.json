@@ -1,0 +1,553 @@
+{
+  "run_id": "run_9ff608ebbf0f",
+  "round": 6,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 131.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 55,
+      "shots_fired": 7,
+      "shots_hit": 6,
+      "accuracy": 0.857,
+      "final_health": 95
+    },
+    "player_2": {
+      "damage_dealt": 55,
+      "damage_taken": 160,
+      "shots_fired": 10,
+      "shots_hit": 4,
+      "accuracy": 0.4,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "8155",
+      "elapsed_ms": null,
+      "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) continuous distance weakens the opponent shotgun aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "8155",
+      "elapsed_ms": null,
+      "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 122485 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 97,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) continuous distance weakens the opponent shotgun aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) continuous distance weakens the opponent shotgun aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) continuous distance weakens the opponent shotgun aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) continuous distance weakens the opponent shotgun aim_error=40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) continuous distance weakens the opponent shotgun aim_error=43"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) continuous distance weakens the opponent shotgun aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 1628 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 2371 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 2628 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 3371 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 3600 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 4257 autopilot_action: player_1 action=route_waypoint reason=wp=4/5 target=(-64,384) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 4342 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 4571 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-120"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 4885 autopilot_action: player_1 action=route_waypoint reason=wp=2/2 target=(0,384) An available weapon pickup has a legal route. aim_error=147"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5314 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5371 autopilot_action: player_2 action=route_complete+attack reason=continuous distance weakens the opponent shotgun aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5371 autopilot_action: player_1 action=route_complete+attack reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5400 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5400 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5542 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=64"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 5800 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6228 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6257 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=-111"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6285 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) continuous distance weakens the opponent shotgun aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6514 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=-117"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 6542 autopilot_action: player_1 action=route_waypoint reason=wp=2/6 target=(-64,192) An available weapon pickup has a legal route. aim_error=-115"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 7171 autopilot_action: player_1 action=route_waypoint reason=wp=3/6 target=(-192,192) An available weapon pickup has a legal route. aim_error=-38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "8155",
+        "elapsed_ms": null,
+        "event": "run_9ff608ebbf0f duel_e1m8_blind_spawn 8155 7257 autopilot_action: player_2 action=route_complete reason=continuous distance weakens the opponent shotgun aim_error=0"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 11
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 4
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 510,
+        "distance_traveled": 21574.5,
+        "unique_cells_visited": 49,
+        "revisited_cells": 461
+      },
+      "player_2": {
+        "path_points": 510,
+        "distance_traveled": 4760.1,
+        "unique_cells_visited": 46,
+        "revisited_cells": 464
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 14164.5,
+    "decision_p95_ms": 32539.0,
+    "decision_max_ms": 32539.0,
+    "mcp_avg_ms": 2499.55,
+    "mcp_p95_ms": 15892.0,
+    "mcp_max_ms": 30068.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 4
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 66
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 8248
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2046
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 88018,
+    "stale_intent_extension_max_ms": 57067
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "begin a moving perimeter sweep",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "continuous distance weakens the opponent shotgun",
+      "plan_summary": "I\u2019m circling the office until the bad decision gets tired."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "continue the moving perimeter sweep",
+      "route": "V25;V24;V23;V22;V21;V20;V19;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "staying mobile preserves pistol range",
+      "plan_summary": "I\u2019m the nacho cart nobody can catch."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep west and draw a long-range fight",
+      "route": "V18;V17;V16;V15;V14;V13;V12;V11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open perimeter keeps the shotgun at distance",
+      "plan_summary": "I\u2019m serving myself curbside combat."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "sweep the west perimeter for contact",
+      "route": "V11;V10;V09;V08;V07;V06;V05;V04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "no contact after thirty-five seconds requires a broader sweep",
+      "plan_summary": "I\u2019m auditing every cubicle with a pistol."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "turn north while returning fire",
+      "route": "V04;U04;T04;S04;R04;Q04;P04;O04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the distant hit confirms useful long-range contact",
+      "plan_summary": "Five damage? The catering complaint has been noted."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep toward the enemy lane",
+      "route": [
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen position is east across this row",
+      "plan_summary": "I\u2019ve finished the perimeter; now I\u2019m entering the awkward party."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "use the upper opening toward contact",
+      "route": "O04;O05;N05;M05;L05;L06;L07;L08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east lane is blocked at this row",
+      "plan_summary": "The office maze has promoted me to lost manager."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take health and sweep center",
+      "route": [
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12",
+        "L13",
+        "L14",
+        "L15"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup lies directly on the engagement route",
+      "plan_summary": "I found the wellness budget and I\u2019m spending all of it."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "enter the health alcove then push center",
+      "route": [
+        "L08",
+        "K08",
+        "K09",
+        "K10",
+        "L10",
+        "L11",
+        "L12",
+        "L13"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the north edge bypasses the wall",
+      "plan_summary": "Wellness requires stairs; naturally."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the north health and force contact",
+      "route": [
+        "L08",
+        "K08",
+        "J08",
+        "I08",
+        "H08",
+        "G08",
+        "F08",
+        "F09"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this open vertical lane reaches a live pickup",
+      "plan_summary": "I\u2019m climbing the snack ladder with intent."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "11",
+      "objective": "take the north health",
+      "route": "L08;K08;J08;I08;H08;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open vertical lane reaches the pickup",
+      "plan_summary": "Finally, benefits without a committee."
+    }
+  ]
+}

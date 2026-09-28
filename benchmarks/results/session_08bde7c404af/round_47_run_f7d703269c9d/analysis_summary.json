@@ -1,0 +1,188 @@
+{
+  "run_id": "run_f7d703269c9d",
+  "round": 47,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 11.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 140,
+      "shots_fired": 13,
+      "shots_hit": 13,
+      "accuracy": 1.0,
+      "final_health": 10
+    },
+    "player_2": {
+      "damage_dealt": 140,
+      "damage_taken": 155,
+      "shots_fired": 13,
+      "shots_hit": 13,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": null,
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": []
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 46,
+        "distance_traveled": 2595.2,
+        "unique_cells_visited": 30,
+        "revisited_cells": 16
+      },
+      "player_2": {
+        "path_points": 46,
+        "distance_traveled": 1655.8,
+        "unique_cells_visited": 21,
+        "revisited_cells": 25
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 2399.75,
+    "decision_p95_ms": 9507.0,
+    "decision_max_ms": 9507.0,
+    "mcp_avg_ms": 459.0,
+    "mcp_p95_ms": 1598.0,
+    "mcp_max_ms": 2611.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 7
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4111
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2563
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 670,
+    "stale_intent_extension_max_ms": 670
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "complete the northern probe",
+      "route": [
+        "R22",
+        "Q22",
+        "P22",
+        "O22",
+        "N22",
+        "N21",
+        "N20",
+        "N19"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the prior plan staged at the doorway but did not finish advancing",
+      "plan_summary": "I\u2019m pushing the tray through the doorway now."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the verified combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the Q22 doorway path avoids the blocked wall",
+      "plan_summary": "I\u2019m rolling my nacho cart into round forty-seven."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open route leads toward Q22",
+      "plan_summary": "I\u2019m steering my spicy cart toward center."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "force contact through the open doorway",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this adjacent-cell path reliably reaches the enemy lane",
+      "plan_summary": "I\u2019m serving the hot tray through the open aisle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "complete the northern probe",
+      "route": [
+        "R22",
+        "Q22",
+        "P22",
+        "O22",
+        "N22",
+        "N21",
+        "N20",
+        "N19"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the staged route is ready to cross the doorway",
+      "plan_summary": "I\u2019m pushing the tray through the doorway now."
+    }
+  ]
+}

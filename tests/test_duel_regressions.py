@@ -30,11 +30,181 @@ def make_handler(run_id: str = "run_test", scenario_id: str = "duel_e1m8"):
         run_id=run_id,
         scenario_id=scenario_id,
         stats_lock=threading.Lock(),
+        intent_records=[],
         latest_intent_by_participant={},
         participant_ready_agents={},
         participant_agent_names={},
+        nonterminal_state_runs=set(),
     )
     return handler
+
+
+def finished_state_text(run_id: str) -> str:
+    return (
+        "run_id\tscenario_id\tkind\tmode\tphase\twinner\tterminal_reason\n"
+        f"{run_id}\tduel_e1m8\tmatch\tduel\tfinished\tplayer_1\tplayer_2_dead\n"
+    )
+
+
+def active_state_text(run_id: str, phase: str = "combat") -> str:
+    return (
+        "run_id\tscenario_id\tkind\tentity_id\tmode\tphase\thealth\talive\n"
+        f"{run_id}\tduel_e1m8\tmatch\tduel\tduel\t{phase}\t\t\n"
+        f"{run_id}\tduel_e1m8\tparticipant\tplayer_1\tduel\t{phase}\t150\t1\n"
+        f"{run_id}\tduel_e1m8\tparticipant\tplayer_2\tduel\t{phase}\t150\t1\n"
+    )
+
+
+def test_match_is_finished_requires_state_for_active_run(monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: server.parse_tsv_rows(finished_state_text("run_previous")),
+    )
+    assert handler.match_is_finished() is False
+
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: server.parse_tsv_rows(finished_state_text("run_current")),
+    )
+    assert handler.match_is_finished() is False
+
+    handler.server.nonterminal_state_runs.add("run_current")
+    assert handler.match_is_finished() is True
+
+
+def test_participant_intent_sequence_retries_are_idempotent_or_conflicting(monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+    keys = server.PARTICIPANT_INTENT_HEADER.strip().split("\t")
+    existing = {key: "" for key in keys}
+    existing.update(
+        {
+            "run_id": "run_current",
+            "scenario_id": "duel_e1m8",
+            "intent_id": "intent_original",
+            "issued_at_ms": "1000",
+            "expires_at_ms": "17000",
+            "participant_id": "player_1",
+            "intent": "search",
+            "style": "balanced",
+            "target_id": "player_2",
+            "preferred_distance": "650",
+            "aggression": "0.550",
+            "duration_ms": "16000",
+            "sequence_number": "4",
+            "plan_objective": "sweep center",
+            "plan_route_cells": "N14;N17",
+            "plan_engagement_policy": "engage_if_visible",
+        }
+    )
+    monkeypatch.setattr(handler, "read_participant_intent_rows", lambda: [existing])
+
+    replay = dict(existing, intent_id="intent_retry", issued_at_ms="2000", expires_at_ms="18000")
+    assert handler.participant_intent_sequence_retry(replay) == ("replay", existing)
+
+    conflict = dict(replay, plan_objective="hold corner")
+    assert handler.participant_intent_sequence_retry(conflict) == ("conflict", existing)
+
+
+def test_finished_artifacts_ignore_stale_run_state(tmp_path, monkeypatch) -> None:
+    handler = make_handler(run_id="run_current")
+    handler.server.summary_written_runs = set()
+    handler.server.run_results_dirs = {"run_current": tmp_path / "run_current"}
+    handler.server.current_run_results_dir = tmp_path / "run_current"
+
+    handler.maybe_write_finished_run_artifacts(finished_state_text("run_previous"))
+
+    assert not (tmp_path / "run_current" / "summary.json").exists()
+    assert handler.server.summary_written_runs == set()
+
+
+def test_stale_state_upload_does_not_replace_current_state_file(tmp_path, monkeypatch) -> None:
+    state_path = tmp_path / "arena_game_state.local.tsv"
+    current_state = finished_state_text("run_current").replace("finished", "waiting_for_agents")
+    state_path.write_text(current_state, encoding="utf-8")
+    monkeypatch.setattr(server, "ARENA_STATE_TSV", state_path)
+
+    handler = make_handler(run_id="run_current")
+    handler.server.latest_arena_state_by_run_id = {}
+    handler.server.latest_arena_state_at_ms_by_run_id = {}
+    handler.read_body = lambda: finished_state_text("run_previous").encode("utf-8")
+    responses = []
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+
+    handler.write_file(state_path, "arena state")
+
+    assert state_path.read_text(encoding="utf-8") == current_state
+    assert responses[0][0] == server.HTTPStatus.CONFLICT
+    assert responses[0][1]["state_run_id"] == "run_previous"
+    assert "run_previous" in handler.server.latest_arena_state_by_run_id
+
+
+def test_terminal_state_requires_prior_active_state_for_same_run(tmp_path, monkeypatch) -> None:
+    state_path = tmp_path / "arena_game_state.local.tsv"
+    initial_state = active_state_text("run_current", "waiting_for_agents")
+    state_path.write_text(initial_state, encoding="utf-8")
+    monkeypatch.setattr(server, "ARENA_STATE_TSV", state_path)
+
+    handler = make_handler(run_id="run_current")
+    handler.server.latest_arena_state_by_run_id = {}
+    handler.server.latest_arena_state_at_ms_by_run_id = {}
+    responses = []
+    finalized = []
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+    handler.maybe_write_finished_run_artifacts = lambda text: (
+        finalized.append(text) if "\tfinished\t" in text else None
+    )
+
+    handler.read_body = lambda: finished_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+
+    assert responses[-1][0] == server.HTTPStatus.CONFLICT
+    assert "before this run became active" in responses[-1][1]["error"]
+    assert state_path.read_text(encoding="utf-8") == initial_state
+    assert finalized == []
+
+    handler.read_body = lambda: active_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+    assert "run_current" in handler.server.nonterminal_state_runs
+
+    handler.read_body = lambda: finished_state_text("run_current").encode("utf-8")
+    handler.write_file(state_path, "arena state")
+    assert finalized == [finished_state_text("run_current")]
+
+
+def participant_intent_payload(participant_id: str, sequence_number: int) -> dict[str, object]:
+    return {
+        "run_id": "run_test",
+        "scenario_id": "duel_e1m8",
+        "intent_id": f"{participant_id}_intent_{sequence_number}",
+        "issued_at_ms": 9_000 + sequence_number,
+        "expires_at_ms": 34_000 + sequence_number,
+        "participant_id": participant_id,
+        "intent": "hold",
+        "style": "balanced",
+        "target_id": "player_2" if participant_id == "player_1" else "player_1",
+        "preferred_distance": 600,
+        "aggression": 0.5,
+        "duration_ms": 25_000,
+        "sequence_number": sequence_number,
+    }
+
+
+def configure_participant_intent_post(
+    handler,
+    body: bytes,
+    content_type: str,
+) -> list[tuple[object, dict[str, object]]]:
+    responses: list[tuple[object, dict[str, object]]] = []
+    handler.headers = {"Content-Type": content_type}
+    handler.read_body = lambda: body
+    handler.match_is_finished = lambda: False
+    handler.write_mcp_stats_locked = lambda: None
+    handler.write_json = lambda status, payload: responses.append((status, payload))
+    return responses
 
 
 def test_participant_intent_parser_smoke_regressions() -> None:
@@ -220,6 +390,229 @@ def test_current_run_participant_intents_merge_file_and_memory(tmp_path, monkeyp
     assert next(row for row in rows if row["participant_id"] == "player_2")["intent"] == "strafe_attack"
 
 
+def test_current_combat_omits_expired_latest_participant_intent(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 1)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(expired)}
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "combat",
+            }
+        ],
+    )
+
+    assert handler.current_run_participant_intent_rows() == []
+
+
+def test_start_barrier_retains_expired_latest_participant_intent(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 1)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(expired)}
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "waiting_for_agents",
+            }
+        ],
+    )
+
+    handler.path = "/api/arena/participant-intents"
+    handler.wfile = BytesIO()
+    response_meta: dict[str, object] = {}
+    handler.send_response = lambda status: response_meta.__setitem__("status", status)
+    handler.send_header = lambda _name, _value: None
+    handler.end_headers = lambda: None
+
+    handler.do_GET()
+
+    rows = handler.parse_participant_intent_rows(
+        handler.wfile.getvalue().decode("utf-8"),
+        reject_expired=False,
+    )
+    assert response_meta["status"] == server.HTTPStatus.OK
+    assert [row["intent_id"] for row in rows] == ["player_1_intent_1"]
+    assert rows[0]["expires_at_ms"] == expired["expires_at_ms"]
+
+
+def test_waiting_start_barrier_accepts_fresh_opening_after_peer_intent_expires(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    current_ms = [10_000]
+    monkeypatch.setattr(server, "now_ms", lambda: current_ms[0])
+    handler = make_handler()
+
+    expired_peer = handler.normalize_participant_intent(
+        participant_intent_payload("player_2", 1)
+    )
+    intent_path.write_text(
+        handler.participant_intent_rows_to_tsv([expired_peer]),
+        encoding="utf-8",
+    )
+    handler.server.latest_intent_by_participant = {
+        "player_2": dict(expired_peer)
+    }
+    current_ms[0] = 40_000
+    monkeypatch.setattr(
+        server,
+        "read_arena_state",
+        lambda: [
+            {
+                "kind": "match",
+                "run_id": "run_test",
+                "phase": "waiting_for_agents",
+            }
+        ],
+    )
+    fresh_opening = participant_intent_payload("player_1", 1)
+    fresh_opening["issued_at_ms"] = 40_000
+    fresh_opening["expires_at_ms"] = 65_000
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps(fresh_opening).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    rows = handler.parse_participant_intent_rows(
+        intent_path.read_text(encoding="utf-8"),
+        reject_expired=False,
+    )
+    assert [row["participant_id"] for row in rows] == ["player_1"]
+
+
+def test_full_replacement_tsv_evicts_absent_latest_cache_but_keeps_history(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 4)
+    )
+    historical = {"history_marker": "kept", **cached}
+    handler.server.latest_intent_by_participant = {"player_1": dict(cached)}
+    handler.server.intent_records = [historical]
+    responses = configure_participant_intent_post(
+        handler,
+        server.PARTICIPANT_INTENT_HEADER.encode("utf-8"),
+        "text/tab-separated-values; charset=utf-8",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert handler.server.latest_intent_by_participant == {}
+    assert handler.server.intent_records == [historical]
+    assert handler.current_run_participant_intent_rows() == []
+
+
+def test_full_replacement_json_list_evicts_only_absent_current_run_cache_entries(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached_p1 = handler.normalize_participant_intent(
+        participant_intent_payload("player_1", 4)
+    )
+    handler.server.latest_intent_by_participant = {"player_1": dict(cached_p1)}
+    handler.server.intent_records = [dict(cached_p1)]
+    replacement_p2 = participant_intent_payload("player_2", 5)
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps([replacement_p2]).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert set(handler.server.latest_intent_by_participant) == {"player_2"}
+    assert (
+        handler.server.latest_intent_by_participant["player_2"]["intent_id"]
+        == "player_2_intent_5"
+    )
+    assert [record["participant_id"] for record in handler.server.intent_records] == [
+        "player_1",
+        "player_2",
+    ]
+    assert {
+        row["participant_id"] for row in handler.current_run_participant_intent_rows()
+    } == {"player_2"}
+
+
+def test_incremental_json_dict_preserves_other_latest_cache_entry(
+    tmp_path, monkeypatch
+) -> None:
+    intent_path = tmp_path / "arena_participant_intents.local.tsv"
+    monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
+    monkeypatch.setattr(server, "now_ms", lambda: 10_000)
+    monkeypatch.setattr(server, "read_arena_state", lambda: [])
+    handler = make_handler()
+
+    cached_p2 = handler.normalize_participant_intent(
+        participant_intent_payload("player_2", 3)
+    )
+    handler.server.latest_intent_by_participant = {"player_2": dict(cached_p2)}
+    handler.server.intent_records = [dict(cached_p2)]
+    incremental_p1 = participant_intent_payload("player_1", 4)
+    responses = configure_participant_intent_post(
+        handler,
+        json.dumps(incremental_p1).encode("utf-8"),
+        "application/json",
+    )
+
+    handler.write_participant_intents()
+
+    assert responses[0][0] == server.HTTPStatus.OK
+    assert set(handler.server.latest_intent_by_participant) == {
+        "player_1",
+        "player_2",
+    }
+    assert {
+        row["participant_id"] for row in handler.current_run_participant_intent_rows()
+    } == {"player_1", "player_2"}
+
+
 def test_get_participant_intents_endpoint_returns_tsv(tmp_path, monkeypatch) -> None:
     intent_path = tmp_path / "arena_participant_intents.local.tsv"
     monkeypatch.setattr(server, "ARENA_PARTICIPANT_INTENT_TSV", intent_path)
@@ -328,8 +721,9 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "Prompt synced" not in index
     assert 'id="duel-prompt-change-indicator" hidden' in index
     assert "<title>Rootly Doom Agent Arena</title>" in index
-    assert "document.title = 'Rootly Doom Agent Arena'" in browser_runtime
-    assert "document.title = title" not in browser_runtime
+    assert "function configureArenaWindowTitle()" in index
+    assert 'document.title = "Rootly Doom Agent Arena";' in index
+    assert "preRun: () => {\n                    configureArenaWindowTitle();" in index
     assert 'script.src = "websockets-doom.js?v=" + doomAssetCacheBust' in index
     assert 'href="assets/rootly-favicon.svg"' in index
     assert 'setLauncherCopy("Doom Arena Duel"' not in index
@@ -601,6 +995,74 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'playerClass: "player-2"' in index
 
 
+def test_duel_launcher_offers_prompt_only_jev_modes_for_each_player() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    duel_payload_builder = index.split("function buildDuelSessionPayload", 1)[1].split(
+        "function buildDuelResetPayload", 1
+    )[0]
+
+    assert 'class="arena-config-section-title">Jev</div>' in index
+    assert 'id="arena-jev-player-1-only"' in index
+    assert 'id="arena-jev-player-1-hybrid"' in index
+    assert 'id="arena-jev-player-2-only"' in index
+    assert 'id="arena-jev-player-2-hybrid"' in index
+    assert index.count('data-jev-mode="jev_only"') == 2
+    assert index.count('data-jev-mode="jev_hybrid"') == 2
+    assert "Optional prompt helper only." in index
+    assert "function buildJevPlayerPrompt(participantId, mode)" in index
+    assert 'var jevPromptModeStorageKey = "doomArenaJevPromptModes";' in index
+    assert "function persistJevPromptSelections()" in index
+    assert "function restoreJevPromptSelections()" in index
+    assert 'roundsInput.value = String(stored.total_rounds);' in index
+    assert 'control_mode=\\"" + controlMode + "\\"' in index
+    assert 'candidate.checked = false;' in index
+    assert 'input.checked' in index
+    assert "click only Next Round" in index
+    assert "Never use the regular doom-arena MCP." in index
+    assert index.count("Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically.") == 2
+    jev_prompt_builder = index.split("function buildJevPlayerPrompt(", 1)[1].split(
+        "function baseDuelPromptForParticipant(", 1
+    )[0]
+    assert "strategic_directive" not in jev_prompt_builder
+    assert "combatDirective" not in jev_prompt_builder
+    assert "jev" not in duel_payload_builder.lower()
+
+
+def test_current_plan_schema_terms_do_not_clear_copyable_duel_prompts() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    stale_prompt_detector = index.split(
+        "function duelPromptHasStaleMapWording", 1
+    )[1].split("function duelSessionHasStalePromptText", 1)[0]
+
+    assert '"Map blueprint:"' in stale_prompt_detector
+    assert '"engagement_policy"' not in stale_prompt_detector
+    assert '"plan_summary"' not in stale_prompt_detector
+
+
+def test_reload_completion_requires_finished_state_for_the_same_run() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    completion_check = index.split(
+        "function duelRunAlreadyRecordedAsComplete", 1
+    )[1].split("function showRecordedDuelCompletion", 1)[0]
+
+    assert 'agenticStateEndpoint + "?run_id=" + encodeURIComponent(runId)' in completion_check
+    assert 'var agenticStateEndpoint = "/api/arena/state";' in index
+    assert "arenaStateEndpoint" not in index
+    assert "var stateRows = parseTsv(results[1]);" in completion_check
+    assert 'match.run_id === runId' in completion_check
+    assert 'match.phase === "finished"' in completion_check
+
+
+def test_round_reload_url_is_unique_per_active_run() -> None:
+    index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
+    reload_body = index.split("function reloadIntoDuelRun", 1)[1].split(
+        "function syncArenaRunMetadataNow", 1
+    )[0]
+
+    assert 'url.searchParams.set("arenaRun", currentArenaRunId' in reload_body
+    assert "window.location.replace(url.toString());" in reload_body
+
+
 def test_duel_pov_refresh_loop_recovers_from_individual_render_errors() -> None:
     index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
 
@@ -774,6 +1236,22 @@ def test_server_accepts_explicit_unavailable_identity_without_blocking_ready() -
     assert identity["agent_label"] == (
         "Budget Falcon, Undetected assistant, Model unavailable"
     )
+
+
+def test_server_accepts_client_reported_gpt6_identity() -> None:
+    handler = make_handler()
+
+    identity = handler.update_participant_ready_agent(
+        {
+            "participant_id": "player_1",
+            "agent_name": "Runtime Raccoon",
+            "coding_assistant": "Codex",
+            "model": "gpt-6-luna medium",
+            "identity_source": "client_reported",
+        }
+    )
+
+    assert identity["agent_label"] == "Runtime Raccoon, Codex, gpt-6-luna medium"
 
 
 def test_restart_duel_session_resets_round_and_alias_lock() -> None:

@@ -1,0 +1,489 @@
+{
+  "run_id": "run_e6ea2ca35488",
+  "round": 2,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 90.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 20,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 130
+    },
+    "player_2": {
+      "damage_dealt": 20,
+      "damage_taken": 150,
+      "shots_fired": 4,
+      "shots_hit": 2,
+      "accuracy": 0.5,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "10045",
+      "elapsed_ms": null,
+      "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 6714 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 116,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 1200 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 1228 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 3200 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 4628 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 4828 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 5085 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 5914 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 6542 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=150"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 6685 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=72"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 6714 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 6800 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 7457 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=-51"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 8085 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=153"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 8228 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=70"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 9000 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 13200 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 13228 autopilot_action: player_1 action=route_waypoint reason=wp=1/6 target=(-64,384) An available weapon pickup has a legal route. aim_error=-113"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 13514 autopilot_action: player_1 action=route_waypoint reason=wp=2/6 target=(-64,192) An available weapon pickup has a legal route. aim_error=-113"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 14142 autopilot_action: player_1 action=route_waypoint reason=wp=3/6 target=(-192,192) An available weapon pickup has a legal route. aim_error=-24"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 54114 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(128,-640) the shotgun room is sealed from the south aim_error=-7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 54142 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(128,-640) the shotgun room is sealed from the south aim_error=-103"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 54371 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(192,-640) the shotgun room is sealed from the south aim_error=-110"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 54600 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(256,-640) the shotgun room is sealed from the south aim_error=-117"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 54857 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(320,-640) the shotgun room is sealed from the south aim_error=-125"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 55085 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(384,-640) the shotgun room is sealed from the south aim_error=-131"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 55342 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(448,-640) the shotgun room is sealed from the south aim_error=-133"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 55571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun room is sealed from the south aim_error=-138"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 55828 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=-140"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 56571 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 56828 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun room is sealed from the south aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 56857 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 57600 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 57771 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun room is sealed from the south aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 57800 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=-137"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 58542 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 58714 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun room is sealed from the south aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 58742 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 59485 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 59657 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the shotgun room is sealed from the south aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "10045",
+        "elapsed_ms": null,
+        "event": "run_e6ea2ca35488 duel_e1m8_blind_spawn 10045 59685 autopilot_action: player_2 action=route_complete reason=the shotgun room is sealed from the south aim_error=-122"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 351,
+        "distance_traveled": 15089.8,
+        "unique_cells_visited": 39,
+        "revisited_cells": 312
+      },
+      "player_2": {
+        "path_points": 351,
+        "distance_traveled": 4859.5,
+        "unique_cells_visited": 29,
+        "revisited_cells": 322
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 13886.86,
+    "decision_p95_ms": 35230.0,
+    "decision_max_ms": 35230.0,
+    "mcp_avg_ms": 7053.3,
+    "mcp_p95_ms": 30181.0,
+    "mcp_max_ms": 30187.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 38
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 6423
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2552
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 181880,
+    "stale_intent_extension_max_ms": 155820
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "begin the shotgun route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "round one proved the starter weapon loses close trades",
+      "plan_summary": "I am making a responsible decision, which feels suspicious."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "circle below the shotgun",
+      "route": "V25;V24;V23;V22;V21;V20;V19;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the lower corridor bypasses the central wall",
+      "plan_summary": "I am sneaking toward the boomstick with office-chair grace."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the shotgun",
+      "route": [
+        "V18",
+        "U18",
+        "T18",
+        "S18",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open lower approach reaches the weapon without crossing the wall",
+      "plan_summary": "At last, a tool matching my poor judgment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the shotgun",
+      "route": [
+        "V18",
+        "U18",
+        "T18",
+        "T17",
+        "S17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon column bypasses the blocked southern wall",
+      "plan_summary": "One tiny detour before the extremely loud apology."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "use the eastern doorway",
+      "route": "V18;V19;V20;V21;V22;V23;V24;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun room is sealed from the south",
+      "plan_summary": "The direct route filed a restraining order."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "enter the eastern doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this corridor reaches the interior around the shotgun wall",
+      "plan_summary": "I have discovered doors: civilization advances."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "cross the interior lane",
+      "route": "R22;Q22;P22;O22;O21;O20;O19;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern opening leads around the shotgun wall",
+      "plan_summary": "I am entering the meeting room with deeply hostile feedback."
+    }
+  ]
+}

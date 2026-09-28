@@ -1,0 +1,393 @@
+{
+  "run_id": "run_5d70c8f0b792",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 52.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 30,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 160,
+      "shots_fired": 8,
+      "shots_hit": 3,
+      "accuracy": 0.375,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1890",
+      "elapsed_ms": null,
+      "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 11457 pickup: player_1 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 20,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 10685 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 10714 autopilot_action: player_1 action=route_waypoint reason=wp=1/1 target=(0,-384) An available weapon pickup has a legal route. aim_error=-12"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 11428 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 11457 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 12285 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48000 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(-192,-320) the local shotgun is gone and contact is overdue aim_error=9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48028 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(-192,-320) the local shotgun is gone and contact is overdue aim_error=-142"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48057 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(-256,-320) the local shotgun is gone and contact is overdue aim_error=-142"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48200 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(-320,-320) the local shotgun is gone and contact is overdue aim_error=146"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48428 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(-384,-320) the local shotgun is gone and contact is overdue aim_error=150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48771 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(-384,-256) the local shotgun is gone and contact is overdue aim_error=156"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 48914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(-384,-192) the local shotgun is gone and contact is overdue aim_error=76"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 49057 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/8 target=(-384,-192) the local shotgun is gone and contact is overdue aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 49257 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/8 target=(-320,-192) the local shotgun is gone and contact is overdue aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 49400 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(-256,-192) the local shotgun is gone and contact is overdue aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 49628 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50028 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(-256,-192) the local shotgun is gone and contact is overdue aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50057 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50171 autopilot_action: player_2 action=route_complete reason=the local shotgun is gone and contact is overdue aim_error=-10"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50200 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50371 autopilot_action: player_2 action=route_complete reason=the local shotgun is gone and contact is overdue aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 50400 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 51000 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 51171 autopilot_action: player_2 action=route_complete reason=the local shotgun is gone and contact is overdue aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1890",
+        "elapsed_ms": null,
+        "event": "run_5d70c8f0b792 duel_e1m8_blind_spawn 1890 51857 autopilot_action: player_2 action=route_complete+attack reason=the local shotgun is gone and contact is overdue aim_error=-1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 10
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 202,
+        "distance_traveled": 6692.8,
+        "unique_cells_visited": 33,
+        "revisited_cells": 169
+      },
+      "player_2": {
+        "path_points": 202,
+        "distance_traveled": 1821.6,
+        "unique_cells_visited": 25,
+        "revisited_cells": 177
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 15239.0,
+    "decision_p95_ms": 36286.0,
+    "decision_max_ms": 36286.0,
+    "mcp_avg_ms": 581.72,
+    "mcp_p95_ms": 1616.0,
+    "mcp_max_ms": 1636.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 10,
+    "superseded_count": 38
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 7
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 10824
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1583
+    },
+    "stale_intent_extension_count": 10,
+    "stale_intent_extension_total_ms": 206835,
+    "stale_intent_extension_max_ms": 98163
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "force a moving flank",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "known corridors keep pressure without stationary exposure",
+      "plan_summary": "I am sprinting toward a professionally bad idea."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep west for contact",
+      "route": "V25;V24;V23;V22;V21;V20;V19;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the outer lane keeps engagement moving and avoids camping",
+      "plan_summary": "I am bringing the disagreement to the west wing."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "turn north through the flank",
+      "route": "V18;U18;T18;T17;T16;T15;T14;S14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the western doorway advances toward likely enemy lanes",
+      "plan_summary": "I have memorized one door and become insufferable."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "close on the southwest health",
+      "route": "S14;R14;Q14;Q13;Q12;Q11;Q10;Q09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern lane keeps distance while adding durability",
+      "plan_summary": "I am speed-walking toward the world's least relaxing clinic."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "unstick toward the health lane",
+      "route": "S14;R14;Q14;Q13;Q12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the longer route stalled at the first corner",
+      "plan_summary": "The floor filed a complaint; I am trying again."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "bypass the stuck corner",
+      "route": "S14;S13;R13;Q13;Q12;Q11;Q10;Q09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a western step avoids the blocked approach to R14",
+      "plan_summary": "I am sidestepping the floor's passive aggression."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "unstick into the southern lane",
+      "route": "S14;T14;T15;T16;T17;T18;U18;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "reversing through known open cells may restore movement",
+      "plan_summary": "I am reversing this shopping cart out of purgatory."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "8",
+      "objective": "shake free along the southern wall",
+      "route": "S14;S13;T13;T14;T15;T16;T17;T18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "an alternate loop may recover from the frozen waypoint",
+      "plan_summary": "I am rattling the map until something admits responsibility."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "resume the western flank",
+      "route": "T18;T17;T16;T15;T14;S14;R14;Q14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the arena recovered and this route restores forward pressure",
+      "plan_summary": "Reality rebooted; I am pretending that was tactical."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "10",
+      "objective": "force contact through the west center",
+      "route": "Q14;Q13;Q12;Q11;P11;O11;O12;O13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the local shotgun is gone and contact is overdue",
+      "plan_summary": "Someone stole my shotgun, so I am filing this complaint in person."
+    }
+  ]
+}

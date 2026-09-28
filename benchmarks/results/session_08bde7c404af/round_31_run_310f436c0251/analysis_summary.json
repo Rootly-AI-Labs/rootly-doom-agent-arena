@@ -1,0 +1,170 @@
+{
+  "run_id": "run_310f436c0251",
+  "round": 31,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 47.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 100,
+      "damage_taken": 160,
+      "shots_fired": 10,
+      "shots_hit": 10,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 100,
+      "shots_fired": 14,
+      "shots_hit": 12,
+      "accuracy": 0.857,
+      "final_health": 50
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": null,
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": []
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 185,
+        "distance_traveled": 9059.1,
+        "unique_cells_visited": 33,
+        "revisited_cells": 152
+      },
+      "player_2": {
+        "path_points": 185,
+        "distance_traveled": 3805.7,
+        "unique_cells_visited": 22,
+        "revisited_cells": 163
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8661.33,
+    "decision_p95_ms": 11231.0,
+    "decision_max_ms": 11231.0,
+    "mcp_avg_ms": 374.27,
+    "mcp_p95_ms": 2078.0,
+    "mcp_max_ms": 2078.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 24
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2033
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2033
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 18853,
+    "stale_intent_extension_max_ms": 10831
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "kite south while returning fire",
+      "route": [
+        "N22",
+        "O22",
+        "P22",
+        "Q22",
+        "R22",
+        "S22",
+        "T22",
+        "T23"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "sixty-five health requires immediate separation",
+      "plan_summary": "Ouch, the cart is reversing downhill!"
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "enter the direct combat route",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central probe remains our best tactic",
+      "plan_summary": "Thirty-one lunches have not improved management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the central doorway",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last seen enemy is beyond it",
+      "plan_summary": "I\u2019m returning to the armed suggestion box."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "probe the enemy lane and reverse",
+      "route": "R22;Q22;P22;O22;N22;N21;N20;N21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the short path maximizes pistol contact",
+      "plan_summary": "Knock, shoot, reverse the nachos."
+    }
+  ]
+}

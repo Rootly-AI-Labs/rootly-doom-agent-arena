@@ -1,0 +1,450 @@
+{
+  "run_id": "run_533f8ae741c8",
+  "round": 9,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 47.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 65,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 85
+    },
+    "player_2": {
+      "damage_dealt": 65,
+      "damage_taken": 160,
+      "shots_fired": 11,
+      "shots_hit": 6,
+      "accuracy": 0.545,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7485 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the moving flank can reach health without stopping aim_error=-11"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 53
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) the moving flank can reach health without stopping aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) the moving flank can reach health without stopping aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) the moving flank can reach health without stopping aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) the moving flank can reach health without stopping aim_error=40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) the moving flank can reach health without stopping aim_error=43"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) the moving flank can reach health without stopping aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 1628 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 2371 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 2628 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 3371 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 3600 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 4000 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 4342 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 4571 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-133"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 4600 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-133"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 5314 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 5400 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 5542 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6028 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=150"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6114 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=73"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6285 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6514 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-121"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 6714 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=-41"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7257 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7314 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7457 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=69"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7485 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 7485 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=62"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 8228 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 8228 autopilot_action: player_2 action=route_complete reason=the moving flank can reach health without stopping aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 8314 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 8342 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=-111"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_533f8ae741c8 duel_e1m8_blind_spawn 2625 8428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) the moving flank can reach health without stopping aim_error=2"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 184,
+        "distance_traveled": 7586.6,
+        "unique_cells_visited": 33,
+        "revisited_cells": 151
+      },
+      "player_2": {
+        "path_points": 184,
+        "distance_traveled": 3487.1,
+        "unique_cells_visited": 28,
+        "revisited_cells": 156
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8114.75,
+    "decision_p95_ms": 9785.0,
+    "decision_max_ms": 9785.0,
+    "mcp_avg_ms": 551.0,
+    "mcp_p95_ms": 1581.0,
+    "mcp_max_ms": 1678.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 23
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4741
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1648
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "begin the southwest health circuit",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the moving flank can reach health without stopping",
+      "plan_summary": "I am taking the scenic route through urgent care."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "continue west at full pace",
+      "route": "V25;V24;V23;V22;V21;V20;V19;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the outer lane avoids an early close engagement",
+      "plan_summary": "I am commuting away from danger with purpose."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "turn north through the doorway",
+      "route": "V17;U17;T17;T16;T15;T14;S14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the flank remains clear and contact is still absent",
+      "plan_summary": "I overshot the exit, naturally, but recovered theatrically."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach the health corridor",
+      "route": "S14;R14;Q14;Q13;Q12;Q11;P11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the valid flank opens west toward the southwest pack",
+      "plan_summary": "I am approaching healthcare from its least obvious entrance."
+    }
+  ]
+}

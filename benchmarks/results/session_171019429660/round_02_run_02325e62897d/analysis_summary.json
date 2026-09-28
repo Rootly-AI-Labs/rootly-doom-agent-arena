@@ -1,0 +1,462 @@
+{
+  "run_id": "run_02325e62897d",
+  "round": 2,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 84.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 140,
+      "damage_taken": 150,
+      "shots_fired": 12,
+      "shots_hit": 12,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 140,
+      "shots_fired": 18,
+      "shots_hit": 14,
+      "accuracy": 0.778,
+      "final_health": 10
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "5250",
+      "elapsed_ms": null,
+      "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 56914 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(704,448) the north shotgun remains available and worth contesting aim_error=-2"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 45,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 56914 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(704,448) the north shotgun remains available and worth contesting aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 56942 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(704,448) the north shotgun remains available and worth contesting aim_error=136"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 57000 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(640,448) the north shotgun remains available and worth contesting aim_error=136"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 57114 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(576,448) the north shotgun remains available and worth contesting aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 57371 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(512,448) the north shotgun remains available and worth contesting aim_error=-44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 57600 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(448,448) the north shotgun remains available and worth contesting aim_error=-47"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 57857 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(384,448) the north shotgun remains available and worth contesting aim_error=-52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 58085 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(320,448) the north shotgun remains available and worth contesting aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 58342 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(256,448) the north shotgun remains available and worth contesting aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 58571 autopilot_action: player_2 action=route_complete reason=the north shotgun remains available and worth contesting aim_error=-55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 59314 autopilot_action: player_2 action=route_complete reason=the north shotgun remains available and worth contesting aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 71314 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(256,448) the shotgun is still unclaimed nearby aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 71342 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(256,448) the shotgun is still unclaimed nearby aim_error=133"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 71400 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(256,384) the shotgun is still unclaimed nearby aim_error=136"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 71542 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(256,320) the shotgun is still unclaimed nearby aim_error=63"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 71885 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,320) the shotgun is still unclaimed nearby aim_error=65"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 72142 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(320,256) the shotgun is still unclaimed nearby aim_error=142"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 72285 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(320,192) the shotgun is still unclaimed nearby aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 72628 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(256,192) the shotgun is still unclaimed nearby aim_error=60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 72771 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,192) the shotgun is still unclaimed nearby aim_error=-30"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 73000 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=-46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 73742 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 76885 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 76942 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 78400 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 78457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(192,192) the shotgun is still unclaimed nearby aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 78485 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 79285 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 80285 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 80600 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 80628 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81057 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(192,192) the shotgun is still unclaimed nearby aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81085 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81400 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81457 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(192,192) the shotgun is still unclaimed nearby aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 81742 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 82200 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 82285 autopilot_action: player_2 action=route_complete+attack reason=the shotgun is still unclaimed nearby aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "5250",
+        "elapsed_ms": null,
+        "event": "run_02325e62897d duel_e1m8_blind_spawn 5250 82828 autopilot_action: player_2 action=route_complete reason=the shotgun is still unclaimed nearby aim_error=5"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 326,
+        "distance_traveled": 15202.6,
+        "unique_cells_visited": 34,
+        "revisited_cells": 292
+      },
+      "player_2": {
+        "path_points": 326,
+        "distance_traveled": 5063.5,
+        "unique_cells_visited": 34,
+        "revisited_cells": 292
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10525.17,
+    "decision_p95_ms": 14826.0,
+    "decision_max_ms": 14826.0,
+    "mcp_avg_ms": 2176.88,
+    "mcp_p95_ms": 1573.0,
+    "mcp_max_ms": 30255.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 42
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 6147
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1546
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 48574,
+    "stale_intent_extension_max_ms": 45676
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the south shotgun",
+      "route": "V32;U32;T32;S32;R32;Q32;P32;O32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the south chamber route avoids the sealed wall",
+      "plan_summary": "I am sprinting toward a louder bad decision."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "flank toward the south shotgun",
+      "route": "O32;O31;O30;O29;N29;M29;L29;K29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern wall requires a northern bypass",
+      "plan_summary": "The scenic route was a terrible menu choice."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "switch to the north shotgun",
+      "route": "K29;J29;I29;H29;G29;F29;E29;E28",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern barriers make the south approach too slow",
+      "plan_summary": "I changed my order before the kitchen noticed."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach the chamber entrance",
+      "route": "E28;E27;E26;E25;E24;E23;E22;E21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the north shotgun remains available and worth contesting",
+      "plan_summary": "This buffet finally has a straight line."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "enter the north chamber",
+      "route": "E21;F21;G21;G22;H22;I22;I21;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun is still unclaimed nearby",
+      "plan_summary": "I see the snack; I respect none of the furniture."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "take the north shotgun",
+      "route": "I20;I19;I18;H18;G18;F18;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "weapon advantage is available before contact",
+      "plan_summary": "At last, the spicy utensil is mine."
+    }
+  ]
+}

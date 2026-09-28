@@ -103,6 +103,7 @@ PLAN_ROUTE_SKIP_DISTANCE_UNITS = 96
 PLAN_ROUTE_PASSED_MARGIN_UNITS = 48
 PLAN_QUIP_MAX_CHARS = 80
 CODEX_RESUMED_SESSION_MAX_AGE_SECONDS = 1800
+CODEX_ALIAS_SESSION_MAX_AGE_SECONDS = 21600
 IDENTITY_CONFIGURATION_HINT = (
     "Set DOOM_ARENA_CODING_ASSISTANT and DOOM_ARENA_MODEL_IDENTITY in this "
     "MCP server's environment to record an exact non-Codex identity."
@@ -165,6 +166,7 @@ class DoomArenaClient:
         self.run_id = "run_unknown"
         self.scenario_id = DEFAULT_SCENARIO_ID
         self.client_name = ""
+        self.client_title = ""
         self.client_version = ""
         self.client_id = f"mcp_{os.getpid()}"
         # Keep MCP startup independent from the browser/arena HTTP state. Some
@@ -176,6 +178,7 @@ class DoomArenaClient:
         if not isinstance(client_info, dict):
             client_info = {}
         self.client_name = str(client_info.get("name", "") or "unknown MCP client").strip()
+        self.client_title = str(client_info.get("title", "") or "").strip()
         self.client_version = str(client_info.get("version", "") or "").strip()
         self.client_id = f"{self.client_name.lower() or 'mcp'}:{os.getpid()}"
 
@@ -295,6 +298,57 @@ class DoomArenaClient:
             expires_at_ms = 0
         return bool(expires_at_ms and expires_at_ms <= now_ms())
 
+    def _observation_tactical_wake_state(self, observation: dict[str, Any]) -> dict[str, Any]:
+        self_block = observation.get("self") if isinstance(observation.get("self"), dict) else {}
+        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), dict) else {}
+        tactical = (
+            observation.get("tactical_context")
+            if isinstance(observation.get("tactical_context"), dict)
+            else {}
+        )
+        match = observation.get("match") if isinstance(observation.get("match"), dict) else {}
+        map_block = observation.get("map") if isinstance(observation.get("map"), dict) else {}
+        pickups = map_block.get("pickups") if isinstance(map_block.get("pickups"), list) else []
+        pickup_state = tuple(
+            sorted(
+                (
+                    str(item.get("id") or item.get("type") or ""),
+                    str(item.get("cell") or ""),
+                    item.get("available") is not False,
+                )
+                for item in pickups
+                if isinstance(item, dict)
+            )
+        )
+        try:
+            endgame = float(match.get("time_left_seconds")) <= 20.0
+        except (TypeError, ValueError):
+            try:
+                endgame = (
+                    float(match.get("timeout_seconds"))
+                    - float(match.get("elapsed_time_seconds"))
+                    <= 20.0
+                )
+            except (TypeError, ValueError):
+                endgame = False
+        return {
+            "health": self_block.get("health"),
+            "damage_dealt": self_block.get("damage_dealt"),
+            "ready_weapon": self_block.get("ready_weapon"),
+            "ammo": tuple(
+                self_block.get(key)
+                for key in ("ammo_bullets", "ammo_shells", "ammo_cells", "ammo_rockets")
+            ),
+            "opponent_visible": bool(opponent.get("visible")),
+            "opponent_cell": opponent.get("cell") if opponent.get("visible") else None,
+            "opponent_health": opponent.get("health") if opponent.get("visible") else None,
+            "pickups": pickup_state,
+            "replan_recommended": bool(tactical.get("replan_recommended")),
+            "replan_reasons": tuple(tactical.get("replan_reasons") or []),
+            "stuck_recovery": bool(self_block.get("stuck_recovery")),
+            "endgame": endgame,
+        }
+
     def _wait_for_previous_plan_before_observation(self, participant_id: str) -> dict[str, Any]:
         deadline_ms = now_ms() + max(0, OBSERVATION_WAIT_FOR_PLAN_MS)
         started_ms = now_ms()
@@ -302,6 +356,7 @@ class DoomArenaClient:
         last_distance: int | None = None
         last_progress_ms = started_ms
         active_plan_seen = False
+        initial_tactical_state: dict[str, Any] | None = None
 
         while True:
             try:
@@ -316,6 +371,22 @@ class DoomArenaClient:
                 return {
                     "waited_ms": max(0, now_ms() - started_ms),
                     "reason": "plan_ready",
+                    "active_plan_seen": active_plan_seen,
+                }
+
+            tactical_state = self._observation_tactical_wake_state(observation)
+            if initial_tactical_state is None:
+                initial_tactical_state = tactical_state
+            elif tactical_state != initial_tactical_state:
+                changed_fields = sorted(
+                    key
+                    for key in tactical_state
+                    if tactical_state.get(key) != initial_tactical_state.get(key)
+                )
+                return {
+                    "waited_ms": max(0, now_ms() - started_ms),
+                    "reason": "tactical_change",
+                    "tactical_changes": changed_fields,
                     "active_plan_seen": active_plan_seen,
                 }
 
@@ -593,12 +664,39 @@ class DoomArenaClient:
         participant_id: str,
         controller_token: str | None = None,
         agent_name: str | None = None,
+        coding_assistant: str | None = None,
+        model: str | None = None,
     ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         ready_at = now_ms()
-        assistant_name, model_name, identity_source = resolve_agent_identity()
         selected_agent_name = validate_agent_name(agent_name)
+        reported_assistant = normalize_identity_component(coding_assistant)
+        reported_model = normalize_identity_component(model)
+        reported_identity_is_exact = bool(
+            reported_assistant
+            and reported_model
+            and model_identity_is_specific(reported_model)
+        )
+        if reported_identity_is_exact:
+            validate_agent_identity(reported_assistant, reported_model)
+            assistant_name = reported_assistant
+            model_name = reported_model
+            identity_source = "client_reported"
+        else:
+            assistant_name, model_name, identity_source = resolve_agent_identity(
+                self.client_title,
+                selected_agent_name,
+            )
+            if (
+                normalize_identity_component(self.client_title).lower() == "codex"
+                and not model_identity_is_specific(model_name)
+            ):
+                raise DoomArenaError(
+                    "Codex readiness requires the exact current model variant and reasoning level; "
+                    "retry set_participant_ready with coding_assistant='Codex' and a model such as "
+                    "'gpt-6-astra medium', 'gpt-6-sol medium', or 'gpt-6-luna medium'"
+                )
         identity_label = format_agent_identity_label(
             assistant_name,
             model_name,
@@ -645,7 +743,7 @@ class DoomArenaClient:
             "ready_at_ms": ready_at,
             "server_response": server_response,
         }
-        if identity_source == "unavailable":
+        if model_name == "Model unavailable":
             result["identity_warning"] = IDENTITY_CONFIGURATION_HINT
         return json.dumps(result, indent=2)
 
@@ -1035,15 +1133,36 @@ class DoomArenaClient:
             json.dumps(payload).encode("utf-8"),
             "application/json; charset=utf-8",
         )
+        server_response = parse_optional_json(response_text)
+        idempotent_replay = bool(
+            isinstance(server_response, dict)
+            and server_response.get("idempotent_replay")
+        )
+        response_intent_id = (
+            str(server_response.get("intent_id") or intent_id)
+            if isinstance(server_response, dict)
+            else intent_id
+        )
+        response_issued_at = (
+            int(server_response.get("issued_at_ms") or issued)
+            if isinstance(server_response, dict)
+            else issued
+        )
+        response_expires_at = (
+            int(server_response.get("expires_at_ms") or (issued + duration_ms))
+            if isinstance(server_response, dict)
+            else issued + duration_ms
+        )
         return json.dumps(
             {
                 "accepted": True,
+                "idempotent_replay": idempotent_replay,
                 "participant_id": participant_id,
-                "intent_id": intent_id,
+                "intent_id": response_intent_id,
                 "run_id": self.run_id,
                 "scenario_id": self.scenario_id,
-                "issued_at_ms": issued,
-                "expires_at_ms": issued + duration_ms,
+                "issued_at_ms": response_issued_at,
+                "expires_at_ms": response_expires_at,
                 "normalized_intent": {
                     "participant_id": participant_id,
                     "intent": intent,
@@ -1087,7 +1206,7 @@ class DoomArenaClient:
                     "plan_summary": plan_summary or None,
                     "plan_route_cells": plan_route_cells or None,
                 },
-                "server_response": parse_optional_json(response_text),
+                "server_response": server_response,
             },
             indent=2,
         )
@@ -1117,12 +1236,62 @@ class DoomArenaClient:
             engagement_policy_text = normalize_plan_engagement_policy(engagement_policy)
             current_position = self.current_participant_position(participant_id, allow_spawn_fallback=True)
             start_cell = xy_to_grid_cell(current_position[0], current_position[1]) if current_position else ""
+            requested_route_cells = route_cells_for_diagnostics(route)
+            try:
+                _observation, active_plan = self._read_participant_observation_and_plan(participant_id)
+            except DoomArenaError:
+                active_plan = {}
+            if (
+                active_plan
+                and str(active_plan.get("status") or "")
+                not in {"complete", "completed", "route_complete", "stalled", "rejected"}
+                and requested_route_cells == list(active_plan.get("route_cells") or [])
+                and objective_text == str(active_plan.get("objective") or "")
+                and engagement_policy_text == str(active_plan.get("engagement_policy") or "")
+            ):
+                return json.dumps(
+                    {
+                        "accepted": True,
+                        "deduplicated": True,
+                        "deduplication_reason": "exact_active_plan",
+                        "participant_id": participant_id,
+                        "intent_id": active_plan.get("intent_id", ""),
+                        "run_id": self.run_id,
+                        "scenario_id": self.scenario_id,
+                        "active_sequence_number": active_plan.get("sequence_number"),
+                        "submitted_sequence_number": sequence_number,
+                        "plan": {
+                            "objective": objective_text,
+                            "route": requested_route_cells,
+                            "engagement_policy": engagement_policy_text,
+                            "reasoning": reasoning_text,
+                            "plan_note": summary_text,
+                            "sequence_number": sequence_number,
+                        },
+                        "route_diagnostics": {
+                            "start_cell": start_cell,
+                            "route_cells": requested_route_cells,
+                            "waypoint_count": len(requested_route_cells),
+                            "validation": "deduplicated",
+                        },
+                    },
+                    indent=2,
+                )
             route_text, route_cells, route_rebase = normalize_plan_route(
                 route,
                 start_cell=start_cell,
                 rebase_position=current_position,
                 return_diagnostics=True,
             )
+            if (
+                route_cells
+                and start_cell
+                and all(cell == start_cell for cell in route_cells)
+                and not explicit_hold_plan(objective_text, engagement_policy_text)
+            ):
+                raise DoomArenaError(
+                    "route does not move from the current cell; use an explicit hold objective with hold_fire to remain in place"
+                )
         except DoomArenaError as exc:
             return json.dumps(
                 self.plan_rejection_payload(
@@ -1237,6 +1406,9 @@ class DoomArenaClient:
         to_cell = ""
         blocked_cells: list[str] = []
         clearance_cells: list[str] = []
+        requested_cells = route_cells_for_diagnostics(route)
+        first_invalid_cell = ""
+        last_valid_cell = start_cell
 
         if "crosses blocked cell(s)" in message:
             error_type = "route_crosses_blocked_cell"
@@ -1244,6 +1416,8 @@ class DoomArenaClient:
                 segment = message.split("route segment ", 1)[1].split(" crosses ", 1)[0]
                 if "->" in segment:
                     from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+                    last_valid_cell = from_cell
+                    first_invalid_cell = to_cell
             if "blocked cell(s):" in message:
                 blocked_text = message.split("blocked cell(s):", 1)[1].split(".", 1)[0]
                 blocked_cells = [
@@ -1257,6 +1431,8 @@ class DoomArenaClient:
                 segment = message.split("route segment ", 1)[1].split(" passes ", 1)[0]
                 if "->" in segment:
                     from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+                    last_valid_cell = from_cell
+                    first_invalid_cell = to_cell
             if "wall cell(s):" in message:
                 clearance_text = message.split("wall cell(s):", 1)[1].split(".", 1)[0]
                 clearance_cells = [
@@ -1270,8 +1446,19 @@ class DoomArenaClient:
                 segment = message.split("route segment ", 1)[1].split(" is diagonal", 1)[0]
                 if "->" in segment:
                     from_cell, to_cell = [part.strip() for part in segment.split("->", 1)]
+                    last_valid_cell = from_cell
+                    first_invalid_cell = to_cell
         elif "blocked wall cell" in message or "wall cell" in message:
             error_type = "waypoint_in_wall_cell"
+            match = re.search(r"route cell ([A-Z][0-9]{2})", message)
+            if match:
+                first_invalid_cell = match.group(1)
+                try:
+                    invalid_index = requested_cells.index(first_invalid_cell)
+                except ValueError:
+                    invalid_index = -1
+                if invalid_index > 0:
+                    last_valid_cell = requested_cells[invalid_index - 1]
         elif "outside map bounds" in message or "route row must" in message or "route column must" in message:
             error_type = "route_out_of_bounds"
         elif "at least one waypoint" in message:
@@ -1280,6 +1467,10 @@ class DoomArenaClient:
             error_type = "route_too_long"
         elif "engagement_policy" in message:
             error_type = "invalid_engagement_policy"
+        elif "does not move from the current cell" in message:
+            error_type = "route_noop"
+            first_invalid_cell = start_cell
+            last_valid_cell = start_cell
 
         return {
             "accepted": False,
@@ -1307,6 +1498,10 @@ class DoomArenaClient:
                 "to_cell": to_cell,
                 "blocked_cells_crossed": blocked_cells,
                 "wall_clearance_cells": clearance_cells,
+                "first_invalid_cell": first_invalid_cell,
+                "last_valid_cell": last_valid_cell,
+                "legal_adjacent_cells": legal_adjacent_grid_cells(last_valid_cell),
+                "invalid_cell_neighbors": legal_adjacent_grid_cells(first_invalid_cell),
                 "validation": "rejected",
             },
         }
@@ -1415,7 +1610,12 @@ class DoomArenaClient:
         }
         return json.dumps(result, indent=2)
 
-    def stop_participant_intent(self, participant_id: str, controller_token: str | None = None) -> str:
+    def stop_participant_intent(
+        self,
+        participant_id: str,
+        controller_token: str | None = None,
+        preserve_opening_plan: bool = True,
+    ) -> str:
         participant_id = normalize_participant_id(participant_id)
         self._verify_controller_token(participant_id, controller_token)
         phase = ""
@@ -1427,7 +1627,7 @@ class DoomArenaClient:
             phase = str(state.get("phase") or match.get("phase") or "")
         except Exception:
             phase = ""
-        if phase == "waiting_for_agents":
+        if phase == "waiting_for_agents" and preserve_opening_plan:
             return json.dumps(
                 {
                     "accepted": True,
@@ -1918,6 +2118,16 @@ def normalize_identity_component(value: Any, max_length: int = 80) -> str:
     return " ".join(str(value or "").strip().split())[:max_length]
 
 
+def model_identity_is_specific(model: str) -> bool:
+    normalized = normalize_identity_component(model).lower()
+    if normalized in {"", "unavailable", "model unavailable", "unknown"}:
+        return False
+    return re.fullmatch(
+        r"gpt[- ]?6(?:\s*(?:\((?:low|medium|high|xhigh|max|ultra)\)|(?:low|medium|high|xhigh|max|ultra)))?",
+        normalized,
+    ) is None
+
+
 def codex_sessions_root() -> Path:
     codex_home = os.environ.get("CODEX_HOME", "").strip()
     if codex_home:
@@ -2153,7 +2363,10 @@ def detect_codex_rollout_from_process(sessions_root: Path) -> Path | None:
 
 
 def detect_codex_session_identity() -> tuple[str, str] | None:
-    thread_id = normalize_identity_component(os.environ.get("CODEX_THREAD_ID", ""))
+    thread_id = normalize_identity_component(
+        os.environ.get("CODEX_THREAD_ID", "")
+        or os.environ.get("CODEX_SESSION_ID", "")
+    )
     sessions_root = codex_sessions_root()
     rollout_path = None
     if thread_id and all(character in "0123456789abcdefABCDEF-" for character in thread_id):
@@ -2171,6 +2384,10 @@ def detect_codex_session_identity() -> tuple[str, str] | None:
     if rollout_path is None:
         return None
 
+    return codex_identity_from_rollout(rollout_path)
+
+
+def codex_identity_from_rollout(rollout_path: Path) -> tuple[str, str] | None:
     metadata = codex_rollout_metadata(rollout_path)
     model_name = metadata["model"]
     reasoning_effort = metadata["reasoning_effort"]
@@ -2188,7 +2405,87 @@ def detect_codex_session_identity() -> tuple[str, str] | None:
     return "Codex", " ".join(identity_parts)
 
 
-def resolve_agent_identity() -> tuple[str, str, str]:
+def rollout_has_ready_call_for_agent(rollout_path: Path, agent_name: str) -> bool:
+    try:
+        handle = rollout_path.open("r", encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    with handle:
+        for line in handle:
+            try:
+                event = json.loads(line)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                continue
+            payload = event.get("payload")
+            if not isinstance(payload, dict):
+                continue
+            item = payload.get("item")
+            if isinstance(item, dict):
+                arguments = item.get("arguments")
+                if (
+                    item.get("type") == "McpToolCall"
+                    and item.get("tool") == "set_participant_ready"
+                    and isinstance(arguments, dict)
+                    and normalize_identity_component(arguments.get("agent_name"), 32) == agent_name
+                ):
+                    return True
+            if payload.get("type") == "custom_tool_call":
+                tool_input = str(payload.get("input", ""))
+                escaped_name = re.escape(agent_name)
+                if (
+                    "mcp__doom_arena__set_participant_ready" in tool_input
+                    and re.search(
+                        rf"agent_name\s*[:=]\s*[\\\"']{escaped_name}[\\\"']",
+                        tool_input,
+                    )
+                ):
+                    return True
+    return False
+
+
+def detect_codex_identity_by_agent_name(agent_name: str) -> tuple[str, str] | None:
+    selected_name = normalize_identity_component(agent_name, 32)
+    if not selected_name:
+        return None
+
+    sessions_root = codex_sessions_root()
+    try:
+        rollout_paths = list(sessions_root.rglob("rollout-*.jsonl"))
+    except OSError:
+        return None
+
+    cutoff = time.time() - CODEX_ALIAS_SESSION_MAX_AGE_SECONDS
+    candidates: list[tuple[float, Path]] = []
+    for rollout_path in rollout_paths:
+        try:
+            modified_at = rollout_path.stat().st_mtime
+        except OSError:
+            continue
+        if modified_at < cutoff:
+            continue
+        candidates.append((modified_at, rollout_path))
+
+    candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+    arena_cwd = os.path.normcase(os.path.abspath(
+        os.environ.get("DOOM_ARENA_HOST_REPO_ROOT", "").strip() or os.getcwd()
+    ))
+    for _, rollout_path in candidates:
+        if not rollout_has_ready_call_for_agent(rollout_path, selected_name):
+            continue
+        metadata = codex_rollout_metadata(rollout_path)
+        rollout_cwd = metadata.get("cwd", "")
+        if rollout_cwd and os.path.normcase(os.path.abspath(rollout_cwd)) != arena_cwd:
+            continue
+        identity = codex_identity_from_rollout(rollout_path)
+        if identity is not None:
+            return identity
+    return None
+
+
+def resolve_agent_identity(
+    client_title: str = "",
+    agent_name: str = "",
+) -> tuple[str, str, str]:
     environment_assistant = normalize_identity_component(
         os.environ.get("DOOM_ARENA_CODING_ASSISTANT", "")
     )
@@ -2200,10 +2497,18 @@ def resolve_agent_identity() -> tuple[str, str, str]:
         return environment_assistant, environment_model, "environment"
 
     detected = detect_codex_session_identity()
+    if detected is None and agent_name:
+        detected = detect_codex_identity_by_agent_name(agent_name)
     if detected is not None:
         assistant_name, model_name = detected
         validate_agent_identity(assistant_name, model_name)
         return assistant_name, model_name, "codex_session"
+
+    # Product title is distinct from the transport package name. It keeps the
+    # harness accurate when a long-lived MCP process lacks session metadata.
+    detected_title = normalize_identity_component(client_title)
+    if detected_title.lower() == "codex":
+        return "Codex", "Model unavailable", "client_info"
 
     return "Undetected assistant", "Model unavailable", "unavailable"
 
@@ -2336,6 +2641,49 @@ def normalize_plan_engagement_policy(value: Any) -> str:
             + ", ".join(sorted(PLAN_ENGAGEMENT_POLICIES))
         )
     return text
+
+
+def route_cells_for_diagnostics(route: Any) -> list[str]:
+    if isinstance(route, str):
+        raw_points = [item.strip() for item in route.replace(",", ";").split(";") if item.strip()]
+    elif isinstance(route, list):
+        raw_points = route
+    else:
+        return []
+    cells: list[str] = []
+    for item in raw_points:
+        try:
+            cells.append(normalize_grid_cell(item))
+        except DoomArenaError:
+            break
+    return cells
+
+
+def explicit_hold_plan(objective: str, engagement_policy: str) -> bool:
+    words = set(re.findall(r"[a-z]+", str(objective or "").lower()))
+    return engagement_policy == "hold_fire" and bool(
+        words.intersection({"hold", "stay", "wait", "defend", "guard", "protect", "cover"})
+    )
+
+
+def legal_adjacent_grid_cells(cell: str) -> list[str]:
+    try:
+        row, col = grid_cell_to_row_col(normalize_grid_cell(cell))
+    except (DoomArenaError, TypeError, ValueError):
+        return []
+    adjacent: list[str] = []
+    for candidate_row, candidate_col in (
+        (row - 1, col),
+        (row + 1, col),
+        (row, col - 1),
+        (row, col + 1),
+    ):
+        if not (0 <= candidate_row < MAP_ROWS and 0 <= candidate_col < MAP_COLS):
+            continue
+        candidate = row_col_to_grid_cell(candidate_row, candidate_col)
+        if not cell_hits_static_wall(candidate):
+            adjacent.append(candidate)
+    return adjacent
 
 
 def point_hits_static_wall(x: int, y: int) -> bool:
@@ -3389,7 +3737,11 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "y": as_int(participant, "y"),
             "cell": xy_to_grid_cell(participant.get("x"), participant.get("y")),
             "angle": as_int(participant, "angle"),
+            "ready_weapon": participant.get("ready_weapon", ""),
             "ammo_bullets": as_int(participant, "ammo_bullets"),
+            "ammo_shells": as_int(participant, "ammo_shells"),
+            "ammo_cells": as_int(participant, "ammo_cells"),
+            "ammo_rockets": as_int(participant, "ammo_rockets"),
             "command_status": participant.get("command_status", ""),
             "last_action": participant.get("last_action", ""),
             "damage_dealt": as_int(participant, "damage_dealt"),
@@ -3566,8 +3918,10 @@ def tool_definitions() -> list[dict[str, Any]]:
             "description": (
                 "Signal that one MCP participant is connected and ready for the duel start barrier. "
                 "Identity is detected automatically from the current local session metadata or trusted "
-                "harness environment; if exact metadata is unavailable, readiness still succeeds with "
-                "an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
+                "harness environment. HTTP MCP clients should submit their exact coding_assistant and "
+                "model values because the HTTP protocol does not expose the selected runtime model; "
+                "a Codex client without exact model identity is rejected so benchmark labels stay exact. "
+                "Other unavailable identities receive an explicit unavailable label. Set DOOM_ARENA_CODING_ASSISTANT and "
                 "DOOM_ARENA_MODEL_IDENTITY in the MCP server environment for an exact non-Codex identity. "
                 "On the first match, choose a funny arena name that a broad "
                 "audience can understand without Doom or gaming knowledge and pass it as agent_name; "
@@ -3580,6 +3934,14 @@ def tool_definitions() -> list[dict[str, Any]]:
                 "properties": {
                     "participant_id": {"type": "string", "enum": sorted(PARTICIPANTS)},
                     "controller_token": {"type": "string"},
+                    "coding_assistant": {
+                        "type": "string",
+                        "description": "Exact coding assistant product, such as Codex.",
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": "Exact current model slug and settings, such as gpt-6-astra medium.",
+                    },
                     "agent_name": {
                         "type": "string",
                         "minLength": 2,
@@ -3886,6 +4248,8 @@ def call_tool(client: DoomArenaClient, name: str, arguments: dict[str, Any]) -> 
             str(arguments["participant_id"]),
             optional_string(arguments.get("controller_token")),
             optional_string(arguments.get("agent_name")),
+            optional_string(arguments.get("coding_assistant")),
+            optional_string(arguments.get("model")),
         )
     if name == "wait_for_match_start":
         return client.wait_for_match_start(

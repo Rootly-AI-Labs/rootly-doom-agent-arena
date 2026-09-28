@@ -385,6 +385,89 @@
                 font-size: 10px;
             }
 
+            .arena-jev-setup {
+                margin-top: 12px;
+                border: 1px solid rgba(125, 220, 255, 0.16);
+                background: linear-gradient(135deg, rgba(19, 29, 27, 0.92), rgba(15, 18, 14, 0.98));
+                padding: 11px 12px 12px;
+            }
+
+            .arena-jev-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .arena-jev-player {
+                min-width: 0;
+                border: 1px solid rgba(204, 212, 183, 0.12);
+                background: rgba(10, 14, 11, 0.68);
+                padding: 10px;
+            }
+
+            .arena-jev-player-title {
+                margin-bottom: 9px;
+                color: #f3f0df;
+                font: 700 10px/1 "Trebuchet MS", Verdana, sans-serif;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .arena-jev-options {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px 14px;
+            }
+
+            .arena-jev-option {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #c9c6b7;
+                cursor: pointer;
+                font: 700 11px/1.2 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .arena-jev-option:hover {
+                color: #f7f5d8;
+            }
+
+            .arena-jev-option input {
+                appearance: none;
+                width: 14px;
+                height: 14px;
+                margin: 0;
+                border: 1px solid rgba(184, 233, 134, 0.58);
+                border-radius: 50%;
+                background: #0b0e0b;
+                cursor: pointer;
+                box-shadow: inset 0 0 0 3px #0b0e0b;
+            }
+
+            .arena-jev-option input:checked {
+                background: #b8e986;
+                border-color: #d7ffae;
+                box-shadow: inset 0 0 0 3px #172015, 0 0 7px rgba(184, 233, 134, 0.34);
+            }
+
+            .arena-jev-option input:focus-visible {
+                outline: 2px solid #ffce6b;
+                outline-offset: 2px;
+            }
+
+            .arena-jev-hint {
+                margin: 9px 0 0;
+                color: #737c6b;
+                font: 400 10px/1.35 "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            @media (max-width: 700px) {
+                .arena-jev-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
             .arena-toggle-stack {
                 display: flex;
                 flex-direction: column;
@@ -2939,6 +3022,38 @@
                                     <input id="arena-round" type="number" min="1" value="1" />
                                 </div>
                             </div>
+                            <div class="arena-jev-setup" id="arena-jev-setup">
+                                <div class="arena-config-section-title">Jev</div>
+                                <div class="arena-jev-grid">
+                                    <div class="arena-jev-player" aria-labelledby="arena-jev-player-1-title">
+                                        <div class="arena-jev-player-title" id="arena-jev-player-1-title">Player 1</div>
+                                        <div class="arena-jev-options">
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-1-only" data-jev-participant="player_1" data-jev-mode="jev_only" />
+                                                <span>Jev only</span>
+                                            </label>
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-1-hybrid" data-jev-participant="player_1" data-jev-mode="jev_hybrid" />
+                                                <span>Jev + model</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="arena-jev-player" aria-labelledby="arena-jev-player-2-title">
+                                        <div class="arena-jev-player-title" id="arena-jev-player-2-title">Player 2</div>
+                                        <div class="arena-jev-options">
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-2-only" data-jev-participant="player_2" data-jev-mode="jev_only" />
+                                                <span>Jev only</span>
+                                            </label>
+                                            <label class="arena-jev-option">
+                                                <input type="checkbox" id="arena-jev-player-2-hybrid" data-jev-participant="player_2" data-jev-mode="jev_hybrid" />
+                                                <span>Jev + model</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="arena-jev-hint">Optional prompt helper only. Selecting a mode replaces that player's copyable prompt; it does not configure or start a controller.</p>
+                            </div>
                             <div class="duel-commentator-panel arena-commentator-setup">
                                 <div class="arena-config-section-title">Live shoutcaster</div>
                                 <div class="duel-commentator-controls">
@@ -3166,6 +3281,7 @@
             <div id="duel-play-footer">
                 <span class="duel-play-footer-actions">
                     <a href="https://github.com/Rootly-AI-Labs/doom-benchmark" target="_blank" rel="noopener">GitHub</a>
+                    <button type="button" id="duel-commentator-audio" data-commentator-toggle>Enable shoutcaster audio</button>
                     <button type="button" id="duel-menu">Menu</button>
                 </span>
             </div>
@@ -3270,7 +3386,7 @@
             </div>
         </div>
 
-        <script src="elevenagents-commentator.js?v=20260731-team-colors"></script>
+    <script src="elevenagents-commentator.js?v=20260924-eight-word-commentary"></script>
         <script>
             var doomAssetCacheBust = "cache-bust-20260731-lifecycle-safe-player-cache";
             var commonArgs = ["-iwad", "doom1-arena.wad", "-warp", "1", "8", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
@@ -3302,6 +3418,7 @@
             var arenaDuelSessionEndpoint = "/api/arena/duel-session";
             var arenaDuelInstructionsEndpoint = "/api/arena/run-instructions";
             var duelSessionStorageKey = "doomArenaDuelSessionPayload";
+            var jevPromptModeStorageKey = "doomArenaJevPromptModes";
             var arenaScoreEndpoint = "/api/arena/score";
             var arenaRunStatsEndpoint = "/api/arena/run-stats";
             var arenaEventsPath = "arena_duel_events.local.tsv";
@@ -3319,6 +3436,8 @@
             var elevenAgentsCommentatorConfigResolved = false;
             var elevenAgentsCommentatorAudioPreparedByUser = false;
             var elevenAgentsCommentatorAudioPreparationPromise = null;
+            var elevenAgentsCommentatorRestoreTimer = 0;
+            var elevenAgentsCommentatorRestoreAttempts = 0;
             var duelIntroductionBlockedRunId = "";
             var lastPostedAgenticState = "";
             var lastPostedArenaEvents = "";
@@ -3410,6 +3529,7 @@
             var duelAutoAdvanceTimer = 0;
             var duelNextRoundEnableTimer = 0;
             var duelAutoAdvanceInFlight = false;
+            var duelCommentaryIdleWaitInFlight = false;
             var duelLastAutoAdvancedRunId = "";
             var duelFinishedElapsedByRun = {};
             var duelFinishedSeenAtByRun = {};
@@ -4901,6 +5021,61 @@
                     });
             }
 
+            function restoreElevenAgentsCommentatorAudio() {
+                if (
+                    !duelPlayViewIsDisplayed() ||
+                    !elevenAgentsCommentatorAvailable ||
+                    !elevenAgentsCommentatorDesired ||
+                    elevenAgentsCommentatorRequested ||
+                    elevenAgentsCommentatorEnabled
+                ) {
+                    return Promise.resolve(false);
+                }
+                syncElevenAgentsCommentatorControls("Connecting…", false, true);
+                setElevenAgentsCommentatorStatus("Restoring shoutcaster audio…", "connecting");
+                return prepareElevenAgentsCommentatorFromUserGesture()
+                    .then(function () {
+                        return requestElevenAgentsCommentator();
+                    })
+                    .then(function () {
+                        return true;
+                    })
+                    .catch(function () {
+                        // Browsers that still require a fresh gesture can recover
+                        // through the visible footer control without blocking play.
+                        elevenAgentsCommentatorError = false;
+                        elevenAgentsCommentatorRequested = false;
+                        syncElevenAgentsCommentatorControls("Enable shoutcaster audio", false, false);
+                        setElevenAgentsCommentatorStatus("Click once to enable browser voice audio", "ready");
+                        return false;
+                    });
+            }
+
+            function scheduleElevenAgentsCommentatorRestore(delayMs) {
+                if (
+                    elevenAgentsCommentatorRestoreTimer ||
+                    elevenAgentsCommentatorRequested ||
+                    elevenAgentsCommentatorEnabled
+                ) {
+                    return;
+                }
+                elevenAgentsCommentatorRestoreTimer = window.setTimeout(function () {
+                    elevenAgentsCommentatorRestoreTimer = 0;
+                    elevenAgentsCommentatorRestoreAttempts += 1;
+                    restoreElevenAgentsCommentatorAudio().then(function (restored) {
+                        if (restored || elevenAgentsCommentatorEnabled) {
+                            elevenAgentsCommentatorRestoreAttempts = 0;
+                            return;
+                        }
+                        if (elevenAgentsCommentatorRestoreAttempts < 3) {
+                            scheduleElevenAgentsCommentatorRestore(900);
+                        } else {
+                            elevenAgentsCommentatorRestoreAttempts = 0;
+                        }
+                    });
+                }, Math.max(0, Number(delayMs) || 0));
+            }
+
             function initializeElevenAgentsCommentator() {
                 var toggles = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-toggle]"));
                 var volumes = Array.prototype.slice.call(document.querySelectorAll("[data-commentator-volume]"));
@@ -4918,6 +5093,23 @@
                 });
                 toggles.forEach(function (toggle) {
                     toggle.addEventListener("click", function () {
+                        if (
+                            duelPlayViewIsDisplayed() &&
+                            elevenAgentsCommentatorDesired &&
+                            !elevenAgentsCommentatorRequested &&
+                            !elevenAgentsCommentatorEnabled
+                        ) {
+                            prepareElevenAgentsCommentatorFromUserGesture()
+                                .then(function () {
+                                    return requestElevenAgentsCommentator();
+                                })
+                                .catch(function (error) {
+                                    elevenAgentsCommentatorError = true;
+                                    syncElevenAgentsCommentatorControls("Retry shoutcaster", false, false);
+                                    setElevenAgentsCommentatorStatus(error.message || "Unable to enable audio", "error");
+                                });
+                            return;
+                        }
                         if (elevenAgentsCommentatorDesired && !elevenAgentsCommentatorError) {
                             elevenAgentsCommentatorDesired = false;
                             elevenAgentsCommentatorRequested = false;
@@ -4974,8 +5166,12 @@
                         elevenAgentsCommentatorAvailable = true;
                         elevenAgentsCommentatorDesired = true;
                         elevenAgentsCommentatorError = false;
-                        syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
-                        setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                        if (duelPlayViewIsDisplayed()) {
+                            scheduleElevenAgentsCommentatorRestore(750);
+                        } else {
+                            syncElevenAgentsCommentatorControls("Shoutcaster enabled", true, false);
+                            setElevenAgentsCommentatorStatus("Enabled by default — starts with benchmark", "ready");
+                        }
                     })
                     .catch(function () {
                         elevenAgentsCommentatorAvailable = false;
@@ -5749,6 +5945,7 @@
                 var url = new URL(window.location.href);
 
                 url.searchParams.set("duel", "1");
+                url.searchParams.set("arenaRun", currentArenaRunId || String(Date.now()));
                 url.searchParams.delete("arenaData");
                 if (autoStart) {
                     url.searchParams.set("autoStart", "1");
@@ -5756,7 +5953,7 @@
                     url.searchParams.delete("autoStart");
                 }
 
-                window.location.href = url.toString();
+                window.location.replace(url.toString());
             }
 
             function syncArenaRunMetadataNow() {
@@ -5916,6 +6113,149 @@
                 }
             }
 
+            function selectedJevPromptMode(participantId) {
+                var selected = document.querySelector(
+                    '[data-jev-participant="' + participantId + '"]:checked'
+                );
+                return selected ? String(selected.getAttribute("data-jev-mode") || "") : "";
+            }
+
+            function persistJevPromptSelections() {
+                if (!window.sessionStorage) {
+                    return;
+                }
+                try {
+                    window.sessionStorage.setItem(jevPromptModeStorageKey, JSON.stringify({
+                        player_1: selectedJevPromptMode("player_1"),
+                        player_2: selectedJevPromptMode("player_2")
+                    }));
+                } catch (error) {
+                    console.warn("Doom Agent Arena: failed to persist Jev prompt selections", error);
+                }
+            }
+
+            function restoreJevPromptSelections() {
+                var stored;
+
+                try {
+                    stored = window.sessionStorage
+                        ? JSON.parse(window.sessionStorage.getItem(jevPromptModeStorageKey) || "null")
+                        : null;
+                } catch (error) {
+                    stored = null;
+                }
+                ["player_1", "player_2"].forEach(function (participantId) {
+                    var mode = stored && (stored[participantId] === "jev_only" || stored[participantId] === "jev_hybrid")
+                        ? stored[participantId]
+                        : "";
+                    document.querySelectorAll('[data-jev-participant="' + participantId + '"]').forEach(function (input) {
+                        input.checked = String(input.getAttribute("data-jev-mode") || "") === mode;
+                    });
+                });
+            }
+
+            function buildJevPlayerPrompt(participantId, mode) {
+                var matchCount = Math.max(1, selectedNumberValue("arena-round", 1));
+                var otherParticipant = participantId === "player_2" ? "player_1" : "player_2";
+                var isHybrid = mode === "jev_hybrid";
+                var controlMode = isHybrid ? "jev_hybrid" : "jev_only";
+                var agentName = isHybrid ? "Jev Hybrid" : "Jev Solo";
+                var modeLabel = isHybrid ? "Jev + model" : "Jev only";
+                var lines = [
+                    "Use the jev-doom-player skill and only its MCP tools for gameplay. Control only " + participantId + " as " + modeLabel + " across all " + matchCount + " match" + (matchCount === 1 ? "" : "es") + " in the current arena benchmark session.",
+                    "Track completed matches by unique run_id. For every distinct active run, call prepare_jev_player exactly once with participant_id=\"" + participantId + "\", agent_name=\"" + agentName + "\", and control_mode=\"" + controlMode + "\". Exactly once applies to each distinct run_id, not to the whole multi-match session."
+                ];
+
+                if (isHybrid) {
+                    lines.push(
+                        "Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically. If status is running, repeat the same call.",
+                        "If status is awaiting_opus, inspect only the sanitized handoff packet and call resume_jev_player with max_run_ms=45000 and an optional legal override_plan. Without an override, Jev reconsiders using the shared prompt and current state. If running, continue run_jev_player."
+                    );
+                } else {
+                    lines.push(
+                        "Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically. If status is running, repeat the same call until the match is finished or failed.",
+                        "Never call resume_jev_player, never add host-authored strategy text, and never provide an override plan. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
+                    );
+                }
+
+                lines.push(
+                    "For each run, continue until the arena match has an actual terminal result. Record its run_id, winner, terminal reason, and result for " + participantId + ". Count a run only once. A controller error, state_not_ready response, or repeated terminal snapshot is not a newly completed match."
+                );
+
+                if (matchCount > 1) {
+                    lines.push(
+                        "After every terminal match, if fewer than " + matchCount + " unique runs have completed, do not finish the task and do not declare yourself blocked because get_jev_player_status still shows the previous terminal run. Keep the arena browser tab open and allow its configured multi-match session to advance automatically. When a different run_id becomes available, prepare " + participantId + " exactly once for that new run and repeat the controller loop.",
+                        "If automatic advancement does not occur after the terminal summary delay and computer-use is available, you are authorized to click only Next Round on the existing arena page. Never click Start Benchmark, Start Duel, Refresh Arena, or Reset. If a preparation attempt still references the completed run_id, do not run or count it again; wait for the next run and retry discovery."
+                    );
+                }
+
+                lines.push(
+                    "Treat state_not_ready as transitional: inspect get_jev_player_status and keep waiting for the active or next run rather than treating it as match completion. If the supervisor dies while the same arena match is still active, prepare " + participantId + " again only as recovery, then continue without creating a second live controller.",
+                    "Continue until " + matchCount + " unique arena run" + (matchCount === 1 ? " has" : "s have") + " actual terminal results, or until an unrecoverable tool failure prevents further control. Then report wins, losses, draws, terminal reasons, and controller failures.",
+                    "Never prepare or control " + otherParticipant + ". Never request, display, or pass a controller token. Never use the regular doom-arena MCP. Never reset or replace the benchmark session."
+                );
+
+                return lines.join("\n\n");
+            }
+
+            function baseDuelPromptForParticipant(participantId) {
+                if (!currentDuelSession) {
+                    return "";
+                }
+                var prompt = participantId === "player_2"
+                    ? (currentDuelSession.player_2_prompt || "")
+                    : (currentDuelSession.player_1_prompt || "");
+                // Older saved sessions have the reference in a separate field.
+                if (prompt && prompt.indexOf("# Doom Arena Map Reference") < 0 && currentDuelSession.map_reference) {
+                    prompt += "\n\n---\n\n" + currentDuelSession.map_reference;
+                }
+                if (prompt.indexOf("# Doom Arena Map Reference") >= 0) {
+                    prompt = prompt.replace("the full ASCII map is separate from this prompt.", "the full map reference is included at the bottom of this prompt.")
+                        .replace("Full ASCII map reference is available separately in the UI.", "The full ASCII map and blocked route cells are included at the bottom of this prompt.");
+                }
+                return prompt;
+            }
+
+            function renderSelectedDuelPrompt(participantId) {
+                var mode = selectedJevPromptMode(participantId);
+                var promptId = participantId === "player_2" ? "duel-p2-prompt" : "duel-p1-prompt";
+                setPromptText(
+                    promptId,
+                    mode ? buildJevPlayerPrompt(participantId, mode) : baseDuelPromptForParticipant(participantId)
+                );
+            }
+
+            function renderSelectedDuelPrompts() {
+                renderSelectedDuelPrompt("player_1");
+                renderSelectedDuelPrompt("player_2");
+            }
+
+            function updateJevPromptSelection(input) {
+                var participantId = String(input.getAttribute("data-jev-participant") || "");
+                var mode = String(input.getAttribute("data-jev-mode") || "");
+                var playerLabel = participantId === "player_2" ? "Player 2" : "Player 1";
+
+                if (input.checked) {
+                    document.querySelectorAll('[data-jev-participant="' + participantId + '"]').forEach(function (candidate) {
+                        if (candidate !== input) {
+                            candidate.checked = false;
+                        }
+                    });
+                }
+                persistJevPromptSelections();
+                renderSelectedDuelPrompt(participantId);
+                if (selectedJevPromptMode("player_1") || selectedJevPromptMode("player_2")) {
+                    setPromptChangeIndicator("Jev prompt active", false);
+                } else {
+                    markPromptSettingsSynced();
+                }
+                updateLauncherStatus(
+                    input.checked
+                        ? playerLabel + " copy prompt set to " + (mode === "jev_hybrid" ? "Jev + model." : "Jev only.")
+                        : playerLabel + " copy prompt restored to the default model prompt."
+                );
+            }
+
             function setPromptChangeIndicator(text, changed) {
                 var node = document.getElementById("duel-prompt-change-indicator");
 
@@ -5980,9 +6320,7 @@
                     "flank_lower",
                     "STATIC MAP FACTS",
                     "STATIC RESOURCES",
-                    "ASCII MAP",
-                    "engagement_policy",
-                    "plan_summary"
+                    "ASCII MAP"
                 ];
                 var text = String(prompt || "");
 
@@ -6047,6 +6385,7 @@
 
             function restoreDuelSessionFromReload() {
                 var stored = storedDuelSessionPayload();
+                var roundsInput;
 
                 if (!stored) {
                     return null;
@@ -6056,6 +6395,10 @@
                     return null;
                 }
 
+                roundsInput = document.getElementById("arena-round");
+                if (roundsInput && stored.total_rounds) {
+                    roundsInput.value = String(stored.total_rounds);
+                }
                 renderDuelSessionPrompts(stored);
                 currentArenaRunId = stored.run_id || currentArenaRunId;
                 currentArenaScenarioId = stored.scenario_id || currentArenaScenarioId;
@@ -6086,10 +6429,11 @@
                     currentDuelSession.player_2_prompt = duelPromptHasStaleMapWording(previousSession.player_2_prompt) ? "" : previousSession.player_2_prompt;
                 }
 
-                setPromptText("duel-p1-prompt", currentDuelSession.player_1_prompt || "");
-                setPromptText("duel-p2-prompt", currentDuelSession.player_2_prompt || "");
+                renderSelectedDuelPrompts();
                 setPromptText("duel-map-reference", currentDuelSession.map_reference || "");
-                if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
+                if (selectedJevPromptMode("player_1") || selectedJevPromptMode("player_2")) {
+                    setPromptChangeIndicator("Jev prompt active", false);
+                } else if (currentDuelSession.player_1_prompt || currentDuelSession.player_2_prompt) {
                     markPromptSettingsSynced();
                 }
                 updateReadinessPanel();
@@ -6144,21 +6488,39 @@
                     return Promise.resolve(false);
                 }
 
-                return fetch(
-                    "/api/arena/duel-session-results?duel_session_id=" + encodeURIComponent(sessionId),
-                    { cache: "no-store" }
-                )
-                    .then(function (response) {
+                return Promise.all([
+                    fetch(
+                        "/api/arena/duel-session-results?duel_session_id=" + encodeURIComponent(sessionId),
+                        { cache: "no-store" }
+                    ).then(function (response) {
                         return response.ok ? response.json() : null;
-                    })
-                    .then(function (payload) {
-                        return !!(
+                    }),
+                    fetch(agenticStateEndpoint + "?run_id=" + encodeURIComponent(runId), {
+                        cache: "no-store",
+                    }).then(function (response) {
+                        return response.ok ? response.text() : "";
+                    }),
+                ])
+                    .then(function (results) {
+                        var payload = results[0];
+                        var stateRows = parseTsv(results[1]);
+                        var match = stateRows.find(function (row) {
+                            return row.kind === "match";
+                        });
+                        var recorded = !!(
                             payload &&
                             payload.ok &&
                             Array.isArray(payload.rounds) &&
                             payload.rounds.some(function (round) {
                                 return round.run_id === runId;
                             })
+                        );
+
+                        return !!(
+                            recorded &&
+                            match &&
+                            match.run_id === runId &&
+                            match.phase === "finished"
                         );
                     })
                     .catch(function () {
@@ -6205,8 +6567,7 @@
                 currentMapBlueprintScenarioId = "";
                 duelAutoStartAfterReloadPending = false;
                 clearStoredDuelSessionForReload();
-                setPromptText("duel-p1-prompt", "");
-                setPromptText("duel-p2-prompt", "");
+                renderSelectedDuelPrompts();
                 setPromptText("duel-map-reference", "");
                 renderLogLines("duel-p1-log", []);
                 renderLogLines("duel-p2-log", []);
@@ -6315,22 +6676,51 @@
 
             function copyPromptText(id, button) {
                 var node = document.getElementById(id);
+                var participantId = id === "duel-p1-prompt" ? "player_1" : (id === "duel-p2-prompt" ? "player_2" : "");
+                var text;
+                var mapNode;
 
                 if (node === null || !node.value) {
                     updateLauncherStatus("No prompt generated yet.");
                     return;
                 }
 
-                node.focus();
-                node.select();
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(node.value).catch(function () {
-                        document.execCommand("copy");
-                    });
-                } else {
-                    document.execCommand("copy");
+                text = node.value;
+                if (participantId && !selectedJevPromptMode(participantId) && text.indexOf("# Doom Arena Map Reference") < 0) {
+                    mapNode = document.getElementById("duel-map-reference");
+                    if (!mapNode || !mapNode.value.trim()) {
+                        updateLauncherStatus("Map reference is not ready yet. Please retry copying once it loads.");
+                        return;
+                    }
+                    text += "\n\n---\n\n" + mapNode.value;
                 }
-                markPromptCopied(button || null);
+
+                function fallbackCopy() {
+                    var copyNode = document.createElement("textarea");
+                    copyNode.value = text;
+                    copyNode.style.position = "fixed";
+                    copyNode.style.opacity = "0";
+                    document.body.appendChild(copyNode);
+                    copyNode.focus();
+                    copyNode.select();
+                    try {
+                        if (document.execCommand("copy")) {
+                            markPromptCopied(button || null);
+                        } else {
+                            updateLauncherStatus("Could not copy. Please allow clipboard access and retry.");
+                        }
+                    } finally {
+                        copyNode.remove();
+                    }
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function () {
+                        markPromptCopied(button || null);
+                    }).catch(fallbackCopy);
+                } else {
+                    fallbackCopy();
+                }
             }
 
             function exitPointerLockIfNeeded() {
@@ -6777,6 +7167,13 @@
                     launcher.style.display = "none";
                 }
                 duelLauncherHidePending = false;
+
+                if (
+                    elevenAgentsCommentatorAvailable &&
+                    elevenAgentsCommentatorDesired
+                ) {
+                    scheduleElevenAgentsCommentatorRestore(750);
+                }
 
                 // Wait for two animation frames so the browser paints the
                 // spectator layout before ElevenAgents can emit any audio.
@@ -7849,10 +8246,27 @@
                 );
                 delayMs = Math.max(deathHoldRemainingMs, summaryHoldRemainingMs);
                 duelAutoAdvanceTimer = window.setTimeout(function () {
+                    var finishedRunId = currentArenaRunId;
                     duelAutoAdvanceTimer = 0;
-                    duelAutoAdvanceInFlight = true;
-                    startDuel({ continueSession: true, autoAdvance: true });
+                    waitForElevenAgentsCommentary().then(function () {
+                        if (currentArenaRunId !== finishedRunId) {
+                            return;
+                        }
+                        duelAutoAdvanceInFlight = true;
+                        startDuel({ continueSession: true, autoAdvance: true });
+                    });
                 }, delayMs);
+            }
+
+            function waitForElevenAgentsCommentary() {
+                if (
+                    !elevenAgentsCommentatorEnabled ||
+                    !elevenAgentsCommentator ||
+                    typeof elevenAgentsCommentator.waitUntilIdle !== "function"
+                ) {
+                    return Promise.resolve();
+                }
+                return elevenAgentsCommentator.waitUntilIdle();
             }
 
             function closeBenchmarkResultsModal() {
@@ -8359,6 +8773,7 @@
                 var hasNextRound;
                 var nextRoundNumber;
                 var remainingDeathHoldMs = 0;
+                var commentaryBusy = false;
 
                 if (button === null) {
                     return;
@@ -8386,6 +8801,19 @@
                     ? currentDuelSession.has_next_round
                     : currentRound < totalRounds;
                 nextRoundNumber = Math.min(totalRounds, currentRound + 1);
+                commentaryBusy = !!(
+                    elevenAgentsCommentatorEnabled &&
+                    elevenAgentsCommentator &&
+                    typeof elevenAgentsCommentator.isIdle === "function" &&
+                    !elevenAgentsCommentator.isIdle()
+                );
+                if (commentaryBusy && !duelCommentaryIdleWaitInFlight) {
+                    duelCommentaryIdleWaitInFlight = true;
+                    waitForElevenAgentsCommentary().then(function () {
+                        duelCommentaryIdleWaitInFlight = false;
+                        updateNextRoundButton("finished");
+                    });
+                }
 
                 if (
                     currentArenaRunId &&
@@ -8401,7 +8829,7 @@
                 }
 
                 button.hidden = !hasNextRound;
-                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight || remainingDeathHoldMs > 0;
+                button.disabled = phase !== "finished" || duelAutoAdvanceInFlight || remainingDeathHoldMs > 0 || commentaryBusy;
                 button.textContent = "Next Match (" + nextRoundNumber + "/" + totalRounds + ")";
             }
 
@@ -8854,6 +9282,12 @@
                     launcher.style.display = "none";
                 }
                 duelLauncherHidePending = false;
+                if (
+                    elevenAgentsCommentatorAvailable &&
+                    elevenAgentsCommentatorDesired
+                ) {
+                    scheduleElevenAgentsCommentatorRestore(250);
+                }
             }
 
             function resetDuelPovFrameState() {
@@ -10219,6 +10653,7 @@
                 } catch (error) {
                     console.warn("Doom Agent Arena: failed to consume menu reload flag", error);
                 }
+                restoreJevPromptSelections();
 
                 buttons.forEach(function (button) {
                     button.addEventListener("click", function () {
@@ -10230,10 +10665,7 @@
                 document.getElementById("arena-start-game").addEventListener("click", function () {
                     // Unlock browser audio while this direct user gesture is
                     // active, but do not connect or speak over the setup view.
-                    if (
-                        elevenAgentsCommentatorAvailable &&
-                        elevenAgentsCommentatorDesired
-                    ) {
+                    if (elevenAgentsCommentator && !elevenAgentsCommentatorError) {
                         prepareElevenAgentsCommentatorFromUserGesture().catch(function (error) {
                             updateLauncherStatus(error.message || "Unable to prepare the shoutcaster");
                         });
@@ -10300,6 +10732,7 @@
                     var pending = null;
                     return function () {
                         markPromptSettingsChanged();
+                        renderSelectedDuelPrompts();
                         if (pending !== null) {
                             window.clearTimeout(pending);
                         }
@@ -10320,6 +10753,11 @@
                     roundsInput.addEventListener("change", schedulePromptPreview);
                     roundsInput.addEventListener("input", schedulePromptPreview);
                 }
+                document.querySelectorAll("[data-jev-participant][data-jev-mode]").forEach(function (input) {
+                    input.addEventListener("change", function () {
+                        updateJevPromptSelection(input);
+                    });
+                });
 
                 document.querySelectorAll("[data-player-command]").forEach(function (button) {
                     button.addEventListener("click", function () {
@@ -10414,6 +10852,15 @@
                 startDuel({ prepareOnly: true });
             }
 
+            function configureArenaWindowTitle() {
+                // Install after Emscripten's shell initializes, before SDL sets a title.
+                // Keep this outside generated JS so engine rebuilds preserve branding.
+                setWindowTitle = function () {
+                    document.title = "Rootly Doom Agent Arena";
+                };
+                setWindowTitle();
+            }
+
             var Module = {
                 onRuntimeInitialized: () => {
                     syncArenaRunMetadataNow();
@@ -10447,6 +10894,7 @@
                     return path;
                 },
                 preRun: () => {
+                    configureArenaWindowTitle();
                     Module.FS.createPreloadedFile("", "doom1-arena.wad", "doom1-arena.wad?v=" + doomAssetCacheBust, true, true);
                     Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
                     Module.FS.createPreloadedFile("", arenaDataMountPath, selectedArenaDataSourcePath, true, true);

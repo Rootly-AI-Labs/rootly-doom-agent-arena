@@ -20,6 +20,11 @@ MAP_ROWS = 23
 MAP_COLS = 33
 
 
+def shared_game_prompt() -> str:
+    """Canonical mechanics/objective text also sent verbatim to Jev."""
+    return (Path(__file__).with_name("benchmark_game_prompt.txt")).read_text(encoding="utf-8").strip()
+
+
 def _xy_to_grid_cell(x: Any, y: Any) -> str:
     try:
         xf = float(x)
@@ -146,7 +151,7 @@ def _static_pickup_context(enable_weapon_pickups: bool, blueprint: dict[str, Any
         if pickup.get("type") == "weapon" and not enable_weapon_pickups:
             continue
         name = str(pickup.get("name") or pickup.get("type") or "pickup")
-        note = "heals +100 up to 150" if pickup.get("type") == "health" else "close-range weapon upgrade with damage boost"
+        note = "heals +100 up to 150" if pickup.get("type") == "health" else "equips shotgun; mechanics in shared game instructions"
         pickups.append((pickup.get("id", ""), name, pickup.get("x"), pickup.get("y"), note))
     lines = []
     for pickup_id, name, x, y, note in pickups:
@@ -172,7 +177,7 @@ MAP FACTS
 - Bounds: x={bounds.get('x_min')}..{bounds.get('x_max')}, y={bounds.get('y_min')}..{bounds.get('y_max')}.
 - Grid frame: rows `A-W` north/top to south/bottom; columns `01-33` west/left to east/right.
 - Legend: `.` walkable, `#` wall, {resource_legend}.
-- Full ASCII map reference is available separately in the UI.
+- The full ASCII map and blocked route cells are included at the bottom of this prompt.
 - Observations report live pickup `available`, `cell`, and `distance`.
 
 """
@@ -268,16 +273,20 @@ def instructions(
 
 """
         ready_example_agent_name = f'\n  "agent_name": {locked_agent_name_json},'
-    identity_section = f"""{agent_name_section}IDENTITY (AUTOMATIC)
+    identity_section = f"""{agent_name_section}IDENTITY
 - Call `set_participant_ready` without guessing or asking the user for model details.
-- For Codex, the Doom Arena MCP reads the current session metadata or matching parent Codex process metadata and reports the coding assistant, model slug, reasoning level, and speed tier automatically.
+- When the tool schema offers `coding_assistant` and `model`, submit `coding_assistant="Codex"` and the exact model identity from your current session metadata, including reasoning level and speed tier when available (for example, `gpt-6-astra medium`).
+- Remote HTTP MCP does not expose the selected model to the arena automatically, so these readiness fields are required for exact GPT-6 Astra, Sol, and Luna labels.
+- Local stdio Codex clients may omit those fields because the Doom Arena MCP can read their current session metadata or matching parent Codex process metadata.
 - For other harnesses, exact identity comes from `DOOM_ARENA_CODING_ASSISTANT` and `DOOM_ARENA_MODEL_IDENTITY` in the MCP server environment.
 - Never submit an MCP transport package name or version such as `codex-mcp-client 0.145.0`.
-- `agent_name` is only your creative alias; coding-assistant and model identity remain automatic. If exact identity is unavailable, readiness still succeeds with an explicit unavailable label; do not loop on reconnects.
+- `agent_name` is only your creative alias. Remote Codex readiness requires exact model identity; if prompted, retry once with the exact `coding_assistant` and `model` values. Other unavailable identities still receive an explicit unavailable label. Do not loop on reconnects.
 
 ```json
 {{
   "participant_id": "{participant_id}",{ready_example_agent_name}
+  "coding_assistant": "Codex",
+  "model": "exact current model identity",
   "controller_token": "{controller_token if enforce_tokens else '<disabled>'}"
 }}
 ```
@@ -289,7 +298,13 @@ def instructions(
 - Do not call Hivemind tools or read, search, write, note, or consolidate Hivemind memory.
 - Make decisions using only this prompt, the supplied map reference, and Doom Arena MCP tools.
 
+MODEL CONTROL
+- Make every gameplay decision directly with the current/default model selected in this MCP client session.
+- Use the normal Doom Arena MCP tools listed in this prompt; do not delegate gameplay decisions to another model, sub-agent, or controller sidecar.
+- Do not use the Jev model, the `jev-doom-player` skill, or any `prepare_jev_player`, `run_jev_player`, `resume_jev_player`, or `stop_jev_player` tool unless the benchmark prompt explicitly identifies this participant as a Jev baseline.
+
 """
+    combat_objective_section = shared_game_prompt() + "\n\nINTERFACE-SPECIFIC INSTRUCTIONS\n"
     if str(control_mode).strip().lower() == "hierarchical":
         strategy_token_line = (
             f"Your controller_token is: `{controller_token}`\n\n"
@@ -323,6 +338,7 @@ You control only `{participant_id}`. Do not control `{opponent_id}`.
 {session_line}
 {identity_section}
 {benchmark_isolation_section}
+{combat_objective_section}
 ROLE AND LOOP
 - Control only `{participant_id}`. Never control `{opponent_id}`.
 - Use only `set_participant_plan` for normal play.
@@ -335,7 +351,7 @@ ROLE AND LOOP
 OBSERVATION
 - Use only the compact fields: `match`, `self`, `opponent`, `map`, `last_plan`, and `previous_rounds` when present.
 - `last_plan` gives neutral execution feedback for your prior public route command.
-- Static map facts are summarized below; the full ASCII map is separate from this prompt.
+- Static map facts are summarized below; the full map reference is included at the bottom of this prompt.
 
 ACTION SCHEMA
 
@@ -355,18 +371,26 @@ ROUTE FACTS
 - `route` is up to 8 grid cells like `A01`.
 - Consecutive cells must be horizontal or vertical; diagonals are rejected.
 - Do not route through `#` wall cells.
-- Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `get the shotgun`.
-- Write `reasoning` as a causal phrase that fits after `because`, such as `a stronger close-range weapon could turn the fight`. Do not begin it with `because`; it is optional and capped to 12 words.
+- A route that only names your current cell is rejected unless the objective explicitly says to hold, wait, defend, guard, protect, or take cover and `engagement_policy` is `hold_fire`.
+- Retrying the exact same payload with the same `sequence_number` is idempotent. Reusing a sequence number for different content is rejected.
+- An exact duplicate of the currently active plan is acknowledged without replacing or extending it.
+- Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `reach cell L10`.
+- Write `reasoning` as a causal phrase that fits after `because`, such as `this route reaches the selected destination`. Do not begin it with `because`; it is optional and capped to 12 words.
 - `plan_note` is required on every decision. Write a short, funny, first-person battle quip that matches your actual intent.
 - Keep it under 80 characters. Examples: `I need to find this bastard!` or `Ouch, medkit time.`
 - Doom executes accepted routes literally and handles frame-level movement/firing.
 - The default behavior is to shoot if visible while following the route.
+- A waiting observation returns early for meaningful tactical changes such as contact, damage, pickup availability, endgame, or a stalled route.
 
 {_static_map_summary_section(scenario_id, participant_id, enable_weapon_pickups)}
 
 {stop_rules}
 
 {_cross_round_recap_section(enable_cross_round_recap, total_rounds)}
+
+---
+
+{build_map_reference(scenario_id, enable_weapon_pickups)}
 """
     return f"""# Doom Arena MCP Instructions: {participant_id}
 
@@ -378,6 +402,7 @@ You control only `{participant_id}`.
 {session_line}
 {identity_section}
 {benchmark_isolation_section}
+{combat_objective_section}
 Core rule:
 - You do not control frame-level movement.
 - You are sending short-lived tactical policies.
@@ -392,7 +417,7 @@ Core rule:
 - Watch `run_id`, `current_round`, `total_rounds`, and `has_next_round` in observations and match results.
 
 Loop template:
-1. Call MCP tool `set_participant_ready` with `participant_id="{participant_id}"`, your controller token, and the arena name instructed above. Coding-assistant and model identity are detected automatically. Use a new name only for a duplicate-name rejection; reuse the quoted name for a locked-name rejection.
+1. Call MCP tool `set_participant_ready` with `participant_id="{participant_id}"`, your controller token, the arena name instructed above, and the exact current coding-assistant/model fields when offered by the tool schema. Use a new name only for a duplicate-name rejection; reuse the quoted name for a locked-name rejection.
 2. Call MCP tool `get_participant_observation` while phase may still be `waiting_for_agents`.
 3. Choose a synchronized opening intent, set `sequence_number=1`, use `duration_ms=60000`, and call `set_participant_intent`. This arms your first policy but Doom will not execute movement until both agents have submitted opening intents. Your opening intent can be `engage_opponent`, `strafe_attack`, `search`, or `hold`; pick the best action from the current observation.
 4. Call MCP tool `wait_for_match_start` with `participant_id="{participant_id}"`, your controller token, and `timeout_ms=60000`.
@@ -478,7 +503,7 @@ Stable mode:
 Full-control decision rule:
 - Use observations and your own reasoning to choose one valid high-level intent and parameters each turn.
 - Treat all tactical parameters as available controls, not recommendations.
-- The prompt intentionally does not prescribe what to do for specific combat situations.
+- Follow the primary combat objective while using your own judgment for specific combat situations.
 - Stop only according to the stop rules below.
 
 Tactical parameter meanings:

@@ -1,0 +1,243 @@
+{
+  "run_id": "run_004728fe87d3",
+  "round": 4,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 41.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 195,
+      "damage_taken": 40,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 110
+    },
+    "player_2": {
+      "damage_dealt": 40,
+      "damage_taken": 195,
+      "shots_fired": 13,
+      "shots_hit": 3,
+      "accuracy": 0.231,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3395",
+      "elapsed_ms": null,
+      "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 5942 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3395",
+      "elapsed_ms": null,
+      "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 39114 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 1600 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=51"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 5942 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 6714 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 6742 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=-118"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 7028 autopilot_action: player_1 action=route_waypoint reason=wp=2/2 target=(0,384) An available weapon pickup has a legal route. aim_error=-121"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 7142 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 7885 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_004728fe87d3 duel_e1m8_blind_spawn 3395 39114 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "waypoint_in_wall_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 162,
+        "distance_traveled": 3617.4,
+        "unique_cells_visited": 36,
+        "revisited_cells": 126
+      },
+      "player_2": {
+        "path_points": 162,
+        "distance_traveled": 848.7,
+        "unique_cells_visited": 14,
+        "revisited_cells": 148
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 12049.0,
+    "decision_p95_ms": 19374.0,
+    "decision_max_ms": 19374.0,
+    "mcp_avg_ms": 376.09,
+    "mcp_p95_ms": 1575.0,
+    "mcp_max_ms": 1575.0
+  },
+  "errors": {
+    "waypoint_in_wall_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 14
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1551
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1551
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 27741,
+    "stale_intent_extension_max_ms": 17205
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "take the nearby health",
+      "route": "V32;V31;V30;V29;V28;V27;V26;U26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "extra durability supports a longer-range running fight",
+      "plan_summary": "Today I am investing in healthcare and poor choices."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the health pack",
+      "route": [
+        "U26",
+        "T26",
+        "S26",
+        "R26",
+        "Q26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent already has the shotgun",
+      "plan_summary": "I am applying a bandage before the argument starts."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the health pack",
+      "route": "U26;T26;S26;S25;R25;Q25;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the western bend bypasses the wall below the pack",
+      "plan_summary": "Even the first-aid kit has a velvet rope."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "collect the health pack",
+      "route": "Q26;Q25;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pack remains available at arm's length",
+      "plan_summary": "I am circling the medicine like a confused moth."
+    }
+  ]
+}

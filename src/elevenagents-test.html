@@ -93,11 +93,12 @@
             <div id="caption" aria-live="polite"></div>
             <p class="hint">If the beep works but voice audio fails, tell us the first step above that does not turn green. No game needs to be running.</p>
         </main>
-        <script src="elevenagents-commentator.js?v=20260731-team-colors"></script>
+        <script src="elevenagents-commentator.js?v=20260924-eight-word-commentary"></script>
         <script>
             (function () {
                 "use strict";
                 var commentator = null;
+                var releaseTimer = 0;
                 var testMessageSent = false;
                 var runButton = document.getElementById("run-test");
                 var stopButton = document.getElementById("stop-test");
@@ -154,6 +155,10 @@
                 }
 
                 function stopTest() {
+                    if (releaseTimer) {
+                        window.clearTimeout(releaseTimer);
+                        releaseTimer = 0;
+                    }
                     if (commentator) {
                         commentator.disable();
                         commentator = null;
@@ -184,7 +189,7 @@
                                 if (!testMessageSent) {
                                     testMessageSent = true;
                                     window.setTimeout(function () {
-                                        if (!commentator || !commentator.send("user_message", "Say one short sentence: Shoutcaster audio test successful. The Doom arena is ready to rumble!")) {
+                                        if (!commentator || !commentator.send("user_message", "Say one short factual sentence: Shoutcaster audio test successful.")) {
                                             setStep("step-text", "fail", "The test line could not be sent to the agent.");
                                         } else {
                                             setStep("step-text", "running", "Test line sent; waiting for the agent response…");
@@ -203,6 +208,12 @@
                             setStep("step-audio", "pass", "PCM audio received and scheduled for playback (" + event.sample_rate + " Hz).");
                             runButton.disabled = false;
                             runButton.textContent = "Run again";
+                            if (releaseTimer) {
+                                window.clearTimeout(releaseTimer);
+                            }
+                            releaseTimer = window.setTimeout(function () {
+                                stopTest();
+                            }, Math.max(2000, Math.ceil(event.duration_seconds * 1000) + 750));
                         }
                     });
                     return commentator.enable();

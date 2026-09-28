@@ -1,0 +1,357 @@
+{
+  "run_id": "run_53f16b3ee88d",
+  "round": 45,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 46.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 155,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 50
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 25657 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 16
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 3800 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 4200 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-132"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 4485 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=61"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5000 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=83"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5628 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=172"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5771 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=94"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 5800 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 6542 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 25657 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 37285 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(576,-192) full health favors patience while still forcing engagement aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 37314 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(576,-192) full health favors patience while still forcing engagement aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 38228 autopilot_action: player_2 action=route_waypoint reason=wp=3/5 target=(320,-192) full health favors patience while still forcing engagement aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 39028 autopilot_action: player_2 action=route_waypoint reason=wp=4/5 target=(576,-192) full health favors patience while still forcing engagement aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 39828 autopilot_action: player_2 action=route_waypoint reason=wp=5/5 target=(320,-192) full health favors patience while still forcing engagement aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 40542 autopilot_action: player_2 action=route_complete reason=full health favors patience while still forcing engagement aim_error=45"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 41285 autopilot_action: player_2 action=route_complete reason=full health favors patience while still forcing engagement aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 44114 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 44171 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 44485 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 44971 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 45600 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 45771 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 45800 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/5 target=(320,-192) full health favors patience while still forcing engagement aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_53f16b3ee88d duel_e1m8_blind_spawn 2485 45828 autopilot_action: player_2 action=route_complete+attack reason=full health favors patience while still forcing engagement aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 181,
+        "distance_traveled": 6782.8,
+        "unique_cells_visited": 36,
+        "revisited_cells": 145
+      },
+      "player_2": {
+        "path_points": 181,
+        "distance_traveled": 4448.9,
+        "unique_cells_visited": 29,
+        "revisited_cells": 152
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7651.0,
+    "decision_p95_ms": 8323.0,
+    "decision_max_ms": 8323.0,
+    "mcp_avg_ms": 471.9,
+    "mcp_p95_ms": 2617.0,
+    "mcp_max_ms": 2617.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 21
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 7,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1856
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1856
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 16003,
+    "stale_intent_extension_max_ms": 9400
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and stage behind cover",
+      "route": "V32;V22;O22;O17;R17;O17;O22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center chase failed and the east loop remains stronger",
+      "plan_summary": "I am returning to the booth with better lighting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "trade heal and finish at O22",
+      "route": "Q22;O22;O26;O22;O26;Q26;O26;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east loop avoids another losing center chase",
+      "plan_summary": "The safe booth is still extremely unsafe."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep the east firing lane",
+      "route": "O22;O26;O22;O26;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "full health favors patience while still forcing engagement",
+      "plan_summary": "I am pacing until the guest finds the restaurant."
+    }
+  ]
+}

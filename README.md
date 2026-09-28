@@ -4,7 +4,7 @@ Benchmark model duels in Doom.
 
 An MCP-native arena for real-time model-vs-model evaluations.
 
-<img width="624" height="627" alt="Doom Agent Arena: tactical overlay, both player POVs, and live MCP command logs" src="assets/arena-overview.png" />
+<img width="1901" height="912" alt="image" src="https://github.com/user-attachments/assets/f836858d-524e-4b72-b4af-d41dea9325c4" />
 
 
 ## Leaderboard
@@ -43,11 +43,29 @@ Results from the earlier four-model tournament. These models faced different opp
 
 | Rank | Model | Win rate | Wins-Losses | Decision speed | Accuracy | Damage diff | Win rate / cost |
 |---|---|---:|---:|---:|---:|---:|---:|
-| 1 | gpt-5.5 | **66.7% 🏆** | 38-18 | 6.9s | **51% 🎯** | **+22.5 💥** | 0.26× |
-| 2 | gpt-5.4 | 52.5% | 25-22 | 8.1s | 45% | +13.9 | 0.43× |
-| 3 | gpt-5.3-codex-spark | 41.7% | 17-27 | **6.6s ⚡** | 38% | −15.9 | n/a |
-| 4 | gpt-5.4-mini | 39.2% | 19-32 | 11.8s | 40% | −20.5 | **1.00× 💰** |
+| 1 | GPT-6 Astra | **82.5% 🏆** | 33–7 | 6.33s | **83.2% 🎯** | **+86.25 💥** | 0.10× |
+| 2 | GPT-6 Sol | 42.5% | 17–23 | **5.34s ⚡** | 57.6% | −24.50 | 0.18× |
+| 3 | GPT-6 Luna | 25.0% | 10–30 | 7.57s | 52.4% | −61.75 | **1.00× 💰** |
 
+Badges mark the category leader: 🏆 win rate · ⚡ fastest decisions · 🎯 accuracy · 💥 damage differential · 💰 cost efficiency.
+
+- **Win rate** = wins ÷ matches played.
+- **Decision speed** = average time from observation completion to the next plan submission (lower is faster). Includes host/orchestration time, not just model inference.
+- **Accuracy** = total shots hit ÷ total shots fired.
+- **Damage diff** = average damage dealt minus opponent damage dealt per match.
+- **Win rate / cost** = wins per estimated API dollar, normalized so the best model = 1.00×. Costs include all logged session requests, including losing matches, at Standard API rates. These are API-equivalent estimates, not actual billed charges.
+
+The cost calculation now uses full-session token usage. The older benchmark used output-token prices, so its cost-efficiency scores are not directly comparable.
+
+Luna delivered the most wins per dollar: **12.8**, compared with Sol's **2.3** and Astra's **1.3**. Astra won the most matches, while Sol made the fastest decisions.
+
+[![GPT-6 Doom benchmark wins per estimated API dollar: Luna 12.8, Sol 2.3, Astra 1.3](benchmarks/figures/gpt-6-wins-per-dollar.png)](benchmarks/figures/gpt-6-wins-per-dollar.png)
+
+Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
+
+See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
+
+## Earlier benchmark findings
 Each model played 60 rounds. Every pair played 20 rounds, swapping player positions after 10. Win rate counts draws as half a win; the Wins-Losses column excludes draws. Badges mark the leaders within this tournament.
 
 The historical **Win rate / cost** metric divides win rate by output-token price, normalized so the best model = 1.00×. It uses the benchmark's May 2026 prices per 1M output tokens: gpt-5.5 $30, gpt-5.4 $14, and gpt-5.4-mini $4.50; Spark had no public price recorded. These scores use a different cost calculation from the GPT-6 table above.
@@ -92,6 +110,8 @@ Example plan submission:
 The same route format can express  kiting, baiting, health retreats, shotgun pushes, flanks, and resets. Doom executes the accepted route in real time and handles low-level movement, aiming, firing when line of sight is available, collision handling, and recovery. 
 
 This keeps the benchmark focused on spatial planning, adaptation, and public plan quality rather than testing whether a model can micromanage shooter controls or win through rapid tool-calling.
+
+For the **Jev-only baseline**, the controller uses public map geometry and permitted observations to generate up to 20 validated route-and-firing-policy candidates per decision. Jev receives the same neutral game rules and objective as the route-writing LLMs, then selects one candidate; the menu changes with the observed game state. No host LLM supplies tactical advice in this mode. Because Jev receives generated routes while other LLMs author their own, this is an agent-system comparison, not an isolated model-reasoning test. Offered candidates, selections, probabilities, API latency, and reported usage are logged for analysis. See [Jev implementation](JEV_IMPLEMENTATION.md).
 
 Rounds are synchronized with a ready gate so neither side starts moving before both agents have connected and submitted an opening intent.
 
@@ -189,13 +209,13 @@ label instead of blocking the duel or guessing another session's model.
 
 The committed `.mcp.json` in this repo uses `python`. If your system needs `python3`, `py -3`, or an absolute path, put that in an ignored `.mcp.local.json`
 
-3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Each session must show `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`.
+3. Open two separate MCP chat agent sessions (e.g., two Claude Code windows, one Codex + one Claude, or any combination of MCP-capable assistants). Normally each session shows `doom-arena` as a connected MCP server — one drives `player_1`, the other drives `player_2`. A Jev sidecar session is the exception: it exposes only `jev-doom-player`, not the regular `doom-arena` tools.
 
 4. In the browser, choose run settings and click `Start Duel`.
 
-5. Paste the generated `player_1` prompt into the first MCP chat agent, and the generated `player_2` prompt into the second one. It does not matter which model or window gets Player 1 versus Player 2.
+5. Paste the generated `player_1` prompt into the first regular MCP chat agent, and the generated `player_2` prompt into the second one. It does not matter which model or window gets Player 1 versus Player 2. For a Jev-controlled side, do not paste the generated prompt or token; give it a token-free instruction naming only its participant and `jev_only` or `jev_hybrid`. The sidecar loads its controller token internally.
 
-The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same Player 1 and Player 2 prompts/tokens. After `Reset` or a new `Start Duel`, use the newly displayed prompts.
+The duel waits until both agents are ready and both have submitted an opening intent. `Start Duel` creates a new session and new player prompts. In a multi-round session, `Next Round` keeps the same regular-player prompts/tokens, but a Jev sidecar must call `prepare_jev_player` again for the new run ID. After `Reset` or a new `Start Duel`, use the newly displayed regular-player prompts.
 
 ### Optional ElevenAgents shoutcaster
 

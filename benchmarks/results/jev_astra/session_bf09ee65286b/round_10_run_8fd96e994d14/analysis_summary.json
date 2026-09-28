@@ -1,0 +1,210 @@
+{
+  "run_id": "run_8fd96e994d14",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 24.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 155,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 30
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1225",
+      "elapsed_ms": null,
+      "event": "run_8fd96e994d14 duel_e1m8_blind_spawn 1225 6285 pickup: player_1 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "1225",
+      "elapsed_ms": null,
+      "event": "run_8fd96e994d14 duel_e1m8_blind_spawn 1225 21685 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1225",
+        "elapsed_ms": null,
+        "event": "run_8fd96e994d14 duel_e1m8_blind_spawn 1225 6285 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1225",
+        "elapsed_ms": null,
+        "event": "run_8fd96e994d14 duel_e1m8_blind_spawn 1225 6285 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1225",
+        "elapsed_ms": null,
+        "event": "run_8fd96e994d14 duel_e1m8_blind_spawn 1225 21685 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 94,
+        "distance_traveled": 3399.5,
+        "unique_cells_visited": 40,
+        "revisited_cells": 54
+      },
+      "player_2": {
+        "path_points": 94,
+        "distance_traveled": 4671.7,
+        "unique_cells_visited": 42,
+        "revisited_cells": 52
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6024.5,
+    "decision_p95_ms": 7332.0,
+    "decision_max_ms": 7332.0,
+    "mcp_avg_ms": 542.25,
+    "mcp_p95_ms": 1570.0,
+    "mcp_max_ms": 3376.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 7
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4879,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3344,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 3073,
+    "stale_intent_extension_max_ms": 3073
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "N02;N08;O08;O16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am acquiring another extremely loud clipboard."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "N02",
+        "N08",
+        "O08",
+        "O16",
+        "R16",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am acquiring another extremely loud clipboard."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol the southwestern health route",
+      "route": "O17;O08;Q08;Q12;O12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am auditing every bandage in this building."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol the southwestern health route",
+      "route": [
+        "O17",
+        "O08",
+        "Q08",
+        "Q12",
+        "O12",
+        "L12",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am auditing every bandage in this building."
+    }
+  ]
+}

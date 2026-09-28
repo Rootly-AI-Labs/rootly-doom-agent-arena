@@ -1,0 +1,450 @@
+{
+  "run_id": "run_c3eaae8e039b",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 13.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 70,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 80
+    },
+    "player_2": {
+      "damage_dealt": 70,
+      "damage_taken": 155,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1995",
+      "elapsed_ms": null,
+      "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-512) the route secures the shotgun without ending point blank aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 29,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-512) the route secures the shotgun without ending point blank aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 457 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-512) the route secures the shotgun without ending point blank aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 2457 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,-192) the route secures the shotgun without ending point blank aim_error=57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 3314 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=-53"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 3428 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 3485 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(0,-192) the route secures the shotgun without ending point blank aim_error=-55"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 4257 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=69"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 4514 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(0,-384) the route secures the shotgun without ending point blank aim_error=80"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 4885 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=172"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5028 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=97"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(0,-192) the route secures the shotgun without ending point blank aim_error=177"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5742 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 5800 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 6000 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 6028 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=-94"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 6314 autopilot_action: player_1 action=route_waypoint reason=wp=2/2 target=(0,384) An available weapon pickup has a legal route. aim_error=-109"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 6428 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=66"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 6685 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=-119"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 7428 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 7685 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 7714 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 8457 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 8628 autopilot_action: player_2 action=route_complete+attack reason=the route secures the shotgun without ending point blank aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 8657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 8685 autopilot_action: player_2 action=route_complete+attack reason=the route secures the shotgun without ending point blank aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 9428 autopilot_action: player_2 action=route_complete+attack reason=the route secures the shotgun without ending point blank aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 9485 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 9514 autopilot_action: player_2 action=route_complete+attack reason=the route secures the shotgun without ending point blank aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 9628 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 10257 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 10600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 10628 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=-141"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 11371 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 11571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-192) the route secures the shotgun without ending point blank aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 11600 autopilot_action: player_2 action=route_complete reason=the route secures the shotgun without ending point blank aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_c3eaae8e039b duel_e1m8_blind_spawn 1995 11914 autopilot_action: player_2 action=route_complete+attack reason=the route secures the shotgun without ending point blank aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 49,
+        "distance_traveled": 3065.3,
+        "unique_cells_visited": 36,
+        "revisited_cells": 13
+      },
+      "player_2": {
+        "path_points": 49,
+        "distance_traveled": 2308.9,
+        "unique_cells_visited": 24,
+        "revisited_cells": 25
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7233.5,
+    "decision_p95_ms": 8087.0,
+    "decision_max_ms": 8087.0,
+    "mcp_avg_ms": 366.25,
+    "mcp_p95_ms": 2808.0,
+    "mcp_max_ms": 2808.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2772
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2772
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 26109,
+    "stale_intent_extension_max_ms": 22317
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "keep firing while circling",
+      "route": [
+        "N17",
+        "N18",
+        "N19",
+        "N20",
+        "O20",
+        "O19",
+        "O18",
+        "O17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "movement can preserve aim without offering a stationary target",
+      "plan_summary": "I am circling the table with terrible etiquette."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and establish firing distance",
+      "route": "V32;T32;T22;O22;O17;R17;O17;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route secures the shotgun without ending point blank",
+      "plan_summary": "Takeout only; I am not dining in."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "heal at the east medikit",
+      "route": "O22;P22;Q22;Q26",
+      "engagement_policy": "",
+      "reasoning": "sixty health is too fragile for another shotgun exchange",
+      "plan_summary": "Emergency salsa refill, then revenge."
+    }
+  ]
+}

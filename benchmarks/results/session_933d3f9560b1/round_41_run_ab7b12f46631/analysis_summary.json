@@ -1,0 +1,412 @@
+{
+  "run_id": "run_ab7b12f46631",
+  "round": 41,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 14.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 30,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 155,
+      "shots_fired": 3,
+      "shots_hit": 2,
+      "accuracy": 0.667,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2415",
+      "elapsed_ms": null,
+      "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 6114 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-640) early pressure can deny another long pickup chase aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(832,-640) early pressure can deny another long pickup chase aim_error=36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 400 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-640) early pressure can deny another long pickup chase aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 657 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(704,-640) early pressure can deny another long pickup chase aim_error=40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 885 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(640,-640) early pressure can deny another long pickup chase aim_error=43"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 1142 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(576,-640) early pressure can deny another long pickup chase aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 1371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) early pressure can deny another long pickup chase aim_error=49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 1628 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 1885 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 2371 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 2600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) early pressure can deny another long pickup chase aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 2628 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 3371 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 3571 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) early pressure can deny another long pickup chase aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 3600 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 4257 autopilot_action: player_1 action=route_waypoint reason=wp=4/5 target=(-64,384) An available weapon pickup has a legal route. aim_error=55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 4342 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 4542 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) early pressure can deny another long pickup chase aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 4571 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=-120"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 4800 autopilot_action: player_1 action=route_waypoint reason=wp=1/3 target=(-64,192) An available weapon pickup has a legal route. aim_error=147"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 5314 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 5342 autopilot_action: player_1 action=route_waypoint reason=wp=2/3 target=(-64,384) An available weapon pickup has a legal route. aim_error=-35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 5514 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(512,-640) early pressure can deny another long pickup chase aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 5542 autopilot_action: player_2 action=route_complete reason=early pressure can deny another long pickup chase aim_error=57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 5942 autopilot_action: player_1 action=route_waypoint reason=wp=3/3 target=(0,384) An available weapon pickup has a legal route. aim_error=152"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 6085 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=73"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 6114 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 6800 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(-64,384) An available weapon pickup has a legal route. aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 7114 autopilot_action: player_1 action=route_waypoint reason=wp=2/2 target=(0,384) An available weapon pickup has a legal route. aim_error=-121"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2415",
+        "elapsed_ms": null,
+        "event": "run_ab7b12f46631 duel_e1m8_blind_spawn 2415 7228 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=56"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 57,
+        "distance_traveled": 3118.2,
+        "unique_cells_visited": 29,
+        "revisited_cells": 28
+      },
+      "player_2": {
+        "path_points": 57,
+        "distance_traveled": 1807.3,
+        "unique_cells_visited": 21,
+        "revisited_cells": 36
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 2288.0,
+    "decision_p95_ms": 3041.0,
+    "decision_max_ms": 3041.0,
+    "mcp_avg_ms": 515.13,
+    "mcp_p95_ms": 1588.0,
+    "mcp_max_ms": 3134.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 15
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 4604
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3069
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 18767,
+    "stale_intent_extension_max_ms": 18767
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the weapon lane",
+      "route": [
+        "R17",
+        "Q17",
+        "Q18",
+        "P18",
+        "O18",
+        "N18",
+        "N17",
+        "N16"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "contact is stale and the central flank must be cleared",
+      "plan_summary": "I am circling the same desk until someone answers."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush the center entrance",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "early pressure can deny another long pickup chase",
+      "plan_summary": "I am arriving before the refreshments this time."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "enter the eastern center",
+      "route": "V25;U25;T25;S25;R25;R24;R23;R22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the doorway keeps the pursuit compact",
+      "plan_summary": "I am using the express entrance to management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "force the center fight",
+      "route": "R22;Q22;P22;O22;O21;O20;O19;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the inner lane prevents a passive round",
+      "plan_summary": "I am cancelling the quiet portion of the meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "pursue the last seen enemy",
+      "route": "O18;N18;N17;N16;N15;N14",
+      "engagement_policy": "",
+      "reasoning": "the center row denies room for a pickup detour",
+      "plan_summary": "I am following the target before lunch breaks out."
+    }
+  ]
+}

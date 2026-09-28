@@ -1,0 +1,26 @@
+{
+  "runner": "doom_arena_server_duel_session",
+  "duel_session_id": "session_933d3f9560b1",
+  "total_rounds": 50,
+  "current_round": 2,
+  "run_id": "run_e6ea2ca35488",
+  "scenario_id": "duel_e1m8_blind_spawn",
+  "arena_mode": "duel",
+  "player_1_model": "",
+  "player_2_model": "",
+  "round": 2,
+  "seed": 42,
+  "timeout_seconds": 180,
+  "decision_cadence_ms": 750,
+  "intent_duration_ms": 25000,
+  "control_path": "external MCP clients call HTTP doom-arena tools",
+  "control_mode": "hierarchical",
+  "hide_enemy_position": true,
+  "enable_weapon_pickups": true,
+  "randomize_spawns": false,
+  "scenario_pool": [
+    "duel_e1m8_blind_spawn"
+  ],
+  "enforce_controller_tokens": true,
+  "stats": "stats.json"
+}

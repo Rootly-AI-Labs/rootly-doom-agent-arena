@@ -1,0 +1,250 @@
+{
+  "run_id": "run_3b3217154e6b",
+  "round": 48,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 26.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 180,
+      "damage_taken": 160,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 180,
+      "shots_fired": 6,
+      "shots_hit": 6,
+      "accuracy": 1.0,
+      "final_health": 70
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1995",
+      "elapsed_ms": null,
+      "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1995",
+      "elapsed_ms": null,
+      "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 24142 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 2
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(-320,640) An available weapon pickup has a legal route. aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-320,192) An available weapon pickup has a legal route. aim_error=63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-64,192) An available weapon pickup has a legal route. aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 3800 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,192) An available weapon pickup has a legal route. aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 4200 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-64,192) An available weapon pickup has a legal route. aim_error=-132"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5000 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(-64,384) An available weapon pickup has a legal route. aim_error=83"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5628 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) An available weapon pickup has a legal route. aim_error=172"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5771 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=94"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 5800 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 6542 autopilot_action: player_1 action=route_complete reason=An available weapon pickup has a legal route. aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 24142 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 25885 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(320,0) An available health pickup has a legal route. aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_3b3217154e6b duel_e1m8_blind_spawn 1995 25914 autopilot_action: player_1 action=route_waypoint reason=wp=1/2 target=(320,0) An available health pickup has a legal route. aim_error=20"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 102,
+        "distance_traveled": 5363.8,
+        "unique_cells_visited": 39,
+        "revisited_cells": 63
+      },
+      "player_2": {
+        "path_points": 102,
+        "distance_traveled": 3305.3,
+        "unique_cells_visited": 29,
+        "revisited_cells": 73
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8026.5,
+    "decision_p95_ms": 9349.0,
+    "decision_max_ms": 9349.0,
+    "mcp_avg_ms": 229.5,
+    "mcp_p95_ms": 1605.0,
+    "mcp_max_ms": 1605.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 13
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1536
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1536
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 16310,
+    "stale_intent_extension_max_ms": 10998
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and stage behind cover",
+      "route": "V32;V22;O22;O17;R17;O17;O22;Q22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east strategy has won three late rounds in a row",
+      "plan_summary": "Three meals left; the burrito smells a comeback."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "trade heal and finish at O22",
+      "route": "Q22;O22;O26;O22;O26;Q26;O26;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east loop is driving the comeback",
+      "plan_summary": "Two laps toward an even dinner bill."
+    }
+  ]
+}

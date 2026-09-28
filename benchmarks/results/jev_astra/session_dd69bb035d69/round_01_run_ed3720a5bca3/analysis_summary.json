@@ -1,0 +1,201 @@
+{
+  "run_id": "run_ed3720a5bca3",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 37.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 55,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 95
+    },
+    "player_2": {
+      "damage_dealt": 55,
+      "damage_taken": 150,
+      "shots_fired": 8,
+      "shots_hit": 4,
+      "accuracy": 0.5,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_ed3720a5bca3 duel_e1m8_blind_spawn 2030 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_ed3720a5bca3 duel_e1m8_blind_spawn 2030 5057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "route_crosses_blocked_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 147,
+        "distance_traveled": 4489.4,
+        "unique_cells_visited": 33,
+        "revisited_cells": 114
+      },
+      "player_2": {
+        "path_points": 147,
+        "distance_traveled": 2213.7,
+        "unique_cells_visited": 24,
+        "revisited_cells": 123
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5561.0,
+    "decision_p95_ms": 7475.0,
+    "decision_max_ms": 7475.0,
+    "mcp_avg_ms": 784.73,
+    "mcp_p95_ms": 1581.0,
+    "mcp_max_ms": 4003.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "route_crosses_blocked_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3098
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1567
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 667,
+    "stale_intent_extension_max_ms": 667
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "approach the southern shotgun",
+      "route": "U32;T32;S32;R32;Q32;P32;O32;O31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I brought layers, but I need a shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cross toward the southern shotgun",
+      "route": "N31;N30;N29;N28;N27;O27;O26;O25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the scenic route to bad decisions."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern inner lane",
+      "route": [
+        "N29",
+        "N28",
+        "N27",
+        "O27",
+        "O26",
+        "O25",
+        "O24",
+        "O23"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I refuse to be served without a shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach the shotgun entrance",
+      "route": "O24;O23;O22;O21;O20;O19;O18;P18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am lasagna with a very urgent appointment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "recover health at q26",
+      "route": [
+        "P23",
+        "Q23",
+        "Q24",
+        "Q25",
+        "Q26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I need medical cheese immediately."
+    }
+  ]
+}

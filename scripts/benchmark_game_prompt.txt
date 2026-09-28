@@ -1,0 +1,15 @@
+SHARED GAME SETUP AND OBJECTIVE (neutral_v1)
+You control one participant in a two-player Doom Arena duel. Win the round under the rules below. Choose your own strategy; no resource or tactic is prescribed.
+
+RULES AND OBSERVATIONS
+- Both participants start with 150 health and a pistol. The configured map, participant identity, round duration and elapsed time are supplied by the match setup and observations.
+- Eliminating the opponent wins. If both remain alive at timeout, higher remaining health wins; equal health is a draw. Damage dealt is not the timeout tie-breaker.
+- Use only supplied observations and public map facts. In fog-of-war, an unseen opponent's current position is unknown; last-seen information is historical, not a live position.
+- Walls block movement and line of sight. Pickup locations do not imply current availability; use the live availability fields. Consumed pickups are removed for the round.
+
+RESOURCE AND WEAPON MECHANICS
+- Pistol: one hitscan attack, 5, 10 or 15 damage if it hits; cooldown 12 game ticks.
+- Shotgun: seven spread pellets, each dealing 5, 10 or 15 damage if it hits; 35-105 total only if all seven hit. Spread can make pellets miss, especially at distance. Cooldown 28 game ticks. There are 35 game ticks per second.
+- A shotgun pickup equips the shotgun and sets shells to 200. Duel firing replenishes the firing weapon's ammunition to 200; ordinary ammunition depletion is not a constraint here. Weapon pickups may be disabled by match configuration.
+- Medikit: restores 100 health, capped at 150. Stimpack, if present: restores 10, capped at 150. Health pickups cannot be consumed at full health.
+- The arena executes movement and firing through its controller. In route-control mode, accepted routes are followed with automatic firing when visible unless the submitted engagement policy specifies otherwise.
