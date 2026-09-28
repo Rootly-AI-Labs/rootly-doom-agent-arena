@@ -1,0 +1,314 @@
+{
+  "run_id": "run_ba848ce30672",
+  "round": 14,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 66.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 205,
+      "damage_taken": 250,
+      "shots_fired": 9,
+      "shots_hit": 6,
+      "accuracy": 0.667,
+      "final_health": 40
+    },
+    "player_2": {
+      "damage_dealt": 250,
+      "damage_taken": 205,
+      "shots_fired": 8,
+      "shots_hit": 6,
+      "accuracy": 0.75,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2800",
+      "elapsed_ms": null,
+      "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 6285 pickup: player_2 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2800",
+      "elapsed_ms": null,
+      "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 19457 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 4
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 2
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 6285 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 6285 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 19457 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 19885 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 51342 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 52371 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 57371 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2800",
+        "elapsed_ms": null,
+        "event": "run_ba848ce30672 duel_e1m8_blind_spawn 2800 65342 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 10,
+      "player_2": 0
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 260,
+        "distance_traveled": 7068.9,
+        "unique_cells_visited": 79,
+        "revisited_cells": 181
+      },
+      "player_2": {
+        "path_points": 260,
+        "distance_traveled": 7035.8,
+        "unique_cells_visited": 75,
+        "revisited_cells": 185
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5975.9,
+    "decision_p95_ms": 8772.0,
+    "decision_max_ms": 8772.0,
+    "mcp_avg_ms": 684.96,
+    "mcp_p95_ms": 1595.0,
+    "mcp_max_ms": 2616.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 20
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 5,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 8716,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2582,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 3936,
+    "stale_intent_extension_max_ms": 2670
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "N02;N08;O08;O16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am collecting the tools of middle management."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "N02",
+        "N08",
+        "O08",
+        "O16",
+        "R16",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am collecting the tools of middle management."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol the southwestern health route",
+      "route": "O17;O08;Q08;Q12;O12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am inspecting the emergency snack cupboard."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol the southwestern health route",
+      "route": [
+        "O17",
+        "O08",
+        "Q08",
+        "Q12",
+        "O12",
+        "L12",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am inspecting the emergency snack cupboard."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "search toward eastern health",
+      "route": "L12;I12;I22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my grievances to the east wing."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search toward eastern health",
+      "route": [
+        "L12",
+        "I12",
+        "I22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking my grievances to the east wing."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "patrol the southeastern health loop",
+      "route": "L22;O22;O26;Q26;Q22;O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am doing another lap of the benefits department."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol the southeastern health loop",
+      "route": [
+        "L22",
+        "O22",
+        "O26",
+        "Q26",
+        "Q22",
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am doing another lap of the benefits department."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "patrol the northeastern health loop",
+      "route": "L22;I22;I26;G26;G22;I22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the upstairs medicine cabinet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol the northeastern health loop",
+      "route": "L22;I22;I26;G26;G22;I22;L22;L24",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am checking the upstairs medicine cabinet."
+    }
+  ]
+}

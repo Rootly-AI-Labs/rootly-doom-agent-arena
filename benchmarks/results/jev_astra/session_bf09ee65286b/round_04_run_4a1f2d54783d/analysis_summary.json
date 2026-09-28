@@ -1,0 +1,258 @@
+{
+  "run_id": "run_4a1f2d54783d",
+  "round": 4,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 50.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 100,
+      "damage_taken": 165,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 165,
+      "damage_taken": 100,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 100
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3150",
+      "elapsed_ms": null,
+      "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 6285 pickup: player_2 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3150",
+      "elapsed_ms": null,
+      "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 39285 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3150",
+        "elapsed_ms": null,
+        "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 6285 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3150",
+        "elapsed_ms": null,
+        "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 6285 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3150",
+        "elapsed_ms": null,
+        "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 39285 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3150",
+        "elapsed_ms": null,
+        "event": "run_4a1f2d54783d duel_e1m8_blind_spawn 3150 40657 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 0
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 194,
+        "distance_traveled": 5002.6,
+        "unique_cells_visited": 56,
+        "revisited_cells": 138
+      },
+      "player_2": {
+        "path_points": 194,
+        "distance_traveled": 4893.7,
+        "unique_cells_visited": 40,
+        "revisited_cells": 154
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5697.12,
+    "decision_p95_ms": 7223.0,
+    "decision_max_ms": 7223.0,
+    "mcp_avg_ms": 1519.14,
+    "mcp_p95_ms": 4690.0,
+    "mcp_max_ms": 20047.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3069,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1535,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 29594,
+    "stale_intent_extension_max_ms": 26992
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "arm at the southern shotgun",
+      "route": "N02;N08;O08;O16;R16;R17;Q17;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am fast tracking the loud stapler purchase."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "N02",
+        "N08",
+        "O08",
+        "O16",
+        "R16",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am cutting the commute and the paperwork."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "search the eastern lane near health",
+      "route": "O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am inspecting the workplace first aid station."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "search the northern weapon room",
+      "route": "L22;I22;I17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking who stole the other stapler."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the northern weapon room",
+      "route": [
+        "L22",
+        "I22",
+        "I17",
+        "G17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am checking who stole the other stapler."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "search the western inner lane",
+      "route": "I17;I12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am conducting an unannounced goose audit."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the western inner lane",
+      "route": [
+        "I17",
+        "I12",
+        "L12",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am conducting an unannounced goose audit."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the southwestern health station",
+      "route": "L12;O12;O08;Q08",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am checking the break room for trouble."
+    }
+  ]
+}

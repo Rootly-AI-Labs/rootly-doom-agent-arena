@@ -1,0 +1,230 @@
+{
+  "run_id": "run_74c979681ee7",
+  "round": 21,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 30.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 165,
+      "damage_taken": 160,
+      "shots_fired": 6,
+      "shots_hit": 4,
+      "accuracy": 0.667,
+      "final_health": 80
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 165,
+      "shots_fired": 5,
+      "shots_hit": 3,
+      "accuracy": 0.6,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1715",
+      "elapsed_ms": null,
+      "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 6285 pickup: player_2 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1715",
+      "elapsed_ms": null,
+      "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 20542 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 2
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 6285 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 6285 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 20542 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 20971 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1715",
+        "elapsed_ms": null,
+        "event": "run_74c979681ee7 duel_e1m8_blind_spawn 1715 28228 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 0
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 117,
+        "distance_traveled": 3582.9,
+        "unique_cells_visited": 38,
+        "revisited_cells": 79
+      },
+      "player_2": {
+        "path_points": 117,
+        "distance_traveled": 4499.8,
+        "unique_cells_visited": 53,
+        "revisited_cells": 64
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6533.2,
+    "decision_p95_ms": 9800.0,
+    "decision_max_ms": 9800.0,
+    "mcp_avg_ms": 544.47,
+    "mcp_p95_ms": 1577.0,
+    "mcp_max_ms": 3665.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5163,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3627,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 2915,
+    "stale_intent_extension_max_ms": 2261
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "N02;N08;O08;O16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am collecting my increasingly noisy paycheck."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "N02",
+        "N08",
+        "O08",
+        "O16",
+        "R16",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am collecting my increasingly noisy paycheck."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol the southwestern health route",
+      "route": "R16;O16;O08;Q08;Q12;O12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am heading to the company bandage buffet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol the southwestern health route",
+      "route": [
+        "R16",
+        "O16",
+        "O08",
+        "Q08",
+        "Q12",
+        "O12",
+        "L12",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am heading to the company bandage buffet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "search toward eastern health",
+      "route": "L12;I12;I22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am filing this complaint in the east wing."
+    }
+  ]
+}
