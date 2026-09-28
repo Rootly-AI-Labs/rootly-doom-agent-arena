@@ -10852,6 +10852,15 @@
                 startDuel({ prepareOnly: true });
             }
 
+            function configureArenaWindowTitle() {
+                // Install after Emscripten's shell initializes, before SDL sets a title.
+                // Keep this outside generated JS so engine rebuilds preserve branding.
+                setWindowTitle = function () {
+                    document.title = "Rootly Doom Agent Arena";
+                };
+                setWindowTitle();
+            }
+
             var Module = {
                 onRuntimeInitialized: () => {
                     syncArenaRunMetadataNow();
@@ -10885,6 +10894,7 @@
                     return path;
                 },
                 preRun: () => {
+                    configureArenaWindowTitle();
                     Module.FS.createPreloadedFile("", "doom1-arena.wad", "doom1-arena.wad?v=" + doomAssetCacheBust, true, true);
                     Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
                     Module.FS.createPreloadedFile("", arenaDataMountPath, selectedArenaDataSourcePath, true, true);

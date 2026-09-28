@@ -721,8 +721,9 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert "Prompt synced" not in index
     assert 'id="duel-prompt-change-indicator" hidden' in index
     assert "<title>Rootly Doom Agent Arena</title>" in index
-    assert "document.title = 'Rootly Doom Agent Arena'" in browser_runtime
-    assert "document.title = title" not in browser_runtime
+    assert "function configureArenaWindowTitle()" in index
+    assert 'document.title = "Rootly Doom Agent Arena";' in index
+    assert "preRun: () => {\n                    configureArenaWindowTitle();" in index
     assert 'script.src = "websockets-doom.js?v=" + doomAssetCacheBust' in index
     assert 'href="assets/rootly-favicon.svg"' in index
     assert 'setLauncherCopy("Doom Arena Duel"' not in index
@@ -1018,9 +1019,12 @@ def test_duel_launcher_offers_prompt_only_jev_modes_for_each_player() -> None:
     assert 'input.checked' in index
     assert "click only Next Round" in index
     assert "Never use the regular doom-arena MCP." in index
-    assert "Primary objective: eliminate the opponent." in index
-    assert index.count('Call run_jev_player with strategic_directive=\\"" + combatDirective + "\\" and max_run_ms=45000.') == 2
-    assert "never replace the fixed benchmark directive with adaptive host-authored tactics" in index
+    assert index.count("Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically.") == 2
+    jev_prompt_builder = index.split("function buildJevPlayerPrompt(", 1)[1].split(
+        "function baseDuelPromptForParticipant(", 1
+    )[0]
+    assert "strategic_directive" not in jev_prompt_builder
+    assert "combatDirective" not in jev_prompt_builder
     assert "jev" not in duel_payload_builder.lower()
 
 

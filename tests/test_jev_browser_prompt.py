@@ -7,6 +7,25 @@ import subprocess
 import pytest
 
 
+def test_arena_title_hook_overrides_engine_titles():
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("Node required for browser title regression")
+    html = (Path(__file__).resolve().parents[1] / "src/index.html").read_text(encoding="utf-8")
+    start = html.index("function configureArenaWindowTitle()")
+    end = html.index("var Module =", start)
+    script = (
+        "var document = {title: 'Old title'};\n"
+        "var setWindowTitle = function(title) { document.title = title; };\n"
+        + html[start:end]
+        + "configureArenaWindowTitle();\n"
+        + "setWindowTitle('DOOM - engine version');\n"
+        + "console.log(document.title);"
+    )
+    result = subprocess.run([node, "-e", script], capture_output=True, text=True, check=True)
+    assert result.stdout.strip() == "Rootly Doom Agent Arena"
+
+
 @pytest.mark.parametrize("mode", ["jev_only", "jev_hybrid"])
 @pytest.mark.parametrize("participant", ["player_1", "player_2"])
 def test_copied_jev_prompt_matches_current_tools(mode, participant):
