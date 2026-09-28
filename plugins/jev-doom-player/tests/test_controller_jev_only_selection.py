@@ -7,6 +7,10 @@ import pytest
 import test_controller as fixtures
 from jev_adapter import DEFAULT_MODEL, JevDecision
 
+@pytest.fixture(autouse=True)
+def current_planner(monkeypatch):
+    monkeypatch.setenv('JEV_DOOM_PLANNER', 'flat_v3')
+
 
 def actionable_candidates() -> list[dict[str, Any]]:
     hold, handoff = fixtures.candidates()
@@ -87,7 +91,10 @@ def test_jev_only_submits_actionable_choice_regardless_of_confidence(
         assert result["last_plan"]["id"] == "seek_health"
         assert harness.client.plan_calls[0][1] == ["A01", "A02"]
         assert harness.routes.fallback_count == 0
-        assert plan_submissions(harness) == [
+        submissions = plan_submissions(harness)
+        assert submissions[0]['decision_id']
+        assert submissions[0]['observation_to_accepted_plan_ms'] >= 0
+        assert [{k: v for k, v in row.items() if k not in {'decision_id', 'observation_to_accepted_plan_ms'}} for row in submissions] == [
             {
                 "run_id": "run_test",
                 "participant_id": "player_1",
@@ -95,6 +102,8 @@ def test_jev_only_submits_actionable_choice_regardless_of_confidence(
                 "candidate_id": "seek_health",
                 "source": "jev",
                 "accepted": True,
+                "planner_version": "flat_v3",
+                "goal": None,
             }
         ]
     finally:

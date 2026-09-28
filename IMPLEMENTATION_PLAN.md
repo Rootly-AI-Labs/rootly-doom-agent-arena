@@ -68,12 +68,11 @@ controller.
 
 ### `run_jev_player`
 
-Inputs: optional `strategic_directive`, optional `max_run_ms`. The participant is
+Inputs: optional `max_run_ms`. The participant is
 owned by the preceding `prepare_jev_player` call.
 
-`strategic_directive` is used only by `jev_hybrid`. The `jev_only` baseline
-ignores host-authored strategy so its decisions depend only on the sanitized
-arena state and the fixed candidate criteria.
+Both modes receive the shared neutral game prompt automatically. No additional
+free-text strategy input exists.
 
 Starts or joins the supervised controller, submits the opening plan when needed,
 and blocks until match completion, a hybrid-only strategic handoff, cancellation,
@@ -82,7 +81,7 @@ in-process supervisor continues control until the next call or MCP shutdown.
 
 ### `resume_jev_player`
 
-Hybrid-only inputs: `strategic_directive`, optional validated `override_plan`,
+Hybrid-only inputs: optional validated `override_plan`,
 optional `max_run_ms`. This tool is never used by `jev_only`.
 
 Resolves a handoff and re-enters the bounded wait. An Opus-authored override is

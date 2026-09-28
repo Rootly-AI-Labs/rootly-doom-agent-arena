@@ -7,6 +7,7 @@ import os
 import re
 import threading
 import time
+import uuid
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -22,7 +23,7 @@ from arena_bridge import (
     verify_active_sequence,
 )
 from candidate_routes import CandidateRouteEngine, CandidateRouteError
-from contracts import MAX_DIRECTIVE_CHARS, CONTROLLER_MODES, build_outbound_state, make_handoff_packet
+from contracts import CONTROLLER_MODES, build_outbound_state, make_handoff_packet, assert_outbound_safe
 from jev_adapter import (
     DEFAULT_ENDPOINT,
     DEFAULT_MODEL,
@@ -32,6 +33,7 @@ from jev_adapter import (
     JevError,
 )
 from telemetry import JsonlTelemetry, filtered_state_hash
+from candidate_facts import candidate_facts
 
 
 PARTICIPANTS = frozenset({"player_1", "player_2"})
@@ -61,10 +63,6 @@ def _clamp_run_ms(value: Any) -> int:
     if not MIN_RUN_MS <= parsed <= MAX_RUN_MS:
         raise ControllerError(f"max_run_ms must be between {MIN_RUN_MS} and {MAX_RUN_MS}")
     return parsed
-
-
-def _clean_directive(value: Any) -> str:
-    return " ".join(str(value or "").replace("\t", " ").split())[:MAX_DIRECTIVE_CHARS]
 
 
 def _safe_error_text(error: BaseException, *secrets: str | None) -> str:
@@ -140,13 +138,24 @@ class JevPlayerController:
         self._thread: threading.Thread | None = None
         self._mode = "idle"
         self._control_mode = "jev_hybrid"
+        self._planner_version = "flat_v3"
+        self._decision_id = None
+        self._search_cooldowns = {}
+        self._outcome_sequences = set()
+        self._plan_fingerprint = None
+        self._hierarchy_goal = ""
+        self._goal_fingerprint = None
+        self._last_seen_at = None
+        self._visited_cells: dict[str, float] = {}
+        self._selected_target = None
+        self._planning_started_at = None
+        self._observation_received_at = None
         self._participant_id = ""
         self._agent_name = ""
         self._controller_token: str | None = None
         self._run_id = ""
         self._scenario_id = ""
         self._sequence_number = 1
-        self._strategic_directive = ""
         self._last_seen_cell = ""
         self._last_contact_at = 0.0
         self._last_health: int | None = None
@@ -173,6 +182,25 @@ class JevPlayerController:
         self._handoff_rearmed = True
 
     # Dependencies remain lazy so installing/enabling the plugin is dormant.
+    def _record(self, event, payload):
+        if self._planner_version in {'flat_v3'}:
+            payload = {'decision_id': self._decision_id, **payload}
+        self._telemetry.record(event, payload)
+
+    def _record_outcome(self, status, observation=None):
+        plan = self._current_plan
+        seq = plan.get('sequence_number')
+        if self._planner_version not in {'flat_v3'} or seq is None or seq in self._outcome_sequences:
+            return
+        self._outcome_sequences.add(seq)
+        if self._planner_version == 'flat_v3':
+            self._recent_plan_outcomes = (getattr(self, '_recent_plan_outcomes', []) + [{
+                'candidate_id': plan.get('id'), 'target_cell': plan.get('target_cell'),
+                'outcome': status}])[-8:]
+        self._record('plan_outcome', {'run_id': self._run_id, 'participant_id': self._participant_id,
+            'decision_id': plan.get('decision_id'), 'sequence_number': seq,
+            'candidate_id': plan.get('id'), 'outcome': status})
+
     def _ensure_dependencies(self) -> None:
         if self._arena is None:
             self._repo_root = resolve_repo_root(self._repo_root_hint)
@@ -208,10 +236,13 @@ class JevPlayerController:
         reader = getattr(self._client, "_read_participant_observation_and_plan", None)
         if callable(reader):
             observation, active_plan = reader(self._participant_id)
+            self._observation_received_at = self._clock()
             if not isinstance(observation, dict):
                 raise ControllerError("Arena returned an invalid participant observation")
             return observation, dict(active_plan or {})
-        return self._observation_reader(self._arena, self._client, self._participant_id), {}
+        observation = self._observation_reader(self._arena, self._client, self._participant_id)
+        self._observation_received_at = self._clock()
+        return observation, {}
 
     def _with_spawn_fallback(self, observation: dict[str, Any]) -> dict[str, Any]:
         self_block = observation.setdefault("self", {})
@@ -225,9 +256,13 @@ class JevPlayerController:
 
     def _update_last_seen(self, observation: Mapping[str, Any]) -> None:
         now = self._clock()
+        cell = observation.get('self', {}).get('cell')
+        if isinstance(cell, str) and re.fullmatch(r'[A-W](?:0[1-9]|[12][0-9]|3[0-3])', cell):
+            self._visited_cells[cell] = now
         opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
         if opponent.get("visible") and opponent.get("cell"):
             self._last_seen_cell = str(opponent["cell"])
+            self._last_seen_at = now
             self._last_contact_at = now
         self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
         try:
@@ -254,22 +289,19 @@ class JevPlayerController:
         observation: Mapping[str, Any],
         current_plan: Mapping[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        candidates = list(
-            self._route_engine.generate_candidates(
-                observation,
-                scenario_id=self._scenario_id,
-                current_plan=current_plan,
-                last_seen_cell=self._last_seen_cell or None,
-                seconds_since_contact=max(0.0, self._clock() - self._last_contact_at),
-                center_patrol_target=self._center_patrol_target or None,
-            )
-        )
-        if self._control_mode == "jev_only":
-            return [
-                candidate
-                for candidate in candidates
-                if candidate.get("actionable") is True
-            ]
+        candidates, self._candidate_audit = self._route_engine.generate_neutral_candidates(
+            observation, scenario_id=self._scenario_id,
+            current_plan={**self._current_plan, **(current_plan or {})},
+            last_seen_cell=self._last_seen_cell or '',
+            visited_cells=self._visited_cells, now=self._clock())
+        if self._control_mode == 'jev_hybrid':
+            handoff = CandidateRouteEngine._handoff_candidate('Request guidance from the configured LLM.')
+            if len(candidates) >= 20:
+                removed = candidates[-1]
+                self._candidate_audit['omitted'].append({**removed, 'omission_reason': 'hybrid_handoff_slot'})
+                candidates = candidates[:-1]
+            candidates = [*candidates, handoff]
+            self._candidate_audit['offered'] = candidates
         return candidates
 
     def _safe_fallback(
@@ -292,12 +324,42 @@ class JevPlayerController:
         observation: Mapping[str, Any],
         candidates: Sequence[Mapping[str, Any]],
     ) -> JevDecision:
+        started = self._clock()
+        self._decision_id = uuid.uuid4().hex
+        self._planning_started_at = self._observation_received_at if self._observation_received_at is not None else started
+        if self._planner_version == 'flat_v3':
+            self._record('candidate_menu', {'run_id': self._run_id,
+                **getattr(self, '_candidate_audit', {})})
         outbound = build_outbound_state(
             observation,
+            repo_root=self._repo_root,
             current_plan=self._current_plan or None,
-            strategic_directive=self._strategic_directive,
         )
+        if self._planner_version in {"flat_v3"}:
+            self._record('decision_observation', {'run_id': self._run_id,
+                'participant_id': self._participant_id, 'state': outbound,
+                'state_hash': filtered_state_hash(outbound)})
+            outbound['memory'] = {'last_seen_opponent_cell': self._last_seen_cell or None,
+                'visited_cell_count': len(self._visited_cells),
+                'search_memory_basis': 'Recorded player cells only; not a visibility or cleared-area map.',
+                'last_seen_age_seconds': max(0.0, self._clock() - self._last_seen_at)
+                if self._last_seen_at is not None else None}
+            if self._planner_version == 'flat_v3':
+                outbound['memory']['recent_plan_outcomes'] = getattr(self, '_recent_plan_outcomes', [])
+                outbound['memory']['last_plan_feedback'] = {
+                    key: self._last_active_plan[key] for key in
+                    ('status', 'sequence_number', 'current_waypoint_cell')
+                    if key in self._last_active_plan}
+            outbound['planning'] = {'stage': 'plan', 'selection_mode': 'all_legal_plans'}
+            outbound['candidates'] = candidate_facts(candidates)
+        assert_outbound_safe(outbound)
         decision = self._adapter.choose(outbound, candidates)
+        if self._planner_version in {'flat_v3'} and decision.selected_id not in {c['id'] for c in candidates}:
+            raise ControllerError('Jev selected an option outside the offered menu')
+        if self._planner_version in {'flat_v3'}:
+            chosen = next(c for c in candidates if c['id'] == decision.selected_id)
+            self._hierarchy_goal = chosen.get('action_family', '')  # Descriptive label only.
+            self._selected_target = chosen.get('target_cell') or (chosen.get('route') or [None])[-1]
         self._last_outbound_state = outbound
         self._last_decision = {
             "selected_id": decision.selected_id,
@@ -309,7 +371,7 @@ class JevPlayerController:
             "latency_ms": round(decision.latency_ms, 3),
             "request_id": decision.request_id,
         }
-        self._telemetry.record(
+        self._record(
             "jev_decision",
             {
                 "run_id": self._run_id,
@@ -318,15 +380,22 @@ class JevPlayerController:
                 "jev_model": decision.model,
                 "filtered_state_hash": filtered_state_hash(outbound),
                 "candidate_ids": [candidate.get("id") for candidate in candidates],
+                "planner_version": self._planner_version,
+                "goal": self._hierarchy_goal or None,
+                "candidates": candidate_facts(candidates),
+                "planning_elapsed_ms": round((self._clock() - started) * 1000, 3),
                 **self._last_decision,
             },
         )
         return decision
 
-    @staticmethod
-    def _find_candidate(candidates: Sequence[Mapping[str, Any]], candidate_id: str) -> dict[str, Any] | None:
+    def _find_candidate(self, candidates: Sequence[Mapping[str, Any]], candidate_id: str) -> dict[str, Any] | None:
         for candidate in candidates:
             if candidate.get("id") == candidate_id and candidate.get("actionable") is True:
+                if self._planner_version in {'flat_v3'}:
+                    target = candidate.get('target_cell') or (candidate.get('route') or [None])[-1]
+                    if target != self._selected_target:
+                        return None
                 return dict(candidate)
         return None
 
@@ -401,8 +470,8 @@ class JevPlayerController:
     ) -> dict[str, Any]:
         state = build_outbound_state(
             observation,
+            repo_root=self._repo_root,
             current_plan=self._current_plan or None,
-            strategic_directive=self._strategic_directive,
         )
         return make_handoff_packet(
             reason=reason,
@@ -418,6 +487,7 @@ class JevPlayerController:
         participant_id: str,
         agent_name: str | None = None,
         control_mode: str | None = None,
+        planner_version: str | None = None,
     ) -> dict[str, Any]:
         participant_id = str(participant_id).strip().lower()
         if participant_id not in PARTICIPANTS:
@@ -425,6 +495,9 @@ class JevPlayerController:
         selected_mode = str(control_mode or os.environ.get("JEV_DOOM_CONTROL_MODE", "jev_hybrid")).strip().lower()
         if selected_mode not in CONTROL_MODES:
             raise ControllerError("control_mode must be jev_only or jev_hybrid")
+        planner = planner_version or os.environ.get('JEV_DOOM_PLANNER') or 'flat_v3'
+        if planner != 'flat_v3':
+            raise ControllerError('Only flat_v3 is supported. Remove the obsolete planner setting; do not downgrade.')
         selected_name = " ".join(str(agent_name or "").split())
         if not selected_name:
             selected_name = "Jev Jockey" if participant_id == "player_1" else "Jev Wrangler"
@@ -435,6 +508,7 @@ class JevPlayerController:
             self._reset_runtime_locked()
             self._participant_id = participant_id
             self._control_mode = selected_mode
+            self._planner_version = planner
             self._agent_name = selected_name
 
         try:
@@ -491,6 +565,18 @@ class JevPlayerController:
             raise
 
     def _reset_runtime_locked(self) -> None:
+        self._decision_id = None
+        self._search_cooldowns = {}
+        self._recent_plan_outcomes = []
+        self._outcome_sequences = set()
+        self._plan_fingerprint = None
+        self._visited_cells = {}
+        self._hierarchy_goal = ''
+        self._goal_fingerprint = None
+        self._last_seen_at = None
+        self._selected_target = None
+        self._planning_started_at = None
+        self._observation_received_at = None
         self._stop_event = threading.Event()
         self._thread = None
         self._mode = "idle"
@@ -498,7 +584,6 @@ class JevPlayerController:
         self._run_id = ""
         self._scenario_id = ""
         self._sequence_number = 1
-        self._strategic_directive = ""
         self._last_seen_cell = ""
         self._last_contact_at = self._clock()
         self._last_health = None
@@ -538,7 +623,7 @@ class JevPlayerController:
                 not in {"complete", "completed", "route_complete", "stalled", "rejected"}
                 and self._plan_signature(candidate) == self._plan_signature(self._current_plan)
             ):
-                self._telemetry.record(
+                self._record(
                     "plan_deduplicated",
                     {
                         "run_id": self._run_id,
@@ -581,6 +666,7 @@ class JevPlayerController:
                 raise ControllerError("Arena did not acknowledge the submitted plan sequence")
 
             self._sequence_number += 1
+            self._record_outcome('replaced', self._last_observation)
             self._last_submission_at = self._clock()
             self._current_plan = {
                 **dict(candidate),
@@ -588,7 +674,10 @@ class JevPlayerController:
                 "sequence_number": sequence,
                 "intent_id": result.get("intent_id"),
                 "submission_source": source,
+                "decision_id": self._decision_id,
+                "goal": self._hierarchy_goal if source == 'jev' else None,
             }
+            self._plan_fingerprint = self._fingerprint(self._last_observation, {'status': 'active'})
             if candidate.get("id") == "patrol_center":
                 route = list(candidate.get("route") or [])
                 self._center_patrol_target = str(
@@ -596,7 +685,7 @@ class JevPlayerController:
                 )
             else:
                 self._center_patrol_target = ""
-            self._telemetry.record(
+            self._record(
                 "plan_submission",
                 {
                     "run_id": self._run_id,
@@ -605,6 +694,10 @@ class JevPlayerController:
                     "candidate_id": candidate.get("id"),
                     "source": source,
                     "accepted": True,
+                    "planner_version": self._planner_version,
+                    "goal": (self._hierarchy_goal or None) if source == 'jev' else None,
+                    **({'observation_to_accepted_plan_ms': round((self._clock() - self._planning_started_at) * 1000, 3)}
+                       if source == 'jev' and self._planner_version in {'flat_v3'} and self._planning_started_at is not None else {}),
                 },
             )
             return dict(result)
@@ -643,7 +736,7 @@ class JevPlayerController:
             self._last_handoff_signature = handoff_signature
             self._last_handoff_at = self._clock()
             self._mode = "awaiting_opus"
-            self._telemetry.record(
+            self._record(
                 "handoff",
                 {
                     "run_id": self._run_id,
@@ -775,6 +868,14 @@ class JevPlayerController:
         self._update_last_seen(observation)
         self._last_observation = dict(observation)
         self._last_active_plan = dict(active_plan or {})
+        if self._planner_version in {'flat_v3'} and self._current_plan:
+            status = active_plan.get('status')
+            same_sequence = active_plan.get('sequence_number') in (None, self._current_plan.get('sequence_number'))
+            if same_sequence and status in {'complete', 'completed', 'route_complete', 'stalled', 'rejected'}:
+                self._record_outcome(status, observation)
+            target = self._current_plan.get('target_cell') or (self._current_plan.get('route') or [None])[-1]
+            if target and observation.get('self', {}).get('cell') == target:
+                self._record_outcome('destination_reached', observation)
         if self._center_patrol_target:
             self_block = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
             active_status = str(active_plan.get("status") or "")
@@ -786,6 +887,7 @@ class JevPlayerController:
                 self._center_patrol_target = ""
         finished = self._match_finished(observation)
         if finished:
+            self._record_outcome('match_finished', observation)
             self._mark_match_finished()
         return observation, active_plan, finished
 
@@ -819,6 +921,8 @@ class JevPlayerController:
     ) -> None:
         if self._stop_event.is_set():
             return
+        if self._planner_version in {'flat_v3'}:
+            self._goal_fingerprint = None  # Reconsider after invalid/stale decisions or API failures.
         try:
             fallback = self._safe_fallback(observation, candidates)
         except CandidateRouteError:
@@ -844,7 +948,7 @@ class JevPlayerController:
                 self._submit_candidate(recovery, source="jev_handoff_suppressed")
             if decision is not None:
                 self._note_actionable_decision(decision)
-            self._telemetry.record(
+            self._record(
                 "handoff_suppressed",
                 {
                     "run_id": self._run_id,
@@ -911,7 +1015,22 @@ class JevPlayerController:
                 else:
                     material_change = fingerprint != self._last_fingerprint
                 heartbeat = now - self._last_evaluation_at >= self._evaluation_seconds
+                if self._planner_version in {'flat_v3'} and active_plan and not material_change:
+                    heartbeat = now - self._last_evaluation_at >= self._safe_refresh_seconds
                 retry_ready = now >= self._retry_after
+                if (self._planner_version in {'flat_v3'}
+                        and self._current_plan.get('submission_source') == 'jev'
+                        and self._current_plan.get('sequence_number') not in self._outcome_sequences
+                        and fingerprint == self._plan_fingerprint):
+                    candidates = self._generate_candidates(observation, active_plan)
+                    target = self._current_plan.get('target_cell') or (self._current_plan.get('route') or [None])[-1]
+                    retained = next((c for c in candidates if c['id'] == 'continue_current'
+                        and (c.get('target_cell') or (c.get('route') or [None])[-1]) == target), None)
+                    if retained:
+                        self._last_evaluation_at = now
+                        self._last_fingerprint = fingerprint
+                        self._sleep(self._poll_seconds)
+                        continue
                 if retry_ready and (material_change or heartbeat):
                     if now - self._last_evaluation_at < MIN_EVALUATION_SECONDS:
                         self._sleep(self._poll_seconds)
@@ -991,15 +1110,13 @@ class JevPlayerController:
                 self._condition.wait(timeout=min(remaining, 0.25))
         return self.status()
 
-    def run(self, strategic_directive: str = "", max_run_ms: int = DEFAULT_RUN_MS) -> dict[str, Any]:
+    def run(self, max_run_ms: int = DEFAULT_RUN_MS) -> dict[str, Any]:
         max_run_ms = _clamp_run_ms(max_run_ms)
         with self._condition:
             if self._mode not in {"prepared", "running", "awaiting_opus"}:
                 raise ControllerError("Prepare the Jev player before running it")
             if self._mode == "awaiting_opus":
                 return self.status()
-            if strategic_directive:
-                self._strategic_directive = _clean_directive(strategic_directive)
             self._mode = "running"
             self._start_thread_locked()
         return self._wait_for_return(max_run_ms)
@@ -1039,7 +1156,6 @@ class JevPlayerController:
 
     def resume(
         self,
-        strategic_directive: str = "",
         override_plan: Mapping[str, Any] | None = None,
         max_run_ms: int = DEFAULT_RUN_MS,
     ) -> dict[str, Any]:
@@ -1047,8 +1163,6 @@ class JevPlayerController:
         with self._condition:
             if self._mode != "awaiting_opus":
                 raise ControllerError("resume_jev_player requires an active strategic handoff")
-            if strategic_directive:
-                self._strategic_directive = _clean_directive(strategic_directive)
             if override_plan is not None:
                 candidate = self._normalize_override(override_plan)
                 self._submit_candidate(candidate, source="opus_override")
@@ -1072,6 +1186,8 @@ class JevPlayerController:
             return {
                 "status": self._mode,
                 "control_mode": self._control_mode,
+                "planner_version": self._planner_version,
+                "current_goal": self._hierarchy_goal or None,
                 "run_id": self._run_id or None,
                 "scenario_id": self._scenario_id or None,
                 "participant_id": self._participant_id or None,

@@ -5623,7 +5623,6 @@
                 var controlMode = isHybrid ? "jev_hybrid" : "jev_only";
                 var agentName = isHybrid ? "Jev Hybrid" : "Jev Solo";
                 var modeLabel = isHybrid ? "Jev + model" : "Jev only";
-                var combatDirective = "Primary objective: eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight. If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. In the final 20 seconds, force engagement unless protecting a meaningful lead.";
                 var lines = [
                     "Use the jev-doom-player skill and only its MCP tools for gameplay. Control only " + participantId + " as " + modeLabel + " across all " + matchCount + " match" + (matchCount === 1 ? "" : "es") + " in the current arena benchmark session.",
                     "Track completed matches by unique run_id. For every distinct active run, call prepare_jev_player exactly once with participant_id=\"" + participantId + "\", agent_name=\"" + agentName + "\", and control_mode=\"" + controlMode + "\". Exactly once applies to each distinct run_id, not to the whole multi-match session."
@@ -5631,13 +5630,13 @@
 
                 if (isHybrid) {
                     lines.push(
-                        "Call run_jev_player with strategic_directive=\"" + combatDirective + "\" and max_run_ms=45000. If status is running, call run_jev_player again with the same directive and max_run_ms=45000.",
-                        "If status is awaiting_opus, inspect only the sanitized handoff packet, choose a concise directive grounded only in that packet, and call resume_jev_player with that directive and max_run_ms=45000. Omit override_plan. If resume returns status=running, continue run_jev_player with the most recently chosen directive."
+                        "Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically. If status is running, repeat the same call.",
+                        "If status is awaiting_opus, inspect only the sanitized handoff packet and call resume_jev_player with max_run_ms=45000 and an optional legal override_plan. Without an override, Jev reconsiders using the shared prompt and current state. If running, continue run_jev_player."
                     );
                 } else {
                     lines.push(
-                        "Call run_jev_player with strategic_directive=\"" + combatDirective + "\" and max_run_ms=45000. If status is running, call run_jev_player again with the same directive and max_run_ms=45000 until the match is finished or failed.",
-                        "Never call resume_jev_player, never replace the fixed benchmark directive with adaptive host-authored tactics, and never provide an override plan. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
+                        "Call run_jev_player with only max_run_ms=45000. The shared game prompt is supplied automatically. If status is running, repeat the same call until the match is finished or failed.",
+                        "Never call resume_jev_player, never add host-authored strategy text, and never provide an override plan. An awaiting_opus result in jev_only mode is a controller error, not permission to resume it."
                     );
                 }
 

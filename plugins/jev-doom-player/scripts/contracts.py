@@ -6,6 +6,7 @@ import json
 import re
 from collections.abc import Mapping
 from typing import Any
+from arena_bridge import resolve_repo_root
 
 
 CONTRACT_VERSION = "1"
@@ -21,7 +22,6 @@ CONTROLLER_MODES = frozenset(
     }
 )
 MAX_OUTBOUND_BYTES = 16_000
-MAX_DIRECTIVE_CHARS = 512
 MAX_CANDIDATES = 20
 MAX_ROUTE_WAYPOINTS = 8
 
@@ -73,7 +73,7 @@ def build_outbound_state(
     observation: Mapping[str, Any],
     *,
     current_plan: Mapping[str, Any] | None = None,
-    strategic_directive: str = "",
+    repo_root: Any = None,
 ) -> dict[str, Any]:
     """Reduce a fog-filtered arena observation to the only fields Jev may see."""
 
@@ -120,6 +120,7 @@ def build_outbound_state(
         replan_reasons = []
 
     outbound: dict[str, Any] = {
+        "game_instructions": (resolve_repo_root(repo_root) / "scripts" / "benchmark_game_prompt.txt").read_text(encoding="utf-8").strip(),
         "contract_version": CONTRACT_VERSION,
         "participant_id": _clean_text(observation.get("participant_id"), 16),
         "opponent_id": _clean_text(observation.get("opponent_id"), 16),
@@ -165,7 +166,6 @@ def build_outbound_state(
             match,
             ("phase", "winner", "terminal_reason", "elapsed_time_seconds", "timeout_seconds"),
         ),
-        "strategic_directive": _clean_text(strategic_directive, MAX_DIRECTIVE_CHARS),
     }
 
     if current_plan:

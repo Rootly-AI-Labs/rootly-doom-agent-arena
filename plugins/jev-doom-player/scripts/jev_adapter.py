@@ -41,11 +41,11 @@ _CANDIDATE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$")
 _STATE_SCHEMA: Mapping[str, Any] = MappingProxyType(
     {
         "contract_version": None,
+        "game_instructions": None,
         "participant_id": None,
         "opponent_id": None,
         "state_mode": None,
         "objective": None,
-        "strategic_directive": None,
         "health": None,
         "ammo": None,
         "cell": None,
@@ -57,6 +57,9 @@ _STATE_SCHEMA: Mapping[str, Any] = MappingProxyType(
         "current_objective": None,
         "route_status": None,
         "trigger": "json",
+        "planning": "json",
+        "memory": "json",
+        "candidates": "json",
         "self": frozenset(
             {
                 "health",
@@ -65,6 +68,8 @@ _STATE_SCHEMA: Mapping[str, Any] = MappingProxyType(
                 "angle",
                 "ammo_bullets",
                 "ammo_shells",
+                "ammo_cells",
+                "ammo_rockets",
                 "ready_weapon",
                 "command_status",
                 "last_action",
@@ -347,6 +352,10 @@ def _candidate_criteria(candidates: Iterable[Any]) -> tuple[dict[str, str], tupl
 
         summary_parts: list[str] = []
         for field_name in _CANDIDATE_SUMMARY_FIELDS:
+            # Controller-authored justifications/quips are not model reasoning.
+            # Offer executable facts, not arguments for choosing a plan.
+            if row.get("actionable") and field_name in {"summary", "reasoning", "plan_note"}:
+                continue
             value = row.get(field_name)
             if value is None:
                 continue
@@ -433,17 +442,21 @@ class JevAdapter:
     def choose(self, state: Mapping[str, Any], candidates: Iterable[Any]) -> JevDecision:
         """Choose exactly one of the caller-provided candidate IDs using Jev Choice."""
 
+        if len(str(state.get("game_instructions", ""))) > _MAX_STRING_LENGTH:
+            raise JevConfigurationError("shared game instructions exceed transport limit; refusing to truncate")
         filtered_state = filter_outbound_state(state)
         criteria, offered_ids = _candidate_criteria(candidates)
-        instructions = (
-            "Select the single safest and most useful tactical plan for the current "
-            "arena state. Return only the typed Choice."
+        main_prompt = filtered_state.pop("game_instructions", "")
+        instructions = main_prompt + "\n\nJEV INTERFACE\n" + (
+            "Select one offered candidate that best achieves the shared game objective "
+            "using the supplied observation. Candidates describe executable routes/actions "
+            "and engagement policies; select an offered ID, do not invent a route. "
+            "Return only the typed Choice."
         )
         if HANDOFF_CHOICE_ID in offered_ids:
-            instructions = (
-                "Select the single safest and most useful tactical plan for the current "
-                "arena state. Choose handoff_to_opus if no offered plan safely fits or "
-                "the available state is insufficient. Return only the typed Choice."
+            instructions += (
+                " In hybrid mode, handoff_to_opus requests guidance from the configured "
+                "LLM when you need assistance selecting a plan."
             )
         payload = {
             "model": self.model,

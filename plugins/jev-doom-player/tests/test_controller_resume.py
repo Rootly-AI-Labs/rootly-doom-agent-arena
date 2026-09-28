@@ -129,6 +129,10 @@ class ResumeClient:
 
 
 class ResumeRouteEngine:
+    def generate_neutral_candidates(self, *args, **kwargs):
+        plans = [c for c in self.generate_candidates(*args, **kwargs) if c.get('actionable')]
+        return plans, {'offered': plans, 'omitted': []}
+
     @staticmethod
     def generate_candidates(*_args: Any, **_kwargs: Any) -> list[dict[str, Any]]:
         return copy.deepcopy(_candidates())
@@ -196,7 +200,6 @@ def test_hybrid_handoff_resumes_with_normalized_override_then_jev_resumes() -> N
     }
 
     result = controller.resume(
-        strategic_directive="Protect the health lead",
         override_plan=override,
         max_run_ms=700,
     )
@@ -213,7 +216,7 @@ def test_hybrid_handoff_resumes_with_normalized_override_then_jev_resumes() -> N
     )
     assert override_calls[0][7] == 2
     assert len(adapter.states) >= 2
-    assert adapter.states[1]["strategic_directive"] == "Protect the health lead"
+    assert "strategic_directive" not in adapter.states[1]
     assert len(client.plan_calls) == 3
     assert controller.status()["next_sequence_number"] == 4
     controller.stop()
@@ -250,13 +253,13 @@ def test_duplicate_resume_is_rejected_without_an_extra_submission() -> None:
     adapter = ScriptedAdapter(_decision(0.2), _decision(0.95))
     controller, client, _arena = _prepare_hybrid_handoff(adapter)
 
-    first = controller.resume(strategic_directive="Continue locally", max_run_ms=100)
+    first = controller.resume(max_run_ms=100)
     assert first["status"] == "running"
     plan_count = len(client.plan_calls)
     sequence = controller.status()["next_sequence_number"]
 
     with pytest.raises(ControllerError, match="requires an active strategic handoff"):
-        controller.resume(strategic_directive="Duplicate resume", max_run_ms=100)
+        controller.resume(max_run_ms=100)
 
     assert len(client.plan_calls) == plan_count
     assert controller.status()["next_sequence_number"] == sequence
@@ -273,7 +276,7 @@ def test_resume_arms_cooldown_and_requires_confident_rearm(
     monkeypatch.setattr(controller, "_wait_for_return", lambda _max_run_ms: controller.status())
     before = controller._clock()
 
-    result = controller.resume(strategic_directive="Continue safely", max_run_ms=100)
+    result = controller.resume(max_run_ms=100)
 
     assert result["status"] == "running"
     assert controller._handoff_cooldown_until >= before + 15.0

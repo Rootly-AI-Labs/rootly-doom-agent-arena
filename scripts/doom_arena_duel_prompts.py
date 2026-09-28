@@ -20,6 +20,11 @@ MAP_ROWS = 23
 MAP_COLS = 33
 
 
+def shared_game_prompt() -> str:
+    """Canonical mechanics/objective text also sent verbatim to Jev."""
+    return (Path(__file__).with_name("benchmark_game_prompt.txt")).read_text(encoding="utf-8").strip()
+
+
 def _xy_to_grid_cell(x: Any, y: Any) -> str:
     try:
         xf = float(x)
@@ -146,7 +151,7 @@ def _static_pickup_context(enable_weapon_pickups: bool, blueprint: dict[str, Any
         if pickup.get("type") == "weapon" and not enable_weapon_pickups:
             continue
         name = str(pickup.get("name") or pickup.get("type") or "pickup")
-        note = "heals +100 up to 150" if pickup.get("type") == "health" else "close-range weapon upgrade with damage boost"
+        note = "heals +100 up to 150" if pickup.get("type") == "health" else "equips shotgun; mechanics in shared game instructions"
         pickups.append((pickup.get("id", ""), name, pickup.get("x"), pickup.get("y"), note))
     lines = []
     for pickup_id, name, x, y, note in pickups:
@@ -299,13 +304,7 @@ MODEL CONTROL
 - Do not use the Jev model, the `jev-doom-player` skill, or any `prepare_jev_player`, `run_jev_player`, `resume_jev_player`, or `stop_jev_player` tool unless the benchmark prompt explicitly identifies this participant as a Jev baseline.
 
 """
-    combat_objective_section = """PRIMARY COMBAT OBJECTIVE
-- Eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage.
-- Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight.
-- If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations.
-- In the final 20 seconds, force engagement unless you are protecting a meaningful lead.
-
-"""
+    combat_objective_section = shared_game_prompt() + "\n\nINTERFACE-SPECIFIC INSTRUCTIONS\n"
     if str(control_mode).strip().lower() == "hierarchical":
         strategy_token_line = (
             f"Your controller_token is: `{controller_token}`\n\n"
@@ -375,8 +374,8 @@ ROUTE FACTS
 - A route that only names your current cell is rejected unless the objective explicitly says to hold, wait, defend, guard, protect, or take cover and `engagement_policy` is `hold_fire`.
 - Retrying the exact same payload with the same `sequence_number` is idempotent. Reusing a sequence number for different content is rejected.
 - An exact duplicate of the currently active plan is acknowledged without replacing or extending it.
-- Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `get the shotgun`.
-- Write `reasoning` as a causal phrase that fits after `because`, such as `a stronger close-range weapon could turn the fight`. Do not begin it with `because`; it is optional and capped to 12 words.
+- Write `objective` as a short lowercase action phrase that fits after `is trying to`, such as `reach cell L10`.
+- Write `reasoning` as a causal phrase that fits after `because`, such as `this route reaches the selected destination`. Do not begin it with `because`; it is optional and capped to 12 words.
 - `plan_note` is required on every decision. Write a short, funny, first-person battle quip that matches your actual intent.
 - Keep it under 80 characters. Examples: `I need to find this bastard!` or `Ouch, medkit time.`
 - Doom executes accepted routes literally and handles frame-level movement/firing.

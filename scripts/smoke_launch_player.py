@@ -10,6 +10,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+from doom_arena_duel_prompts import shared_game_prompt
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -39,14 +40,15 @@ def main() -> int:
         parser.error("--log-dir must be inside benchmarks/results")
     if args.round_dir and args.mode == "jev_only":
         skill = (REPO / "plugins/jev-doom-player/skills/jev-doom-player/SKILL.md").read_text(encoding="utf-8")
-        directive = "Primary objective: eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight. If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. In the final 20 seconds, force engagement unless protecting a meaningful lead."
         prompt = (
+            shared_game_prompt() + "\n\nJEV HOST INTERFACE\n"
             f"Use these supplied Jev skill instructions:\n{skill}\n\n"
             f"Control only {args.participant} for exactly one current match. "
             f"Call prepare_jev_player exactly once with participant_id={args.participant}, "
             "agent_name=Jev Solo, control_mode=jev_only. "
-            f"Call run_jev_player with strategic_directive={json.dumps(directive)} and max_run_ms=45000. "
-            "If running, repeat with the identical directive until finished or failed. "
+            "Call run_jev_player with max_run_ms=45000. "
+            "The controller sends the shared game instructions directly to Jev. "
+            "If running, repeat without adding strategy until finished or failed. "
             "Never call resume_jev_player or author adaptive tactics. Never request, display or pass a controller token. "
             "Never reset the duel or control the other player. Use only the Jev MCP tools. "
             "Record actual terminal run_id, winner and reason. A transient state_not_ready or controller error is not a match result."

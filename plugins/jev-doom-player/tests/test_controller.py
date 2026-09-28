@@ -12,6 +12,11 @@ import pytest
 from controller import ControllerError, JevPlayerController
 from jev_adapter import DEFAULT_ENDPOINT, DEFAULT_MODEL, JevDecision, JevRequestError
 
+@pytest.fixture(autouse=True)
+def current_planner(monkeypatch):
+    """These regression scenarios exercise the original one-call planner."""
+    monkeypatch.setenv('JEV_DOOM_PLANNER', 'flat_v3')
+
 
 def observation() -> dict[str, Any]:
     return {
@@ -111,6 +116,10 @@ class FakeClient:
 
 
 class FakeRouteEngine:
+    def generate_neutral_candidates(self, *args, **kwargs):
+        plans = [c for c in self.generate_candidates(*args, **kwargs) if c.get('actionable')]
+        return plans, {'offered': plans, 'omitted': [], 'version': 'neutral_v1'}
+
     def __init__(self) -> None:
         self.generate_count = 0
 
@@ -488,38 +497,31 @@ def test_production_setup_rejects_non_exact_openrouter_configuration_before_adap
     assert adapter_factory_calls == []
 
 
-def test_hybrid_run_directive_is_in_the_first_jev_state() -> None:
+def test_hybrid_uses_shared_prompt_without_strategy_field() -> None:
     adapter = RecordingAdapter()
     controller, client = make_controller(adapter)
     controller.prepare("player_1", control_mode="jev_hybrid")
     assert adapter.states == []
 
-    controller.run("Guard the center lane", max_run_ms=100)
+    controller.run(max_run_ms=100)
 
     assert adapter.states
-    assert adapter.states[0]["strategic_directive"] == "Guard the center lane"
+    assert "strategic_directive" not in adapter.states[0]
     assert len(client.plan_calls) == 1
     controller.stop()
 
 
-def test_jev_only_run_directive_is_in_the_first_jev_state() -> None:
+def test_jev_only_rejected_directive_leaves_prepared_controller_recoverable() -> None:
     adapter = RecordingAdapter()
     controller, client = make_controller(adapter)
     controller.prepare("player_1", control_mode="jev_only")
-    directive = (
-        "Primary objective: eliminate the opponent. Prioritize establishing contact, "
-        "acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not "
-        "camp, repeatedly hold the same location, or retreat merely to preserve health. "
-        "Use health and cover only when they improve the chance of winning the fight. "
-        "If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. "
-        "In the final 20 seconds, force engagement unless protecting a meaningful lead."
-    )
-    assert len(directive) > 320
-
-    controller.run(directive, max_run_ms=100)
-
-    assert adapter.states
-    assert adapter.states[0]["strategic_directive"] == directive
+    with pytest.raises(TypeError):
+        controller.run(strategic_directive="old benchmark directive", max_run_ms=100)
+    assert not adapter.states
+    assert not client.plan_calls
+    assert controller._mode == "prepared"
+    controller.run(max_run_ms=100)
+    assert "strategic_directive" not in adapter.states[0]
     assert len(client.plan_calls) == 1
     controller.stop()
 
@@ -578,6 +580,8 @@ def test_controller_is_dormant_until_prepare() -> None:
     assert status == {
         "status": "idle",
         "control_mode": "jev_hybrid",
+        "planner_version": "flat_v3",
+        "current_goal": None,
         "run_id": None,
         "scenario_id": None,
         "participant_id": None,

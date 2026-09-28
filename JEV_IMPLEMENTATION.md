@@ -7,6 +7,29 @@ This is the shortest supported workflow for running either:
 
 ## The Simple Mental Model
 
+### Shared benchmark instructions (`neutral_v1`)
+
+`scripts/benchmark_game_prompt.txt` is the single source for the game setup,
+objective, victory/timeout rules and resource mechanics. The LLM prompt includes
+this text verbatim; the Jev controller records it in `game_instructions` and the
+adapter places it verbatim before the Jev-specific Choice instructions in each
+request. It is not merely a prompt for the host Codex session.
+
+Neither side is told to acquire a weapon, avoid camping, sweep the center or
+force a late engagement. Jev no longer receives a separate "safest plan" objective.
+LLMs retain their route-writing/tool instructions; Jev retains candidate selection.
+Controller-authored candidate justifications and quips are excluded from actionable
+Choice descriptions, while concrete routes, objectives and policies remain.
+Candidate generation, legality filters and fallbacks still constrain Jev; this is
+an agent-setup comparison, not an identical-action-space model test. Hybrid plan overrides remain additional assistance and should be
+reported separately from Jev-only benchmark results.
+
+Mechanics verified against `src/doom/arena_duel.c`: pistol damage 5/10/15;
+shotgun seven spread pellets of 5/10/15 each, with 12/28-tick cooldowns;
+medikits +100 capped at 150; timeout uses remaining health, not damage dealt.
+Use fresh generated prompts and a new plugin session after updating. Historical
+copied prompts and already-running MCP/server processes are not rewritten.
+
 Use two Codex windows:
 
 | Window | Controls | What you paste |
@@ -25,24 +48,60 @@ The two Jev modes differ in only one important way:
 
 ## 1. Add the OpenRouter Key Once
 
-Put this in the repository-root `.env` file:
+Put `OPENROUTER_API_KEY=your-key` in the repository-root `.env` (never commit it).
+The plugin loads this internally; do not put the key in an agent prompt.
 
-```dotenv
-OPENROUTER_API_KEY=<paste-your-openrouter-key-here>
-OPENROUTER_DECISIONS_URL=https://openrouter.ai/api/alpha/decisions
-OPENROUTER_MODEL=typesafe/jev-1.13
-DOOM_ARENA_BASE_URL=http://127.0.0.1:8001
-```
+### Default: Jev-only neutral route menu (`flat_v3`)
 
-Do not paste the key into Codex, the browser, a prompt, or a committed file. A separate TypeSafe key is not needed.
+Only `flat_v3` is supported in Jev-only and hybrid modes, using the versioned `neutral_v1` generator in
+`plugins/jev-doom-player/scripts/neutral_candidates.py`. Use
+`planner_version: "flat_v3"` explicitly for benchmark reproducibility. Make a
+new Codex session after reinstalling. Both modes receive the shared game prompt
+directly. The free-text strategy input has been removed from the API.
 
-The current implementation uses OpenRouter's Decisions endpoint, not Chat Completions.
+The 14 families are `continue_current`, `pursue_visible`,
+`investigate_last_seen`, `seek_shotgun`, `seek_health`, `pickup_then_move`,
+`sweep_region`, `explore_unvisited`, `recheck_region`, `alternate_approach`,
+`move_to_cover`, `increase_distance`, `move_to_position`, and `hold_position`.
+One Choice call selects a concrete route-policy pair; no goal-selection call.
 
-Optional check that the plugin is installed:
+Health, score, elapsed time and visibility do not gate search, center movement,
+cover or retreat. A known/remembered threat position is still required for
+threat-relative geometry, and visible pursuit requires visible contact.
+Unavailable/unknown pickups and invalid routes are excluded. Failed search
+destinations are not cooldown-suppressed; the last eight plan outcomes are
+included as history. Legacy planners and their tactical menus have been removed.
 
-```powershell
-codex --enable plugins mcp get jev-doom-player --json
-```
+Moving routes default to `engage_if_visible`. The shared server requires a
+stationary hold to use `hold_fire`; this is not a special Jev ability. Explicit
+`avoid_until_target`, `hold_fire` and `force_fight` variants can occupy spare
+menu slots after default routes, within the same single Choice request.
+
+**Frozen generation and selection rule:** five reachable geometric anchors
+(center and quadrant centers); two-anchor sweeps; pickup routes to those anchors
+or two nearby junctions; up to four geometrically occluded cover destinations;
+one alternate path per eligible target by excluding a middle baseline edge.
+All routes pass the existing arena validator and eight-waypoint bound.
+Candidates are selected in the published family order, round-robin across
+destinations, then policy variants. Exact route-policy duplicates are removed;
+the first 20 distinct candidates are offered. This is fixed allocation, not a
+utility/win-probability ranking. Not every family or policy is present each turn.
+
+`candidate_menu` logs the full offered menu and generated-but-omitted candidates,
+including invalid routes, unavailable pickups, duplicates and budget exclusions.
+It records generator version/hash and the selection rule. It does not enumerate
+every possible route on the map. Freeze the source, geometry, configuration and
+prompt version for a benchmark; do not tune the menu on evaluation rounds.
+
+**Assistance disclosure:** this remains an agent-system comparison. Jev gets
+prevalidated BFS routes, geometric path lengths/cover tests, regional anchors and
+controller-maintained sampled-cell/outcome history. These derive from public
+geometry and allowed observations, not hidden opponent state. Cover is a grid
+occlusion test, not a guarantee of safety; an unvisited anchor is not proof that
+an entire region is unexplored. Astra authors its own routes; identical raw input
+formatting, memory processing, and model-only reasoning parity are not claimed.
+Existing server movement, firing and material-change signals are unchanged.
+
 
 ## 2. Start the Arena
 
@@ -83,7 +142,7 @@ Now choose exactly one prompt.
 Paste this into Window A:
 
 ```text
-Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Jockey", and control_mode="jev_only". Then call run_jev_player with strategic_directive="Primary objective: eliminate the opponent. Prioritize establishing contact, acquiring a viable weapon, pursuing the opponent, and dealing damage. Do not camp, repeatedly hold the same location, or retreat merely to preserve health. Use health and cover only when they improve the chance of winning the fight. If no contact occurs for 15-20 seconds, sweep the center and likely enemy locations. In the final 20 seconds, force engagement unless protecting a meaningful lead." and max_run_ms=45000. If status is running, call run_jev_player again with the same directive until status is finished or failed. Never call resume_jev_player, never replace the fixed directive with adaptive host tactics, never control player_2, never request or display a controller token, and never use doom-arena tools.
+Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Jockey", control_mode="jev_only". Call run_jev_player with max_run_ms=45000. The shared game prompt is automatic. If running, repeat run_jev_player until finished or failed. Never downgrade, re-prepare, use resume_jev_player, control player_2, expose tokens, or use regular doom-arena tools.
 ```
 
 That is the standalone baseline. The fixed combat objective is supplied to Jev, but the host Codex session only keeps the plugin running; it does not adapt tactics or handle decisions.
@@ -93,7 +152,7 @@ That is the standalone baseline. The fixed combat objective is supplied to Jev, 
 Paste this into Window A instead:
 
 ```text
-Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Hybrid", and control_mode="jev_hybrid". Call run_jev_player with strategic_directive="Prioritize useful weapon and health control, pursue visible opponents when advantageous, and disengage only when necessary." and max_run_ms=45000. If status is running, continue run_jev_player. If status is awaiting_opus, inspect the sanitized handoff, choose a concise new directive, and call resume_jev_player without an override plan unless a current legal route is genuinely required. Continue until finished or failed. Never control player_2, request or display a controller token, reset the duel, or use doom-arena tools.
+Use the jev-doom-player skill. Control only player_1. Call prepare_jev_player once with participant_id="player_1", agent_name="Jev Hybrid", control_mode="jev_hybrid". Call run_jev_player with max_run_ms=45000. If running, repeat the call. If awaiting_opus, inspect the filtered handoff and call resume_jev_player with an optional legal override_plan and max_run_ms=45000. Without an override, Jev resumes using the shared prompt and current state. Continue until finished or failed. Never control player_2, expose tokens, reset the duel, or use regular doom-arena tools.
 ```
 
 The host can be Opus, GPT, Astra, or another LLM. `awaiting_opus` is only the legacy name for the hybrid handoff state.
@@ -200,7 +259,11 @@ Local evidence:
 
 These result paths are local and ignored by Git. Never commit controller-token files, generated participant prompts, or `.env`.
 
-## Exact Recorded Jev + LLM Example
+## Historical Recorded Jev + LLM Example
+
+This section documents an older run, not the current API. Free-text strategy
+input has since been removed. Current hybrid intervention uses `override_plan`;
+resuming without a plan simply lets Jev reconsider.
 
 This example comes from `run_6cbe2e9e48eb`; it shows how the same Jev decision is handled differently in standalone and hybrid modes.
 

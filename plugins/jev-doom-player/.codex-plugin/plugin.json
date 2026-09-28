@@ -1,6 +1,6 @@
 {
   "name": "jev-doom-player",
-  "version": "0.1.0+codex.20260922143407",
+  "version": "0.1.0+codex.20260927213327",
   "description": "Run one Doom Agent Arena participant with deterministic routes and Jev decisions through OpenRouter.",
   "author": {
     "name": "Rootly AI Labs",

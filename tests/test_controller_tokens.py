@@ -201,7 +201,7 @@ def test_participant_prompt_makes_goal_and_reason_sentence_compatible():
     assert "Do not begin it with `because`" in prompt
 
 
-def test_participant_prompt_prioritizes_eliminating_the_opponent():
+def test_participant_prompt_shares_neutral_mechanics_without_strategy_coaching():
     for control_mode in ("hierarchical", "intent"):
         prompt = prompts.instructions(
             participant_id="player_1",
@@ -212,11 +212,12 @@ def test_participant_prompt_prioritizes_eliminating_the_opponent():
             control_mode=control_mode,
         )
 
-        assert "PRIMARY COMBAT OBJECTIVE" in prompt
-        assert "Eliminate the opponent" in prompt
-        assert "Do not camp" in prompt
-        assert "If no contact occurs for 15-20 seconds" in prompt
-        assert "In the final 20 seconds, force engagement" in prompt
+        assert prompts.shared_game_prompt() in prompt
+        assert "higher remaining health wins" in prompt
+        assert "Do not camp" not in prompt
+        assert "Prioritize establishing contact" not in prompt
+        assert "If no contact occurs for 15-20 seconds" not in prompt
+        assert "In the final 20 seconds, force engagement" not in prompt
 
 
 # --------------------------------------------------------------------------- #

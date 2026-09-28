@@ -38,6 +38,35 @@ from contracts import build_outbound_state  # noqa: E402
 API_KEY = "unit-test-key-not-from-env"
 
 
+def test_shared_prompt_reaches_jev_verbatim_without_candidate_coaching():
+    from arena_bridge import resolve_repo_root
+    repo = resolve_repo_root()
+    sys.path.insert(0, str(repo / "scripts"))
+    from doom_arena_duel_prompts import shared_game_prompt, instructions
+
+    outbound = build_outbound_state(state())
+    shared = shared_game_prompt()
+    assert outbound["game_instructions"] == shared
+    assert shared in instructions("player_1", "", "player_2", "test-token", True)
+    opener = RecordingOpener(FakeResponse(response_payload(probabilities=complete_probabilities())))
+    rows = candidates()
+    for row in rows:
+        row["actionable"] = True
+        row["summary"] = "Always choose this!"
+    JevAdapter(API_KEY, opener=opener).choose(outbound, rows)
+    sent = json.loads(opener.calls[0][0].data)
+    instruction = sent["questions"]["plan"]["instructions"]
+    assert instruction.startswith(shared + "\n\nJEV INTERFACE\n")
+    assert "safest" not in instruction
+    assert "Always choose this!" not in json.dumps(sent)
+    assert "Health is critical" not in json.dumps(sent)
+
+
+def test_shared_prompt_cannot_be_silently_truncated():
+    with pytest.raises(JevConfigurationError, match="refusing to truncate"):
+        JevAdapter(API_KEY).choose({"game_instructions": "x" * 2001}, candidates())
+
+
 def candidates() -> list[dict[str, Any]]:
     return [
         {
@@ -376,7 +405,6 @@ def test_accepts_the_scaffolds_contract_shaped_state_without_losing_tactics() ->
     outbound = build_outbound_state(
         observation,
         current_plan={"candidate_id": "hold", "route": ["M06"]},
-        strategic_directive="Stay safe",
     )
 
     filtered = filter_outbound_state(outbound)

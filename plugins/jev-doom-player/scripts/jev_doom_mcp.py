@@ -30,14 +30,6 @@ _PARTICIPANT_SCHEMA = {
     "type": "string",
     "enum": ["player_1", "player_2"],
 }
-_DIRECTIVE_SCHEMA = {
-    "type": "string",
-    "maxLength": 512,
-    "description": (
-        "Fixed strategic objective supplied to Jev in either control mode; "
-        "jev_hybrid may also update it after a handoff."
-    ),
-}
 _MAX_RUN_SCHEMA = {
     "type": "integer",
     "minimum": 100,
@@ -114,6 +106,11 @@ TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
                         "jev_hybrid permits host-model handoffs."
                     ),
                 },
+                "planner_version": {
+                    "type": "string",
+                    "enum": ["flat_v3"],
+                    "description": "Only flat_v3 is supported: the neutral route menu. Do not downgrade.",
+                },
             },
             required=["participant_id"],
         ),
@@ -123,11 +120,10 @@ TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
         "description": (
             "Run or join the supervised Jev controller until completion, "
             "hybrid-only handoff, cancellation, or a bounded return deadline. "
-            "A fixed strategic directive is passed to Jev in either mode."
+            "The shared game prompt is supplied automatically."
         ),
         "inputSchema": _object_schema(
             {
-                "strategic_directive": _DIRECTIVE_SCHEMA,
                 "max_run_ms": _MAX_RUN_SCHEMA,
             }
         ),
@@ -135,12 +131,11 @@ TOOL_DEFINITIONS: tuple[dict[str, Any], ...] = (
     {
         "name": "resume_jev_player",
         "description": (
-            "In jev_hybrid only, resolve a strategic handoff with a directive or "
+            "In jev_hybrid only, resolve a handoff with an optional "
             "validated override plan, then resume the bounded controller wait."
         ),
         "inputSchema": _object_schema(
             {
-                "strategic_directive": _DIRECTIVE_SCHEMA,
                 "override_plan": _OVERRIDE_PLAN_SCHEMA,
                 "max_run_ms": _MAX_RUN_SCHEMA,
             }
@@ -480,15 +475,14 @@ class JevDoomMCPServer:
                 str(arguments["participant_id"]),
                 agent_name=arguments.get("agent_name"),
                 control_mode=arguments.get("control_mode"),
+                planner_version=arguments.get("planner_version"),
             )
         if name == "run_jev_player":
             return self.controller.run(
-                strategic_directive=str(arguments.get("strategic_directive", "")),
                 max_run_ms=int(arguments.get("max_run_ms", DEFAULT_MAX_RUN_MS)),
             )
         if name == "resume_jev_player":
             return self.controller.resume(
-                strategic_directive=str(arguments.get("strategic_directive", "")),
                 override_plan=arguments.get("override_plan"),
                 max_run_ms=int(arguments.get("max_run_ms", DEFAULT_MAX_RUN_MS)),
             )

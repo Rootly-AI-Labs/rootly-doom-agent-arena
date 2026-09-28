@@ -45,7 +45,7 @@ def test_controller_modes_are_frozen():
 
 
 def test_outbound_state_hides_coordinates_and_hidden_opponent_details():
-    outbound = build_outbound_state(sample_observation(visible=False), strategic_directive="Stay safe")
+    outbound = build_outbound_state(sample_observation(visible=False))
 
     assert outbound["self"]["cell"] == "M06"
     assert outbound["self"]["ready_weapon"] == "shotgun"
@@ -63,6 +63,15 @@ def test_visible_opponent_cell_is_allowed_but_coordinates_are_not():
     assert outbound["opponent"]["cell"] == "M20"
     assert "x" not in outbound["opponent"]
     assert "y" not in outbound["opponent"]
+
+
+def test_removed_strategy_field_is_not_forwarded_from_observation():
+    from jev_adapter import filter_outbound_state
+    observation = sample_observation()
+    observation["strategic_directive"] = "external advice"
+    assert "strategic_directive" not in build_outbound_state(observation)
+    assert "strategic_directive" not in filter_outbound_state(
+        {"health": 100, "strategic_directive": "external advice"})
 
 
 @pytest.mark.parametrize(

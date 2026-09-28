@@ -34,7 +34,7 @@ class FakeController:
         self.stop_calls = 0
         self.close_calls = 0
 
-    def prepare(self, participant_id, agent_name=None, control_mode=None):
+    def prepare(self, participant_id, agent_name=None, control_mode=None, planner_version=None):
         self.calls.append(
             (
                 "prepare",
@@ -44,26 +44,24 @@ class FakeController:
         )
         return {"mode": "prepared", "participant_id": participant_id}
 
-    def run(self, strategic_directive="", max_run_ms=45_000):
+    def run(self, max_run_ms=45_000):
         self.calls.append(
             (
                 "run",
                 (),
                 {
-                    "strategic_directive": strategic_directive,
                     "max_run_ms": max_run_ms,
                 },
             )
         )
         return {"mode": "running", "max_run_ms": max_run_ms}
 
-    def resume(self, strategic_directive="", override_plan=None, max_run_ms=45_000):
+    def resume(self, override_plan=None, max_run_ms=45_000):
         self.calls.append(
             (
                 "resume",
                 (),
                 {
-                    "strategic_directive": strategic_directive,
                     "override_plan": override_plan,
                     "max_run_ms": max_run_ms,
                 },
@@ -197,8 +195,7 @@ def test_initialize_lists_exact_strict_tool_surface():
         limit = by_name[name]["inputSchema"]["properties"]["max_run_ms"]
         assert limit["minimum"] == 100
         assert limit["maximum"] == 55_000
-        directive = by_name[name]["inputSchema"]["properties"]["strategic_directive"]
-        assert directive["maxLength"] == 512
+        assert "strategic_directive" not in by_name[name]["inputSchema"]["properties"]
     override = by_name["resume_jev_player"]["inputSchema"]["properties"]["override_plan"]
     assert override["additionalProperties"] is False
 
@@ -222,11 +219,11 @@ def test_tools_call_controller_with_defaults_and_validated_override():
                 "control_mode": "jev_only",
             },
         ),
-        tool_call(2, "run_jev_player", {"strategic_directive": "Hold center"}),
+        tool_call(2, "run_jev_player", {}),
         tool_call(
             3,
             "resume_jev_player",
-            {"strategic_directive": "Take the lane", "override_plan": override, "max_run_ms": 500},
+            {"override_plan": override, "max_run_ms": 500},
         ),
         tool_call(4, "get_jev_player_status"),
         tool_call(5, "stop_jev_player"),
@@ -242,12 +239,11 @@ def test_tools_call_controller_with_defaults_and_validated_override():
             ("player_1",),
             {"agent_name": "Doom Roomba", "control_mode": "jev_only"},
         ),
-        ("run", (), {"strategic_directive": "Hold center", "max_run_ms": 45_000}),
+        ("run", (), {"max_run_ms": 45_000}),
         (
             "resume",
             (),
             {
-                "strategic_directive": "Take the lane",
                 "override_plan": override,
                 "max_run_ms": 500,
             },
@@ -281,6 +277,14 @@ def test_unknown_arguments_and_invalid_nested_override_are_rejected():
 
     responses = ndjson_messages(output.getvalue())
     assert [item["result"]["isError"] for item in responses] == [True, True]
+    assert controller.calls == []
+
+
+@pytest.mark.parametrize("name", ["run_jev_player", "resume_jev_player"])
+def test_removed_strategy_argument_cannot_reach_controller(name):
+    server, controller, output = make_server()
+    server.handle_message(tool_call(1, name, {"strategic_directive": "old prompt"}))
+    assert ndjson_messages(output.getvalue())[0]["result"]["isError"] is True
     assert controller.calls == []
 
 
@@ -417,10 +421,10 @@ class BlockingController(FakeController):
         self.started = threading.Event()
         self.released = threading.Event()
 
-    def run(self, strategic_directive="", max_run_ms=45_000):
+    def run(self, max_run_ms=45_000):
         self.started.set()
         assert self.released.wait(timeout=3), "cancel did not stop the blocking controller"
-        return super().run(strategic_directive, max_run_ms)
+        return super().run(max_run_ms)
 
     def stop(self):
         self.released.set()
@@ -501,8 +505,8 @@ import jev_doom_mcp as mcp
 
 class Fake:
     def prepare(self, participant_id, agent_name=None, control_mode=None): return {{"mode": "prepared"}}
-    def run(self, strategic_directive="", max_run_ms=45000): return {{"mode": "running"}}
-    def resume(self, strategic_directive="", override_plan=None, max_run_ms=45000): return {{"mode": "running"}}
+    def run(self, max_run_ms=45000): return {{"mode": "running"}}
+    def resume(self, override_plan=None, max_run_ms=45000): return {{"mode": "running"}}
     def status(self): return {{"mode": "idle"}}
     def stop(self): return {{"mode": "finished"}}
     def close(self): pass
