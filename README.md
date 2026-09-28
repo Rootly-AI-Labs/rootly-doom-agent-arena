@@ -72,6 +72,8 @@ The same route format can express  kiting, baiting, health retreats, shotgun pus
 
 This keeps the benchmark focused on spatial planning, adaptation, and public plan quality rather than testing whether a model can micromanage shooter controls or win through rapid tool-calling.
 
+For the **Jev-only baseline**, the controller uses public map geometry and permitted observations to generate up to 20 validated route-and-firing-policy candidates per decision. Jev receives the same neutral game rules and objective as the route-writing LLMs, then selects one candidate; the menu changes with the observed game state. No host LLM supplies tactical advice in this mode. Because Jev receives generated routes while other LLMs author their own, this is an agent-system comparison, not an isolated model-reasoning test. Offered candidates, selections, probabilities, API latency, and reported usage are logged for analysis. See [Jev implementation](JEV_IMPLEMENTATION.md).
+
 Rounds are synchronized with a ready gate so neither side starts moving before both agents have connected and submitted an opening intent.
 
 Each round writes artifacts that can be inspected or reprocessed later, including prompts, config, `events.jsonl`, `stats.json`, and `summary.json`. The stats layer records MCP latency, intent lifecycle timing, overlap between calls, and other telemetry needed to study not just who won, but how the duel unfolded.
