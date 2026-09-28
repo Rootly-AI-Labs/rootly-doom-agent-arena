@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Shared visual language with doom-agent-benchmark-design; no gameplay changes. */
+:root {
+    --arena-duel-font: 'JetBrains Mono', monospace;
+    --broadcast-bg: oklch(0.12 0.004 0);
+    --broadcast-card: oklch(0.17 0.006 0);
+    --broadcast-text: oklch(0.94 0.008 90);
+    --broadcast-muted: oklch(0.62 0.01 90);
+    --broadcast-green: oklch(0.75 0.24 142);
+    --broadcast-red: oklch(0.52 0.22 25);
+    --broadcast-border: #ffffff1f;
+}
+body:has(#container.duel-layout-active), html.duel-preview,
+html.duel-preview body, html.duel-preview #container.duel-layout-active { background: var(--broadcast-bg); }
+#container.duel-layout-active { max-width: 1240px; margin: auto; gap: 24px; grid-template-columns: minmax(0,1fr) 320px minmax(0,1fr); grid-template-rows: 0 auto; row-gap: 0; }
+/* Center the complete match and footer as one block; tall layouts scroll normally. */
+body:has(#container.duel-layout-active) { padding: 24px 16px; }
+#container.duel-layout-active {
+    min-height: calc(100dvh - 48px);
+    align-content: safe center;
+}
+html.duel-preview body { padding: 0; }
+html.duel-preview #container.duel-layout-active { align-content: safe center; }
+#container.duel-layout-active #duel-tactical-panel,
+html.duel-preview #container.duel-layout-active #duel-tactical-panel {
+    position: static;
+    top: auto;
+}
+#duel-pov-grid.duel-active .duel-pov-card, #duel-tactical-panel {
+    border: 0; background: transparent; padding: 0; color: var(--broadcast-text);
+}
+.duel-player-runtime-panel { min-width: 0; }
+.duel-agent-identity-header { padding: 0 0 16px; margin-bottom: 0; min-height: 116px; }
+#player-1-pov-card .duel-agent-name-line { align-items: flex-start; text-align: left; }
+#player-2-pov-card .duel-agent-name-line { align-items: flex-end; text-align: right; }
+#player-1-pov-card .duel-pov-title-row, #player-2-pov-card .duel-pov-title-row { flex-direction: row-reverse; }
+#container.duel-layout-active .duel-agent-name,
+#container.duel-layout-active .duel-tactical-vs-label,
+#container.duel-layout-active .duel-tactical-meta-value,
+#container.duel-layout-active .duel-tactical-elapsed { font-family: 'Black Ops One', monospace !important; font-weight: 400; }
+#duel-pov-grid.duel-active .duel-pov-card h2 { font-size: 30px; line-height: 1.2; letter-spacing: .05em; }
+.duel-agent-name.player-1 { color: var(--broadcast-text); text-shadow: 0 0 10px #39db4890; }
+.duel-agent-name.player-2 { color: var(--broadcast-text); text-shadow: 0 0 12px #d3073590; }
+.duel-agent-chosen-label, .duel-decision-context, .duel-tactical-meta-label {
+    color: var(--broadcast-muted); font-size: 10px; font-weight: 400; letter-spacing: .2em;
+}
+.duel-agent-identity-meta { display: grid; grid-template-columns: 1fr; margin-top: 8px; gap: 5px; font-size: 13px; }
+#player-1-pov-card .duel-agent-identity-meta { justify-content: start; text-align: left; }
+#player-2-pov-card .duel-agent-identity-meta { justify-content: end; text-align: right; }
+.duel-agent-identity-meta-field { flex-direction: row; align-items: baseline; gap: 8px; }
+#player-2-pov-card .duel-agent-identity-meta-field { justify-content: flex-end; }
+.duel-agent-identity-meta-label { order: -1; color: var(--broadcast-muted); font-size: 12px; font-weight: 400; }
+.duel-agent-identity-meta-label::after { content: ':'; }
+.duel-agent-identity-meta-value { color: var(--broadcast-text); font-weight: 500; white-space: normal; }
+.duel-agent-status { font-size: 9px; }
+.duel-equipment-strip { min-height: 42px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid var(--broadcast-border); border-radius: 2px; background: var(--broadcast-card); }
+.duel-equipment-icons { min-height: 20px; }
+#player-2-pov-card .duel-equipment-icons { justify-content: flex-end; }
+.duel-equipment-empty { font-size: 10px; font-weight: 400; letter-spacing: .1em; color: var(--broadcast-muted); }
+.duel-equipment-icon { width: 38px; height: 36px; flex-basis: 38px; border-radius: 2px; box-shadow: none; }
+.duel-equipment-icon.shotgun { background: #24170e; border-color: #795126; }
+.duel-equipment-icon.health-pack { background: #101d10; border-color: #398629; }
+.duel-equipment-icon.shotgun::before,
+.duel-equipment-icon.health-pack::before {
+    content: ''; position: absolute; inset: 4px; width: auto; height: auto;
+    background: url('pickup-shotgun.svg') center / contain no-repeat;
+    clip-path: none; border-radius: 0; box-shadow: none; filter: none;
+    image-rendering: pixelated;
+}
+.duel-equipment-icon.health-pack::before { background-image: url('pickup-health.svg'); inset: 6px; }
+.duel-equipment-icon.health-pack::after { display: none; }
+.duel-health-bar { position: relative; padding: 8px 85px 8px 30px; margin-bottom: 12px; border: 1px solid var(--broadcast-border); border-radius: 2px; background: var(--broadcast-card); box-shadow: none; }
+.duel-health-bar::before {
+    content: ''; position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 12px; background: var(--broadcast-green);
+    clip-path: polygon(0 16%, 16% 0, 34% 0, 50% 20%, 66% 0, 84% 0, 100% 16%, 100% 42%, 50% 100%, 0 42%);
+}
+.duel-health-bar-track { height: 10px; overflow: visible; background: #242123; border-radius: 2px; }
+.duel-health-bar-fill { background: var(--broadcast-green); border-radius: 2px; }
+.duel-health-bar-label { inset: -3px auto -3px calc(100% + 8px); width: 70px; color: var(--broadcast-green); font-size: 10px; font-weight: 400; white-space: nowrap; text-shadow: none; letter-spacing: 0; }
+#duel-pov-grid.duel-active .duel-pov-frame {
+    --connection-border: var(--broadcast-red);
+    outline: none; box-shadow: none; border-radius: 2px;
+}
+#duel-pov-grid.duel-active .duel-pov-card.llm-connected .duel-pov-frame {
+    --connection-border: var(--broadcast-green);
+}
+#duel-pov-grid.duel-active .duel-pov-card.llm-disconnected .duel-pov-frame {
+    --connection-border: var(--broadcast-red);
+}
+/* Draw inside the frame so the card cannot clip its sides. Leave canvas coordinates untouched. */
+#duel-pov-grid.duel-active .duel-pov-frame::after {
+    content: ''; position: absolute; inset: 0; z-index: 20;
+    border: 2px solid var(--connection-border); border-radius: inherit;
+    pointer-events: none;
+}
+.duel-battle-quip-overlay { background: #080707df; border: 1px solid var(--broadcast-border); color: var(--broadcast-text); border-radius: 2px; font-size: 11px; line-height: 1.5; box-shadow: none; }
+.duel-battle-quip-overlay::after { display: none; }
+.duel-tactical-vs { gap: 12px; margin: 8px 0 24px; }
+.duel-tactical-vs-label { color: var(--broadcast-red); background: none; -webkit-text-stroke: 0; transform: none; filter: none; font-size: 48px; letter-spacing: .08em; line-height: 1; text-shadow: 0 0 12px #c9003370; }
+.duel-versus-provider { min-width: 0; min-height: 0; padding: 4px; font-size: 10px; border-radius: 2px; background: var(--broadcast-card); box-shadow: none; }
+.duel-versus-provider .duel-model-provider-logo { width: 18px; height: 18px; }
+.duel-tactical-shell { gap: 20px; }
+.duel-tactical-map-wrap { border: 1px solid #35cd343d; padding: 0; background: var(--broadcast-bg); }
+.duel-tactical-map-stage { aspect-ratio: 1; }
+.duel-tactical-elapsed { padding: 14px; margin-top: 16px; color: var(--broadcast-green); font-size: 24px; background: var(--broadcast-card); border: 1px solid var(--broadcast-border); text-shadow: 0 0 10px #39db4870; }
+.duel-tactical-meta-card { border: 1px solid var(--broadcast-border); border-radius: 2px; background: var(--broadcast-card); padding: 14px; }
+.duel-tactical-meta-value { color: var(--broadcast-text); font-size: 24px; }
+.duel-tactical-meta-card.score { border-color: #d000344d; background: #24090d55; }
+.duel-tactical-meta-card.score .duel-tactical-meta-label { color: var(--broadcast-muted); }
+.duel-tactical-meta-card.score .duel-tactical-meta-value { color: var(--broadcast-red); font-size: 36px; text-shadow: 0 0 12px #c9003370; }
+.duel-tactical-score-card { width: 100%; margin: 0 0 20px; border-radius: 2px; }
+.duel-commentator-caption { border: 1px solid #35cd344d; border-radius: 2px; padding: 14px; background: var(--broadcast-card); color: var(--broadcast-green); font-size: 11px; font-style: italic; line-height: 1.6; }
+.duel-player-log { border: 0; padding-top: 0; margin-top: 12px; }
+.duel-player-log-body { border: 0; padding: 0; background: transparent; scrollbar-width: thin; }
+.duel-decision-card { border: 0; border-left: 2px solid var(--broadcast-green); border-radius: 2px; background: var(--broadcast-card); padding: 14px; }
+.duel-decision-card.status-rejected { border-left-color: var(--broadcast-red); background: #24090d55; }
+.duel-decision-objective { color: var(--broadcast-text); font-size: 12px; line-height: 1.6; font-weight: 400; }
+.duel-decision-reasoning { color: var(--broadcast-muted); font-size: 11px; line-height: 1.6; }
+.duel-decision-status { border-radius: 2px; font-size: 9px; font-weight: 400; }
+.status-accepted .duel-decision-status, .status-current .duel-decision-status { color: var(--broadcast-green); background: #35cd3419; border-color: #35cd3466; }
+.duel-decision-meta, .duel-agent-decision-metrics { color: var(--broadcast-muted); font-size: 10px; font-weight: 400; }
+/* A restrained CRT-like halo; glyphs stay sharp rather than blurring the whole element. */
+.duel-tactical-vs-label,
+.duel-tactical-meta-card.score .duel-tactical-meta-value {
+    text-shadow: 0 0 3px #ff2044b3, 0 0 10px #ef12378c, 0 0 22px #df12364d;
+}
+.duel-tactical-elapsed {
+    text-shadow: 0 0 2px #39db4880, 0 0 7px #39db4859, 0 0 14px #39db4826;
+}
+.duel-health-bar-label,
+.status-accepted .duel-decision-status, .status-current .duel-decision-status {
+    text-shadow: 0 0 4px #39db4840;
+}
+#container.duel-layout-active #duel-play-footer {
+    grid-column: 1 / -1; grid-row: 5; position: static;
+    justify-content: flex-end; align-self: end;
+    margin: 24px 0 0; padding: 12px 0;
+}
+#container.duel-layout-active #arena-duel-dashboard { grid-row: 6; }
+.duel-play-footer-actions { flex-wrap: wrap; justify-content: flex-end; gap: 12px 18px; }
+html.duel-preview body > #duel-play-footer.duel-preview-outside-controls {
+    position: fixed; left: auto; top: auto; right: 16px; bottom: 8px;
+    width: auto; max-width: calc(100vw - 32px); padding: 8px 12px;
+    background: var(--broadcast-bg); justify-content: flex-end;
+}
+@media (max-width: 1000px) { #container.duel-layout-active { grid-template-columns: minmax(0,1fr) 240px minmax(0,1fr); gap: 16px; } }
+@media (max-width: 760px) {
+    #container.duel-layout-active { grid-template-columns: 1fr; max-width: 480px; }
+    #container.duel-layout-active #duel-tactical-panel,
+    #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:first-child,
+    #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:last-child { grid-column: 1; position: static; }
+    #container.duel-layout-active #duel-tactical-panel { grid-row: 2; }
+    #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:first-child { grid-row: 3; }
+    #container.duel-layout-active #duel-pov-grid .duel-player-runtime-panel:last-child { grid-row: 4; }
+}

@@ -249,7 +249,7 @@ def test_duel_health_never_leaks_doom_overkill_as_a_negative_value() -> None:
 
     assert "static int Agentic_DisplayHealth(int health)" in state_source
     assert state_source.count("Agentic_DisplayHealth(") >= 4
-    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
+    assert 'label.textContent = clamped + " / " + DUEL_MAX_HEALTH' in index
     assert score["player_1_health"] == 0
     assert score["player_2_health"] == 70
 
@@ -731,9 +731,9 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'id="duel-p2-equipment-icons"' in index
     assert 'id="duel-p1-health"' not in index
     assert 'id="duel-p2-health"' not in index
-    assert 'id="duel-p1-health-label">❤️ 150 / 150</div>' in index
-    assert 'id="duel-p2-health-label">❤️ 150 / 150</div>' in index
-    assert 'label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH' in index
+    assert 'id="duel-p1-health-label">150 / 150</div>' in index
+    assert 'id="duel-p2-health-label">150 / 150</div>' in index
+    assert 'label.textContent = clamped + " / " + DUEL_MAX_HEALTH' in index
     assert 'label.textContent = "HP "' not in index
     assert 'id="duel-p1-damage"' not in index
     assert 'id="duel-p2-damage"' not in index
@@ -753,7 +753,7 @@ def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     assert 'class="duel-stat-label">Shotgun</span>' not in index
     assert 'class="duel-stat-label">Health packs</span>' not in index
     assert 'id="duel-tactical-match-progress">1/1</div>' in index
-    assert '<h1 id="duel-stream-title">AIs Fighting</h1>' in index
+    assert '<h1 id="duel-stream-title">' not in index
     stream_title_css = index.split("#container.duel-layout-active #duel-stream-title {", 1)[1].split("}", 1)[0]
     assert "grid-column: 1 / -1;" in stream_title_css
     assert "grid-row: 1;" in stream_title_css

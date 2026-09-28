@@ -2992,6 +2992,7 @@
             }
 
         </style>
+        <link rel="stylesheet" href="assets/benchmark-spectator.css" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
     </head>
     <body>
@@ -3115,7 +3116,6 @@
                     </div>
                 </div>
             </div>
-            <h1 id="duel-stream-title">AIs Fighting</h1>
             <div id="duel-tactical-panel">
                 <div class="duel-tactical-vs" aria-label="Versus">
                     <span class="duel-model-provider duel-versus-provider player-1" id="player-1-versus-provider" hidden>
@@ -3195,7 +3195,7 @@
                         <div class="duel-health-bar" id="duel-p1-health-bar">
                             <div class="duel-health-bar-track">
                                 <div class="duel-health-bar-fill" id="duel-p1-health-fill"></div>
-                                <div class="duel-health-bar-label" id="duel-p1-health-label">❤️ 150 / 150</div>
+                                <div class="duel-health-bar-label" id="duel-p1-health-label">150 / 150</div>
                             </div>
                         </div>
                         <div class="duel-pov-frame">
@@ -3253,7 +3253,7 @@
                         <div class="duel-health-bar" id="duel-p2-health-bar">
                             <div class="duel-health-bar-track">
                                 <div class="duel-health-bar-fill" id="duel-p2-health-fill"></div>
-                                <div class="duel-health-bar-label" id="duel-p2-health-label">❤️ 150 / 150</div>
+                                <div class="duel-health-bar-label" id="duel-p2-health-label">150 / 150</div>
                             </div>
                         </div>
                         <div class="duel-pov-frame">
@@ -4150,8 +4150,24 @@
                 ctx.closePath();
             }
 
+            // Share the inventory sprite; load once, not once per marker/frame.
+            var tacticalShotgunSprite = new Image();
+            tacticalShotgunSprite.src = "assets/pickup-shotgun.svg";
+
             function drawTacticalShotgunIcon(ctx, centerX, centerY) {
                 ctx.save();
+                if (tacticalShotgunSprite.complete && tacticalShotgunSprite.naturalWidth > 0) {
+                    ctx.fillStyle = "#24170e";
+                    ctx.strokeStyle = "#795126";
+                    ctx.lineWidth = 1;
+                    ctx.fillRect(centerX - 18, centerY - 12, 36, 24);
+                    ctx.strokeRect(centerX - 17.5, centerY - 11.5, 35, 23);
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(tacticalShotgunSprite, centerX - 16, centerY - 10, 32, 20);
+                    ctx.restore();
+                    return;
+                }
+                // Keep a visible marker while the sprite loads or if it fails.
                 ctx.fillStyle = "rgba(54, 34, 7, 0.96)";
                 ctx.strokeStyle = "rgba(255, 205, 88, 0.96)";
                 ctx.lineWidth = 2;
@@ -7351,7 +7367,7 @@
                     fill.style.width = percent.toFixed(1) + "%";
                 }
                 if (label !== null) {
-                    label.textContent = "❤️ " + clamped + " / " + DUEL_MAX_HEALTH;
+                    label.textContent = clamped + " / " + DUEL_MAX_HEALTH;
                 }
                 if (bar !== null) {
                     bar.classList.toggle("health-critical", clamped > 0 && clamped <= DUEL_MAX_HEALTH * 0.25);
