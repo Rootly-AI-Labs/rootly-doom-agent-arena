@@ -1,5 +1,7 @@
 # On-Demand Jev Doom Player Plugin — Implementation Plan
 
+> Historical design document, archived September 28, 2026. Some proposed interfaces and strategic-directive behavior below have been superseded. For current setup and supported behavior, use [Jev implementation](../../JEV_IMPLEMENTATION.md).
+
 ## Goal
 
 Build a client-neutral MCP sidecar that can be enabled for exactly one Doom Arena

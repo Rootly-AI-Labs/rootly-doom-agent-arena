@@ -2,7 +2,22 @@
 
 Doom Agent Arena splits control between LLM tactical decisions and Doom-side real-time execution.
 
-## High-Level MCP Agent Control
+## Current Route-Based Control
+
+The default duel interface uses `set_participant_plan`: a model authors a route of grid cells and an engagement policy, while Doom executes movement, aiming, firing, collision handling, and recovery. The Jev-only controller instead generates legal route-policy candidates and asks Jev to select one. See [MCP game state and character control](mcp-game-state-and-control.md) for the current schemas and [Jev implementation](../JEV_IMPLEMENTATION.md) for the selection baseline.
+
+### Evaluation and Debugging Notes
+
+- Supply the public map in the initial prompt; keep repeated observations focused on live state. Under fog of war, last-seen opponent locations are historical observations, not current coordinates.
+- Separate planning quality from execution quality. Compare submitted routes, accepted plans, path trails, and plan outcomes before attributing failed movement to a model decision.
+- Frequent replanning can interrupt route completion; audit supersession and repeated plans alongside decision latency.
+- Use grid-cell labels and short public plan explanations to correlate prompts, telemetry, and the tactical overlay. Public explanations are not a record of private model reasoning.
+- Health and weapon pickups introduce resource tradeoffs, but observations should describe their mechanics rather than prescribe a strategy.
+- Cross-round recap changes the evaluation: report whether it was enabled and distinguish within-session adaptation from independent single-round performance.
+
+## Legacy Intent-Based MCP Control
+
+The intent-oriented examples below describe the compatibility interface, not the default route-writing benchmark loop.
 
 The two chat agents do not drive frame-level controls. They send short-lived tactical policies with:
 
