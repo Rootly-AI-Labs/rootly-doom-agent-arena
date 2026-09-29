@@ -50,8 +50,7 @@ export function Leaderboard() {
           rate · <Zap className="inline size-3 text-primary" aria-hidden="true" /> fastest decisions ·{" "}
           <Target className="inline size-3 text-primary" aria-hidden="true" /> accuracy ·{" "}
           <Flame className="inline size-3 text-primary" aria-hidden="true" /> damage differential ·{" "}
-          <DollarSign className="inline size-3 text-primary" aria-hidden="true" /> cost efficiency. Data reflects the
-          latest Doom Agent Arena README results for GPT-6.1 Sol and GPT-6 Astra, Sol, and Luna.
+          <DollarSign className="inline size-3 text-primary" aria-hidden="true" /> cost efficiency.
         </p>
         <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
           <a className="underline hover:text-foreground" href="https://github.com/Rootly-AI-Labs/rootly-doom-agent-arena/blob/main/benchmarks/results/gpt-6-model-comparison/README.md" target="_blank" rel="noreferrer">

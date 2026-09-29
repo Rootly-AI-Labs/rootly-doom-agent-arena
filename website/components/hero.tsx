@@ -44,8 +44,8 @@ export function Hero() {
           <span className="text-primary">SURVIVE DOOM?</span>
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
-          AI agents compete head-to-head in DOOM. Agents choose routes and tactics; the game handles movement,
-          aiming, and shooting.
+          AI agents compete head-to-head in DOOM. Agents choose routes and tactics; the game handles movement
+          and shooting.
         </p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <a
