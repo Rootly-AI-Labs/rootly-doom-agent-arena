@@ -1,0 +1,342 @@
+{
+  "run_id": "run_1ec598b7ed6f",
+  "round": 3,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 43.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 160,
+      "damage_taken": 205,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 205,
+      "damage_taken": 160,
+      "shots_fired": 7,
+      "shots_hit": 6,
+      "accuracy": 0.857,
+      "final_health": 10
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2065",
+      "elapsed_ms": null,
+      "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 5085 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2065",
+      "elapsed_ms": null,
+      "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 18057 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 2
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 5914 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 18057 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 19685 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2065",
+        "elapsed_ms": null,
+        "event": "run_1ec598b7ed6f duel_e1m8_blind_spawn 2065 40114 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 4,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 169,
+        "distance_traveled": 4971.7,
+        "unique_cells_visited": 49,
+        "revisited_cells": 120
+      },
+      "player_2": {
+        "path_points": 169,
+        "distance_traveled": 3025.7,
+        "unique_cells_visited": 36,
+        "revisited_cells": 133
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5345.33,
+    "decision_p95_ms": 7036.0,
+    "decision_max_ms": 7374.0,
+    "mcp_avg_ms": 648.97,
+    "mcp_p95_ms": 1638.0,
+    "mcp_max_ms": 5479.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5158,
+      "player_2": 6230
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3599,
+      "player_2": 1611
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 7660,
+    "stale_intent_extension_max_ms": 5776
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun",
+      "route": "B14;G14;G12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I bring better paperwork this time."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "T32;T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am back for the lunch special."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "T32",
+        "T22",
+        "O22",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am back for the lunch special."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun",
+      "route": [
+        "G12",
+        "I12",
+        "I16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I rush the supply cupboard."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "patrol near a medikit",
+      "route": "O17;O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am reserving the table by the first aid."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol near the west medikit",
+      "route": "I17;I12;L12;L10;L12;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I set up my office beside first aid."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "patrol near a medikit",
+      "route": [
+        "O17",
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am reserving the table by the first aid."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "heal at the west medikit",
+      "route": "I12;L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I use my generous bandage allowance."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the eastern corridor",
+      "route": [
+        "O17",
+        "O22",
+        "L22",
+        "I22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I check who stole the other bandages."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "search the northern flank",
+      "route": "L22;I22;I26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking who stole my appetizer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "search the eastern corridor",
+      "route": "L12;O12;O22;L22;I22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I make a surprise department visit."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the northern flank",
+      "route": [
+        "L22",
+        "I22",
+        "I26",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am checking who stole my appetizer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the eastern corridor",
+      "route": [
+        "O12",
+        "O22",
+        "L22",
+        "I22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I take the scenic route to trouble."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western flank",
+      "route": "I26;I22;I12;G12;G08",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am taking my awkwardness across town."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "heal at the southeast medikit",
+      "route": "L22;O22;Q22;Q26",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I run to the bandages before HR notices."
+    }
+  ]
+}

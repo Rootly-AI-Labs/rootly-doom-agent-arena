@@ -1,0 +1,208 @@
+{
+  "run_id": "run_14e871a31c51",
+  "round": 5,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 11.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 0,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 150,
+      "shots_fired": 2,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1680",
+      "elapsed_ms": null,
+      "event": "run_14e871a31c51 duel_e1m8_blind_spawn 1680 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1680",
+        "elapsed_ms": null,
+        "event": "run_14e871a31c51 duel_e1m8_blind_spawn 1680 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1680",
+        "elapsed_ms": null,
+        "event": "run_14e871a31c51 duel_e1m8_blind_spawn 1680 5028 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 42,
+        "distance_traveled": 3111.6,
+        "unique_cells_visited": 37,
+        "revisited_cells": 5
+      },
+      "player_2": {
+        "path_points": 42,
+        "distance_traveled": 2283.0,
+        "unique_cells_visited": 25,
+        "revisited_cells": 17
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5838.67,
+    "decision_p95_ms": 6927.0,
+    "decision_max_ms": 6927.0,
+    "mcp_avg_ms": 580.32,
+    "mcp_p95_ms": 3630.0,
+    "mcp_max_ms": 4808.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3375,
+      "player_2": 3600
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3375,
+      "player_2": 3600
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 29112,
+    "stale_intent_extension_max_ms": 21217
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and leave the south alcove",
+      "route": "V22;O22;O17;R17;O17;O22;L22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I grab my fork and flee the awkward kitchen."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "arm and circle central cover",
+      "route": "B12;I12;I17;F17;I17;I12;O12;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am repeating my one successful management decision."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle central cover",
+      "route": "O22;I22;I12;O12;O22;I22;I12;L12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am chairing a meeting that refuses to sit down."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm and exit toward eastern cover",
+      "route": [
+        "O17",
+        "R17",
+        "O17",
+        "O22",
+        "L22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I refuse to become leftovers in this cupboard."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "circle central cover",
+      "route": "O22;I22;I12;O12;O22;I22;I12;L12",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am keeping this review on the move."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "heal and circle the east corridor",
+      "route": "L24;L22;I22",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I need emergency sauce before the next course."
+    }
+  ]
+}

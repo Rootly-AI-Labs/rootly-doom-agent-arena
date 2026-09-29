@@ -1,0 +1,12 @@
+{
+  "session_id": "session_bb6e61c3b31b",
+  "label": "GPT-6.1 Sol vs GPT-6 Luna",
+  "completed_matches": 10,
+  "included_in_original_60_match_leaderboard": false,
+  "identity_source": "codex_turn_context",
+  "original_retained": true,
+  "players": {
+    "player_1": {"agent_name": "Manager Goose", "model": "gpt-6.1-sol", "reasoning_effort": "medium", "wins": 9},
+    "player_2": {"agent_name": "Nervous Nacho", "model": "gpt-6-luna", "reasoning_effort": "medium", "wins": 1, "incorrect_reported_model": "gpt-6.1-sol"}
+  }
+}

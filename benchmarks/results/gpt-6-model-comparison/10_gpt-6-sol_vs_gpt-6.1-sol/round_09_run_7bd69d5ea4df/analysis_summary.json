@@ -1,0 +1,244 @@
+{
+  "run_id": "run_7bd69d5ea4df",
+  "round": 9,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 27.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 0,
+      "damage_taken": 150,
+      "shots_fired": 0,
+      "shots_hit": 0,
+      "accuracy": null,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 0,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 150
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2170",
+      "elapsed_ms": null,
+      "event": "run_7bd69d5ea4df duel_e1m8_blind_spawn 2170 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,192) the opponent is behind me with a shotgun aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_7bd69d5ea4df duel_e1m8_blind_spawn 2170 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,192) the opponent is behind me with a shotgun aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2170",
+        "elapsed_ms": null,
+        "event": "run_7bd69d5ea4df duel_e1m8_blind_spawn 2170 17485 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 103,
+        "distance_traveled": 357.6,
+        "unique_cells_visited": 6,
+        "revisited_cells": 97
+      },
+      "player_2": {
+        "path_points": 103,
+        "distance_traveled": 3776.2,
+        "unique_cells_visited": 51,
+        "revisited_cells": 52
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7099.62,
+    "decision_p95_ms": 12486.0,
+    "decision_max_ms": 12486.0,
+    "mcp_avg_ms": 1000.85,
+    "mcp_p95_ms": 3132.0,
+    "mcp_max_ms": 18642.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1547,
+      "player_2": 3093
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1547,
+      "player_2": 3093
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 32017,
+    "stale_intent_extension_max_ms": 17204
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "escape toward southern cover",
+      "route": "I02;I03;I04;I05;J05;K05;L05;M05",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is behind me with a shotgun",
+      "plan_summary": "This meeting has become an evacuation drill."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the shotgun and sweep west",
+      "route": "V22;O22;O17;R17;O17;O12;I12;I08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing the house special again."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the shotgun and search west",
+      "route": [
+        "R17",
+        "O17",
+        "O12",
+        "I12",
+        "I08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am plating trouble with a side of recoil."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "cross the far northern boundary",
+      "route": "B02;A02;A03;A04;A05;A06;A07;A08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "greater separation may reduce shotgun pellet hits",
+      "plan_summary": "I have relocated my desk to the roof."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "collect the shotgun and sweep west",
+      "route": "V22;O22;O17;R17;O17;O12;I12;I08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am restarting the dinner delivery."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "sweep the western perimeter",
+      "route": "I08;G08;G09;B09;B05;I05;I02",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am searching behind the bread basket."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "return to the north boundary",
+      "route": "F02;E02;D02;C02;B02;A02;A03;A04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the prior route drifted down the western edge",
+      "plan_summary": "I accidentally took the stairs back down."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search west and preserve health",
+      "route": "I02;L02;L08;G08;G09;B09",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am bringing first aid to the afterparty."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "move south away from contact",
+      "route": [
+        "F02",
+        "G02",
+        "H02",
+        "I02",
+        "J02",
+        "K02",
+        "L02",
+        "M02"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is currently north of me",
+      "plan_summary": "I am changing floors before management finds me."
+    }
+  ]
+}

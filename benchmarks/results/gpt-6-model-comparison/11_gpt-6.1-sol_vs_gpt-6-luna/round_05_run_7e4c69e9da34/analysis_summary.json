@@ -1,0 +1,418 @@
+{
+  "run_id": "run_7e4c69e9da34",
+  "round": 5,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 26.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 95,
+      "shots_fired": 22,
+      "shots_hit": 15,
+      "accuracy": 0.682,
+      "final_health": 55
+    },
+    "player_2": {
+      "damage_dealt": 95,
+      "damage_taken": 150,
+      "shots_fired": 21,
+      "shots_hit": 7,
+      "accuracy": 0.333,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1995",
+      "elapsed_ms": null,
+      "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 14914 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,128) the route avoids the blocked center and reaches the shotgun approach a"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 26,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 14914 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,128) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 14942 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,128) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 15628 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(640,128) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 16171 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(576,128) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 16485 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(576,256) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 16914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(320,256) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 17742 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(320,128) the route avoids the blocked center and reaches the shotgun approach a"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 17885 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/8 target=(320,128) the route avoids the blocked center and reaches the shotgun app"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 18171 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(192,128) the route avoids the blocked center and reaches the shotgun app"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 18514 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 19114 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 20285 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 20371 autopilot_action: player_2 action=route_complete reason=the route avoids the blocked center and reaches the shotgun approach aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 20571 autopilot_action: player_2 action=route_complete reason=the route avoids the blocked center and reaches the shotgun approach aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 22142 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 22200 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 22828 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 22885 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 23114 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(192,128) the route avoids the blocked center and reaches the shotgun app"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 23142 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 23800 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 23914 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 24771 autopilot_action: player_2 action=route_waypoint+attack reason=wp=8/8 target=(192,128) the route avoids the blocked center and reaches the shotgun app"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 24800 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 25485 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1995",
+        "elapsed_ms": null,
+        "event": "run_7e4c69e9da34 duel_e1m8_blind_spawn 1995 25971 autopilot_action: player_2 action=route_complete+attack reason=the route avoids the blocked center and reaches the shotgun approach aim_error=2"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 103,
+        "distance_traveled": 1849.6,
+        "unique_cells_visited": 18,
+        "revisited_cells": 85
+      },
+      "player_2": {
+        "path_points": 103,
+        "distance_traveled": 2307.0,
+        "unique_cells_visited": 27,
+        "revisited_cells": 76
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9278.62,
+    "decision_p95_ms": 12885.0,
+    "decision_max_ms": 12885.0,
+    "mcp_avg_ms": 1003.4,
+    "mcp_p95_ms": 3711.0,
+    "mcp_max_ms": 16193.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1553,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1553,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 15273,
+    "stale_intent_extension_max_ms": 13212
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun",
+      "route": [
+        "I15",
+        "I16",
+        "H16",
+        "G16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am choosing a louder cure for this problem."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush up the eastern corridor toward the enemy",
+      "route": "V32;R32;R30;N30;K30;H30;G30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent reaches the central lane quickly",
+      "plan_summary": "I am delivering spicy nachos in a hurry."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "approach the north shotgun",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the executive hallway."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "flank through the eastern corridor toward the opponent",
+      "route": [
+        "R32",
+        "R30",
+        "N30",
+        "K30",
+        "H30",
+        "J30",
+        "J27",
+        "J26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route avoids the blocked center and reaches the shotgun approach",
+      "plan_summary": "I am back on the snack delivery route."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "approach the shotgun entrance",
+      "route": "B10;C10;D10;E10;F10;G10;H10;I10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am heading for the loud supply closet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "flank through the eastern corridor toward the opponent",
+      "route": "G30;J30;J27;J26;H26;H22;J22;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route avoids the blocked center and reaches the shotgun approach",
+      "plan_summary": "I am back on the snack delivery route."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "approach the north shotgun",
+      "route": "D10;E10;F10;G10;H10;I10;I11;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am marching toward a bigger job title."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the shotgun then pursue the visible opponent",
+      "route": "J20;I20;I18;H18;F18;G18;I18;I10",
+      "engagement_policy": "",
+      "reasoning": "the enemy is north on the same corridor",
+      "plan_summary": "I am bringing spicy snacks straight to the showdown."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "restore health at the western medikit",
+      "route": [
+        "H10",
+        "G10",
+        "G09",
+        "G08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am claiming hazard pay in bandages."
+    }
+  ]
+}

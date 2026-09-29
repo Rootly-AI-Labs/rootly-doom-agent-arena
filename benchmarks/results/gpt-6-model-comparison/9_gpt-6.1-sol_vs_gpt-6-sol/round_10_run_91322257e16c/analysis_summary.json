@@ -1,0 +1,300 @@
+{
+  "run_id": "run_91322257e16c",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 40.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 40,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 110
+    },
+    "player_2": {
+      "damage_dealt": 40,
+      "damage_taken": 150,
+      "shots_fired": 10,
+      "shots_hit": 4,
+      "accuracy": 0.4,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2765",
+      "elapsed_ms": null,
+      "event": "run_91322257e16c duel_e1m8_blind_spawn 2765 20085 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_91322257e16c duel_e1m8_blind_spawn 2765 20085 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 10,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 4,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 4
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 156,
+        "distance_traveled": 2795.6,
+        "unique_cells_visited": 36,
+        "revisited_cells": 120
+      },
+      "player_2": {
+        "path_points": 156,
+        "distance_traveled": 2448.6,
+        "unique_cells_visited": 24,
+        "revisited_cells": 132
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 3801.0,
+    "decision_p95_ms": 6653.0,
+    "decision_max_ms": 6844.0,
+    "mcp_avg_ms": 681.2,
+    "mcp_p95_ms": 1574.0,
+    "mcp_max_ms": 10349.0
+  },
+  "errors": {
+    "route_diagonal_segment": 4,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4617,
+      "player_2": 4610
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1543,
+      "player_2": 1539
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 11390,
+    "stale_intent_extension_max_ms": 7077
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "get the north shotgun",
+      "route": "C02;D02;E02;E03;E04;E05;E06;E07",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am clocking in for my final loud shift."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "cross the southern edge",
+      "route": "V32;V31;V30;V29;V28;V27;V26;V25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my nervous noodles west again."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "get the north shotgun",
+      "route": "E07;E08;E09;F09;G09;H09;I09;I10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am renewing the final supply order."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get the north shotgun",
+      "route": [
+        "E09",
+        "F09",
+        "G09",
+        "H09",
+        "I09",
+        "I10",
+        "I11",
+        "I12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am sprinting through purchasing."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "get the north shotgun",
+      "route": "I11;I12;I13;I14;I15;I16;I17;H17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making one last loud investment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cross the southern edge",
+      "route": "V25;V24;V23;V22;V21;V20;V19;V18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am sprinting through the spaghetti outskirts."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "get the north shotgun",
+      "route": [
+        "I15",
+        "I16",
+        "I17",
+        "H17",
+        "G17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am reaching the executive supply shelf."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "get the north shotgun",
+      "route": "G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am claiming my retirement megaphone."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "search the west interior",
+      "route": "G17;H17;I17;J17;J16;J15;J14;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the intern escape route."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "cross toward western health",
+      "route": "V18;V17;V16;V15;V14;V13;V12;V11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am a noodle on a very long lunch break."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the west interior",
+      "route": [
+        "J17",
+        "J16",
+        "J15",
+        "J14",
+        "K14",
+        "L14",
+        "M14",
+        "N14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am patrolling the old complaint hallway."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "search the southwest interior",
+      "route": "L14;M14;N14;O14;O13;O12;O11;O10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the downstairs west desks."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "approach western health",
+      "route": "V11;V10;V09;V08;U08;T08;S08;S09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am heading to the other first aid buffet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the southwest interior",
+      "route": [
+        "M14",
+        "N14",
+        "O14",
+        "O13",
+        "O12",
+        "O11",
+        "O10",
+        "O09"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am catching whoever skipped the final meeting."
+    }
+  ]
+}

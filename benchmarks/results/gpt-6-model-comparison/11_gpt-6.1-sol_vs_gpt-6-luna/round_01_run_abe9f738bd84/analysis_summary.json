@@ -1,0 +1,652 @@
+{
+  "run_id": "run_abe9f738bd84",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "timeout_health",
+    "elapsed_time_seconds": 180.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 100,
+      "damage_taken": 10,
+      "shots_fired": 6,
+      "shots_hit": 3,
+      "accuracy": 0.5,
+      "final_health": 140
+    },
+    "player_2": {
+      "damage_dealt": 10,
+      "damage_taken": 100,
+      "shots_fired": 8,
+      "shots_hit": 1,
+      "accuracy": 0.125,
+      "final_health": 50
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "7385",
+      "elapsed_ms": null,
+      "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 52200 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "7385",
+      "elapsed_ms": null,
+      "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 57828 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(448,-384) I took damage and need the eastern health pickup aim_error=2"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 18,
+        "health": 92
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 52200 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 57828 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(448,-384) I took damage and need the eastern health pickup aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 57914 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(384,-384) I took damage and need the eastern health pickup aim_error=-137"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 58028 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-384) I took damage and need the eastern health pickup aim_error=55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 58257 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(256,-384) I took damage and need the eastern health pickup aim_error=58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 58514 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(192,-384) I took damage and need the eastern health pickup aim_error=63"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 58828 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(192,-320) I took damage and need the eastern health pickup aim_error=70"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 59085 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(256,-320) I took damage and need the eastern health pickup aim_error=-10"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 59228 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-320) I took damage and need the eastern health pickup aim_error=-109"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 59457 autopilot_action: player_2 action=route_complete reason=I took damage and need the eastern health pickup aim_error=-119"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 60200 autopilot_action: player_2 action=route_complete reason=I took damage and need the eastern health pickup aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 74714 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(384,-448) the central shotgun is behind a wall aim_error=-30"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 74771 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(448,-448) the central shotgun is behind a wall aim_error=31"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 74885 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(512,-448) the central shotgun is behind a wall aim_error=-150"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 75142 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(576,-448) the central shotgun is behind a wall aim_error=-153"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 75371 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(640,-448) the central shotgun is behind a wall aim_error=-155"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 75628 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(704,-448) the central shotgun is behind a wall aim_error=-156"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 75857 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(768,-448) the central shotgun is behind a wall aim_error=-156"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 76114 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(832,-448) the central shotgun is behind a wall aim_error=-158"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 76342 autopilot_action: player_2 action=route_complete reason=the central shotgun is behind a wall aim_error=-159"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 77085 autopilot_action: player_2 action=route_complete reason=the central shotgun is behind a wall aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91000 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(704,-448) Q27 blocks direct access to the medikit aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91028 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(704,-448) Q27 blocks direct access to the medikit aim_error=-162"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91228 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(768,-448) Q27 blocks direct access to the medikit aim_error=-164"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91457 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(832,-448) Q27 blocks direct access to the medikit aim_error=-169"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91714 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(896,-448) Q27 blocks direct access to the medikit aim_error=-172"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 91942 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(960,-448) Q27 blocks direct access to the medikit aim_error=-173"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 92285 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(960,-384) Q27 blocks direct access to the medikit aim_error=-174"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 92428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-320) Q27 blocks direct access to the medikit aim_error=-92"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 92685 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=-90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 93428 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 93657 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-320) Q27 blocks direct access to the medikit aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 93685 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 94428 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 94628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-320) Q27 blocks direct access to the medikit aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 94657 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=-90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 95400 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 95600 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-320) Q27 blocks direct access to the medikit aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 95628 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "7385",
+        "elapsed_ms": null,
+        "event": "run_abe9f738bd84 duel_e1m8_blind_spawn 7385 96371 autopilot_action: player_2 action=route_complete reason=Q27 blocks direct access to the medikit aim_error=6"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 22,
+      "player_2": 33
+    },
+    "invalid_plan_counts": {
+      "player_1": 6,
+      "player_2": 15
+    },
+    "plan_errors": {
+      "route_crosses_blocked_cell": 4,
+      "route_too_long": 1,
+      "waypoint_in_wall_cell": 10,
+      "route_diagonal_segment": 5,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 700,
+        "distance_traveled": 9869.1,
+        "unique_cells_visited": 81,
+        "revisited_cells": 619
+      },
+      "player_2": {
+        "path_points": 700,
+        "distance_traveled": 10076.6,
+        "unique_cells_visited": 37,
+        "revisited_cells": 663
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6935.85,
+    "decision_p95_ms": 13997.0,
+    "decision_max_ms": 21068.0,
+    "mcp_avg_ms": 550.64,
+    "mcp_p95_ms": 1763.0,
+    "mcp_max_ms": 3107.0
+  },
+  "errors": {
+    "route_crosses_blocked_cell": 4,
+    "route_too_long": 1,
+    "waypoint_in_wall_cell": 10,
+    "route_diagonal_segment": 5,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 28
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 8,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 15242,
+      "player_2": 7745
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3097,
+      "player_2": 1587
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 27861,
+    "stale_intent_extension_max_ms": 14008
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "13",
+      "objective": "sweep the southern edge",
+      "route": "Q02;R02;S02;T02;T03;T04;T05;T06",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the scenic route to disciplinary action."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "13",
+      "objective": "return toward the southern medikit",
+      "route": "Q32;Q31;Q30;Q29;Q28;R28;S28;S27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the eastern medikit remains the nearest pickup",
+      "plan_summary": "My snack compass is spinning again."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "14",
+      "objective": "sweep the south lane",
+      "route": "T05;T06;T07;T08;T09;T10;T11;T12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am looking for someone to blame."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "14",
+      "objective": "advance along the clear southern lane",
+      "route": "S27;S26;S25;S24;S23;S22;S21;S20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the last route reached the health pickup approach",
+      "plan_summary": "I am marching my snack straight into trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "15",
+      "objective": "search the southwest interior",
+      "route": "T09;T10;T11;S11;R11;Q11;P11;O11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing management back indoors."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "pick up the southern shotgun",
+      "route": [
+        "S20",
+        "R20",
+        "R18",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is nearby and still available",
+      "plan_summary": "Time to upgrade my snack defense."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "16",
+      "objective": "search the southern interior",
+      "route": "T11;S11;R11;Q11;P11;O11;O12;O13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am inspecting the basement break room."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "approach the southern shotgun from its west gap",
+      "route": [
+        "S20",
+        "R20",
+        "Q20",
+        "Q19",
+        "Q18",
+        "Q17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "R19 is blocked",
+      "plan_summary": "A careful burrito never cuts through walls."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "circle around the southern wall",
+      "route": [
+        "S20",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R25",
+        "R26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "R19 is blocked and the weapon remains behind it",
+      "plan_summary": "My shotgun errand is becoming a field trip."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the southern crossway",
+      "route": [
+        "R11",
+        "Q11",
+        "P11",
+        "O11",
+        "O12",
+        "O13",
+        "O14",
+        "O15"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am chasing rumors with a very loud clipboard."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the southern shotgun",
+      "route": [
+        "S20",
+        "S19",
+        "S18",
+        "S17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "S19 is the clear route beside the central wall",
+      "plan_summary": "My nachos are finally going to get armed."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "15",
+      "objective": "hold the southern edge and search for the opponent",
+      "route": "S20;T20;U20;V20;W20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the central wall blocks the shotgun route",
+      "plan_summary": "I am guarding my snacks with extreme suspicion."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "18",
+      "objective": "deny the remaining shotgun",
+      "route": "O14;O15;O16;P16;Q16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am confiscating the spare office equipment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "16",
+      "objective": "return toward the central corridor",
+      "route": "W20;V20;U20;T20;S20;R20;R21;Q21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the arena ends soon and the opponent was last seen north",
+      "plan_summary": "I am bravely retracing my snack crumbs."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "deny the south shotgun and patrol",
+      "route": [
+        "O16",
+        "P16",
+        "Q16",
+        "R16",
+        "R17",
+        "Q17",
+        "P17",
+        "O17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am hoarding the good stationery."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "17",
+      "objective": "hold the southwest side for the timeout",
+      "route": "Q21;Q20;R20;S20;T20;U20;V20;W20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I retain 130 health and the opponent remains unseen",
+      "plan_summary": "I am guarding my nachos till the bell."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "20",
+      "objective": "sweep the southeast lane",
+      "route": "R16;R17;Q17;P17;O17;O18;O19;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am auditing the other half of the office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "18",
+      "objective": "preserve my health through timeout",
+      "route": "W20;V20;U20;T20;S20;R20;R21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "my 130 health leads while the opponent stays hidden",
+      "plan_summary": "I am sitting tight with my suspicious nachos."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "21",
+      "objective": "search the eastern interior",
+      "route": "O17;O18;O19;O20;O21;O22;N22;M22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making one last surprise inspection."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "restore health before timeout",
+      "route": "L22;L23;L24",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am filing for emergency sick leave."
+    }
+  ]
+}

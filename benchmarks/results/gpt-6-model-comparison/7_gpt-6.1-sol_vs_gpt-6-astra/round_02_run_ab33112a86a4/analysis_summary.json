@@ -1,0 +1,386 @@
+{
+  "run_id": "run_ab33112a86a4",
+  "round": 2,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 50.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 195,
+      "shots_fired": 13,
+      "shots_hit": 8,
+      "accuracy": 0.615,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 195,
+      "damage_taken": 150,
+      "shots_fired": 13,
+      "shots_hit": 12,
+      "accuracy": 0.923,
+      "final_health": 30
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 8200 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 23914 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 2
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 8200 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 23914 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 24514 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 36628 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_ab33112a86a4 duel_e1m8_blind_spawn 1925 40714 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 17,
+      "player_2": 22
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 193,
+        "distance_traveled": 2621.3,
+        "unique_cells_visited": 37,
+        "revisited_cells": 156
+      },
+      "player_2": {
+        "path_points": 193,
+        "distance_traveled": 3809.0,
+        "unique_cells_visited": 38,
+        "revisited_cells": 155
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10490.41,
+    "decision_p95_ms": 30301.0,
+    "decision_max_ms": 41914.0,
+    "mcp_avg_ms": 769.28,
+    "mcp_p95_ms": 1705.0,
+    "mcp_max_ms": 10239.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 16,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 7,
+      "player_2": 4
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 4,
+      "player_2": 7
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 12,
+      "player_2": 16
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 19936,
+      "player_2": 25983
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2561,
+      "player_2": 2422
+    },
+    "stale_intent_extension_count": 16,
+    "stale_intent_extension_total_ms": 139297,
+    "stale_intent_extension_max_ms": 27721
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "advance to the shotgun",
+      "route": [
+        "T30",
+        "T22",
+        "O22",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am nudging this frozen dinner forward."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "10",
+      "objective": "collect the north shotgun",
+      "route": "B14;G14;G12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I keep my requisition on the boss's desk."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "11",
+      "objective": "advance to the shotgun",
+      "route": "T30;T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am still thawing out."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "11",
+      "objective": "collect the north shotgun",
+      "route": "B14;G14;G12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I wait for the office elevator to unfreeze."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "12",
+      "objective": "collect the southern shotgun",
+      "route": "T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am reheating my original bad idea."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "13",
+      "objective": "collect the southern shotgun",
+      "route": "T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am patiently becoming leftovers."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "12",
+      "objective": "collect the north shotgun",
+      "route": "B14;G14;G12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am still in the world's slowest commute."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "14",
+      "objective": "advance to the shotgun",
+      "route": "T30;T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am trying another poke with my fork."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "O22",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I have finally escaped the freezer."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "13",
+      "objective": "collect the north shotgun",
+      "route": "B14;G14;G12;I12;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I keep the supply request alive."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "16",
+      "objective": "patrol near a medikit",
+      "route": "O17;O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I like my danger with a side of first aid."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "patrol near a medikit",
+      "route": [
+        "O17",
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I have booked a table near the bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun",
+      "route": [
+        "G12",
+        "I12",
+        "I16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I finally escaped the elevator."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "18",
+      "objective": "recover health",
+      "route": "L22;O22;O26;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am ordering a second helping of bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "15",
+      "objective": "reach the east medikit",
+      "route": "I17;I22;G22;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I file a workplace injury claim."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "recover health",
+      "route": [
+        "L22",
+        "O22",
+        "O26",
+        "Q26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am ordering a second helping of bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "reach the east medikit",
+      "route": [
+        "I17",
+        "I22",
+        "G22",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I chase the first aid department."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "20",
+      "objective": "close on the visible opponent",
+      "route": "L26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering the bill personally."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close on the visible opponent",
+      "route": "I26;L26;O26;Q26",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I deliver the performance review in person."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the visible opponent",
+      "route": "L26;G26",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am delivering the bill personally."
+    }
+  ]
+}

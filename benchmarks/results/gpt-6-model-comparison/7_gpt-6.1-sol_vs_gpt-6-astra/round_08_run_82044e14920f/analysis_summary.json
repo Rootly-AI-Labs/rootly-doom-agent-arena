@@ -1,0 +1,248 @@
+{
+  "run_id": "run_82044e14920f",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 21.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 70,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 80
+    },
+    "player_2": {
+      "damage_dealt": 70,
+      "damage_taken": 155,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1610",
+      "elapsed_ms": null,
+      "event": "run_82044e14920f duel_e1m8_blind_spawn 1610 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1610",
+        "elapsed_ms": null,
+        "event": "run_82044e14920f duel_e1m8_blind_spawn 1610 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1610",
+        "elapsed_ms": null,
+        "event": "run_82044e14920f duel_e1m8_blind_spawn 1610 5028 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 82,
+        "distance_traveled": 2104.2,
+        "unique_cells_visited": 23,
+        "revisited_cells": 59
+      },
+      "player_2": {
+        "path_points": 82,
+        "distance_traveled": 2806.4,
+        "unique_cells_visited": 32,
+        "revisited_cells": 50
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6128.38,
+    "decision_p95_ms": 8373.0,
+    "decision_max_ms": 8373.0,
+    "mcp_avg_ms": 657.29,
+    "mcp_p95_ms": 2606.0,
+    "mcp_max_ms": 4151.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 0
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4228,
+      "player_2": 3982
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2576,
+      "player_2": 2331
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 8253,
+    "stale_intent_extension_max_ms": 5583
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun quickly",
+      "route": "B12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I grab the boss-sized stapler again."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and reach the eastern medikit",
+      "route": "V22;O22;O17;R17;O17;O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am packing lunch and a backup lunch."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm and reach the eastern medikit",
+      "route": [
+        "V22",
+        "O22",
+        "O17",
+        "R17",
+        "O17",
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am packing lunch and a backup lunch."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun quickly",
+      "route": [
+        "B12",
+        "I12",
+        "I17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I expedite the equipment request."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol past the west medikits",
+      "route": "I17;I12;L12;L10;L12;O12;O08;Q08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I start the mandatory wellness walk."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "probe north and return to healing",
+      "route": "L22;I22;I17;I22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am poking trouble with a very long fork."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol past the west medikits",
+      "route": [
+        "I17",
+        "I12",
+        "L12",
+        "L10",
+        "L12",
+        "O12",
+        "O08",
+        "Q08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I let my health plan do its job."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "probe north and return to healing",
+      "route": [
+        "L22",
+        "I22",
+        "I17",
+        "I22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am poking trouble with a very long fork."
+    }
+  ]
+}

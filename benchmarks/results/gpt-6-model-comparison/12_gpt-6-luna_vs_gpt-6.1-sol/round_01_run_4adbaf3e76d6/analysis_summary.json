@@ -1,0 +1,591 @@
+{
+  "run_id": "run_4adbaf3e76d6",
+  "round": 1,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 78.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 70,
+      "damage_taken": 155,
+      "shots_fired": 26,
+      "shots_hit": 8,
+      "accuracy": 0.308,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 70,
+      "shots_fired": 14,
+      "shots_hit": 8,
+      "accuracy": 0.571,
+      "final_health": 80
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3605",
+      "elapsed_ms": null,
+      "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) this route secures nearby health before the shotgun aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "3605",
+      "elapsed_ms": null,
+      "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 23714 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-832,320) the medikit is blocked by a wall from this corridor aim_error=-5"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 26,
+        "health": 11
+      },
+      "player_2": {
+        "shotgun": 11,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) this route secures nearby health before the shotgun aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) a shotgun gives stronger close range attacks aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 142 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,512) this route secures nearby health before the shotgun aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 171 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,-640) a shotgun gives stronger close range attacks aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,448) this route secures nearby health before the shotgun aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 400 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(768,-640) a shotgun gives stronger close range attacks aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 628 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,384) this route secures nearby health before the shotgun aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 657 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(704,-640) a shotgun gives stronger close range attacks aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(640,-640) a shotgun gives stronger close range attacks aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,320) this route secures nearby health before the shotgun aim_error=-58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1142 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(576,-640) a shotgun gives stronger close range attacks aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1228 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-896,320) this route secures nearby health before the shotgun aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-832,320) this route secures nearby health before the shotgun aim_error=26"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1371 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(512,-640) a shotgun gives stronger close range attacks aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1600 autopilot_action: player_1 action=route_complete reason=this route secures nearby health before the shotgun aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(448,-640) a shotgun gives stronger close range attacks aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 1857 autopilot_action: player_2 action=route_complete reason=a shotgun gives stronger close range attacks aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 2342 autopilot_action: player_1 action=route_complete reason=this route secures nearby health before the shotgun aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 2600 autopilot_action: player_2 action=route_complete reason=a shotgun gives stronger close range attacks aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 23714 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-832,320) the medikit is blocked by a wall from this corridor aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 23742 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-832,320) the medikit is blocked by a wall from this corridor aim_error=-142"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 23800 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-768,320) the medikit is blocked by a wall from this corridor aim_error=-142"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 23914 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-704,320) the medikit is blocked by a wall from this corridor aim_error=41"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 24257 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-704,384) the medikit is blocked by a wall from this corridor aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 24400 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,448) the medikit is blocked by a wall from this corridor aim_error=130"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 24657 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-704,512) the medikit is blocked by a wall from this corridor aim_error=136"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 24885 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-704,576) the medikit is blocked by a wall from this corridor aim_error=138"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 25142 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-704,640) the medikit is blocked by a wall from this corridor aim_error=140"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 25371 autopilot_action: player_1 action=route_complete reason=the medikit is blocked by a wall from this corridor aim_error=141"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 26114 autopilot_action: player_1 action=route_complete reason=the medikit is blocked by a wall from this corridor aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 50400 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 73114 autopilot_action: player_1 action=route_waypoint+attack reason=wp=1/8 target=(-256,640) the west side corridor leads around the shotgun wall aim_error"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 73200 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-256,576) the west side corridor leads around the shotgun wall aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 73342 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-256,512) the west side corridor leads around the shotgun wall aim_error=9"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 73571 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-256,448) the west side corridor leads around the shotgun wall aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 73800 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-256,384) the west side corridor leads around the shotgun wall aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 74057 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-256,320) the west side corridor leads around the shotgun wall aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 74400 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-320,320) the west side corridor leads around the shotgun wall aim_error=7"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 74571 autopilot_action: player_1 action=route_waypoint+attack reason=wp=7/8 target=(-320,320) the west side corridor leads around the shotgun wall aim_error"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3605",
+        "elapsed_ms": null,
+        "event": "run_4adbaf3e76d6 duel_e1m8_blind_spawn 3605 74628 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-320,256) the west side corridor leads around the shotgun wall aim_error"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 11
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "route_crosses_blocked_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 305,
+        "distance_traveled": 3946.4,
+        "unique_cells_visited": 28,
+        "revisited_cells": 277
+      },
+      "player_2": {
+        "path_points": 305,
+        "distance_traveled": 4505.5,
+        "unique_cells_visited": 37,
+        "revisited_cells": 268
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9395.87,
+    "decision_p95_ms": 16399.0,
+    "decision_max_ms": 29364.0,
+    "mcp_avg_ms": 655.03,
+    "mcp_p95_ms": 1770.0,
+    "mcp_max_ms": 2317.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "route_crosses_blocked_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 4
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3298,
+      "player_2": 6963
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1762,
+      "player_2": 2305
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 32706,
+    "stale_intent_extension_max_ms": 18927
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "take the upper-left medikit",
+      "route": "B02;C02;D02;E02;F02;G02;G03;G04",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this route secures nearby health before the shotgun",
+      "plan_summary": "My clipboard says this medkit is a promotion."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a shotgun gives stronger close range attacks",
+      "plan_summary": "I brought a fork to a gunfight. Upgrading now."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the southern shotgun",
+      "route": "V25;V24;V23;V22;V21;V20;U20;T20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am speedwalking toward better cutlery."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern shotgun",
+      "route": [
+        "U25",
+        "T25",
+        "S25",
+        "R25",
+        "Q25",
+        "P25",
+        "O25",
+        "O24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I took the scenic route. My pasta has regrets."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle the wall toward the shotgun",
+      "route": "G04;G05;G06;F06;E06;D06;C06;B06",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the medikit is blocked by a wall from this corridor",
+      "plan_summary": "I have filed a complaint with the wall."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern shotgun",
+      "route": [
+        "S20",
+        "R20",
+        "Q20",
+        "O20",
+        "O19",
+        "O18",
+        "O17",
+        "P17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am circling the pantry with criminal intent."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "reach the southern shotgun",
+      "route": "T21;T22;S22;R22;Q22;P22;O22;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I found the pantry door. It was embarrassingly far away."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "cross the upper lane toward the shotgun",
+      "route": "B06;B07;B08;B09;B10;B11;B12;B13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the upper lane bypasses the central wall",
+      "plan_summary": "I am taking the scenic route to management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern shotgun",
+      "route": [
+        "Q22",
+        "P22",
+        "O22",
+        "O21",
+        "O20",
+        "O19",
+        "O18",
+        "O17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am navigating dinner by the emergency exits."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "collect the shotgun",
+      "route": "O20;O19;O18;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am about to become stuffed with confidence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "8",
+      "objective": "collect the shotgun",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am claiming the loudest utensil."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "search the western corridor",
+      "route": "P17;O17;O16;O15;O14;O13;O12;P12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering aggressively seasoned pasta."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western corridor",
+      "route": [
+        "O16",
+        "O15",
+        "O14",
+        "O13",
+        "O12",
+        "P12",
+        "Q12",
+        "Q11"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am hunting a dinner guest who forgot to RSVP."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "circle behind the central barrier",
+      "route": "B13;C13;D13;E13;F13;G13;G12;H12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the west side corridor leads around the shotgun wall",
+      "plan_summary": "I found the back door; it has no handle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "11",
+      "objective": "find the opponent near western health",
+      "route": "Q12;Q11;Q10;Q09;Q08;P08;O08;N08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the buffet for hostile leftovers."
+    }
+  ]
+}

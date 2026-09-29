@@ -1,0 +1,582 @@
+{
+  "run_id": "run_672d612e0996",
+  "round": 4,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 53.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 135,
+      "damage_taken": 150,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 135,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 20
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2870",
+      "elapsed_ms": null,
+      "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the open lane reaches a medikit before the shotgun fight aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "2870",
+      "elapsed_ms": null,
+      "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 14200 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(-512,640) the north side pickup keeps me healthy on approach aim_error=3"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 69,
+        "health": 10
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the open lane reaches a medikit before the shotgun fight aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) the open lane reaches a medikit before the shotgun fight aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) the open lane reaches a medikit before the shotgun fight aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) the open lane reaches a medikit before the shotgun fight aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) the open lane reaches a medikit before the shotgun fight aim_error=42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) the open lane reaches a medikit before the shotgun fight aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 1628 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 2371 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 2628 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 3371 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 3600 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 4342 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 4571 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 5314 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 5542 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 6285 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 6485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 6514 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 7257 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 7457 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 7485 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 8228 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 8428 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 8457 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-137"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 9200 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 9400 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 9428 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 10171 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 10371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 10400 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-135"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 11142 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 11342 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 11371 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 12114 autopilot_action: player_1 action=route_complete reason=the open lane reaches a medikit before the shotgun fight aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2870",
+        "elapsed_ms": null,
+        "event": "run_672d612e0996 duel_e1m8_blind_spawn 2870 12314 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the open lane reaches a medikit before the shotgun fight aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 10
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 4
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 207,
+        "distance_traveled": 3022.5,
+        "unique_cells_visited": 28,
+        "revisited_cells": 179
+      },
+      "player_2": {
+        "path_points": 207,
+        "distance_traveled": 3775.4,
+        "unique_cells_visited": 39,
+        "revisited_cells": 168
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6181.07,
+    "decision_p95_ms": 14779.0,
+    "decision_max_ms": 15649.0,
+    "mcp_avg_ms": 505.26,
+    "mcp_p95_ms": 1572.0,
+    "mcp_max_ms": 4964.0
+  },
+  "errors": {
+    "route_diagonal_segment": 4
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3083,
+      "player_2": 4622
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1549,
+      "player_2": 1547
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 5629,
+    "stale_intent_extension_max_ms": 5279
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "fall back to the available medikit",
+      "route": [
+        "I13",
+        "I12",
+        "I11",
+        "I10",
+        "I09",
+        "I08",
+        "H08",
+        "G08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I have 110 health and can heal before the next close fight",
+      "plan_summary": "I am rescheduling this meeting for health reasons."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making another questionable grocery run."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "take the safe upper lane toward health",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the open lane reaches a medikit before the shotgun fight",
+      "plan_summary": "I have a very aggressive wellness policy."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "collect the southern shotgun",
+      "route": "U24;T24;S24;R24;Q24;P24;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my usual table by the ammunition."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "take the nearby medikit",
+      "route": "B09;C09;D09;E09;F09;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the north side pickup keeps me healthy on approach",
+      "plan_summary": "Vitals first; paperwork can bleed later."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "go around the center toward the shotgun",
+      "route": "G08;G09;G10;G11;G12;H12;I12;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this route uses the clear western opening",
+      "plan_summary": "I passed the wall's performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "collect the southern shotgun",
+      "route": "O24;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am cutting through the kitchen with purpose."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "collect the southern shotgun",
+      "route": "O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am collecting my crunchy confidence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the central shotgun",
+      "route": "I13;I14;I15;I16;H16;G16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I need the heavier weapon before contact",
+      "plan_summary": "The budget committee approved seven pellets."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "search the western central lane",
+      "route": "N17;N14;I14;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering hot pasta to whoever is upstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western central lane",
+      "route": [
+        "N14",
+        "I14",
+        "I12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am threading the hallway like an angry noodle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "recover health in the western alcove",
+      "route": "G12;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am grabbing a tiny medicinal appetizer."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search near the northern shotgun",
+      "route": [
+        "I12",
+        "I17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking the bill back to the center table."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "advance on the opponent's last seen area",
+      "route": "F17;G17;H17;I17;I16;I15;I14;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I have full health and the shotgun ready",
+      "plan_summary": "I am bringing the loudest agenda item."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "search near the northern shotgun",
+      "route": "G12;I12;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am returning to the party with restored sauce."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search near the northern shotgun",
+      "route": [
+        "G12",
+        "I12",
+        "I17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am approaching the noisy dinner table."
+    }
+  ]
+}

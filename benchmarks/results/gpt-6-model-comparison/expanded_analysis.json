@@ -1,0 +1,1212 @@
+{
+  "matches": 120,
+  "models": {
+    "sol61": {
+      "matches": 60,
+      "wins": 51,
+      "damage": 9245,
+      "damage_taken": 5310,
+      "hits": 311,
+      "shots": 403,
+      "p1_wins": 27,
+      "p2_wins": 24,
+      "plan_calls": 449,
+      "rejected_plans": 140,
+      "full_session": {
+        "input_tokens": 37965681,
+        "cached_input_tokens": 37347584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 71972,
+        "reasoning_output_tokens": 4791,
+        "requests": 664,
+        "cost_usd": 5.6906724,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 14231508,
+        "cached_input_tokens": 13982976,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 46103,
+        "reasoning_output_tokens": 2663,
+        "requests": 269,
+        "cost_usd": 2.3563916000000003,
+        "long_context_requests": 0
+      },
+      "decision_count": 443,
+      "mean_decision_seconds": 5.655218961625282,
+      "median_decision_seconds": 5.31,
+      "plan_outcomes": {
+        "diagonal": 105,
+        "accepted": 309,
+        "post_finish": 28,
+        "blocked": 5,
+        "stationary": 2
+      },
+      "route_validation_attempts": 421,
+      "route_rejections": 112,
+      "route_rejection_rate": 0.2660332541567696
+    },
+    "astra": {
+      "matches": 60,
+      "wins": 38,
+      "damage": 8600,
+      "damage_taken": 5935,
+      "hits": 248,
+      "shots": 300,
+      "p1_wins": 22,
+      "p2_wins": 16,
+      "plan_calls": 356,
+      "rejected_plans": 110,
+      "full_session": {
+        "input_tokens": 31362140,
+        "cached_input_tokens": 30727296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 64489,
+        "reasoning_output_tokens": 2565,
+        "requests": 536,
+        "cost_usd": 40.300186000000004,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 20916874,
+        "cached_input_tokens": 20542464,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 49636,
+        "reasoning_output_tokens": 1918,
+        "requests": 356,
+        "cost_usd": 26.768364000000005,
+        "long_context_requests": 0
+      },
+      "decision_count": 351,
+      "mean_decision_seconds": 6.526176638176638,
+      "median_decision_seconds": 5.872,
+      "plan_outcomes": {
+        "accepted": 246,
+        "diagonal": 77,
+        "blocked": 4,
+        "post_finish": 27,
+        "run_mismatch": 2
+      },
+      "route_validation_attempts": 327,
+      "route_rejections": 81,
+      "route_rejection_rate": 0.24770642201834864
+    },
+    "sol": {
+      "matches": 60,
+      "wins": 17,
+      "damage": 5110,
+      "damage_taken": 8155,
+      "hits": 265,
+      "shots": 532,
+      "p1_wins": 10,
+      "p2_wins": 7,
+      "plan_calls": 305,
+      "rejected_plans": 45,
+      "full_session": {
+        "input_tokens": 42128954,
+        "cached_input_tokens": 41488256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 125340,
+        "reasoning_output_tokens": 30351,
+        "requests": 741,
+        "cost_usd": 10.832447200000002,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 17569932,
+        "cached_input_tokens": 17385728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 65218,
+        "reasoning_output_tokens": 16379,
+        "requests": 301,
+        "cost_usd": 4.4977336,
+        "long_context_requests": 0
+      },
+      "decision_count": 299,
+      "mean_decision_seconds": 5.9115652173913045,
+      "median_decision_seconds": 5.395,
+      "plan_outcomes": {
+        "accepted": 260,
+        "post_finish": 23,
+        "blocked": 4,
+        "diagonal": 18
+      },
+      "route_validation_attempts": 282,
+      "route_rejections": 22,
+      "route_rejection_rate": 0.07801418439716312
+    },
+    "luna": {
+      "matches": 60,
+      "wins": 14,
+      "damage": 4965,
+      "damage_taken": 8520,
+      "hits": 287,
+      "shots": 601,
+      "p1_wins": 12,
+      "p2_wins": 2,
+      "plan_calls": 329,
+      "rejected_plans": 66,
+      "full_session": {
+        "input_tokens": 94989198,
+        "cached_input_tokens": 93297664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 185842,
+        "reasoning_output_tokens": 104906,
+        "requests": 885,
+        "cost_usd": 1.19505104,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 34825224,
+        "cached_input_tokens": 34230528,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 105297,
+        "reasoning_output_tokens": 61245,
+        "requests": 331,
+        "cost_usd": 0.45442338000000004,
+        "long_context_requests": 0
+      },
+      "decision_count": 315,
+      "mean_decision_seconds": 8.03051111111111,
+      "median_decision_seconds": 5.652,
+      "plan_outcomes": {
+        "accepted": 263,
+        "blocked": 16,
+        "diagonal": 22,
+        "post_finish": 27,
+        "waypoint_limit": 1
+      },
+      "route_validation_attempts": 302,
+      "route_rejections": 39,
+      "route_rejection_rate": 0.1291390728476821
+    }
+  },
+  "head_to_head": {
+    "astra": {
+      "sol": 18,
+      "luna": 15,
+      "sol61": 5
+    },
+    "sol": {
+      "astra": 2,
+      "luna": 15,
+      "sol61": 0
+    },
+    "luna": {
+      "astra": 5,
+      "sol": 5,
+      "sol61": 4
+    },
+    "sol61": {
+      "astra": 15,
+      "sol": 20,
+      "luna": 16
+    }
+  },
+  "series": [
+    {
+      "setup": 1,
+      "folder": "1_astra_sol",
+      "players": [
+        "astra",
+        "sol"
+      ],
+      "p1_wins": 9,
+      "p2_wins": 1
+    },
+    {
+      "setup": 2,
+      "folder": "2_sol_astra",
+      "players": [
+        "sol",
+        "astra"
+      ],
+      "p1_wins": 1,
+      "p2_wins": 9
+    },
+    {
+      "setup": 3,
+      "folder": "3_astra_luna",
+      "players": [
+        "astra",
+        "luna"
+      ],
+      "p1_wins": 10,
+      "p2_wins": 0
+    },
+    {
+      "setup": 4,
+      "folder": "4_luna_astra",
+      "players": [
+        "luna",
+        "astra"
+      ],
+      "p1_wins": 5,
+      "p2_wins": 5
+    },
+    {
+      "setup": 5,
+      "folder": "5_sol_luna",
+      "players": [
+        "sol",
+        "luna"
+      ],
+      "p1_wins": 9,
+      "p2_wins": 1
+    },
+    {
+      "setup": 6,
+      "folder": "6_luna_sol",
+      "players": [
+        "luna",
+        "sol"
+      ],
+      "p1_wins": 4,
+      "p2_wins": 6
+    },
+    {
+      "setup": 7,
+      "folder": "7_gpt-6.1-sol_vs_gpt-6-astra",
+      "players": [
+        "sol61",
+        "astra"
+      ],
+      "p1_wins": 8,
+      "p2_wins": 2
+    },
+    {
+      "setup": 8,
+      "folder": "8_gpt-6-astra_vs_gpt-6.1-sol",
+      "players": [
+        "astra",
+        "sol61"
+      ],
+      "p1_wins": 3,
+      "p2_wins": 7
+    },
+    {
+      "setup": 9,
+      "folder": "9_gpt-6.1-sol_vs_gpt-6-sol",
+      "players": [
+        "sol61",
+        "sol"
+      ],
+      "p1_wins": 10,
+      "p2_wins": 0
+    },
+    {
+      "setup": 10,
+      "folder": "10_gpt-6-sol_vs_gpt-6.1-sol",
+      "players": [
+        "sol",
+        "sol61"
+      ],
+      "p1_wins": 0,
+      "p2_wins": 10
+    },
+    {
+      "setup": 11,
+      "folder": "11_gpt-6.1-sol_vs_gpt-6-luna",
+      "players": [
+        "sol61",
+        "luna"
+      ],
+      "p1_wins": 9,
+      "p2_wins": 1
+    },
+    {
+      "setup": 12,
+      "folder": "12_gpt-6-luna_vs_gpt-6.1-sol",
+      "players": [
+        "luna",
+        "sol61"
+      ],
+      "p1_wins": 3,
+      "p2_wins": 7
+    }
+  ],
+  "cost_sessions": [
+    {
+      "setup": 1,
+      "participant": "player_1",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-15-22-01a0cb67-0880-7b80-ac1f-19857c8eda23.jsonl",
+      "full_session": {
+        "input_tokens": 5065560,
+        "cached_input_tokens": 4976000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9748,
+        "reasoning_output_tokens": 350,
+        "requests": 89,
+        "cost_usd": 6.359000000000003,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3393534,
+        "cached_input_tokens": 3341696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7642,
+        "reasoning_output_tokens": 304,
+        "requests": 59,
+        "cost_usd": 4.2421760000000015,
+        "long_context_requests": 0
+      },
+      "max_request_input": 81675,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 1,
+      "participant": "player_2",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T19-15-23-01a0cb67-0df4-7840-a424-88f391aa8a0b.jsonl",
+      "full_session": {
+        "input_tokens": 5996509,
+        "cached_input_tokens": 5910144,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 20256,
+        "reasoning_output_tokens": 5232,
+        "requests": 111,
+        "cost_usd": 1.5573187999999996,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2567818,
+        "cached_input_tokens": 2537344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10568,
+        "reasoning_output_tokens": 2946,
+        "requests": 47,
+        "cost_usd": 0.6740968000000002,
+        "long_context_requests": 0
+      },
+      "max_request_input": 74805,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 2,
+      "participant": "player_1",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T19-27-38-01a0cb72-4207-7f83-bace-18d6070c60ff.jsonl",
+      "full_session": {
+        "input_tokens": 5238986,
+        "cached_input_tokens": 5097728,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14721,
+        "reasoning_output_tokens": 3277,
+        "requests": 110,
+        "cost_usd": 1.4492715999999997,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 1502882,
+        "cached_input_tokens": 1481344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5847,
+        "reasoning_output_tokens": 1673,
+        "requests": 32,
+        "cost_usd": 0.39781479999999997,
+        "long_context_requests": 0
+      },
+      "max_request_input": 60927,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 2,
+      "participant": "player_2",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-27-40-01a0cb72-4ac9-7ef1-84ff-1a11e83c5f74.jsonl",
+      "full_session": {
+        "input_tokens": 3837107,
+        "cached_input_tokens": 3751296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8991,
+        "reasoning_output_tokens": 267,
+        "requests": 66,
+        "cost_usd": 5.058955999999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2617071,
+        "cached_input_tokens": 2580992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6970,
+        "reasoning_output_tokens": 182,
+        "requests": 44,
+        "cost_usd": 3.2902820000000004,
+        "long_context_requests": 0
+      },
+      "max_request_input": 74053,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 3,
+      "participant": "player_1",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-42-27-01a0cb7f-d53b-7e71-85c2-abb556d115d5.jsonl",
+      "full_session": {
+        "input_tokens": 5203915,
+        "cached_input_tokens": 5106816,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9677,
+        "reasoning_output_tokens": 318,
+        "requests": 86,
+        "cost_usd": 6.561655999999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3292474,
+        "cached_input_tokens": 3233792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7425,
+        "reasoning_output_tokens": 302,
+        "requests": 56,
+        "cost_usd": 4.191861999999999,
+        "long_context_requests": 0
+      },
+      "max_request_input": 90351,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 3,
+      "participant": "player_2",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T19-42-29-01a0cb7f-dcd1-7cf3-b40f-4c04c1d6b396.jsonl",
+      "full_session": {
+        "input_tokens": 8326401,
+        "cached_input_tokens": 8067584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 31046,
+        "reasoning_output_tokens": 22209,
+        "requests": 98,
+        "cost_usd": 0.12208054000000003,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2513411,
+        "cached_input_tokens": 2391296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18286,
+        "reasoning_output_tokens": 14000,
+        "requests": 31,
+        "cost_usd": 0.04526746,
+        "long_context_requests": 0
+      },
+      "max_request_input": 136601,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 4,
+      "participant": "player_1",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T19-56-36-01a0cb8c-ca55-7132-8f31-1b0b32c96909.jsonl",
+      "full_session": {
+        "input_tokens": 24955603,
+        "cached_input_tokens": 24610560,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 23067,
+        "reasoning_output_tokens": 5417,
+        "requests": 198,
+        "cost_usd": 0.2921434,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 9063651,
+        "cached_input_tokens": 8953600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13755,
+        "reasoning_output_tokens": 4342,
+        "requests": 73,
+        "cost_usd": 0.1074186,
+        "long_context_requests": 0
+      },
+      "max_request_input": 227725,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 4,
+      "participant": "player_2",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-22T19-56-40-01a0cb8c-da54-7530-aac2-5b51e006d4a2.jsonl",
+      "full_session": {
+        "input_tokens": 5892941,
+        "cached_input_tokens": 5801600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13743,
+        "reasoning_output_tokens": 581,
+        "requests": 103,
+        "cost_usd": 7.40216,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4646213,
+        "cached_input_tokens": 4587264,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 11880,
+        "reasoning_output_tokens": 568,
+        "requests": 81,
+        "cost_usd": 5.770754,
+        "long_context_requests": 0
+      },
+      "max_request_input": 82152,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 5,
+      "participant": "player_1",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T20-53-00-01a0cbc0-6b10-77d3-a2d9-dff2d9d48f0b.jsonl",
+      "full_session": {
+        "input_tokens": 11722481,
+        "cached_input_tokens": 11611520,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 21577,
+        "reasoning_output_tokens": 1497,
+        "requests": 177,
+        "cost_usd": 2.759996000000001,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4378060,
+        "cached_input_tokens": 4341120,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10000,
+        "reasoning_output_tokens": 1042,
+        "requests": 66,
+        "cost_usd": 1.0421040000000001,
+        "long_context_requests": 0
+      },
+      "max_request_input": 87988,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 5,
+      "participant": "player_2",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T20-53-06-01a0cbc0-835d-7eb2-a0db-080a1f698fe5.jsonl",
+      "full_session": {
+        "input_tokens": 14645970,
+        "cached_input_tokens": 14386944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 35540,
+        "reasoning_output_tokens": 22378,
+        "requests": 145,
+        "cost_usd": 0.18754204000000002,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 5490853,
+        "cached_input_tokens": 5408512,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 16165,
+        "reasoning_output_tokens": 9095,
+        "requests": 53,
+        "cost_usd": 0.07040172000000003,
+        "long_context_requests": 0
+      },
+      "max_request_input": 177101,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 6,
+      "participant": "player_1",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-22T21-21-22-01a0cbda-63ed-7c00-9fb5-60980514d779.jsonl",
+      "full_session": {
+        "input_tokens": 14423016,
+        "cached_input_tokens": 14175232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30796,
+        "reasoning_output_tokens": 18120,
+        "requests": 140,
+        "cost_usd": 0.1819287199999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4904798,
+        "cached_input_tokens": 4828160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 17601,
+        "reasoning_output_tokens": 11331,
+        "requests": 48,
+        "cost_usd": 0.0647459,
+        "long_context_requests": 0
+      },
+      "max_request_input": 177995,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 6,
+      "participant": "player_2",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-22T21-21-19-01a0cbda-58f9-7261-87c1-a4c1536768c5.jsonl",
+      "full_session": {
+        "input_tokens": 6547899,
+        "cached_input_tokens": 6457472,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 24332,
+        "reasoning_output_tokens": 6257,
+        "requests": 107,
+        "cost_usd": 1.7156684,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4287392,
+        "cached_input_tokens": 4244736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 17237,
+        "reasoning_output_tokens": 3736,
+        "requests": 67,
+        "cost_usd": 1.1066292000000002,
+        "long_context_requests": 0
+      },
+      "max_request_input": 83794,
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 7,
+      "participant": "player_1",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T13-33-22-01a0ee3a-6c73-7060-b768-8f0194337202.jsonl",
+      "full_session": {
+        "input_tokens": 7353944,
+        "cached_input_tokens": 7254016,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 15569,
+        "reasoning_output_tokens": 634,
+        "requests": 115,
+        "cost_usd": 1.0809476000000007,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 4667181,
+        "cached_input_tokens": 4603392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12618,
+        "reasoning_output_tokens": 391,
+        "requests": 74,
+        "cost_usd": 0.7140972000000002,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 7,
+      "participant": "player_2",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-29T13-33-30-01a0ee3a-8b82-74c0-b0fe-cdf982e15d81.jsonl",
+      "full_session": {
+        "input_tokens": 7445172,
+        "cached_input_tokens": 7259392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14531,
+        "reasoning_output_tokens": 850,
+        "requests": 116,
+        "cost_usd": 9.843742000000002,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 5029619,
+        "cached_input_tokens": 4906496,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 11109,
+        "reasoning_output_tokens": 535,
+        "requests": 79,
+        "cost_usd": 6.693176,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 8,
+      "participant": "player_1",
+      "model": "gpt-6-astra",
+      "rollout": "rollout-2026-09-29T13-58-23-01a0ee51-55af-7420-a0f8-8c6e358eccc6.jsonl",
+      "full_session": {
+        "input_tokens": 3917445,
+        "cached_input_tokens": 3832192,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7799,
+        "reasoning_output_tokens": 199,
+        "requests": 76,
+        "cost_usd": 5.074672000000001,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 1937963,
+        "cached_input_tokens": 1892224,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4610,
+        "reasoning_output_tokens": 27,
+        "requests": 37,
+        "cost_usd": 2.580114,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 8,
+      "participant": "player_2",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T13-58-27-01a0ee51-6588-7d20-8b86-2351f031ce09.jsonl",
+      "full_session": {
+        "input_tokens": 3810500,
+        "cached_input_tokens": 3738752,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8708,
+        "reasoning_output_tokens": 235,
+        "requests": 79,
+        "cost_usd": 0.6044512000000001,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 1839059,
+        "cached_input_tokens": 1807360,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5430,
+        "reasoning_output_tokens": 165,
+        "requests": 38,
+        "cost_usd": 0.29843400000000014,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 9,
+      "participant": "player_1",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T14-12-03-01a0ee5d-d60f-7770-af21-3d63933952d1.jsonl",
+      "full_session": {
+        "input_tokens": 10126376,
+        "cached_input_tokens": 10009344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10820,
+        "reasoning_output_tokens": 680,
+        "requests": 161,
+        "cost_usd": 1.3431983999999995,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 781623,
+        "cached_input_tokens": 762880,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3512,
+        "reasoning_output_tokens": 143,
+        "requests": 20,
+        "cost_usd": 0.14889400000000003,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 9,
+      "participant": "player_2",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-29T14-14-09-01a0ee5f-c1fb-7222-ae22-2e3fee95e80e.jsonl",
+      "full_session": {
+        "input_tokens": 9166426,
+        "cached_input_tokens": 9066112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 28956,
+        "reasoning_output_tokens": 8742,
+        "requests": 162,
+        "cost_usd": 2.303410400000002,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3306371,
+        "cached_input_tokens": 3277824,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13778,
+        "reasoning_output_tokens": 5089,
+        "requests": 58,
+        "cost_usd": 0.8504388,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 10,
+      "participant": "player_1",
+      "model": "gpt-6-sol",
+      "rollout": "rollout-2026-09-29T14-47-34-01a0ee7e-5b81-76b2-8542-a4f1e03fd591.jsonl",
+      "full_session": {
+        "input_tokens": 3456653,
+        "cached_input_tokens": 3345280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 15498,
+        "reasoning_output_tokens": 5346,
+        "requests": 74,
+        "cost_usd": 1.0467819999999999,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 1527409,
+        "cached_input_tokens": 1503360,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7788,
+        "reasoning_output_tokens": 1893,
+        "requests": 31,
+        "cost_usd": 0.42665,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 10,
+      "participant": "player_2",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T14-47-29-01a0ee7e-4807-7a12-9097-bc5389729fda.jsonl",
+      "full_session": {
+        "input_tokens": 3664169,
+        "cached_input_tokens": 3591040,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10241,
+        "reasoning_output_tokens": 867,
+        "requests": 74,
+        "cost_usd": 0.607772,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 2490076,
+        "cached_input_tokens": 2449792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8106,
+        "reasoning_output_tokens": 589,
+        "requests": 50,
+        "cost_usd": 0.40660719999999995,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 11,
+      "participant": "player_1",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T15-00-25-01a0ee8a-20c7-7d32-9bb1-c80216bc0754.jsonl",
+      "full_session": {
+        "input_tokens": 5643355,
+        "cached_input_tokens": 5546624,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 16681,
+        "reasoning_output_tokens": 1433,
+        "requests": 97,
+        "cost_usd": 0.9149343999999997,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 3843639,
+        "cached_input_tokens": 3783552,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13248,
+        "reasoning_output_tokens": 1182,
+        "requests": 69,
+        "cost_usd": 0.6310091999999999,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 11,
+      "participant": "player_2",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-29T15-00-28-01a0ee8a-2ba2-7382-923a-ac9360323075.jsonl",
+      "full_session": {
+        "input_tokens": 16598742,
+        "cached_input_tokens": 16295168,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 32092,
+        "reasoning_output_tokens": 16508,
+        "requests": 155,
+        "cost_usd": 0.20935508,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 7038673,
+        "cached_input_tokens": 6921216,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18809,
+        "reasoning_output_tokens": 8830,
+        "requests": 72,
+        "cost_usd": 0.09036236,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 12,
+      "participant": "player_1",
+      "model": "gpt-6-luna",
+      "rollout": "rollout-2026-09-29T15-49-33-01a0eeb7-1a35-7b62-a03d-aa34bb2eabea.jsonl",
+      "full_session": {
+        "input_tokens": 16039466,
+        "cached_input_tokens": 15762176,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33301,
+        "reasoning_output_tokens": 20274,
+        "requests": 149,
+        "cost_usd": 0.20200126000000007,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 5813838,
+        "cached_input_tokens": 5727744,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 20681,
+        "reasoning_output_tokens": 13647,
+        "requests": 54,
+        "cost_usd": 0.07622734,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    },
+    {
+      "setup": 12,
+      "participant": "player_2",
+      "model": "gpt-6.1-sol",
+      "rollout": "rollout-2026-09-29T15-49-37-01a0eeb7-28f8-7080-a455-c3ed37395de6.jsonl",
+      "full_session": {
+        "input_tokens": 7367337,
+        "cached_input_tokens": 7207808,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9953,
+        "reasoning_output_tokens": 942,
+        "requests": 138,
+        "cost_usd": 1.1393688000000006,
+        "long_context_requests": 0
+      },
+      "plan_requests": {
+        "input_tokens": 609930,
+        "cached_input_tokens": 576000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3189,
+        "reasoning_output_tokens": 193,
+        "requests": 18,
+        "cost_usd": 0.15735,
+        "long_context_requests": 0
+      },
+      "reconciles_to_final_token_count": true,
+      "reasoning_efforts": [
+        "medium"
+      ],
+      "recorded_service_tiers": [
+        "None"
+      ]
+    }
+  ],
+  "rates": {
+    "astra": [
+      10,
+      1,
+      12.5,
+      50
+    ],
+    "sol": [
+      2,
+      0.2,
+      2.5,
+      10
+    ],
+    "luna": [
+      0.1,
+      0.01,
+      0.125,
+      0.5
+    ],
+    "sol61": [
+      2,
+      0.1,
+      2.5,
+      10
+    ]
+  },
+  "pricing_basis": "Standard API-equivalent estimate, not actual billing; 6.1 rates checked 2026-09-29",
+  "plan_outcome_cohorts": {
+    "original": {
+      "sol61": {},
+      "astra": {
+        "accepted": 156,
+        "diagonal": 63,
+        "blocked": 2,
+        "post_finish": 17,
+        "run_mismatch": 2
+      },
+      "sol": {
+        "accepted": 182,
+        "post_finish": 13,
+        "blocked": 4,
+        "diagonal": 17
+      },
+      "luna": {
+        "accepted": 173,
+        "blocked": 1,
+        "diagonal": 10,
+        "post_finish": 21
+      }
+    },
+    "extension": {
+      "sol61": {
+        "diagonal": 105,
+        "accepted": 309,
+        "post_finish": 28,
+        "blocked": 5,
+        "stationary": 2
+      },
+      "astra": {
+        "diagonal": 14,
+        "accepted": 90,
+        "post_finish": 10,
+        "blocked": 2
+      },
+      "sol": {
+        "accepted": 78,
+        "post_finish": 10,
+        "diagonal": 1
+      },
+      "luna": {
+        "blocked": 15,
+        "waypoint_limit": 1,
+        "accepted": 90,
+        "diagonal": 12,
+        "post_finish": 6
+      }
+    }
+  }
+}

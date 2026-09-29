@@ -1,0 +1,433 @@
+{
+  "run_id": "run_da8df84bbe57",
+  "round": 7,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 31.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 65,
+      "damage_taken": 175,
+      "shots_fired": 13,
+      "shots_hit": 7,
+      "accuracy": 0.538,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 175,
+      "damage_taken": 65,
+      "shots_fired": 8,
+      "shots_hit": 7,
+      "accuracy": 0.875,
+      "final_health": 85
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2205",
+      "elapsed_ms": null,
+      "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 11428 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "2205",
+      "elapsed_ms": null,
+      "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14800 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 17,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 11428 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 13428 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(-512,576) the pickup is on the way to center aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 13571 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(-512,512) the pickup is on the way to center aim_error=-34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 13800 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-512,448) the pickup is on the way to center aim_error=-30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14028 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-512,384) the pickup is on the way to center aim_error=-30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14285 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(-512,320) the pickup is on the way to center aim_error=-32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14628 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(-576,320) the pickup is on the way to center aim_error=-35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14771 autopilot_action: player_1 action=route_complete reason=the pickup is on the way to center aim_error=-120"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 14800 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "unknown",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 15542 autopilot_action: player_1 action=route_complete reason=the pickup is on the way to center aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 24514 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-512,320) the previous route acquired the shotgun before contact aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 24542 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-512,320) the previous route acquired the shotgun before contact aim_error=62"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 24742 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-448,320) the previous route acquired the shotgun before contact aim_error=69"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 24971 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-384,320) the previous route acquired the shotgun before contact aim_error=76"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 25228 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-320,320) the previous route acquired the shotgun before contact aim_error=84"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 25485 autopilot_action: player_1 action=route_waypoint+attack reason=wp=5/8 target=(-320,320) the previous route acquired the shotgun before contact aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 25571 autopilot_action: player_1 action=route_waypoint+attack reason=wp=6/8 target=(-320,256) the previous route acquired the shotgun before contact aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 25714 autopilot_action: player_1 action=route_waypoint+attack reason=wp=7/8 target=(-320,192) the previous route acquired the shotgun before contact aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 26057 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) the previous route acquired the shotgun before contact aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 26200 autopilot_action: player_1 action=route_complete+attack reason=the previous route acquired the shotgun before contact aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 26942 autopilot_action: player_1 action=route_complete+attack reason=the previous route acquired the shotgun before contact aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 27885 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) the previous route acquired the shotgun before contact aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 27914 autopilot_action: player_1 action=route_complete+attack reason=the previous route acquired the shotgun before contact aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 29171 autopilot_action: player_1 action=route_complete+attack reason=the previous route acquired the shotgun before contact aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 29228 autopilot_action: player_1 action=route_complete reason=the previous route acquired the shotgun before contact aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 29485 autopilot_action: player_1 action=route_complete+attack reason=the previous route acquired the shotgun before contact aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2205",
+        "elapsed_ms": null,
+        "event": "run_da8df84bbe57 duel_e1m8_blind_spawn 2205 29742 autopilot_action: player_1 action=route_complete reason=the previous route acquired the shotgun before contact aim_error=6"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 118,
+        "distance_traveled": 2140.8,
+        "unique_cells_visited": 19,
+        "revisited_cells": 99
+      },
+      "player_2": {
+        "path_points": 118,
+        "distance_traveled": 3111.8,
+        "unique_cells_visited": 33,
+        "revisited_cells": 85
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4525.45,
+    "decision_p95_ms": 11549.0,
+    "decision_max_ms": 11549.0,
+    "mcp_avg_ms": 898.25,
+    "mcp_p95_ms": 1588.0,
+    "mcp_max_ms": 16703.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4095,
+      "player_2": 1560
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2565,
+      "player_2": 1560
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 12547,
+    "stale_intent_extension_max_ms": 12547
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making another questionable grocery run."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "reach the upper-left health corridor",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the same opening won the previous match",
+      "plan_summary": "I am repeating the one meeting that worked."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "collect the southern shotgun",
+      "route": "O24;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am stocking up on dramatic seasoning."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "O24",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am entering the pantry with a very bad idea."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "secure the north medikit route",
+      "route": "B09;C09;D09;E09;F09;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is on the way to center",
+      "plan_summary": "I am putting my health on autopilot."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "search the western open lane",
+      "route": "O17;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking my spicy personality to the west hallway."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western open lane",
+      "route": [
+        "O17",
+        "O12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am heading to the table with the worst manners."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach center by the west opening",
+      "route": "G08;G09;G10;G11;G12;H12;I12;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the previous route acquired the shotgun before contact",
+      "plan_summary": "I am following the map's only sensible suggestion."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "search the western open lane",
+      "route": "I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking upstairs for unpaid dinner bills."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "take the central shotgun before engaging",
+      "route": "I13;I14;I15;I16;H16;G16;F16;F17",
+      "engagement_policy": "",
+      "reasoning": "my pistol is losing damage against the armed opponent",
+      "plan_summary": "I am upgrading before the budget meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "recover health beside the western lane",
+      "route": "L12;L10",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am ordering urgent first aid with extra cheese."
+    }
+  ]
+}

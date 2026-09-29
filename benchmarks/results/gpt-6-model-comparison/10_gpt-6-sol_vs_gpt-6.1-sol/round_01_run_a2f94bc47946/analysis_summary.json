@@ -1,0 +1,447 @@
+{
+  "run_id": "run_a2f94bc47946",
+  "round": 1,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 43.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 60,
+      "damage_taken": 160,
+      "shots_fired": 13,
+      "shots_hit": 6,
+      "accuracy": 0.462,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 60,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 90
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2940",
+      "elapsed_ms": null,
+      "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the shotgun boosts close combat damage aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 27,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the shotgun boosts close combat damage aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) the shotgun boosts close combat damage aim_error=34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 514 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-832,576) the shotgun boosts close combat damage aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 742 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-768,576) the shotgun boosts close combat damage aim_error=-54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 1000 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-768,512) the shotgun boosts close combat damage aim_error=22"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 1257 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-704,512) the shotgun boosts close combat damage aim_error=-53"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 1514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-704,448) the shotgun boosts close combat damage aim_error=25"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 1657 autopilot_action: player_1 action=route_complete reason=the shotgun boosts close combat damage aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 2428 autopilot_action: player_1 action=route_complete reason=the shotgun boosts close combat damage aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 30228 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 34685 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-256,448) walls block the direct shotgun approach aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 34771 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-256,384) walls block the direct shotgun approach aim_error=75"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 34914 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-256,320) walls block the direct shotgun approach aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 35257 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-320,320) walls block the direct shotgun approach aim_error=-14"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 35485 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-320,256) walls block the direct shotgun approach aim_error=-105"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 35628 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-320,192) walls block the direct shotgun approach aim_error=-32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 35971 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-256,192) walls block the direct shotgun approach aim_error=-29"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 36114 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-192,192) walls block the direct shotgun approach aim_error=60"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 36342 autopilot_action: player_1 action=route_complete reason=walls block the direct shotgun approach aim_error=70"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 37085 autopilot_action: player_1 action=route_complete reason=walls block the direct shotgun approach aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 38685 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 39114 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 39600 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 39657 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-192,192) walls block the direct shotgun approach aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 39685 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 40400 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 42314 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_a2f94bc47946 duel_e1m8_blind_spawn 2940 42571 autopilot_action: player_1 action=route_complete+attack reason=walls block the direct shotgun approach aim_error=-4"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 168,
+        "distance_traveled": 2240.0,
+        "unique_cells_visited": 23,
+        "revisited_cells": 145
+      },
+      "player_2": {
+        "path_points": 168,
+        "distance_traveled": 2957.3,
+        "unique_cells_visited": 34,
+        "revisited_cells": 134
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5588.45,
+    "decision_p95_ms": 7882.0,
+    "decision_max_ms": 7882.0,
+    "mcp_avg_ms": 1049.71,
+    "mcp_p95_ms": 2459.0,
+    "mcp_max_ms": 13219.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3094,
+      "player_2": 5122
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1548,
+      "player_2": 3318
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 14817,
+    "stale_intent_extension_max_ms": 9969
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach the southern shotgun",
+      "route": "U32;T32;S32;S31;S30;R30;Q30;Q29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I brought a fork to a gunfight."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "reach the northern shotgun",
+      "route": "B02;B03;B04;C04;C05;D05;D06;E06",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun boosts close combat damage",
+      "plan_summary": "I brought a clipboard to a gunfight. Management approves."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the southern shotgun",
+      "route": "P29;O29;N29;N28;N27;O27;O26;O25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the scenic route to poor decisions."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern shotgun",
+      "route": [
+        "N28",
+        "N27",
+        "O27",
+        "O26",
+        "O25",
+        "O24",
+        "O23",
+        "O22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am pasta my comfort zone."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "approach the northern shotgun",
+      "route": "E06;E07;E08;E09;E10;E11;E12;E13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the inner entrance is south of this corridor",
+      "plan_summary": "My quarterly goal is aggressive stationery."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach cell R17",
+      "route": "O24;O23;O22;O21;O20;O19;O18;P18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I want the loud cutlery."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "collect the shotgun",
+      "route": "Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am upgrading my dinner manners."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "enter the central corridor",
+      "route": "E13;F13;G13;G12;H12;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "walls block the direct shotgun approach",
+      "plan_summary": "The office maze finally has a use."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "collect the shotgun and search",
+      "route": "R17;Q17;P17;O17;N17;N16;N15;N14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I will stir trouble with both hands."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western central lane",
+      "route": [
+        "Q17",
+        "P17",
+        "O17",
+        "N17",
+        "N16",
+        "N15",
+        "N14",
+        "M14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am looking for an unwilling dinner guest."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "claim the northern shotgun",
+      "route": "I14;I15;I16;H16;G16;G17;F17",
+      "engagement_policy": "",
+      "reasoning": "the opponent already has a shotgun",
+      "plan_summary": "I am promoting myself to shotgun supervisor."
+    }
+  ]
+}

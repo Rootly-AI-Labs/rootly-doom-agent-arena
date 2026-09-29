@@ -34,7 +34,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sessions-root", type=Path, default=Path.home()/".codex/sessions")
     args = parser.parse_args()
-    entries = re.findall(r"\| ([1-6])/player_([12]) \((Astra|Sol|Luna)\) \| (rollout-[^ |]+\.jsonl) \|", (ROOT/"README.md").read_text(encoding="utf-8"))
+    entries = re.findall(r"\| ([1-6])/player_([12]) \((Astra|Sol|Luna)\) \| (rollout-[^ |]+\.jsonl) \|", (ROOT/"README-pre-6.1-update.md").read_text(encoding="utf-8"))
     assert len(entries) == 12
     totals = {m: {"full_session": empty(), "plan_requests": empty()} for m in RATES}
     sessions = []

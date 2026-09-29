@@ -1,0 +1,283 @@
+{
+  "run_id": "run_e7d7e6b5831d",
+  "round": 8,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 14.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 10,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 1,
+      "accuracy": 0.2,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 10,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 140
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1330",
+      "elapsed_ms": null,
+      "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) this edge reduced shotgun hits previously aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 13,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,576) this edge reduced shotgun hits previously aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 142 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,512) this edge reduced shotgun hits previously aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,448) this edge reduced shotgun hits previously aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 628 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,384) this edge reduced shotgun hits previously aim_error=-56"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,320) this edge reduced shotgun hits previously aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 1114 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-960,256) this edge reduced shotgun hits previously aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,192) this edge reduced shotgun hits previously aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 1600 autopilot_action: player_1 action=route_complete reason=this edge reduced shotgun hits previously aim_error=-58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 2342 autopilot_action: player_1 action=route_complete reason=this edge reduced shotgun hits previously aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 11942 autopilot_action: player_1 action=route_complete+attack reason=this edge reduced shotgun hits previously aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 12000 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-960,192) this edge reduced shotgun hits previously aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 12028 autopilot_action: player_1 action=route_complete+attack reason=this edge reduced shotgun hits previously aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_e7d7e6b5831d duel_e1m8_blind_spawn 1330 13257 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-960,192) this edge reduced shotgun hits previously aim_error=-3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 2,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 53,
+        "distance_traveled": 610.9,
+        "unique_cells_visited": 8,
+        "revisited_cells": 45
+      },
+      "player_2": {
+        "path_points": 53,
+        "distance_traveled": 3406.1,
+        "unique_cells_visited": 44,
+        "revisited_cells": 9
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6396.4,
+    "decision_p95_ms": 9589.0,
+    "decision_max_ms": 9589.0,
+    "mcp_avg_ms": 1045.06,
+    "mcp_p95_ms": 3585.0,
+    "mcp_max_ms": 11196.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 2347,
+      "player_2": 3559
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2347,
+      "player_2": 3559
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 4394,
+    "stale_intent_extension_max_ms": 4394
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the shotgun and sweep west",
+      "route": "V22;O22;O17;R17;O17;O12;I12;I08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making another reckless dinner delivery."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "move down the western edge",
+      "route": "B02;C02;D02;E02;F02;G02;H02;I02",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this edge reduced shotgun hits previously",
+      "plan_summary": "I am taking the scenic route to unemployment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "search the western edge",
+      "route": "I08;G08;G09;B09;B05;I05;I02",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking leftovers to the alley."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "weave toward southern cover",
+      "route": "I02;I03;I04;I05;J05;K05;L05;M05",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a turn disrupts the opponent's firing line",
+      "plan_summary": "I zigzag because the budget forbids body armor."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the western perimeter",
+      "route": [
+        "G08",
+        "G09",
+        "B09",
+        "B05",
+        "I05",
+        "I02",
+        "P02"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am patrolling the delivery entrance."
+    }
+  ]
+}

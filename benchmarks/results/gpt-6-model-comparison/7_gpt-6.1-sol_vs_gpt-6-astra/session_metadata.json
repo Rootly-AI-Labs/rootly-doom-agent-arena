@@ -1,0 +1,14 @@
+{
+  "session_id": "session_8734a932dd37",
+  "label": "GPT-6.1 Sol vs GPT-6 Astra",
+  "completed_matches": 10,
+  "draws": 0,
+  "mirrored_pairing_complete": false,
+  "included_in_original_60_match_leaderboard": false,
+  "identity_source": "codex_turn_context",
+  "raw_artifacts_preserved": true,
+  "players": {
+    "player_1": {"agent_name": "Stapler Boss", "model": "gpt-6.1-sol", "reasoning_effort": "medium", "wins": 8},
+    "player_2": {"agent_name": "Panic Ravioli", "model": "gpt-6-astra", "reasoning_effort": "medium", "wins": 2, "incorrect_reported_model": "gpt-6-sol"}
+  }
+}

@@ -1,0 +1,320 @@
+{
+  "run_id": "run_b284c0dd5a8e",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 40.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 170,
+      "damage_taken": 50,
+      "shots_fired": 6,
+      "shots_hit": 4,
+      "accuracy": 0.667,
+      "final_health": 100
+    },
+    "player_2": {
+      "damage_dealt": 50,
+      "damage_taken": 170,
+      "shots_fired": 1,
+      "shots_hit": 1,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3220",
+      "elapsed_ms": null,
+      "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3220",
+      "elapsed_ms": null,
+      "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 18142 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 2
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3220",
+        "elapsed_ms": null,
+        "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3220",
+        "elapsed_ms": null,
+        "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 5028 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3220",
+        "elapsed_ms": null,
+        "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 18142 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3220",
+        "elapsed_ms": null,
+        "event": "run_b284c0dd5a8e duel_e1m8_blind_spawn 3220 37571 pickup: player_2 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 156,
+        "distance_traveled": 4458.3,
+        "unique_cells_visited": 50,
+        "revisited_cells": 106
+      },
+      "player_2": {
+        "path_points": 156,
+        "distance_traveled": 3540.5,
+        "unique_cells_visited": 41,
+        "revisited_cells": 115
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6846.17,
+    "decision_p95_ms": 9280.0,
+    "decision_max_ms": 11651.0,
+    "mcp_avg_ms": 928.47,
+    "mcp_p95_ms": 2194.0,
+    "mcp_max_ms": 17179.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 0
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5672,
+      "player_2": 3698
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2582,
+      "player_2": 2156
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 36691,
+    "stale_intent_extension_max_ms": 24510
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "arm and reach the eastern medikit",
+      "route": "V22;O22;O17;R17;O17;O22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I packed both hot sauce and bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun quickly",
+      "route": "B12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I return from my very long coffee break."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "arm and reach the eastern medikit",
+      "route": [
+        "V22",
+        "O22",
+        "O17",
+        "R17",
+        "O17",
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I packed both hot sauce and bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun quickly",
+      "route": [
+        "B12",
+        "I12",
+        "I17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I finish the express supply run."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the eastern medikit",
+      "route": [
+        "O22",
+        "L22",
+        "L24"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am checking in at the snack clinic."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol past the west medikits",
+      "route": "I17;I12;L12;L10;L12;O12;O08;Q08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I make health care my office location."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "patrol between eastern medikits",
+      "route": "L22;I22;I26;G26;I26;O26;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am on the all-you-can-heal tour."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "patrol past the west medikits",
+      "route": [
+        "I17",
+        "I12",
+        "L12",
+        "L10",
+        "L12",
+        "O12",
+        "O08",
+        "Q08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I keep moving through my benefits tour."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "patrol between eastern medikits",
+      "route": [
+        "L22",
+        "I22",
+        "I26",
+        "G26",
+        "I26",
+        "O26",
+        "Q26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am on the all-you-can-heal tour."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "sweep the east health stations",
+      "route": "O08;O12;O22;Q22;Q26;O26;I26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I go inspect their suspicious sick leave."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "sweep the east health stations",
+      "route": [
+        "O08",
+        "O12",
+        "O22",
+        "Q22",
+        "Q26",
+        "O26",
+        "I26",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I keep the office inspection rolling."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep west with healing stops",
+      "route": "O26;O12;L12;L10;L12;O12;O08;Q08",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am touring every questionable lunch spot."
+    }
+  ]
+}

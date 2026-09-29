@@ -1,0 +1,11 @@
+{
+  "session_id": "session_85a56520f514",
+  "label": "GPT-6 Astra vs GPT-6.1 Sol",
+  "completed_matches": 10,
+  "included_in_original_60_match_leaderboard": false,
+  "identity_source": "codex_turn_context",
+  "players": {
+    "player_1": {"agent_name": "Chairman Stapler", "model": "gpt-6-astra", "reasoning_effort": "medium", "wins": 3, "incorrect_reported_identity": "gpt-6-sol high"},
+    "player_2": {"agent_name": "Clingy Ravioli", "model": "gpt-6.1-sol", "reasoning_effort": "medium", "wins": 7}
+  }
+}

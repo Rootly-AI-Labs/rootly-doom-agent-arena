@@ -1,0 +1,257 @@
+{
+  "run_id": "run_e55cdceea0c8",
+  "round": 2,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 41.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 0,
+      "shots_fired": 9,
+      "shots_hit": 8,
+      "accuracy": 0.889,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 155,
+      "shots_fired": 18,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2905",
+      "elapsed_ms": null,
+      "event": "run_e55cdceea0c8 duel_e1m8_blind_spawn 2905 33028 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2905",
+        "elapsed_ms": null,
+        "event": "run_e55cdceea0c8 duel_e1m8_blind_spawn 2905 33028 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_crosses_blocked_cell": 1,
+      "route_diagonal_segment": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 162,
+        "distance_traveled": 2689.5,
+        "unique_cells_visited": 32,
+        "revisited_cells": 130
+      },
+      "player_2": {
+        "path_points": 162,
+        "distance_traveled": 2256.9,
+        "unique_cells_visited": 21,
+        "revisited_cells": 141
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10728.6,
+    "decision_p95_ms": 23541.0,
+    "decision_max_ms": 23541.0,
+    "mcp_avg_ms": 1317.7,
+    "mcp_p95_ms": 3035.0,
+    "mcp_max_ms": 17964.0
+  },
+  "errors": {
+    "route_crosses_blocked_cell": 1,
+    "route_diagonal_segment": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5669,
+      "player_2": 3848
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2581,
+      "player_2": 2307
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 20078,
+    "stale_intent_extension_max_ms": 12238
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "advance up the eastern edge toward the northern shotgun",
+      "route": "V32;R32;R30;N30;K30;H30;G30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the outer corridor avoids the blocked center lanes",
+      "plan_summary": "I am taking my nachos on a northbound road trip."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun",
+      "route": "C02;D02;E02;E03;E04;E05;E06;E07",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am renewing my loud management license."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "collect the north shotgun",
+      "route": "E07;E08;E09;F09;G09;H09;I09;I10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am shopping for a persuasive stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the northeast medikit",
+      "route": [
+        "P30",
+        "N30",
+        "K30",
+        "H30",
+        "I30",
+        "I26",
+        "H26",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "it is the closest available healing pickup",
+      "plan_summary": "I am politely requesting a health burrito."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "collect the north shotgun",
+      "route": "I10;I11;I12;I13;I14;I15;I16;H16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am almost ready to call this meeting to disorder."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "circle the wall toward the northeast medikit",
+      "route": "G30;H30;I30;J30;J27;J26;I26;H26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "J28 is open while I28 is blocked",
+      "plan_summary": "I am taking a polite detour for first aid."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun",
+      "route": [
+        "I14",
+        "I15",
+        "I16",
+        "H16",
+        "G16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am signing for my noise allowance."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "equip the shotgun and enter the center",
+      "route": "G16;F16;F17;G17;H17;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am now the head of loud operations."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "arm up and search the east lane",
+      "route": "F17;G17;H17;I17;J17;J18;J19;J20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing the noise to the east wing."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the east interior",
+      "route": [
+        "H17",
+        "I17",
+        "J17",
+        "J18",
+        "J19",
+        "J20",
+        "K20",
+        "L20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am visiting the complaints desk in person."
+    }
+  ]
+}

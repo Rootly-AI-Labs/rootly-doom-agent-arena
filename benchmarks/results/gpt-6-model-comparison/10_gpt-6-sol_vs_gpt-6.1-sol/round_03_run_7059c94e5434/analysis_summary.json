@@ -1,0 +1,301 @@
+{
+  "run_id": "run_7059c94e5434",
+  "round": 3,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 38.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 75,
+      "damage_taken": 240,
+      "shots_fired": 15,
+      "shots_hit": 7,
+      "accuracy": 0.467,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 240,
+      "damage_taken": 75,
+      "shots_fired": 8,
+      "shots_hit": 8,
+      "accuracy": 1.0,
+      "final_health": 110
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_7059c94e5434 duel_e1m8_blind_spawn 2485 5028 pickup: player_2 shotgun x=0 y=-384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2485",
+      "elapsed_ms": null,
+      "event": "run_7059c94e5434 duel_e1m8_blind_spawn 2485 18285 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_7059c94e5434 duel_e1m8_blind_spawn 2485 5028 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_7059c94e5434 duel_e1m8_blind_spawn 2485 18285 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2485",
+        "elapsed_ms": null,
+        "event": "run_7059c94e5434 duel_e1m8_blind_spawn 2485 23085 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 9
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 5
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 4,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 148,
+        "distance_traveled": 1470.8,
+        "unique_cells_visited": 15,
+        "revisited_cells": 133
+      },
+      "player_2": {
+        "path_points": 148,
+        "distance_traveled": 6109.7,
+        "unique_cells_visited": 60,
+        "revisited_cells": 88
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5796.09,
+    "decision_p95_ms": 8964.0,
+    "decision_max_ms": 8964.0,
+    "mcp_avg_ms": 782.57,
+    "mcp_p95_ms": 1570.0,
+    "mcp_max_ms": 16347.0
+  },
+  "errors": {
+    "route_diagonal_segment": 4,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 16357,
+    "stale_intent_extension_max_ms": 11017
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western lanes",
+      "route": [
+        "L12",
+        "I12",
+        "I08",
+        "G08",
+        "I08",
+        "I12",
+        "O12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am bringing leftovers to the wrong party."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the shotgun and search",
+      "route": "V22;O22;O17;R17;O17;O14;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am speedrunning dinner regret."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "approach the west medikit",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the west entrance leads to emergency healing",
+      "plan_summary": "My benefits package includes one suspicious floor medikit."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the shotgun and search",
+      "route": [
+        "V22",
+        "O22",
+        "O17",
+        "R17",
+        "O17",
+        "O14",
+        "I14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am taking my fork to the loud buffet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "search the northern and eastern lanes",
+      "route": "O14;I14;I17;F17;I17;I22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking every table for my nemesis."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "heal and pursue the western contact",
+      "route": [
+        "I14",
+        "I12",
+        "L12",
+        "L10",
+        "L12",
+        "I12",
+        "G12",
+        "G08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am getting patched before seconds."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "collect the west medikit",
+      "route": "B09;C09;D09;E09;F09;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing restores my early damage",
+      "plan_summary": "I need the office first aid box right now."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "search near the last northern contact",
+      "route": "L22;I22;I12;D12;D09;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am following yesterday's dinner invitation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep the northern perimeter",
+      "route": [
+        "I12",
+        "D12",
+        "D09",
+        "B09",
+        "B26",
+        "D26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am ruining the seating plan."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "heal and search the western side",
+      "route": "B12;L12;L10;L12;O12;O08;Q08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am searching the pantry for bandages."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "advance toward the northern shotgun",
+      "route": "G08;G09;H09;I09;I10;I11;I12;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing bought time to secure the weapon",
+      "plan_summary": "Bandaged up; returning to the worst team meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "heal and search the western side",
+      "route": "L12;L10;L12;O12;O08;Q08",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am putting bandages on the menu."
+    }
+  ]
+}

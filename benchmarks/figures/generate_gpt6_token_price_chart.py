@@ -27,6 +27,8 @@ RESULTS = ROOT / "benchmarks/results/gpt-6-model-comparison"
 cost_report = json.loads((RESULTS / "cost_analysis.json").read_text())
 counts, wins, run_ids = Counter(), Counter(), set()
 for summary_path in sorted(RESULTS.glob("*/*/summary.json")):
+    if int(summary_path.parts[-3].split('_')[0]) > 6:
+        continue  # Preserve the original 60-match chart as a historical artifact.
     summary = json.loads(summary_path.read_text())
     assert summary["run_id"] not in run_ids
     run_ids.add(summary["run_id"])

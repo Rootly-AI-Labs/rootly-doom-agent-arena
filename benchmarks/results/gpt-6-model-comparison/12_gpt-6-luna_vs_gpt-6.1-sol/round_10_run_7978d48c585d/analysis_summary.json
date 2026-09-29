@@ -1,0 +1,592 @@
+{
+  "run_id": "run_7978d48c585d",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 49.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 70,
+      "shots_fired": 8,
+      "shots_hit": 6,
+      "accuracy": 0.75,
+      "final_health": 80
+    },
+    "player_2": {
+      "damage_dealt": 70,
+      "damage_taken": 150,
+      "shots_fired": 8,
+      "shots_hit": 3,
+      "accuracy": 0.375,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3185",
+      "elapsed_ms": null,
+      "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 12714 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-512,640) this is a direct step toward the shotgun aim_error=-35"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "3185",
+      "elapsed_ms": null,
+      "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38114 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(0,384) I am fully healthy and armed now aim_error=-1"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 11,
+        "health": 28
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 12714 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-512,640) this is a direct step toward the shotgun aim_error=-35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 12742 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-512,576) this is a direct step toward the shotgun aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 12885 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-512,512) this is a direct step toward the shotgun aim_error=-26"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 13114 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-512,448) this is a direct step toward the shotgun aim_error=-34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 13371 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-512,384) this is a direct step toward the shotgun aim_error=-38"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 13600 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-512,320) this is a direct step toward the shotgun aim_error=-41"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 13942 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-448,320) this is a direct step toward the shotgun aim_error=-47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 14085 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-384,320) this is a direct step toward the shotgun aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 14314 autopilot_action: player_1 action=route_complete reason=this is a direct step toward the shotgun aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 15057 autopilot_action: player_1 action=route_complete reason=this is a direct step toward the shotgun aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 17057 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 30685 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38114 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(0,384) I am fully healthy and armed now aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38142 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(0,384) I am fully healthy and armed now aim_error=-104"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38200 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(0,320) I am fully healthy and armed now aim_error=-105"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38342 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(0,256) I am fully healthy and armed now aim_error=-36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38600 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(0,192) I am fully healthy and armed now aim_error=-34"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 38942 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-64,192) I am fully healthy and armed now aim_error=-37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 39085 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-128,192) I am fully healthy and armed now aim_error=-123"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 39314 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-192,192) I am fully healthy and armed now aim_error=-133"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 39571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=-139"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 39800 autopilot_action: player_1 action=route_complete reason=I am fully healthy and armed now aim_error=-143"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 40542 autopilot_action: player_1 action=route_complete reason=I am fully healthy and armed now aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 43342 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 43400 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 43428 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 44171 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 44457 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 44485 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 45114 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 45142 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 45885 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 46171 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 46200 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 46685 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 46714 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 47457 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 48057 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-256,192) I am fully healthy and armed now aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 48085 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3185",
+        "elapsed_ms": null,
+        "event": "run_7978d48c585d duel_e1m8_blind_spawn 3185 48828 autopilot_action: player_1 action=route_complete+attack reason=I am fully healthy and armed now aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 9
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 4,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 191,
+        "distance_traveled": 3094.7,
+        "unique_cells_visited": 27,
+        "revisited_cells": 164
+      },
+      "player_2": {
+        "path_points": 191,
+        "distance_traveled": 2510.2,
+        "unique_cells_visited": 29,
+        "revisited_cells": 162
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6345.36,
+    "decision_p95_ms": 7700.0,
+    "decision_max_ms": 16862.0,
+    "mcp_avg_ms": 576.18,
+    "mcp_p95_ms": 1571.0,
+    "mcp_max_ms": 10186.0
+  },
+  "errors": {
+    "route_diagonal_segment": 4,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4614,
+      "player_2": 3065
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1542,
+      "player_2": 1536
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 22750,
+    "stale_intent_extension_max_ms": 15669
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "circle toward eastern health while engaging",
+      "route": [
+        "I22",
+        "G22",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am serving shots while heading for the medical buffet."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the last seen central lane",
+      "route": [
+        "I17",
+        "I16",
+        "I15",
+        "I14",
+        "I13",
+        "I12",
+        "J12",
+        "K12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I have full health and shotgun for a close engagement",
+      "plan_summary": "I am walking into the meeting with the right equipment."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making another questionable grocery run."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "take the north lane toward the central weapon",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct opening was my only recent winning route",
+      "plan_summary": "Final meeting: bring the shotgun, skip the slides."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "S27",
+        "S25",
+        "O25",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am preparing the final course of bad decisions."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "cross to the central west passage",
+      "route": "B09;C09;D09;E09;F09;G09;G10;G11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this is a direct step toward the shotgun",
+      "plan_summary": "I am taking the express lane to firepower."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "collect the southern shotgun",
+      "route": "O24;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am fetching dessert with explosive toppings."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the west side of the shotgun room",
+      "route": "G11;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this avoids the central blocked wall",
+      "plan_summary": "I am navigating around a very large no."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "O24",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am picking up the last terrible utensil."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "equip the central shotgun",
+      "route": "I16;H16;G16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is now a short run away",
+      "plan_summary": "I am finally bringing the loud agenda item."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "search the southern eastern corridor",
+      "route": "O17;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking the final dinner cart around the east wall."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the eastern open lane",
+      "route": [
+        "N18",
+        "N20",
+        "I20",
+        "I21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am bringing the final bill up the east hallway."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "push toward the opponent's last seen center route",
+      "route": "F17;G17;H17;I17;I16;I15;I14;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I am fully healthy and armed now",
+      "plan_summary": "I brought the right paperwork and the loud tool."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "search the eastern open lane",
+      "route": "I21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am creeping upstairs with a plate of consequences."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "grab the nearby medikit before the next fight",
+      "route": "I13;I12;J12;K12;K11;K10;L10",
+      "engagement_policy": "",
+      "reasoning": "I lost 35 health and the pickup is still available",
+      "plan_summary": "I am making a quick stop at medical."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the northern open corridor",
+      "route": "I21;I13",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am presenting the final spicy invoice."
+    }
+  ]
+}

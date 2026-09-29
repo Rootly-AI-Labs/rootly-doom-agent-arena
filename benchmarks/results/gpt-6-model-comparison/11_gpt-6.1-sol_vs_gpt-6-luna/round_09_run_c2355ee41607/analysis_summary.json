@@ -1,0 +1,204 @@
+{
+  "run_id": "run_c2355ee41607",
+  "round": 9,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 15.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 50,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 100
+    },
+    "player_2": {
+      "damage_dealt": 50,
+      "damage_taken": 155,
+      "shots_fired": 10,
+      "shots_hit": 4,
+      "accuracy": 0.4,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2625",
+      "elapsed_ms": null,
+      "event": "run_c2355ee41607 duel_e1m8_blind_spawn 2625 5114 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2625",
+        "elapsed_ms": null,
+        "event": "run_c2355ee41607 duel_e1m8_blind_spawn 2625 5114 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 57,
+        "distance_traveled": 2446.8,
+        "unique_cells_visited": 33,
+        "revisited_cells": 24
+      },
+      "player_2": {
+        "path_points": 57,
+        "distance_traveled": 1593.2,
+        "unique_cells_visited": 21,
+        "revisited_cells": 36
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10500.5,
+    "decision_p95_ms": 19690.0,
+    "decision_max_ms": 19690.0,
+    "mcp_avg_ms": 771.86,
+    "mcp_p95_ms": 3922.0,
+    "mcp_max_ms": 11689.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 0
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 2314,
+      "player_2": 2053
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2314,
+      "player_2": 2053
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 44006,
+    "stale_intent_extension_max_ms": 24137
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun",
+      "route": "E02;E09;I09;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am renewing my hostile office supplies."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "race toward the northern shotgun via the east",
+      "route": "V32;R32;R30;N30;J30;J26;H26;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southern passage is guarded by the opponent",
+      "plan_summary": "I am switching lanes with my spicy snack map."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "equip the shotgun and search east",
+      "route": "F17;I17;I22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am taking complaints at maximum volume."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on the northwest shotgun route",
+      "route": [
+        "N30",
+        "J30",
+        "J26",
+        "H26",
+        "H22",
+        "J22",
+        "J20",
+        "I20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is near O22 and the weapon is north",
+      "plan_summary": "I am cutting across with spicy confidence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "restore health at the eastern medikit",
+      "route": "O22;L22;L24",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am ordering fresh bandages for management."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "take the northern shotgun before the opponent reaches me",
+      "route": "H22;J22;J20;I20;I18;H18;F18",
+      "engagement_policy": "",
+      "reasoning": "the north pickup remains available",
+      "plan_summary": "I am making a run for the spicy snack cannon."
+    }
+  ]
+}

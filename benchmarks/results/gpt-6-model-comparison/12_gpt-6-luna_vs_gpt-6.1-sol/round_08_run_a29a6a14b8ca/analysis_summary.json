@@ -1,0 +1,566 @@
+{
+  "run_id": "run_a29a6a14b8ca",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 53.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 175,
+      "damage_taken": 75,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 75
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 175,
+      "shots_fired": 5,
+      "shots_hit": 2,
+      "accuracy": 0.4,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10171 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-512,640) this moves directly toward the shotgun route aim_error=6"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the direct route skips an unnecessary health detour aim_error=-11"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 26,
+        "health": 32
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) the direct route skips an unnecessary health detour aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) the direct route skips an unnecessary health detour aim_error=35"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) the direct route skips an unnecessary health detour aim_error=37"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) the direct route skips an unnecessary health detour aim_error=39"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) the direct route skips an unnecessary health detour aim_error=42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) the direct route skips an unnecessary health detour aim_error=44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 1628 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=50"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 2371 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 2628 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 3371 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 3600 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 4342 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 4571 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 5314 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 5542 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 6285 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 6485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 6514 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 7257 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 7457 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 7485 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 8228 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 8428 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 8457 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 9200 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 9400 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) the direct route skips an unnecessary health detour aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 9428 autopilot_action: player_1 action=route_complete reason=the direct route skips an unnecessary health detour aim_error=54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10171 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-512,640) this moves directly toward the shotgun route aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10200 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-512,640) this moves directly toward the shotgun route aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10257 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-512,576) this moves directly toward the shotgun route aim_error=-125"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10400 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-512,512) this moves directly toward the shotgun route aim_error=-46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10628 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-512,448) this moves directly toward the shotgun route aim_error=-41"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 10885 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-512,384) this moves directly toward the shotgun route aim_error=-40"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 11114 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-512,320) this moves directly toward the shotgun route aim_error=-41"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_a29a6a14b8ca duel_e1m8_blind_spawn 2730 11457 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-448,320) this moves directly toward the shotgun route aim_error=-44"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 10
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 208,
+        "distance_traveled": 2682.2,
+        "unique_cells_visited": 27,
+        "revisited_cells": 181
+      },
+      "player_2": {
+        "path_points": 207,
+        "distance_traveled": 3267.6,
+        "unique_cells_visited": 36,
+        "revisited_cells": 171
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5064.87,
+    "decision_p95_ms": 6009.0,
+    "decision_max_ms": 16143.0,
+    "mcp_avg_ms": 731.08,
+    "mcp_p95_ms": 1566.0,
+    "mcp_max_ms": 14588.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 7
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1537,
+      "player_2": 3061
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1537,
+      "player_2": 1533
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 18261,
+    "stale_intent_extension_max_ms": 14644
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "collect the southern shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am making another questionable grocery run."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "take the north lane toward the central weapon",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the direct route skips an unnecessary health detour",
+      "plan_summary": "I am expediting the shotgun request."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "cross to the central west passage",
+      "route": "B09;C09;D09;E09;F09;G09;G10;G11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this moves directly toward the shotgun route",
+      "plan_summary": "I am skipping the snack break this round."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "collect the southern shotgun",
+      "route": "O24;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am shopping for unnecessarily loud utensils."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "collect the southern shotgun",
+      "route": [
+        "O24",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am securing the spicy serving spoon."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "use the west passage toward the shotgun",
+      "route": "G11;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this direct corridor keeps me moving toward the weapon",
+      "plan_summary": "The shortcut passed its safety inspection."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "search the western open lane",
+      "route": "O17;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am joining the hallway potluck with bad intentions."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "equip the shotgun now",
+      "route": "I16;H16;G16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the weapon is one short corridor away",
+      "plan_summary": "I can hear the other team's budget."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "search the western open lane",
+      "route": [
+        "O17",
+        "O12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am wheeling my terrible food cart west."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "search the western open lane",
+      "route": "I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am bringing a very stern dinner invitation."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "recover health beside the western lane",
+      "route": "L12;L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am refilling my life with emergency lasagna."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "recover health beside the western lane",
+      "route": [
+        "K12",
+        "K10",
+        "L10"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am insisting on the medicinal side dish."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hold range near the opponent's route",
+      "route": "F17;G17;H17;I17;I16;I15;I14;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun can reach them without a close collision",
+      "plan_summary": "I am scheduling this duel at a safe distance."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "search the western open lane",
+      "route": "K10;K12;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am fully sauced and returning to the hallway."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "recover health in the northern western alcove",
+      "route": "K10;K12;G12;G08",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am fleeing toward the emergency snack station."
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "run_id": "run_ee82b39c33ae",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 25.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 95,
+      "shots_fired": 6,
+      "shots_hit": 5,
+      "accuracy": 0.833,
+      "final_health": 55
+    },
+    "player_2": {
+      "damage_dealt": 95,
+      "damage_taken": 155,
+      "shots_fired": 12,
+      "shots_hit": 9,
+      "accuracy": 0.75,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3045",
+      "elapsed_ms": null,
+      "event": "run_ee82b39c33ae duel_e1m8_blind_spawn 3045 5114 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3045",
+        "elapsed_ms": null,
+        "event": "run_ee82b39c33ae duel_e1m8_blind_spawn 3045 5114 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 97,
+        "distance_traveled": 2525.5,
+        "unique_cells_visited": 32,
+        "revisited_cells": 65
+      },
+      "player_2": {
+        "path_points": 97,
+        "distance_traveled": 3096.1,
+        "unique_cells_visited": 25,
+        "revisited_cells": 72
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9983.14,
+    "decision_p95_ms": 14873.0,
+    "decision_max_ms": 14873.0,
+    "mcp_avg_ms": 1544.0,
+    "mcp_p95_ms": 7021.0,
+    "mcp_max_ms": 20165.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3596
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 2049
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 41264,
+    "stale_intent_extension_max_ms": 39158
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "search the northwest interior",
+      "route": [
+        "I22",
+        "I12",
+        "G12",
+        "G08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am inspecting the suspicious coffee corner."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun",
+      "route": "E02;E09;I09;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am clocking in with hostile confidence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "rush up the eastern corridor toward the enemy",
+      "route": "V32;R32;R30;N30;K30;H30;G30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent reaches the center quickly",
+      "plan_summary": "I am delivering spicy nachos in a hurry."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "collect the north shotgun",
+      "route": [
+        "E02",
+        "E09",
+        "I09",
+        "I16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "I am heading to the loud equipment cupboard."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach the east side of the central shotgun lane",
+      "route": "R30;N30;K30;J30;J27;J26;H26;H22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the route safely circles the blocked walls",
+      "plan_summary": "My nachos are taking the dependable detour."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "search the eastern center",
+      "route": "I17;I22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering a loud performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "cross to the southern shotgun passage",
+      "route": [
+        "M30",
+        "J30",
+        "J27",
+        "J26",
+        "H26",
+        "H22",
+        "J22",
+        "P22"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this detour avoids the central barrier",
+      "plan_summary": "I am taking the burrito tunnel around the wall."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach the southern shotgun through the west gap",
+      "route": "H22;J22;P22;O22;O18;P18;Q18;R18",
+      "engagement_policy": "",
+      "reasoning": "the path wraps around the blocked central cells",
+      "plan_summary": "I found the sneaky passage for my snack cannon."
+    }
+  ]
+}

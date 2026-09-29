@@ -1,0 +1,443 @@
+{
+  "run_id": "run_c57b190e395e",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 67.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 175,
+      "damage_taken": 75,
+      "shots_fired": 6,
+      "shots_hit": 6,
+      "accuracy": 1.0,
+      "final_health": 85
+    },
+    "player_2": {
+      "damage_dealt": 75,
+      "damage_taken": 175,
+      "shots_fired": 10,
+      "shots_hit": 7,
+      "accuracy": 0.7,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "4970",
+      "elapsed_ms": null,
+      "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 5114 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "4970",
+      "elapsed_ms": null,
+      "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 23171 autopilot_action: player_2 action=route_waypoint reason=wp=2/2 target=(-576,-704) I have 150 health and the opponent is far away aim_error=4"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 24
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 5114 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 23171 autopilot_action: player_2 action=route_waypoint reason=wp=2/2 target=(-576,-704) I have 150 health and the opponent is far away aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 23200 autopilot_action: player_2 action=route_waypoint reason=wp=2/2 target=(-576,-704) I have 150 health and the opponent is far away aim_error=-94"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 23971 autopilot_action: player_2 action=route_complete reason=I have 150 health and the opponent is far away aim_error=-115"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 24714 autopilot_action: player_2 action=route_complete reason=I have 150 health and the opponent is far away aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 30971 autopilot_action: player_2 action=route_complete+attack reason=I have 150 health and the opponent is far away aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 31542 autopilot_action: player_2 action=route_complete reason=I have 150 health and the opponent is far away aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 38885 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(-576,-704) I lost 5 health and the pickup is nearby aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 38914 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(-576,-704) I lost 5 health and the pickup is nearby aim_error=20"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 38942 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(-512,-704) I lost 5 health and the pickup is nearby aim_error=21"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 39200 autopilot_action: player_2 action=route_waypoint reason=wp=3/5 target=(-512,-512) I lost 5 health and the pickup is nearby aim_error=-59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 39742 autopilot_action: player_2 action=route_waypoint reason=wp=4/5 target=(-512,-320) I lost 5 health and the pickup is nearby aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 40485 autopilot_action: player_2 action=route_waypoint reason=wp=5/5 target=(-576,-320) I lost 5 health and the pickup is nearby aim_error=57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 40628 autopilot_action: player_2 action=route_complete reason=I lost 5 health and the pickup is nearby aim_error=143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 40657 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 41400 autopilot_action: player_2 action=route_complete reason=I lost 5 health and the pickup is nearby aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 41885 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 55400 autopilot_action: player_2 action=route_complete+attack reason=I lost 5 health and the pickup is nearby aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 56914 autopilot_action: player_2 action=route_complete reason=I lost 5 health and the pickup is nearby aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 65371 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(-512,-320) the opponent remains near the center and I lead in health aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 65400 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(-512,-320) the opponent remains near the center and I lead in health aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 65657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/7 target=(-512,-320) the opponent remains near the center and I lead in health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 65685 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/7 target=(-512,-384) the opponent remains near the center and I lead in health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 65828 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/7 target=(-512,-448) the opponent remains near the center and I lead in health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 66057 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/7 target=(-512,-512) the opponent remains near the center and I lead in health aim"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4970",
+        "elapsed_ms": null,
+        "event": "run_c57b190e395e duel_e1m8_blind_spawn 4970 66314 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/7 target=(-512,-704) the opponent remains near the center and I lead in health aim"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 259,
+        "distance_traveled": 8253.8,
+        "unique_cells_visited": 86,
+        "revisited_cells": 173
+      },
+      "player_2": {
+        "path_points": 259,
+        "distance_traveled": 2879.5,
+        "unique_cells_visited": 31,
+        "revisited_cells": 228
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10795.46,
+    "decision_p95_ms": 20399.0,
+    "decision_max_ms": 23310.0,
+    "mcp_avg_ms": 1386.15,
+    "mcp_p95_ms": 4192.0,
+    "mcp_max_ms": 20035.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3094
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1547
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 55760,
+    "stale_intent_extension_max_ms": 36861
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "collect the north shotgun",
+      "route": "E02;E09;I09;I16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am preparing my final loud staff meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "keep to the far southern edge and preserve health",
+      "route": "V32;W32;W08;S08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent is controlling the central lane",
+      "plan_summary": "I am taking my nachos to the quiet corner."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "stay remote on the southern edge",
+      "route": [
+        "W27",
+        "W08",
+        "S08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the center remains dangerous and I have full health",
+      "plan_summary": "I am heading for the farthest quiet snack shelf."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "equip the shotgun and search east",
+      "route": "F17;I17;I22;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am delivering the final performance review."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "search the south shotgun passage",
+      "route": "O22;O16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the last noisy supply cupboard."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "hold the far southern corner through timeout",
+      "route": "S08;W08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I have 150 health and the opponent is far away",
+      "plan_summary": "I am camping with my emergency nachos."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "sweep the western interior",
+      "route": "R17;O17;O12;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am auditing the other side of the office."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "search the northeast interior",
+      "route": "I12;I22;G22;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am chasing the missing employee upstairs."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "restore health at the west medikit",
+      "route": "W08;W09;T09;Q09;Q08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I lost 5 health and the pickup is nearby",
+      "plan_summary": "I am retrieving emergency nacho first aid."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "heal and search the southern last sighting",
+      "route": "G26;I26;I22;O22;O12;T12;T09;W09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking who hid behind the time clock."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "search the southwest perimeter",
+      "route": "W09;W02;T02;T12;O12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I am checking the unofficial smoking area."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "return to the remote southwest corner",
+      "route": "Q08;Q09;R09;S09;T09;W09;W08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent remains near the center and I lead in health",
+      "plan_summary": "I am retreating with my nachos and my 150 health."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "restore health at the western central medikit",
+      "route": "O12;L12;L10",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "I am restocking my management bandages."
+    }
+  ]
+}
