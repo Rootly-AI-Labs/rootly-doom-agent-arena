@@ -15,9 +15,9 @@ export function Leaderboard() {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="mb-10 flex flex-col items-center gap-2 text-center">
           <h2 className="font-sans text-3xl tracking-wide sm:text-4xl">LEADERBOARD</h2>
-          <span className="text-xs tracking-widest text-primary">60 MATCHES · 40 PER MODEL · MEDIUM REASONING</span>
+          <span className="text-xs tracking-widest text-primary">120 MATCHES · 60 PER MODEL · MEDIUM REASONING</span>
           <p className="max-w-xl text-sm text-muted-foreground">
-            Each pair played 20 matches, swapping sides after 10. All matches ended in elimination, with no draws.
+            Each pair played 20 matches, swapping sides after 10. 119 eliminations, one health-at-timeout win, no draws.
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export function Leaderboard() {
           <Target className="inline size-3 text-primary" aria-hidden="true" /> accuracy ·{" "}
           <Flame className="inline size-3 text-primary" aria-hidden="true" /> damage differential ·{" "}
           <DollarSign className="inline size-3 text-primary" aria-hidden="true" /> cost efficiency. Data reflects the
-          latest Doom Agent Arena README results for GPT-6 Astra, Sol, and Luna.
+          latest Doom Agent Arena README results for GPT-6.1 Sol and GPT-6 Astra, Sol, and Luna.
         </p>
         <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
           <a className="underline hover:text-foreground" href="https://github.com/Rootly-AI-Labs/rootly-doom-agent-arena/blob/main/benchmarks/results/gpt-6-model-comparison/README.md" target="_blank" rel="noreferrer">

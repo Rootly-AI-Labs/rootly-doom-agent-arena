@@ -24,22 +24,28 @@ export type LeaderboardEntry = {
   badges: ("winrate" | "speed" | "accuracy" | "damage" | "cost")[]
 }
 
-// Latest README tournament: 60 total matches, 40 per model, medium reasoning.
+// expanded_analysis.json: 120 total matches, 60 per model, medium reasoning.
 // Decision speed includes orchestration. Costs are full-session API-equivalent estimates.
+// Cost efficiency: wins / full-session cost, normalized to Luna using unrounded costs.
 export const leaderboard: LeaderboardEntry[] = [
   {
-    rank: 1, model: "GPT-6 Astra", winRate: 82.5, wins: 33, losses: 7,
-    decisionSpeed: "6.33s", accuracy: 83.2, damageDiff: 86.25,
-    costEfficiency: "0.10×", badges: ["winrate", "accuracy", "damage"],
+    rank: 1, model: "GPT-6.1 Sol", winRate: 85.0, wins: 51, losses: 9,
+    decisionSpeed: "5.66s", accuracy: 77.2, damageDiff: 65.58,
+    costEfficiency: "0.77×", badges: ["winrate", "speed", "damage"],
   },
   {
-    rank: 2, model: "GPT-6 Sol", winRate: 42.5, wins: 17, losses: 23,
-    decisionSpeed: "5.34s", accuracy: 57.6, damageDiff: -24.50,
-    costEfficiency: "0.18×", badges: ["speed"],
+    rank: 2, model: "GPT-6 Astra", winRate: 63.3, wins: 38, losses: 22,
+    decisionSpeed: "6.53s", accuracy: 82.7, damageDiff: 44.42,
+    costEfficiency: "0.08×", badges: ["accuracy"],
   },
   {
-    rank: 3, model: "GPT-6 Luna", winRate: 25.0, wins: 10, losses: 30,
-    decisionSpeed: "7.57s", accuracy: 52.4, damageDiff: -61.75,
+    rank: 3, model: "GPT-6 Sol", winRate: 28.3, wins: 17, losses: 43,
+    decisionSpeed: "5.91s", accuracy: 49.8, damageDiff: -50.75,
+    costEfficiency: "0.13×", badges: [],
+  },
+  {
+    rank: 4, model: "GPT-6 Luna", winRate: 23.3, wins: 14, losses: 46,
+    decisionSpeed: "8.03s", accuracy: 47.8, damageDiff: -59.25,
     costEfficiency: "1.00×", badges: ["cost"],
   },
 ]
