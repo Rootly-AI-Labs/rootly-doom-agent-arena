@@ -466,6 +466,8 @@
         this.lastCueAt = 0;
         this.pendingCue = null;
         this.pendingCueTimer = 0;
+        this.recentCueKeys = new Map();
+        this.recentAudioChunks = new Set();
         this.readyWaiters = [];
         this.introduction = null;
         this.introductionPromise = null;
@@ -694,6 +696,7 @@
         var previousSocket = this.socket;
         var socket = new WebSocket(signedUrl);
         this.socket = socket;
+        this.recentAudioChunks.clear();
         if (previousSocket) {
             previousSocket.close();
         }
@@ -808,6 +811,19 @@
             return;
         }
         if (message.type === "audio" && message.audio_event && message.audio_event.audio_base_64) {
+            // Event IDs may identify a response rather than an individual chunk.
+            // Compare both so distinct chunks of the same response still play.
+            var audioEvent = message.audio_event;
+            if (audioEvent.event_id !== undefined && audioEvent.event_id !== null) {
+                var chunkKey = String(audioEvent.event_id) + ":" + audioEvent.audio_base_64;
+                if (this.recentAudioChunks.has(chunkKey)) {
+                    return;
+                }
+                this.recentAudioChunks.add(chunkKey);
+                if (this.recentAudioChunks.size > 128) {
+                    this.recentAudioChunks.delete(this.recentAudioChunks.values().next().value);
+                }
+            }
             this.speaking = true;
             this.queueAudio(message.audio_event.audio_base_64);
             return;
@@ -1037,6 +1053,14 @@
         if (!pending || this.speaking) {
             return;
         }
+        // Generation completion can precede the end of scheduled playback.
+        if (this.audioContext && this.nextAudioTime > this.audioContext.currentTime + 0.05) {
+            this.pendingCueTimer = window.setTimeout(function () {
+                this.pendingCueTimer = 0;
+                this.flushPendingCue();
+            }.bind(this), Math.max(50, (this.nextAudioTime - this.audioContext.currentTime) * 1000));
+            return;
+        }
         if (now - pending.queuedAt > cueMaxAgeMs(pending.event)) {
             this.pendingCue = null;
             return;
@@ -1050,7 +1074,17 @@
             return;
         }
         this.pendingCue = null;
+        var cueKey = JSON.stringify([pending.snapshot.run_id, pending.snapshot.benchmark.current_round, pending.event]);
+        this.recentCueKeys.forEach(function (sentAt, key) {
+            if (now - sentAt >= 10000) {
+                this.recentCueKeys.delete(key);
+            }
+        }, this);
+        if (this.recentCueKeys.has(cueKey)) {
+            return;
+        }
         if (this.send("user_message", this.commentaryPayload(pending.event, pending.snapshot))) {
+            this.recentCueKeys.set(cueKey, now);
             this.speaking = true;
             this.lastCueAt = now;
         }
@@ -1083,6 +1117,12 @@
             this.lastContextAt = now;
         }
         if (event) {
+            var eventKey = JSON.stringify([snapshot.run_id, snapshot.benchmark.current_round, event]);
+            var sentAt = this.recentCueKeys.get(eventKey);
+            if (sentAt !== undefined && now - sentAt < 10000) {
+                this.flushPendingCue();
+                return snapshot;
+            }
             if (interruptsSpeech(event) && this.speaking) {
                 this.clearScheduledAudio();
             }

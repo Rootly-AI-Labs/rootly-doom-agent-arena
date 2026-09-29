@@ -73,7 +73,10 @@ export function Hero() {
           aria-label="Built by Rootly AI Labs"
         >
           <span>Built by</span>
-          <img src={assetPath("/images/rootly-ai-logo-white.png")} alt="Rootly AI Labs" className="h-auto w-[104px]" />
+          <span className="inline-flex items-center gap-1.5">
+            <img src={assetPath("/images/rootly-ai-logo-white.png")} alt="Rootly AI" className="h-auto w-[104px]" />
+            <span className="text-foreground">Labs</span>
+          </span>
         </a>
       </div>
     </section>

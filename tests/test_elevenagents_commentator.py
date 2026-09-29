@@ -17,6 +17,42 @@ def require_node() -> None:
         pytest.skip("node is required for commentator behavior tests")
 
 
+def test_commentator_deduplicates_chunks_and_cues_and_waits_for_playback():
+    require_node()
+    script = r"""
+const assert = require('assert');
+global.window = {setTimeout: () => 1, clearTimeout: () => {}};
+const {Commentator, buildSnapshot} = require('./src/elevenagents-commentator.js');
+const c = new Commentator({});
+const chunks = [];
+c.queueAudio = chunk => chunks.push(chunk);
+const audio = (id, data) => c.handleMessage(JSON.stringify({type: 'audio', audio_event: {event_id: id, audio_base_64: data}}));
+audio(1, 'AAAA'); audio(1, 'AAAA'); audio(1, 'AAAA');
+audio(1, 'BBBB'); audio(2, 'AAAA');
+assert.deepEqual(chunks, ['AAAA', 'BBBB', 'AAAA']);
+const sent = [];
+c.send = (type, payload) => { sent.push(payload); return true; };
+const snapshot = buildSnapshot({runId: 'r1', round: 1, player1: {}, player2: {}}, Date.now());
+const event = {type: 'round_end', facts: ['Team Red wins']};
+function offer(s = snapshot, e = event) {
+  c.speaking = false;
+  c.pendingCue = {event: e, snapshot: s, queuedAt: Date.now()};
+  c.flushPendingCue();
+}
+c.audioContext = {currentTime: 1}; c.nextAudioTime = 5;
+offer(); assert.equal(sent.length, 0); assert(c.pendingCue);
+c.audioContext.currentTime = 5;
+c.flushPendingCue(); assert.equal(sent.length, 1);
+offer(); offer(); assert.equal(sent.length, 1);
+offer({...snapshot, run_id: 'r2'}); assert.equal(sent.length, 2);
+offer(snapshot, {type: 'round_end', facts: ['Team Blue wins']});
+assert.equal(sent.length, 3);
+c.recentCueKeys.forEach((_, key) => c.recentCueKeys.set(key, Date.now() - 11000));
+offer(); assert.equal(sent.length, 4);
+"""
+    subprocess.run(["node", "-e", script], check=True, cwd=REPO_ROOT)
+
+
 class FakeResponse:
     def __init__(self, payload: dict):
         self.body = json.dumps(payload).encode("utf-8")
