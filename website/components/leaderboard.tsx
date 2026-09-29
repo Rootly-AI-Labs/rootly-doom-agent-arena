@@ -22,6 +22,15 @@ export function Leaderboard() {
         </div>
 
         <LeaderboardTable entries={leaderboard} />
+        <a
+          href="https://github.com/Rootly-AI-Labs/rootly-doom-agent-arena/blob/main/benchmarks/results/gpt-6-model-comparison/README.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="-mt-px flex items-center justify-between rounded-b-sm border border-border bg-card px-4 py-1.5 text-[10px] tracking-widest text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          READ MORE
+          <span aria-hidden="true" className="text-sm text-primary">↗</span>
+        </a>
         <details className="group mt-3 rounded-sm border border-border bg-card">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xs tracking-widest text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
             VIEW LEGACY RESULTS
