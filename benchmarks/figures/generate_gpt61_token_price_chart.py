@@ -7,6 +7,7 @@ from pathlib import Path
 import json
 import os
 import tempfile
+import sys
 from collections import Counter
 
 HERE = Path(__file__).resolve().parent
@@ -27,6 +28,11 @@ RESULTS = ROOT / "benchmarks/results/gpt-6-model-comparison"
 cost_report = json.loads((RESULTS / "expanded_analysis.json").read_text())
 assert cost_report['matches'] == 120
 ORDER = ('sol61', 'astra', 'sol', 'luna')
+HEAD_TO_HEAD = '--astra-vs-sol' in sys.argv
+if HEAD_TO_HEAD:
+    ORDER = ('sol61', 'astra')
+    pair_report = json.loads((RESULTS / 'astra-vs-sol61.json').read_text())
+    cost_report['models'] = pair_report['models']
 LABELS = dict(sol61='GPT-6.1 Sol', astra='GPT-6 Astra', sol='GPT-6 Sol', luna='GPT-6 Luna')
 DATA = {
     "logo_path": str(ROOT / "src/assets/rootly-ai-logo-white.png"),
@@ -35,7 +41,7 @@ DATA = {
         "output_price": cost_report['rates'][m][3],
     } for m in ORDER},
 }
-assert [DATA["models"][m]["output_price"] for m in ("astra", "sol", "luna")] == [50, 10, .5]
+assert DATA['models']['astra']['output_price'] == 50
 COLORS = {"sol61": "#69E8B3", "astra": "#3788FF", "sol": "#FFE18A", "luna": "#DCC8FF"}
 BG, FG, MUTED = "#050505", "#F4F4F4", "#ACACB4"
 plt.rcParams.update({"font.family": "Arial", "text.color": FG,
@@ -72,9 +78,9 @@ border = FancyBboxPatch((.015, .02), .97, .96, boxstyle="round,pad=0,rounding_si
                        facecolor="none", edgecolor="#303036", linewidth=1,
                        transform=fig.transFigure, zorder=0)
 fig.add_artist(border)
-fig.text(.063, .939, "GPT-6.1 Sol leads the expanded Doom benchmark",
+fig.text(.063, .939, "GPT-6.1 Sol vs. GPT-6 Astra in Doom" if HEAD_TO_HEAD else "GPT-6.1 Sol leads the expanded Doom benchmark",
          fontsize=23, weight="bold", color=FG, va="top")
-fig.text(.063, .878, "120 matches  /  60 per model  /  medium reasoning  /  both player positions", fontsize=12, color=MUTED)
+fig.text(.063, .878, "20 head-to-head matches  /  medium reasoning  /  both player positions" if HEAD_TO_HEAD else "120 matches  /  60 per model  /  medium reasoning  /  both player positions", fontsize=12, color=MUTED)
 
 # Use the white, transparent version of the supplied logo on the dark chart.
 logo_ax = fig.add_axes([.835, .031, .11, .048], facecolor=BG)
@@ -107,7 +113,7 @@ ax.grid(axis="y", color="#242429", linewidth=.6, zorder=0)
 ax.axhline(50, color="#92929A", linewidth=.9, linestyle=(0, (5, 4)), zorder=1)
 ax.text(54.5, 51.5, "50% parity", color=MUTED, fontsize=11, ha="right", va="bottom")
 
-for m in ('luna', 'sol', 'astra', 'sol61'):
+for m in reversed(ORDER):
     row = DATA["models"][m]
     cost = row["output_price"]
     win_rate = row["wins"] / row["matches"] * 100
@@ -126,7 +132,8 @@ for m in ('luna', 'sol', 'astra', 'sol61'):
 
 fig.text(.063, .045, "Token price is not total match cost. Standard API rates; no draws in this sample.", fontsize=10, color=MUTED)
 for ext in ("png", "svg"):
-    out = HERE / f"gpt-6.1-output-token-price-vs-win-rate.{ext}"
+    stem = 'astra-vs-sol61-token-price-vs-win-rate' if HEAD_TO_HEAD else 'gpt-6.1-output-token-price-vs-win-rate'
+    out = HERE / f"{stem}.{ext}"
     fig.savefig(out, dpi=200, facecolor=BG)
     if ext == "svg":
         out.write_text("\n".join(line.rstrip() for line in out.read_text().splitlines()) + "\n")

@@ -1,0 +1,47 @@
+{
+  "matches": 20,
+  "models": {
+    "sol61": {
+      "matches": 20,
+      "wins": 15,
+      "hits": 85,
+      "shots": 102,
+      "damage": 3210,
+      "damage_taken": 2425,
+      "outcomes": {
+        "diagonal": 23,
+        "accepted": 78,
+        "post_finish": 8,
+        "blocked": 3
+      },
+      "full_cost": 1.6853988000000006,
+      "plan_cost": 1.0125312000000004,
+      "decision_count": 112,
+      "mean_decision_seconds": 6.702589285714286,
+      "median_decision_seconds": 5.9825,
+      "invalid_routes": 26,
+      "validated_routes": 104
+    },
+    "astra": {
+      "matches": 20,
+      "wins": 5,
+      "hits": 70,
+      "shots": 86,
+      "damage": 2425,
+      "damage_taken": 3210,
+      "outcomes": {
+        "diagonal": 14,
+        "accepted": 90,
+        "post_finish": 10,
+        "blocked": 2
+      },
+      "full_cost": 14.918414000000004,
+      "plan_cost": 9.27329,
+      "decision_count": 115,
+      "mean_decision_seconds": 6.9242,
+      "median_decision_seconds": 6.092,
+      "invalid_routes": 16,
+      "validated_routes": 106
+    }
+  }
+}
