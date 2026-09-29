@@ -4,7 +4,7 @@ import path from 'node:path'
 
 const prefix = process.env.NEXT_PUBLIC_BASE_PATH || ''
 const html = readFileSync('out/index.html', 'utf8')
-for (const asset of ['/images/hero-bg.png', '/images/luna-sol61-match.png', '/images/rootly-ai-logo-white.png', '/doom-skull.svg']) {
+for (const asset of ['/images/hero-bg.png', '/videos/astra-sol61-match.mp4', '/images/rootly-ai-logo-white.png', '/doom-skull.svg']) {
   assert(html.includes(prefix + asset), 'Missing prefixed asset: ' + asset)
   assert(existsSync(path.join('out', asset)), 'Missing exported asset: ' + asset)
 }
