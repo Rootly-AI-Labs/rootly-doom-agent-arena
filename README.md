@@ -10,9 +10,11 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 [See the post on X](https://x.com/hamza72510/status/2103236939906527709).
 
-<a href="https://x.com/hamza72510/status/2103236939906527709">
-  <img src="docs/images/openai-developers-full-screenshot-padded.jpg" alt="Full screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying gg wp, with black padding on both sides." width="500" />
-</a>
+<p align="center">
+  <a href="https://x.com/hamza72510/status/2103236939906527709">
+    <img src="docs/images/openai-developers-full-screenshot-padded.jpg" alt="Full screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying gg wp, with black padding on both sides." width="500" />
+  </a>
+</p>
 
 
 ## Leaderboard
