@@ -64,8 +64,6 @@ Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
 
 See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
 
-[![Previous-generation output-token price versus draw-adjusted Doom win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
-
 See the [earlier benchmark analysis](benchmarks/benchmark-analysis-official/analysis.md) and [head-to-head results](benchmarks/benchmark-analysis-official/figures/fig02_head_to_head_heatmap.png).
 
 ## What this taught us about AI-assisted incident response
