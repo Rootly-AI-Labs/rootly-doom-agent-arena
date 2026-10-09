@@ -6,6 +6,14 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 <img width="1901" height="912" alt="image" src="https://github.com/user-attachments/assets/f836858d-524e-4b72-b4af-d41dea9325c4" />
 
+## A shout-out from OpenAI Developers
+
+[See the post on X](https://x.com/hamza72510/status/2103236939906527709).
+
+<a href="https://x.com/hamza72510/status/2103236939906527709">
+  <img src="docs/images/openai-developers-gg-wp.jpg" alt="Screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying with gg wp." width="640" />
+</a>
+
 
 ## Leaderboard
 
