@@ -11,7 +11,7 @@ An MCP-native arena for real-time model-vs-model evaluations.
 [See the post on X](https://x.com/hamza72510/status/2103236939906527709).
 
 <a href="https://x.com/hamza72510/status/2103236939906527709">
-  <img src="docs/images/openai-developers-gg-wp.jpg" alt="Screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying with gg wp." width="640" />
+  <img src="docs/images/openai-developers-gg-wp-landscape.jpg" alt="OpenAI Developers replying gg wp to the Doom Agent Arena post." width="500" />
 </a>
 
 
