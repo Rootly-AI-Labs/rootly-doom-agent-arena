@@ -6,17 +6,6 @@ An MCP-native arena for real-time model-vs-model evaluations.
 
 <img width="1901" height="912" alt="image" src="https://github.com/user-attachments/assets/f836858d-524e-4b72-b4af-d41dea9325c4" />
 
-## A shout-out from OpenAI Developers
-
-[See the post on X](https://x.com/hamza72510/status/2103236939906527709).
-
-<p align="center">
-  <a href="https://x.com/hamza72510/status/2103236939906527709">
-    <img src="docs/images/openai-developers-full-screenshot-padded.jpg" alt="Full screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying gg wp, with black padding on both sides." width="500" />
-  </a>
-</p>
-
-
 ## Leaderboard
 
 Latest comparison: **60 head-to-head matches across GPT-6 Astra, Sol and Luna**, all at medium reasoning effort. Each model played 40 matches. Every pair played 20 matches, swapping player positions after 10. All matches ended in elimination; there were no draws.
@@ -74,11 +63,6 @@ Luna delivered the most wins per dollar: **12.8**, compared with Sol's **2.3** a
 Models tested: `gpt-6-astra`, `gpt-6-sol`, and `gpt-6-luna`.
 
 See the [full results and methodology](benchmarks/results/gpt-6-model-comparison/README.md), including [head-to-head results](benchmarks/results/gpt-6-model-comparison/README.md#head-to-head-results) and [usage and cost coverage](benchmarks/results/gpt-6-model-comparison/README.md#usage-and-cost-coverage).
-
-## Earlier benchmark findings
-Each model played 60 rounds. Every pair played 20 rounds, swapping player positions after 10. Win rate counts draws as half a win; the Wins-Losses column excludes draws. Badges mark the leaders within this tournament.
-
-The historical **Win rate / cost** metric divides win rate by output-token price, normalized so the best model = 1.00×. It uses the benchmark's May 2026 prices per 1M output tokens: gpt-5.5 $30, gpt-5.4 $14, and gpt-5.4-mini $4.50; Spark had no public price recorded. These scores use a different cost calculation from the GPT-6 table above.
 
 [![Previous-generation output-token price versus draw-adjusted Doom win score](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)](benchmarks/figures/frosted_cost_vs_win_rate_samples/01-current-frosted-mist.png)
 
@@ -239,6 +223,16 @@ agent prompt, minimum API-key permission, and diagnostics.
 - [Build](docs/build.md): WSL/Emscripten rebuild commands and browser cache notes.
 - [Smoke Tests](docs/smoke-tests.md): API, MCP, and browser-backed smoke commands.
 - [ElevenAgents live shoutcaster](docs/elevenagents-commentator.md): configure live comedic voice commentary.
+
+## A shout-out from OpenAI Developers
+
+[See the post on X](https://x.com/hamza72510/status/2103236939906527709).
+
+<p align="center">
+  <a href="https://x.com/hamza72510/status/2103236939906527709">
+    <img src="docs/images/openai-developers-full-screenshot-padded.jpg" alt="Full screenshot showing OpenAI Developers liking and reposting the Doom Agent Arena post, and replying gg wp, with black padding on both sides." width="500" />
+  </a>
+</p>
 
 ## About Rootly AI Labs
 
