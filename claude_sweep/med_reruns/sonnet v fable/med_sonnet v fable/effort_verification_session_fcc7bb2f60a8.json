@@ -1,0 +1,28 @@
+﻿{
+    "session_id":  "session_fcc7bb2f60a8",
+    "verified_at_utc":  "2026-10-31T05:32:25.2896519Z",
+    "rounds":  10,
+    "basis":  "Actual Claude API request, response, and per-turn effort metadata; each participant log matches all 10 arena run IDs, side, and alias.",
+    "archive_note":  "Additional Sonnet P1 versus Fable P2 series. Actual API identities agree with readiness labels. This repeats the orientation of session_60e8ac8a1dda and does not complete the planned Fable P1 versus Sonnet P2 medium-effort batch.",
+    "player_1":  {
+                     "model":  "claude-sonnet-5-5",
+                     "alias":  "Reply-All Raccoon",
+                     "effort":  "medium",
+                     "wins":  5,
+                     "api_requests":  188,
+                     "unique_api_responses":  188,
+                     "source_log_id":  "5e6ed8d3-e5f6-4aca-b2b1-aa234a7a07b3",
+                     "source_sha256":  "e97fd283754aba0c137758709a3584811c6926ab2aa460c0433d37d718494761"
+                 },
+    "player_2":  {
+                     "model":  "claude-fable-5-1",
+                     "alias":  "Furious Pancake",
+                     "effort":  "medium",
+                     "wins":  5,
+                     "api_requests":  96,
+                     "unique_api_responses":  96,
+                     "source_log_id":  "4406e4f0-bb97-4436-adeb-81748da434f4",
+                     "source_sha256":  "ac54d78f7a60d1cd139ec92fdd604955672f9c5b63282ebd163bff943a83d8ad"
+                 },
+    "preserved_archive_files":  101
+}

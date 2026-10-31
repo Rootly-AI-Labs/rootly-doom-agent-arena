@@ -1,0 +1,507 @@
+{
+  "run_id": "run_dbb9c16ab1a2",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 46.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 0,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 150,
+      "shots_fired": 2,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3395",
+      "elapsed_ms": null,
+      "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) the column 22 route is the fastest way into the shotgun room aim_error=-1"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 78,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) the column 22 route is the fastest way into the shotgun room aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 171 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,-640) the column 22 route is the fastest way into the shotgun room aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 400 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(768,-640) the column 22 route is the fastest way into the shotgun room aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 657 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(704,-640) the column 22 route is the fastest way into the shotgun room aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(640,-640) the column 22 route is the fastest way into the shotgun room aim_error="
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 1142 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(576,-640) the column 22 route is the fastest way into the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 1371 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(512,-640) the column 22 route is the fastest way into the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 1628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(448,-640) the column 22 route is the fastest way into the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 1857 autopilot_action: player_2 action=route_complete reason=the column 22 route is the fastest way into the shotgun room aim_error=31"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 2600 autopilot_action: player_2 action=route_complete reason=the column 22 route is the fastest way into the shotgun room aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 17800 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(384,-640) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 17828 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(320,-640) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 18171 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-576) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 18314 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(320,-512) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 18571 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(320,-448) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 18800 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(320,-384) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 19057 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(320,-320) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 19285 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 19542 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 20285 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 20485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 20514 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=145"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 21257 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 21457 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 21485 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 22228 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 22428 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 22457 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 23200 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 23400 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 23428 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 24171 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 24371 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 24400 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=143"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 25142 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 25342 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 25371 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 26114 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 26314 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(320,-256) column 22 is clear all the way to the shotgun room entrance aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3395",
+        "elapsed_ms": null,
+        "event": "run_dbb9c16ab1a2 duel_e1m8_blind_spawn 3395 26342 autopilot_action: player_2 action=route_complete reason=column 22 is clear all the way to the shotgun room entrance aim_error=144"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 180,
+        "distance_traveled": 3714.6,
+        "unique_cells_visited": 37,
+        "revisited_cells": 143
+      },
+      "player_2": {
+        "path_points": 180,
+        "distance_traveled": 2376.1,
+        "unique_cells_visited": 24,
+        "revisited_cells": 156
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5338.29,
+    "decision_p95_ms": 9466.0,
+    "decision_max_ms": 9466.0,
+    "mcp_avg_ms": 2246.0,
+    "mcp_p95_ms": 2753.0,
+    "mcp_max_ms": 46706.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 4,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 7703,
+      "player_2": 4953
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2676,
+      "player_2": 1719
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 41600,
+    "stale_intent_extension_max_ms": 37736
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Round seven. Lucky number, unlucky coworker."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "grab the shotgun and hold the room corner",
+      "route": [
+        "Q18",
+        "R18",
+        "R17",
+        "R16"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the room corner forces a close fight where my shots land",
+      "plan_summary": "Thirty health, one dream. Shotgun or bust, probably bust."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "sprint west along row V toward the south shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the column 22 route is the fastest way into the shotgun room",
+      "plan_summary": "Round seven. Burrito legs don't quit. Shotgun room or nothing."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell I09 on the way to the shotgun",
+      "route": "I04;I05;J05;J06;J07;I07;I08;I09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Another day, another commute."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "go north up column 22 toward row O",
+      "route": "V23;V22;U22;T22;S22;R22;Q22;P22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "column 22 is clear all the way to the shotgun room entrance",
+      "plan_summary": "Up the hallway at full tilt. Don't look at me, I'm just a burrito."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach cell I17 below the shotgun room",
+      "route": "I10;I11;I12;I13;I14;I15;I16;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Strutting down the hall like I own it."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17 and exit west",
+      "route": "H17;G17;F17;G17;H17;I17;I16;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Quick shotgun errand. Back before standup."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "enter the shotgun room via P18",
+      "route": "O22;O21;O20;O19;O18;P18;Q18;R18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun at R17 is one cell from R18",
+      "plan_summary": "Door's right there. Burrito commits. No refunds."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "head south toward the R17 shotgun room",
+      "route": "I15;I14;J14;K14;L14;M14;N14;O14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun in hand, heading to find the other intern."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep east along row O to find the wounded opponent",
+      "route": "O15;O16;O17;O18;O19;O20;O21;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I hit something. Follow the trail of paperwork."
+    }
+  ]
+}

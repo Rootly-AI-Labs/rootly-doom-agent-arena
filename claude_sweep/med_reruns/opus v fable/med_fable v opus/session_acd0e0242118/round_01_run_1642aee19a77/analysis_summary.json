@@ -1,0 +1,509 @@
+{
+  "run_id": "run_1642aee19a77",
+  "round": 1,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 35.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 30,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 3,
+      "accuracy": 0.6,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 30,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 120
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2380",
+      "elapsed_ms": null,
+      "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(960,-512) shotgun outdamages pistol in close duels aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2380",
+      "elapsed_ms": null,
+      "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 13485 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(0,-192) find the opponent while staying near east medikits aim_error=3"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 10,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 12,
+        "health": 23
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(960,-512) shotgun outdamages pistol in close duels aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,576) row I is the clear corridor into the north shotgun room aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 142 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,512) row I is the clear corridor into the north shotgun room aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 400 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,448) row I is the clear corridor into the north shotgun room aim_error=-60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 457 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(320,-512) shotgun outdamages pistol in close duels aim_error=-61"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 628 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,384) row I is the clear corridor into the north shotgun room aim_error=-61"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 885 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,320) row I is the clear corridor into the north shotgun room aim_error=-62"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 1114 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,256) row I is the clear corridor into the north shotgun room aim_error=-63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 1371 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-960,192) row I is the clear corridor into the north shotgun room aim_error=-63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 1714 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-896,192) row I is the clear corridor into the north shotgun room aim_error=-64"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 1857 autopilot_action: player_1 action=route_complete reason=row I is the clear corridor into the north shotgun room aim_error=20"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 2457 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(320,-192) shotgun outdamages pistol in close duels aim_error=30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 2628 autopilot_action: player_1 action=route_complete reason=row I is the clear corridor into the north shotgun room aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 3485 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-192) shotgun outdamages pistol in close duels aim_error=-70"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 4514 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) shotgun outdamages pistol in close duels aim_error=23"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 5057 autopilot_action: player_2 action=route_complete reason=shotgun outdamages pistol in close duels aim_error=120"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 5800 autopilot_action: player_2 action=route_complete reason=shotgun outdamages pistol in close duels aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 13485 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(0,-192) find the opponent while staying near east medikits aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 13514 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(0,-192) find the opponent while staying near east medikits aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 14200 autopilot_action: player_2 action=route_waypoint reason=wp=3/4 target=(320,-192) find the opponent while staying near east medikits aim_error=-66"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 15228 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=-160"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 16371 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 17114 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 17314 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 17342 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=88"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 18085 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 18285 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 18314 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 19057 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 19257 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 19285 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=88"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 20028 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 20228 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 20257 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-90"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 21000 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 21200 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 21228 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=88"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 21971 autopilot_action: player_2 action=route_complete reason=find the opponent while staying near east medikits aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2380",
+        "elapsed_ms": null,
+        "event": "run_1642aee19a77 duel_e1m8_blind_spawn 2380 22171 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(320,192) find the opponent while staying near east medikits aim_error=6"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 2,
+      "player_2": 7
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 3
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 137,
+        "distance_traveled": 1033.3,
+        "unique_cells_visited": 17,
+        "revisited_cells": 120
+      },
+      "player_2": {
+        "path_points": 137,
+        "distance_traveled": 3958.5,
+        "unique_cells_visited": 41,
+        "revisited_cells": 96
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10436.44,
+    "decision_p95_ms": 23187.0,
+    "decision_max_ms": 23187.0,
+    "mcp_avg_ms": 1239.0,
+    "mcp_p95_ms": 1640.0,
+    "mcp_max_ms": 21194.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1613,
+      "player_2": 1624
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1613,
+      "player_2": 1624
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 33995,
+    "stale_intent_extension_max_ms": 20306
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "get my bearings at spawn",
+      "route": [
+        "L17",
+        "L18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Sweating marinara, but I'm ready."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the south shotgun at R17",
+      "route": "V32;T32;T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun outdamages pistol in close duels",
+      "plan_summary": "A nervous meatball with a shotgun is still a meatball. Armed."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head south toward row I en route to shotgun F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "row I is the clear corridor into the north shotgun room",
+      "plan_summary": "Pistol is for amateurs. I have a shotgun appointment at F17."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "grab the south shotgun at R17",
+      "route": [
+        "T22",
+        "O22",
+        "O17",
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Almost at the boomstick, please nobody look at me."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "sweep north along the east lane",
+      "route": "R17;O17;O22;I22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "find the opponent while staying near east medikits",
+      "plan_summary": "Shotgun acquired. Still sweating sauce, but now dangerously."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "take the north shotgun at F17",
+      "route": "I22;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "denying the second shotgun keeps opponent on pistol",
+      "plan_summary": "Two shotguns? Rude to share. I'm eating both."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "detour around I06 wall toward shotgun F17",
+      "route": "I04;I05;J05;J06;J07;J08;I08;I09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I06 is a wall so row J bypasses it",
+      "plan_summary": "Walls? In MY office? Taking the scenic route to my shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "hunt through the west side",
+      "route": "F17;H17;I17;I08;O08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent likely lurks west, unseen so far",
+      "plan_summary": "Knock knock. It's a meatball with anxiety and a shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close in and shotgun the opponent",
+      "route": "I12;I10",
+      "engagement_policy": "",
+      "reasoning": "shotgun spread hits hardest at close range",
+      "plan_summary": "Sorry for staring. Also sorry for this shotgun blast."
+    }
+  ]
+}

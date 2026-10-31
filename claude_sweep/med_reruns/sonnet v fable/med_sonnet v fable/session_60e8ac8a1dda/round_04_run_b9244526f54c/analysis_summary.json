@@ -1,0 +1,273 @@
+{
+  "run_id": "run_b9244526f54c",
+  "round": 4,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 59.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 0,
+      "shots_fired": 6,
+      "shots_hit": 6,
+      "accuracy": 1.0,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 150,
+      "shots_fired": 0,
+      "shots_hit": 0,
+      "accuracy": null,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "4515",
+      "elapsed_ms": null,
+      "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) the wall block breaks the shotgun sightline from row O aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 5,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) the wall block breaks the shotgun sightline from row O aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 257 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-576) the wall block breaks the shotgun sightline from row O aim_error=34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 400 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(896,-512) the wall block breaks the shotgun sightline from row O aim_error=-51"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 657 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(896,-448) the wall block breaks the shotgun sightline from row O aim_error=-59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(896,-384) the wall block breaks the shotgun sightline from row O aim_error=-63"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "4515",
+        "elapsed_ms": null,
+        "event": "run_b9244526f54c duel_e1m8_blind_spawn 4515 31057 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 229,
+        "distance_traveled": 4374.8,
+        "unique_cells_visited": 41,
+        "revisited_cells": 188
+      },
+      "player_2": {
+        "path_points": 229,
+        "distance_traveled": 510.3,
+        "unique_cells_visited": 9,
+        "revisited_cells": 220
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 11219.0,
+    "decision_p95_ms": 38329.0,
+    "decision_max_ms": 38329.0,
+    "mcp_avg_ms": 2528.4,
+    "mcp_p95_ms": 2507.0,
+    "mcp_max_ms": 60150.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 6,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 10992,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2462,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 125077,
+    "stale_intent_extension_max_ms": 56970
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Round four. Promotion pending, shotgun first."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "take cover behind the Q27 wall block",
+      "route": "V31;U31;T31;S31;R31;Q31;Q30;R30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the wall block breaks the shotgun sightline from row O",
+      "plan_summary": "Ouch! Hiding behind a wall like a burrito behind a napkin."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "sprint west along row V toward the south shotgun",
+      "route": "V31;V30;V29;V28;V27;V26;V25;V24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shortest 25-cell path to R17 avoids the N-row detour",
+      "plan_summary": "Camping got me shot. Fine. Burrito goes full speed for the shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell J07 on the way to the shotgun",
+      "route": "H02;I02;I03;I04;I05;J05;J06;J07",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Walking fast with scissors. Responsibly."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "run east along row I toward the shotgun room",
+      "route": "I07;I08;I09;I10;I11;I12;I13;I14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Corridor sprint, take two."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17 and exit",
+      "route": "I15;I16;I17;H17;G17;F17;G17;H17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun errand. Stapler budget approved."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "go east toward the south-east corner",
+      "route": "I17;I18;I19;I20;I21;I22;I23;I24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Heading for the corner office. Knock knock."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "swing around the east side toward the south-east corner",
+      "route": "I25;I26;J26;J27;J28;J29;J30;K30",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Taking the scenic route to your cubicle."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cut west through the N-row gap toward R17",
+      "route": "P31;O31;N31;N30;N29;N28;N27;N26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the N28 gap is the shortest path to the south shotgun",
+      "plan_summary": "Late start, no gun, full confidence. Classic burrito."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "push south toward the opponent at R31",
+      "route": [
+        "J28",
+        "J29",
+        "J30",
+        "K30",
+        "L30",
+        "M30",
+        "N30",
+        "O30"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Already tagged you. Closing for the finish."
+    }
+  ]
+}

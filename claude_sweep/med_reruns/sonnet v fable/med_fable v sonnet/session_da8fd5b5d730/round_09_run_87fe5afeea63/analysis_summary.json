@@ -1,0 +1,289 @@
+{
+  "run_id": "run_87fe5afeea63",
+  "round": 9,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 59.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 45,
+      "shots_fired": 20,
+      "shots_hit": 8,
+      "accuracy": 0.4,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 150,
+      "shots_fired": 47,
+      "shots_hit": 5,
+      "accuracy": 0.106,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3010",
+      "elapsed_ms": null,
+      "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) the shotgun has carried every round aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 7,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) the shotgun has carried every round aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-320,192) the shotgun has carried every round aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,192) the shotgun has carried every round aim_error=-54"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 4457 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) the shotgun has carried every round aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 5000 autopilot_action: player_1 action=route_complete reason=the shotgun has carried every round aim_error=136"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 5028 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_87fe5afeea63 duel_e1m8_blind_spawn 3010 5742 autopilot_action: player_1 action=route_complete reason=the shotgun has carried every round aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 8
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 232,
+        "distance_traveled": 5546.7,
+        "unique_cells_visited": 62,
+        "revisited_cells": 170
+      },
+      "player_2": {
+        "path_points": 232,
+        "distance_traveled": 2804.0,
+        "unique_cells_visited": 4,
+        "revisited_cells": 228
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6874.2,
+    "decision_p95_ms": 18655.0,
+    "decision_max_ms": 18655.0,
+    "mcp_avg_ms": 961.61,
+    "mcp_p95_ms": 1999.0,
+    "mcp_max_ms": 14670.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 6
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3211,
+      "player_2": 8652
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1607,
+      "player_2": 2186
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 27222,
+    "stale_intent_extension_max_ms": 12244
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "grab the north shotgun",
+      "route": "B12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun has carried every round",
+      "plan_summary": "Round nine. Same stapler, same hallway, same inevitable outcome."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "guard the bottom edge corner with a long lane along row W",
+      "route": "V32;W32;W31;W32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Hiding in the cheese drawer, shooting snacks."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W32;W31;W32;W31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Drawer closed, burrito inside, do not knock."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "grab the shotgun then hunt south",
+      "route": "I17;F17;I17;I13;N13;N17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent tends to flank along the east or camp south",
+      "plan_summary": "Plan timed out in the lobby. Stapler run, then a stroll south."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W31;W32;W31;W32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still hiding. The cheese drawer is cozy."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W32;W31;W32;W31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Knock knock. Who's there? Pistol."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W31;W32;W31;W32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Rent-free in the corner, thanks."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "sweep north then east for the flanker",
+      "route": "O17;O22;I22;E22;E31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent flanked north along the east edge last round",
+      "plan_summary": "Flanking me? Cute. I'm checking the north wing with my stapler out."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W32;W31;W32;W31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Corner seat, hot sauce, zero chill."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "guard the bottom corner and shoot along row W",
+      "route": "W31;W32;W31;W32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Late again? Typical shotgun guy."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "push down the east edge to the spawn corner",
+      "route": "T31;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the north and center are empty so they are likely south",
+      "plan_summary": "North wing empty. Taking the east stairwell down to your corner office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "trade fire with the opponent down the column 32 lane",
+      "route": "W32;V32;U32;V32",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Long-distance relationship, short-tempered burrito."
+    }
+  ]
+}

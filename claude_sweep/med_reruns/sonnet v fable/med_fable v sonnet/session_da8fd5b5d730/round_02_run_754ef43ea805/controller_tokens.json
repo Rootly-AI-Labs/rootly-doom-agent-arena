@@ -1,0 +1,12 @@
+{
+  "run_id": "run_754ef43ea805",
+  "player_1": {
+    "model": "",
+    "controller_token": "5wrwBos9s0Zd5LSJdSOpaVWqQUHy84Wz"
+  },
+  "player_2": {
+    "model": "",
+    "controller_token": "E9mEpBHO7XujYvVQ15iQ2M3mA1KPKERC"
+  },
+  "enforce_controller_tokens": true
+}

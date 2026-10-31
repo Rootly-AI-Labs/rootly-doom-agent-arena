@@ -1,0 +1,1492 @@
+{
+  "schema_version": 1,
+  "cohort": "all_medium_60_round_sweep",
+  "required_effort": "medium",
+  "excluded_arena_session_ids": [
+    "session_fcc7bb2f60a8",
+    "session_0126b7e77ed7",
+    "session_12edeaaa9be8",
+    "session_234aaaa29bc0",
+    "session_d553d09a35fc"
+  ],
+  "pinned_arena_session_ids": [
+    "session_5188b2ed236f",
+    "session_572d2d193f0a",
+    "session_60e8ac8a1dda",
+    "session_8fdec3c440b4",
+    "session_acd0e0242118",
+    "session_da8fd5b5d730"
+  ],
+  "generated_at_utc": "2026-10-31T05:55:44.225367+00:00",
+  "pricing_checked_date": "2026-10-31",
+  "currency": "USD",
+  "actual_invoice_cost_available": false,
+  "full_session_cost_available_for_all": false,
+  "all_conversation_cost_snapshots_available": false,
+  "bounded_tournament_total_available": false,
+  "uniform_main_thread_usage_available_for_all": true,
+  "scope": "Observed primary-model main-thread API messages in twelve gameplay conversations, including tool discovery, between-round waits, and final summaries; excludes other conversations and unrecorded background usage.",
+  "method": [
+    "Match each private log to all ten archived run IDs plus the participant side and arena alias; verify actual response model equals the archive label.",
+    "Pin the six primary all-medium session IDs, twelve source log IDs, and participant identities independently of generated metrics; require rounds 1-10, completed outcomes, and sixty globally unique run IDs.",
+    "Require medium effort in every API request, response effort field, and per-turn effort field; exclude the extra same-orientation 5-5 series and all older Fable-high series.",
+    "Require every arena tool result to identify only its pinned session and ten runs; reject extra gameplay runs or mixed participant control. Separately flag other session IDs in static context.",
+    "Verify all tools in included conversations are Doom Arena or ToolSearch; reject unrelated coding activity or model switches.",
+    "Require exactly one substantive user instruction, identifying Doom gameplay, before the first API request; exclude local UI commands and reject later unrelated user work rather than silently expanding scope.",
+    "Deduplicate assistant content blocks by message.id; repeated usage must match exactly; each response is counted once.",
+    "Sum input, output, cache-read, and cache-write tokens separately; cache writes use observed one-hour TTL. Thinking tokens are a subset of output.",
+    "Verify every included response is standard service/speed and global inference, with no web-tool charges or fallback credits.",
+    "Price response aggregates with verified current standard global API list rates. These estimates are not a subscription invoice or all-inclusive cost.",
+    "Cumulative cost-state snapshots exist for 10 of 12 conversations. Export the final snapshot per conversation separately; never add snapshots to response totals. Snapshot presence does not certify tournament-only scope."
+  ],
+  "coverage": {
+    "archived_sessions": 6,
+    "archived_rounds": 60,
+    "expected_participant_logs": 12,
+    "matched_participant_logs": 12,
+    "cumulative_cost_state_logs": 10,
+    "excluded_candidate_logs": [],
+    "unrelated_project_logs_not_read": 28,
+    "unique_api_messages": 1194,
+    "duplicate_assistant_content_rows_removed": 1369,
+    "api_requests_without_response_usage": 1
+  },
+  "total_main_thread_api_equivalent_usd": 60.36828345,
+  "recorded_cost_state_totals": {
+    "covered_logs": 10,
+    "total_logs": 12,
+    "total_usd": 47.731194150000015,
+    "auxiliary_model_usd": 0.0066661,
+    "all_snapshot_model_costs_reconcile_to_published_rates": true,
+    "bounded_tournament_scope_certified": false,
+    "warning": "Whole-conversation cumulative totals may include background or post-game activity absent from the gameplay transcript. They are not certified bounded tournament costs and must not be used as a wins-per-dollar denominator."
+  },
+  "partial_recorded_cost_state_totals": {
+    "covered_logs": 10,
+    "total_logs": 12,
+    "total_usd": 47.731194150000015,
+    "auxiliary_model_usd": 0.0066661,
+    "all_snapshot_model_costs_reconcile_to_published_rates": true,
+    "bounded_tournament_scope_certified": false,
+    "warning": "Whole-conversation cumulative totals may include background or post-game activity absent from the gameplay transcript. They are not certified bounded tournament costs and must not be used as a wins-per-dollar denominator.",
+    "legacy_key_note": "Retained for compatibility; inspect covered_logs and bounded_tournament_scope_certified, not this legacy key's name."
+  },
+  "limitations": [
+    "API request records without corresponding assistant response usage: 1. No charge or token count is invented for them.",
+    "3 available cost-state snapshots contain additional primary-model usage beyond the deduplicated assistant transcript; background work is not fully visible there.",
+    "10/12 whole-conversation cost snapshots are present (2 missing). Their scope extends beyond the last gameplay response, so all-in bounded tournament costs cannot be certified.",
+    "0 conversations have a /model command after their final gameplay response. Any cumulative background or post-game charges remain outside the observed primary-thread tournament estimate.",
+    "Per-model prices use one checked date, not historical invoices. Subscription allocations, credits, taxes, negotiated prices, and unseen work are excluded.",
+    "These are session-scoped estimates, not per-round or per-intent token allocations. Per-round figures are session totals divided by appearances."
+  ],
+  "by_model": {
+    "claude-opus-5-5": {
+      "display_name": "Claude Opus 5.5",
+      "participant_sessions": 4,
+      "round_appearances": 40,
+      "unique_api_messages": 379,
+      "tokens": {
+        "input_tokens": 766,
+        "output_tokens": 118029,
+        "cache_creation_input_tokens": 716471,
+        "cache_read_input_tokens": 47835295,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 716471,
+        "thinking_tokens_in_output": 22278
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.003064,
+          "output": 2.36058,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 5.731768,
+          "cache_read": 9.567059
+        },
+        "total_usd": 17.662471
+      },
+      "mean_main_thread_usd_per_round_appearance": 0.441561775,
+      "cost_state_sessions_available": 4,
+      "all_conversation_cost_snapshots_available": true,
+      "full_session_cost_available_for_all": false,
+      "recorded_conversation_total_usd": 17.719288000000006,
+      "recorded_primary_model_total_usd": 17.716567800000004,
+      "recorded_other_model_total_usd": 0.0027202000000000003
+    },
+    "claude-sonnet-5-5": {
+      "display_name": "Claude Sonnet 5.5",
+      "participant_sessions": 4,
+      "round_appearances": 40,
+      "unique_api_messages": 445,
+      "tokens": {
+        "input_tokens": 894,
+        "output_tokens": 165174,
+        "cache_creation_input_tokens": 929319,
+        "cache_read_input_tokens": 66885702,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 929319,
+        "thinking_tokens_in_output": 45894
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.001788,
+          "output": 1.65174,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 3.717276,
+          "cache_read": 6.6885702
+        },
+        "total_usd": 12.0593742
+      },
+      "mean_main_thread_usd_per_round_appearance": 0.30148435500000004,
+      "cost_state_sessions_available": 3,
+      "all_conversation_cost_snapshots_available": false,
+      "full_session_cost_available_for_all": false,
+      "recorded_conversation_total_usd": 8.7252755,
+      "recorded_primary_model_total_usd": 8.723343,
+      "recorded_other_model_total_usd": 0.0019325000000000002
+    },
+    "claude-fable-5-1": {
+      "display_name": "Claude Fable 5.1",
+      "participant_sessions": 4,
+      "round_appearances": 40,
+      "unique_api_messages": 370,
+      "tokens": {
+        "input_tokens": 11720,
+        "output_tokens": 139479,
+        "cache_creation_input_tokens": 635723,
+        "cache_read_input_tokens": 43363313,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 635723,
+        "thinking_tokens_in_output": 55816
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.1172,
+          "output": 6.97395,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 12.71446,
+          "cache_read": 10.84082825
+        },
+        "total_usd": 30.64643825
+      },
+      "mean_main_thread_usd_per_round_appearance": 0.76616095625,
+      "cost_state_sessions_available": 3,
+      "all_conversation_cost_snapshots_available": false,
+      "full_session_cost_available_for_all": false,
+      "recorded_conversation_total_usd": 21.28663065000001,
+      "recorded_primary_model_total_usd": 21.28461725000001,
+      "recorded_other_model_total_usd": 0.0020134000000000003
+    }
+  },
+  "participants": [
+    {
+      "arena_session_id": "session_5188b2ed236f",
+      "participant_id": "player_1",
+      "agent_name": "Sleepy Intern",
+      "harness": "Claude Code",
+      "model_id": "claude-sonnet-5-5",
+      "source_log_id": "d1c74f23-9971-4ddd-9ee3-86105e59438f",
+      "source_sha256": "2bdcd1fe23bab0c673b8332741251e4787b2f06a27304a9c6f7cc86e64813ec5",
+      "source_bytes": 2731060,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v sonnet/med_sonnet v opus/effort_verification.json",
+      "original_verification_source_sha256": "2bdcd1fe23bab0c673b8332741251e4787b2f06a27304a9c6f7cc86e64813ec5",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T01:51:09.968Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v sonnet/med_sonnet v opus/session_5188b2ed236f",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_39076fd0bbff",
+        "run_3ec43892bd40",
+        "run_595f7b5b2ac9",
+        "run_5f514703c524",
+        "run_7de17358419c",
+        "run_953577b6e0b0",
+        "run_a17e3939711e",
+        "run_b53b43688c92",
+        "run_d328e1e07bb7",
+        "run_fa5295ae078a"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_5188b2ed236f"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T01:51:10.056Z",
+      "last_request_at_utc": "2026-10-31T02:00:33.589Z",
+      "first_assistant_at_utc": "2026-10-31T01:51:12.288Z",
+      "last_assistant_at_utc": "2026-10-31T02:00:37.835Z",
+      "observed_assistant_rows": 236,
+      "unique_api_messages": 90,
+      "duplicate_content_rows_removed": 146,
+      "api_request_rows": 90,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 90
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 90
+      },
+      "effort_by_api_request_count": {
+        "medium": 90
+      },
+      "standard_global_messages": 90,
+      "max_input_context_tokens": 251038,
+      "tokens": {
+        "input_tokens": 182,
+        "output_tokens": 44544,
+        "cache_creation_input_tokens": 223423,
+        "cache_read_input_tokens": 12500507,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 223423,
+        "thinking_tokens_in_output": 16337
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.000364,
+          "output": 0.44544,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 0.893692,
+          "cache_read": 1.2500507
+        },
+        "total_usd": 2.5895467
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 2.617815300000001,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 6000,
+            "outputTokens": 218,
+            "thinkingTokens": 192,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0007090000000000001
+          },
+          "claude-sonnet-5-5": {
+            "inputTokens": 278,
+            "outputTokens": 44618,
+            "thinkingTokens": 16337,
+            "cacheReadInputTokens": 12751543,
+            "cacheCreationInputTokens": 223804,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 223804,
+            "webSearchRequests": 0,
+            "costUSD": 2.617106300000001
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 2.617106300000001,
+        "auxiliary_model_usd": 0.0007090000000000001,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.000709,
+          "claude-sonnet-5-5": 2.6171063
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_5188b2ed236f",
+      "participant_id": "player_2",
+      "agent_name": "Clingy Burrito",
+      "harness": "Claude Code",
+      "model_id": "claude-opus-5-5",
+      "source_log_id": "51fc4a65-d0e0-4a40-a99c-0b1a9eafaa50",
+      "source_sha256": "dde11ef25c5321fe60a49add113c094e37ac4bc0d21d97bc526503ff33e0ea89",
+      "source_bytes": 2620701,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v sonnet/med_sonnet v opus/effort_verification.json",
+      "original_verification_source_sha256": "dde11ef25c5321fe60a49add113c094e37ac4bc0d21d97bc526503ff33e0ea89",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T01:51:10.579Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v sonnet/med_sonnet v opus/session_5188b2ed236f",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_39076fd0bbff",
+        "run_3ec43892bd40",
+        "run_595f7b5b2ac9",
+        "run_5f514703c524",
+        "run_7de17358419c",
+        "run_953577b6e0b0",
+        "run_a17e3939711e",
+        "run_b53b43688c92",
+        "run_d328e1e07bb7",
+        "run_fa5295ae078a"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_5188b2ed236f"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T01:51:10.648Z",
+      "last_request_at_utc": "2026-10-31T02:00:37.802Z",
+      "first_assistant_at_utc": "2026-10-31T01:51:13.587Z",
+      "last_assistant_at_utc": "2026-10-31T02:00:44.263Z",
+      "observed_assistant_rows": 214,
+      "unique_api_messages": 100,
+      "duplicate_content_rows_removed": 114,
+      "api_request_rows": 100,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 100
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 100
+      },
+      "effort_by_api_request_count": {
+        "medium": 100
+      },
+      "standard_global_messages": 100,
+      "max_input_context_tokens": 239986,
+      "tokens": {
+        "input_tokens": 202,
+        "output_tokens": 31490,
+        "cache_creation_input_tokens": 212443,
+        "cache_read_input_tokens": 13707398,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 212443,
+        "thinking_tokens_in_output": 3388
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.000808,
+          "output": 0.6298,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 1.699544,
+          "cache_read": 2.7414796
+        },
+        "total_usd": 5.0716316
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 5.126444200000001,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 5988,
+            "outputTokens": 234,
+            "thinkingTokens": 213,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0007158
+          },
+          "claude-opus-5-5": {
+            "inputTokens": 298,
+            "outputTokens": 31557,
+            "thinkingTokens": 3388,
+            "cacheReadInputTokens": 13947382,
+            "cacheCreationInputTokens": 212990,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 212990,
+            "webSearchRequests": 0,
+            "costUSD": 5.125728400000001
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 5.125728400000001,
+        "auxiliary_model_usd": 0.0007158,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0007158,
+          "claude-opus-5-5": 5.1257284
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_572d2d193f0a",
+      "participant_id": "player_1",
+      "agent_name": "Stapler Tyrant",
+      "harness": "Claude Code",
+      "model_id": "claude-opus-5-5",
+      "source_log_id": "fe2f8510-c736-481e-a736-1a339d5239b4",
+      "source_sha256": "5f9ae6715de26281132bdc252634dc1da580a4cb2e6922748b2f16930ce59d89",
+      "source_bytes": 2067343,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v fable/med_opus v fable/effort_verification.json",
+      "original_verification_source_sha256": "5f9ae6715de26281132bdc252634dc1da580a4cb2e6922748b2f16930ce59d89",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:07:37.428Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v fable/med_opus v fable/session_572d2d193f0a",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_083f3fc7e7c0",
+        "run_1ea805bccf50",
+        "run_52247697da2b",
+        "run_64757af11647",
+        "run_7bb694584118",
+        "run_8341f3c2e39a",
+        "run_a176a13b9fae",
+        "run_e2e32fefdc63",
+        "run_f44d0948be6c",
+        "run_f5bcc6075bf1"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_572d2d193f0a"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:07:37.486Z",
+      "last_request_at_utc": "2026-10-31T04:15:50.940Z",
+      "first_assistant_at_utc": "2026-10-31T04:07:39.938Z",
+      "last_assistant_at_utc": "2026-10-31T04:15:58.696Z",
+      "observed_assistant_rows": 185,
+      "unique_api_messages": 71,
+      "duplicate_content_rows_removed": 114,
+      "api_request_rows": 71,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 71
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 71
+      },
+      "effort_by_api_request_count": {
+        "medium": 71
+      },
+      "standard_global_messages": 71,
+      "max_input_context_tokens": 181168,
+      "tokens": {
+        "input_tokens": 144,
+        "output_tokens": 33343,
+        "cache_creation_input_tokens": 153625,
+        "cache_read_input_tokens": 8012740,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 153625,
+        "thinking_tokens_in_output": 10878
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.000576,
+          "output": 0.66686,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 1.229,
+          "cache_read": 1.602548
+        },
+        "total_usd": 3.498984
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 3.4995956000000006,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 6001,
+            "outputTokens": 23,
+            "thinkingTokens": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006116000000000001
+          },
+          "claude-opus-5-5": {
+            "inputTokens": 144,
+            "outputTokens": 33343,
+            "thinkingTokens": 10878,
+            "cacheReadInputTokens": 8012740,
+            "cacheCreationInputTokens": 153625,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 153625,
+            "webSearchRequests": 0,
+            "costUSD": 3.4989840000000005
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 3.4989840000000005,
+        "auxiliary_model_usd": 0.0006116000000000001,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006116,
+          "claude-opus-5-5": 3.498984
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_572d2d193f0a",
+      "participant_id": "player_2",
+      "agent_name": "Divorced Lasagna",
+      "harness": "Claude Code",
+      "model_id": "claude-fable-5-1",
+      "source_log_id": "4aaab9a4-5ffa-4e20-a3d4-436044a0924a",
+      "source_sha256": "97fa40e57a5270d33ac5cee9bd9c5175318f5d11ddd20762878c096c7c2bf40a",
+      "source_bytes": 2369470,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v fable/med_opus v fable/effort_verification.json",
+      "original_verification_source_sha256": "97fa40e57a5270d33ac5cee9bd9c5175318f5d11ddd20762878c096c7c2bf40a",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:07:36.853Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v fable/med_opus v fable/session_572d2d193f0a",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_083f3fc7e7c0",
+        "run_1ea805bccf50",
+        "run_52247697da2b",
+        "run_64757af11647",
+        "run_7bb694584118",
+        "run_8341f3c2e39a",
+        "run_a176a13b9fae",
+        "run_e2e32fefdc63",
+        "run_f44d0948be6c",
+        "run_f5bcc6075bf1"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_572d2d193f0a"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:07:36.911Z",
+      "last_request_at_utc": "2026-10-31T04:15:45.470Z",
+      "first_assistant_at_utc": "2026-10-31T04:07:39.990Z",
+      "last_assistant_at_utc": "2026-10-31T04:15:53.296Z",
+      "observed_assistant_rows": 236,
+      "unique_api_messages": 93,
+      "duplicate_content_rows_removed": 143,
+      "api_request_rows": 93,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 93
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 93
+      },
+      "effort_by_api_request_count": {
+        "medium": 93
+      },
+      "standard_global_messages": 93,
+      "max_input_context_tokens": 177688,
+      "tokens": {
+        "input_tokens": 2946,
+        "output_tokens": 30792,
+        "cache_creation_input_tokens": 148257,
+        "cache_read_input_tokens": 10458282,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 148257,
+        "thinking_tokens_in_output": 9600
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.02946,
+          "output": 1.5396,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 2.96514,
+          "cache_read": 2.6145705
+        },
+        "total_usd": 7.1487705
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 7.1494729000000055,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 5994,
+            "outputTokens": 206,
+            "thinkingTokens": 180,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0007024
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2946,
+            "outputTokens": 30792,
+            "thinkingTokens": 9600,
+            "cacheReadInputTokens": 10458282,
+            "cacheCreationInputTokens": 148257,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 148257,
+            "webSearchRequests": 0,
+            "costUSD": 7.148770500000004
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 7.148770500000004,
+        "auxiliary_model_usd": 0.0007024,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0007024,
+          "claude-fable-5-1": 7.1487705
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_60e8ac8a1dda",
+      "participant_id": "player_1",
+      "agent_name": "Overconfident Intern",
+      "harness": "Claude Code",
+      "model_id": "claude-sonnet-5-5",
+      "source_log_id": "6b72f6ac-c3ce-4271-b61a-6464da4125b3",
+      "source_sha256": "c889b5493b2e8bbe59d6d9e39439115b899054d086cf38dee8c723697f71d75a",
+      "source_bytes": 3432309,
+      "effort_verification_path": "claude_sweep/med_reruns/sonnet v fable/med_sonnet v fable/effort_verification.json",
+      "original_verification_source_sha256": "c889b5493b2e8bbe59d6d9e39439115b899054d086cf38dee8c723697f71d75a",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:54:49.169Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/sonnet v fable/med_sonnet v fable/session_60e8ac8a1dda",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_005a55b38e9e",
+        "run_1d05e75b7279",
+        "run_365645e2c226",
+        "run_41658511b531",
+        "run_77c71f7d0a55",
+        "run_94d63506682e",
+        "run_9a48cc00a6df",
+        "run_b9244526f54c",
+        "run_bed8e33200df",
+        "run_dbb9c16ab1a2"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_60e8ac8a1dda"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:54:49.231Z",
+      "last_request_at_utc": "2026-10-31T05:13:09.908Z",
+      "first_assistant_at_utc": "2026-10-31T04:54:52.019Z",
+      "last_assistant_at_utc": "2026-10-31T05:13:13.437Z",
+      "observed_assistant_rows": 306,
+      "unique_api_messages": 135,
+      "duplicate_content_rows_removed": 171,
+      "api_request_rows": 135,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 135
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 135
+      },
+      "effort_by_api_request_count": {
+        "medium": 135
+      },
+      "standard_global_messages": 135,
+      "max_input_context_tokens": 309116,
+      "tokens": {
+        "input_tokens": 270,
+        "output_tokens": 44648,
+        "cache_creation_input_tokens": 283417,
+        "cache_read_input_tokens": 23696532,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 283417,
+        "thinking_tokens_in_output": 6403
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.00054,
+          "output": 0.44648,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 1.133668,
+          "cache_read": 2.3696532
+        },
+        "total_usd": 3.9503412
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 3.9838321999999993,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 6001,
+            "outputTokens": 23,
+            "thinkingTokens": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006116000000000001
+          },
+          "claude-sonnet-5-5": {
+            "inputTokens": 776,
+            "outputTokens": 44650,
+            "thinkingTokens": 6403,
+            "cacheReadInputTokens": 24005646,
+            "cacheCreationInputTokens": 283651,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 283651,
+            "webSearchRequests": 0,
+            "costUSD": 3.9832205999999992
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 3.9832205999999992,
+        "auxiliary_model_usd": 0.0006116000000000001,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006116,
+          "claude-sonnet-5-5": 3.9832206
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_60e8ac8a1dda",
+      "participant_id": "player_2",
+      "agent_name": "Nervous Burrito",
+      "harness": "Claude Code",
+      "model_id": "claude-fable-5-1",
+      "source_log_id": "012f0335-ec16-468b-93be-81474dcd1f53",
+      "source_sha256": "b955574cd7fbfeee6587b7135aea25c8c4788d2aec6a2cc07ce42e2650e36175",
+      "source_bytes": 2396295,
+      "effort_verification_path": "claude_sweep/med_reruns/sonnet v fable/med_sonnet v fable/effort_verification.json",
+      "original_verification_source_sha256": "b955574cd7fbfeee6587b7135aea25c8c4788d2aec6a2cc07ce42e2650e36175",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:54:48.674Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/sonnet v fable/med_sonnet v fable/session_60e8ac8a1dda",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_005a55b38e9e",
+        "run_1d05e75b7279",
+        "run_365645e2c226",
+        "run_41658511b531",
+        "run_77c71f7d0a55",
+        "run_94d63506682e",
+        "run_9a48cc00a6df",
+        "run_b9244526f54c",
+        "run_bed8e33200df",
+        "run_dbb9c16ab1a2"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_60e8ac8a1dda"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:54:48.741Z",
+      "last_request_at_utc": "2026-10-31T05:13:10.676Z",
+      "first_assistant_at_utc": "2026-10-31T04:54:55.675Z",
+      "last_assistant_at_utc": "2026-10-31T05:13:10.609Z",
+      "observed_assistant_rows": 201,
+      "unique_api_messages": 86,
+      "duplicate_content_rows_removed": 115,
+      "api_request_rows": 87,
+      "request_refs_without_response_usage": 1,
+      "effort_by_message_count": {
+        "medium": 86
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 86
+      },
+      "effort_by_api_request_count": {
+        "medium": 87
+      },
+      "standard_global_messages": 86,
+      "max_input_context_tokens": 196718,
+      "tokens": {
+        "input_tokens": 2722,
+        "output_tokens": 43480,
+        "cache_creation_input_tokens": 167287,
+        "cache_read_input_tokens": 10152575,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 167287,
+        "thinking_tokens_in_output": 22394
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.02722,
+          "output": 2.174,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 3.34574,
+          "cache_read": 2.53814375
+        },
+        "total_usd": 8.08510375
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 8.085716550000003,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 6003,
+            "outputTokens": 25,
+            "thinkingTokens": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006128
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2722,
+            "outputTokens": 43480,
+            "thinkingTokens": 22394,
+            "cacheReadInputTokens": 10152575,
+            "cacheCreationInputTokens": 167287,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 167287,
+            "webSearchRequests": 0,
+            "costUSD": 8.085103750000004
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 8.085103750000004,
+        "auxiliary_model_usd": 0.0006128,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006128,
+          "claude-fable-5-1": 8.08510375
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_8fdec3c440b4",
+      "participant_id": "player_1",
+      "agent_name": "Stapler Tyrant",
+      "harness": "Claude Code",
+      "model_id": "claude-opus-5-5",
+      "source_log_id": "e5f004d5-7432-4b3f-ba2c-5a54ae0532ef",
+      "source_sha256": "8754edf4d22b6ab8ffe920d1635a63d5f772372348610e2c6c0c9162dacb00d7",
+      "source_bytes": 2161002,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v sonnet/med_opus v sonnet/effort_verification.json",
+      "original_verification_source_sha256": "8754edf4d22b6ab8ffe920d1635a63d5f772372348610e2c6c0c9162dacb00d7",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T01:41:21.918Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v sonnet/med_opus v sonnet/session_8fdec3c440b4",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_2e831cc0e546",
+        "run_6f4052818b03",
+        "run_8c794ae964f4",
+        "run_936cf0c8f4fa",
+        "run_97cff64504a9",
+        "run_9ec6737e8d40",
+        "run_a6036fc88155",
+        "run_e73d7ac9d49d",
+        "run_e8825f59d98e",
+        "run_ee240cc8a1b7"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_8fdec3c440b4"
+      ],
+      "non_gameplay_session_id_references": [],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T01:41:22.024Z",
+      "last_request_at_utc": "2026-10-31T01:48:15.001Z",
+      "first_assistant_at_utc": "2026-10-31T01:41:25.538Z",
+      "last_assistant_at_utc": "2026-10-31T01:48:22.572Z",
+      "observed_assistant_rows": 177,
+      "unique_api_messages": 80,
+      "duplicate_content_rows_removed": 97,
+      "api_request_rows": 80,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 80
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 80
+      },
+      "effort_by_api_request_count": {
+        "medium": 80
+      },
+      "standard_global_messages": 80,
+      "max_input_context_tokens": 193804,
+      "tokens": {
+        "input_tokens": 162,
+        "output_tokens": 24882,
+        "cache_creation_input_tokens": 166261,
+        "cache_read_input_tokens": 9653709,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 166261,
+        "thinking_tokens_in_output": 4063
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.000648,
+          "output": 0.49764,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 1.330088,
+          "cache_read": 1.9307418
+        },
+        "total_usd": 3.7591178
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 3.7598218,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 5990,
+            "outputTokens": 210,
+            "thinkingTokens": 184,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.000704
+          },
+          "claude-opus-5-5": {
+            "inputTokens": 162,
+            "outputTokens": 24882,
+            "thinkingTokens": 4063,
+            "cacheReadInputTokens": 9653709,
+            "cacheCreationInputTokens": 166261,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 166261,
+            "webSearchRequests": 0,
+            "costUSD": 3.7591177999999994
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 3.7591177999999994,
+        "auxiliary_model_usd": 0.000704,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.000704,
+          "claude-opus-5-5": 3.7591178
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_8fdec3c440b4",
+      "participant_id": "player_2",
+      "agent_name": "Soggy Nachos",
+      "harness": "Claude Code",
+      "model_id": "claude-sonnet-5-5",
+      "source_log_id": "8057de5a-f7f5-4aa9-b239-d8e126934c2c",
+      "source_sha256": "77a8f632c138f9a1cc46d709df9dd993267bef26b11ad68afc4de3016329463e",
+      "source_bytes": 2407884,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v sonnet/med_opus v sonnet/effort_verification.json",
+      "original_verification_source_sha256": "77a8f632c138f9a1cc46d709df9dd993267bef26b11ad68afc4de3016329463e",
+      "source_hash_matches_original_verification": true,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T01:41:21.339Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v sonnet/med_opus v sonnet/session_8fdec3c440b4",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_2e831cc0e546",
+        "run_6f4052818b03",
+        "run_8c794ae964f4",
+        "run_936cf0c8f4fa",
+        "run_97cff64504a9",
+        "run_9ec6737e8d40",
+        "run_a6036fc88155",
+        "run_e73d7ac9d49d",
+        "run_e8825f59d98e",
+        "run_ee240cc8a1b7"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_8fdec3c440b4"
+      ],
+      "non_gameplay_session_id_references": [],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T01:41:21.446Z",
+      "last_request_at_utc": "2026-10-31T01:48:04.912Z",
+      "first_assistant_at_utc": "2026-10-31T01:41:23.265Z",
+      "last_assistant_at_utc": "2026-10-31T01:48:09.390Z",
+      "observed_assistant_rows": 194,
+      "unique_api_messages": 79,
+      "duplicate_content_rows_removed": 115,
+      "api_request_rows": 79,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 79
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 79
+      },
+      "effort_by_api_request_count": {
+        "medium": 79
+      },
+      "standard_global_messages": 79,
+      "max_input_context_tokens": 224752,
+      "tokens": {
+        "input_tokens": 160,
+        "output_tokens": 30449,
+        "cache_creation_input_tokens": 199053,
+        "cache_read_input_tokens": 10219941,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 199053,
+        "thinking_tokens_in_output": 7215
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.00032,
+          "output": 0.30449,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 0.796212,
+          "cache_read": 1.0219941
+        },
+        "total_usd": 2.1230161
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 2.123628,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 5999,
+            "outputTokens": 24,
+            "thinkingTokens": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006119
+          },
+          "claude-sonnet-5-5": {
+            "inputTokens": 160,
+            "outputTokens": 30449,
+            "thinkingTokens": 7215,
+            "cacheReadInputTokens": 10219941,
+            "cacheCreationInputTokens": 199053,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 199053,
+            "webSearchRequests": 0,
+            "costUSD": 2.1230161
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 2.1230161,
+        "auxiliary_model_usd": 0.0006119,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006119,
+          "claude-sonnet-5-5": 2.1230161
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_acd0e0242118",
+      "participant_id": "player_1",
+      "agent_name": "Stapler Tyrant",
+      "harness": "Claude Code",
+      "model_id": "claude-fable-5-1",
+      "source_log_id": "eef1d822-c9f7-4d03-9c45-007595079b86",
+      "source_sha256": "3b4648cd9f66adfe6b7f897f471ae99498aac2167d0cce040f733676a00d446a",
+      "source_bytes": 1915688,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v fable/med_fable v opus/effort_verification.json",
+      "original_verification_source_sha256": "c31ce610b27e84ebe7ae1923a577318eedb8a8540f0e61f940da827a17a07d92",
+      "source_hash_matches_original_verification": false,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:37:57.312Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v fable/med_fable v opus/session_acd0e0242118",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_1642aee19a77",
+        "run_30efe359bbd1",
+        "run_42d43bdcf170",
+        "run_82abce39aef9",
+        "run_85b5cf00097a",
+        "run_bf53551d5a8c",
+        "run_c8a61f725695",
+        "run_d73a7fa75a7e",
+        "run_e018fecb6402",
+        "run_fc5b791aaa16"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_acd0e0242118"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:37:57.375Z",
+      "last_request_at_utc": "2026-10-31T04:51:20.269Z",
+      "first_assistant_at_utc": "2026-10-31T04:38:01.729Z",
+      "last_assistant_at_utc": "2026-10-31T04:51:33.847Z",
+      "observed_assistant_rows": 143,
+      "unique_api_messages": 71,
+      "duplicate_content_rows_removed": 72,
+      "api_request_rows": 71,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 71
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 71
+      },
+      "effort_by_api_request_count": {
+        "medium": 71
+      },
+      "standard_global_messages": 71,
+      "max_input_context_tokens": 161843,
+      "tokens": {
+        "input_tokens": 2242,
+        "output_tokens": 31309,
+        "cache_creation_input_tokens": 132412,
+        "cache_read_input_tokens": 7258532,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 132412,
+        "thinking_tokens_in_output": 14214
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.02242,
+          "output": 1.56545,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 2.64824,
+          "cache_read": 1.814633
+        },
+        "total_usd": 6.050743
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 6.051441200000002,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 5997,
+            "outputTokens": 197,
+            "thinkingTokens": 171,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006982
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2242,
+            "outputTokens": 31309,
+            "thinkingTokens": 14214,
+            "cacheReadInputTokens": 7258532,
+            "cacheCreationInputTokens": 132412,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 132412,
+            "webSearchRequests": 0,
+            "costUSD": 6.0507430000000015
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 6.0507430000000015,
+        "auxiliary_model_usd": 0.0006982,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006982,
+          "claude-fable-5-1": 6.050743
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_acd0e0242118",
+      "participant_id": "player_2",
+      "agent_name": "Nervous Meatball",
+      "harness": "Claude Code",
+      "model_id": "claude-opus-5-5",
+      "source_log_id": "fb2cff05-d24e-466a-b526-7a76d3354a00",
+      "source_sha256": "22668798d60d7111b00bd7eb4855d695720ae654f94408a77a4bf60cef8867fd",
+      "source_bytes": 2441766,
+      "effort_verification_path": "claude_sweep/med_reruns/opus v fable/med_fable v opus/effort_verification.json",
+      "original_verification_source_sha256": "9fc44a8a387562a93058f61d69f8f6b6be789124baf2952694a30fec1043064c",
+      "source_hash_matches_original_verification": false,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T04:37:56.547Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/opus v fable/med_fable v opus/session_acd0e0242118",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_1642aee19a77",
+        "run_30efe359bbd1",
+        "run_42d43bdcf170",
+        "run_82abce39aef9",
+        "run_85b5cf00097a",
+        "run_bf53551d5a8c",
+        "run_c8a61f725695",
+        "run_d73a7fa75a7e",
+        "run_e018fecb6402",
+        "run_fc5b791aaa16"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_acd0e0242118"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T04:37:56.604Z",
+      "last_request_at_utc": "2026-10-31T04:51:13.210Z",
+      "first_assistant_at_utc": "2026-10-31T04:37:59.584Z",
+      "last_assistant_at_utc": "2026-10-31T04:51:20.151Z",
+      "observed_assistant_rows": 199,
+      "unique_api_messages": 128,
+      "duplicate_content_rows_removed": 71,
+      "api_request_rows": 128,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 128
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 128
+      },
+      "effort_by_api_request_count": {
+        "medium": 128
+      },
+      "standard_global_messages": 128,
+      "max_input_context_tokens": 211685,
+      "tokens": {
+        "input_tokens": 258,
+        "output_tokens": 28314,
+        "cache_creation_input_tokens": 184142,
+        "cache_read_input_tokens": 16461448,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 184142,
+        "thinking_tokens_in_output": 3949
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.001032,
+          "output": 0.56628,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 1.473136,
+          "cache_read": 3.2922896
+        },
+        "total_usd": 5.3327376
+      },
+      "recorded_cost_state": {
+        "total_api_equivalent_usd": 5.333426400000003,
+        "has_unknown_model_cost": false,
+        "model_usage": {
+          "claude-haiku-5-5": {
+            "inputTokens": 6003,
+            "outputTokens": 177,
+            "thinkingTokens": 151,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0006888
+          },
+          "claude-opus-5-5": {
+            "inputTokens": 258,
+            "outputTokens": 28314,
+            "thinkingTokens": 3949,
+            "cacheReadInputTokens": 16461448,
+            "cacheCreationInputTokens": 184142,
+            "cacheCreationEphemeral5mInputTokens": 0,
+            "cacheCreationEphemeral1hInputTokens": 184142,
+            "webSearchRequests": 0,
+            "costUSD": 5.332737600000002
+          }
+        },
+        "scope": "Whole Claude Code session cumulative snapshot; may include background requests absent from assistant transcript.",
+        "snapshot_count": 2,
+        "primary_model_usd": 5.332737600000002,
+        "auxiliary_model_usd": 0.0006888,
+        "repriced_model_costs_usd": {
+          "claude-haiku-5-5": 0.0006888,
+          "claude-opus-5-5": 5.3327376
+        },
+        "repricing_matches_recorded_costs": true,
+        "post_game_model_command_at_utc": [],
+        "nonparticipant_nonhaiku_model_costs_usd": {},
+        "bounded_tournament_scope_certified": false
+      }
+    },
+    {
+      "arena_session_id": "session_da8fd5b5d730",
+      "participant_id": "player_1",
+      "agent_name": "Stapler Tyrant",
+      "harness": "Claude Code",
+      "model_id": "claude-fable-5-1",
+      "source_log_id": "39376c4e-d271-4ba2-a442-040044dc5c24",
+      "source_sha256": "b315f0829e04e4052f531d96f7f8d27d477b527a7d40c57b401b772ace49eb3f",
+      "source_bytes": 2749807,
+      "effort_verification_path": "claude_sweep/med_reruns/sonnet v fable/med_fable v sonnet/effort_verification.json",
+      "original_verification_source_sha256": "134be21f515bd6a5a9caa2239e600b76b36b49632b17b7f801c74e142a84dae9",
+      "source_hash_matches_original_verification": false,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T05:33:57.162Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/sonnet v fable/med_fable v sonnet/session_da8fd5b5d730",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_414e9e90041c",
+        "run_503feb253505",
+        "run_754ef43ea805",
+        "run_7b396bf3c0a6",
+        "run_8426584f2e11",
+        "run_87fe5afeea63",
+        "run_a47c72675765",
+        "run_b0170921a601",
+        "run_ca22c72d0e36",
+        "run_d837b8e91c2a"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_da8fd5b5d730"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T05:33:57.245Z",
+      "last_request_at_utc": "2026-10-31T05:44:40.750Z",
+      "first_assistant_at_utc": "2026-10-31T05:33:59.300Z",
+      "last_assistant_at_utc": "2026-10-31T05:44:53.408Z",
+      "observed_assistant_rows": 233,
+      "unique_api_messages": 120,
+      "duplicate_content_rows_removed": 113,
+      "api_request_rows": 120,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 120
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 120
+      },
+      "effort_by_api_request_count": {
+        "medium": 120
+      },
+      "standard_global_messages": 120,
+      "max_input_context_tokens": 217198,
+      "tokens": {
+        "input_tokens": 3810,
+        "output_tokens": 33898,
+        "cache_creation_input_tokens": 187767,
+        "cache_read_input_tokens": 15493924,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 187767,
+        "thinking_tokens_in_output": 9608
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.0381,
+          "output": 1.6949,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 3.75534,
+          "cache_read": 3.873481
+        },
+        "total_usd": 9.361821
+      },
+      "recorded_cost_state": null
+    },
+    {
+      "arena_session_id": "session_da8fd5b5d730",
+      "participant_id": "player_2",
+      "agent_name": "Soggy Burrito",
+      "harness": "Claude Code",
+      "model_id": "claude-sonnet-5-5",
+      "source_log_id": "d1bb5072-fec5-4702-af9b-d00f58b9ff50",
+      "source_sha256": "d59c8e0af1b8cb6321ad072428843481a695db39b5c57e6b13701abb62ba03db",
+      "source_bytes": 2831500,
+      "effort_verification_path": "claude_sweep/med_reruns/sonnet v fable/med_fable v sonnet/effort_verification.json",
+      "original_verification_source_sha256": "15aacc34256b47b04c5421b7047d3d52554536f99e994a6ff9a8406c8e759106",
+      "source_hash_matches_original_verification": false,
+      "request_response_counts_match_original_verification": true,
+      "sole_substantive_user_instruction_at_utc": "2026-10-31T05:33:56.313Z",
+      "substantive_user_instruction_count": 1,
+      "archive_path": "claude_sweep/med_reruns/sonnet v fable/med_fable v sonnet/session_da8fd5b5d730",
+      "matched_rounds": 10,
+      "matched_run_ids": [
+        "run_414e9e90041c",
+        "run_503feb253505",
+        "run_754ef43ea805",
+        "run_7b396bf3c0a6",
+        "run_8426584f2e11",
+        "run_87fe5afeea63",
+        "run_a47c72675765",
+        "run_b0170921a601",
+        "run_ca22c72d0e36",
+        "run_d837b8e91c2a"
+      ],
+      "verified_arena_tool_result_session_ids": [
+        "session_da8fd5b5d730"
+      ],
+      "non_gameplay_session_id_references": [
+        "session_08bde7c404af"
+      ],
+      "non_gameplay_reference_note": "References outside arena tool results are retained as context metadata; gameplay tool results must exclusively identify the pinned session.",
+      "first_request_at_utc": "2026-10-31T05:33:56.407Z",
+      "last_request_at_utc": "2026-10-31T05:44:37.289Z",
+      "first_assistant_at_utc": "2026-10-31T05:33:58.877Z",
+      "last_assistant_at_utc": "2026-10-31T05:44:40.483Z",
+      "observed_assistant_rows": 239,
+      "unique_api_messages": 141,
+      "duplicate_content_rows_removed": 98,
+      "api_request_rows": 141,
+      "request_refs_without_response_usage": 0,
+      "effort_by_message_count": {
+        "medium": 141
+      },
+      "per_turn_effort_by_message_count": {
+        "medium": 141
+      },
+      "effort_by_api_request_count": {
+        "medium": 141
+      },
+      "standard_global_messages": 141,
+      "max_input_context_tokens": 251041,
+      "tokens": {
+        "input_tokens": 282,
+        "output_tokens": 45533,
+        "cache_creation_input_tokens": 223426,
+        "cache_read_input_tokens": 20468722,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 223426,
+        "thinking_tokens_in_output": 15939
+      },
+      "main_thread_api_equivalent": {
+        "components_usd": {
+          "input": 0.000564,
+          "output": 0.45533,
+          "cache_write_5m": 0.0,
+          "cache_write_1h": 0.893704,
+          "cache_read": 2.0468722
+        },
+        "total_usd": 3.3964702
+      },
+      "recorded_cost_state": null
+    }
+  ]
+}

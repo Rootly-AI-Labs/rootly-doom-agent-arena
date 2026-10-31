@@ -1,0 +1,442 @@
+{
+  "run_id": "run_76c73cd4bdef",
+  "round": 6,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 71.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 45,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 4,
+      "accuracy": 0.667,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 45,
+      "shots_fired": 6,
+      "shots_hit": 4,
+      "accuracy": 0.667,
+      "final_health": 110
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "4725",
+      "elapsed_ms": null,
+      "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) the one-plan sprint reached the shotgun in ten seconds last round aim_err"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "4725",
+      "elapsed_ms": null,
+      "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 65800 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,-192) at 145 I lose a timeout; medikit restores the lead aim_error=2"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 11,
+        "health": 14
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) the one-plan sprint reached the shotgun in ten seconds last round aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 457 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(512,-512) the one-plan sprint reached the shotgun in ten seconds last round aim_e"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 1885 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(512,-192) the one-plan sprint reached the shotgun in ten seconds last round aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 2914 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-192) the one-plan sprint reached the shotgun in ten seconds last round aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 4542 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) the one-plan sprint reached the shotgun in ten seconds last round aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 4885 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) the one-plan sprint reached the shotgun in ten seconds last round aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 5114 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reached the shotgun in ten seconds last round aim_error=151"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 5142 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 5857 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reached the shotgun in ten seconds last round aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 14371 autopilot_action: player_2 action=route_complete+attack reason=the one-plan sprint reached the shotgun in ten seconds last round aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 14428 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reached the shotgun in ten seconds last round aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 21542 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 65800 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,-192) at 145 I lose a timeout; medikit restores the lead aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 65828 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,-192) at 145 I lose a timeout; medikit restores the lead aim_error=14"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 66142 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(0,-128) at 145 I lose a timeout; medikit restores the lead aim_error=11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 66485 autopilot_action: player_2 action=route_waypoint reason=wp=3/5 target=(320,-128) at 145 I lose a timeout; medikit restores the lead aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 67514 autopilot_action: player_2 action=route_waypoint reason=wp=4/5 target=(320,0) at 145 I lose a timeout; medikit restores the lead aim_error=-125"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 67657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/5 target=(320,0) at 145 I lose a timeout; medikit restores the lead aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 67971 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/5 target=(448,0) at 145 I lose a timeout; medikit restores the lead aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 68314 autopilot_action: player_2 action=route_complete+attack reason=at 145 I lose a timeout; medikit restores the lead aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 68342 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 68885 autopilot_action: player_2 action=route_complete+attack reason=at 145 I lose a timeout; medikit restores the lead aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 70057 autopilot_action: player_2 action=route_complete+attack reason=at 145 I lose a timeout; medikit restores the lead aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 70228 autopilot_action: player_2 action=route_complete reason=at 145 I lose a timeout; medikit restores the lead aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 70314 autopilot_action: player_2 action=route_complete reason=at 145 I lose a timeout; medikit restores the lead aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "4725",
+        "elapsed_ms": null,
+        "event": "run_76c73cd4bdef duel_e1m8_blind_spawn 4725 70428 autopilot_action: player_2 action=route_complete+attack reason=at 145 I lose a timeout; medikit restores the lead aim_error=6"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 10,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 276,
+        "distance_traveled": 3856.2,
+        "unique_cells_visited": 28,
+        "revisited_cells": 248
+      },
+      "player_2": {
+        "path_points": 276,
+        "distance_traveled": 2700.4,
+        "unique_cells_visited": 32,
+        "revisited_cells": 244
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6471.5,
+    "decision_p95_ms": 10012.0,
+    "decision_max_ms": 21435.0,
+    "mcp_avg_ms": 2130.09,
+    "mcp_p95_ms": 2022.0,
+    "mcp_max_ms": 56684.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 9
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 5,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 9091,
+      "player_2": 4898
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2392,
+      "player_2": 1651
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 63920,
+    "stale_intent_extension_max_ms": 46134
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Lost by five health. Raccoon demands a recount."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach shotgun at R17 in one sprint",
+      "route": "T32;T25;O25;O17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the one-plan sprint reached the shotgun in ten seconds last round",
+      "plan_summary": "Round six. Same sprint, then I camp my kitchen like a grumpy chef."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Back on the commute to violence."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance",
+      "route": "F12;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "They sprinted. I power-walk with intent."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17",
+      "route": "I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Grabbing the upgrade before the meeting starts."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard shotgun room entrance at Q17",
+      "route": "Q17;Q16;Q17;Q18;Q17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the narrow P17 doorway forces a close fight on my terms",
+      "plan_summary": "Camping my kitchen doorway. Come get breakfast, I dare you."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "ambush the opponent from behind the corner at H18",
+      "route": "F17;G17;H17;H18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Hiding behind the corner like it's a surprise party."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "guard the corner at H18 and ambush whoever comes along row I",
+      "route": "H18;H17;H18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Any minute now. Surprise! Please be on time."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "guard shotgun room entrance at Q17",
+      "route": "Q18;Q17;Q16;Q17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "stray hit means he is close; make him come through the doorway",
+      "plan_summary": "Someone's poking at my pancake. Stay in the doorway, stay spicy."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "guard the corner at H18 and ambush whoever comes along row I",
+      "route": "H18;H17;H18;H17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Patience is a virtue. So is a loaded shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "guard the corner at H18 and ambush whoever comes along row I",
+      "route": "H17;H18;H17;H18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still here. Still armed. Still hiding."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "guard the corner at H18 and ambush whoever comes along row I",
+      "route": "H18;H17;H18;H17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Rent is paid up to the corner. Holding."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "heal at L24 and regain health lead",
+      "route": "O17;N17;N22;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "at 145 I lose a timeout; medikit restores the lead",
+      "plan_summary": "Nobody showed up to my doorway party. Fine, snack run to L24."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "10",
+      "objective": "scout east along row I to find the opponent",
+      "route": "H17;I17;I18;I19;I20;I21;I22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Nobody showed. Going to the next meeting room."
+    }
+  ]
+}

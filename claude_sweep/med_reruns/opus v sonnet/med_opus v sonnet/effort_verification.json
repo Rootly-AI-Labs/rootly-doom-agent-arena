@@ -1,0 +1,27 @@
+{
+  "session_id": "session_8fdec3c440b4",
+  "verified_at_utc": "2026-10-31T05:48:52.872236+00:00",
+  "rounds": 10,
+  "basis": "Existing original-sweep cost audit of actual Claude API requests and responses; both participant records match the exact ten run IDs and sole arena session. Reused original medium-effort series, unaffected by Fable effort settings.",
+  "source_audit": "../../../analysis/cost_audit.json",
+  "source_audit_generated_at_utc": "2026-10-31T04:11:03.109289+00:00",
+  "preserved_archive_files": 96,
+  "player_1": {
+    "model": "claude-opus-5-5",
+    "alias": "Stapler Tyrant",
+    "effort": "medium",
+    "api_requests": 80,
+    "unique_api_responses": 80,
+    "source_log_id": "e5f004d5-7432-4b3f-ba2c-5a54ae0532ef",
+    "source_sha256": "8754edf4d22b6ab8ffe920d1635a63d5f772372348610e2c6c0c9162dacb00d7"
+  },
+  "player_2": {
+    "model": "claude-sonnet-5-5",
+    "alias": "Soggy Nachos",
+    "effort": "medium",
+    "api_requests": 79,
+    "unique_api_responses": 79,
+    "source_log_id": "8057de5a-f7f5-4aa9-b239-d8e126934c2c",
+    "source_sha256": "77a8f632c138f9a1cc46d709df9dd993267bef26b11ad68afc4de3016329463e"
+  }
+}

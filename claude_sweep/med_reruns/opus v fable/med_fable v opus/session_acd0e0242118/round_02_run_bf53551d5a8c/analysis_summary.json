@@ -1,0 +1,313 @@
+{
+  "run_id": "run_bf53551d5a8c",
+  "round": 2,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 25.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 30,
+      "damage_taken": 155,
+      "shots_fired": 14,
+      "shots_hit": 3,
+      "accuracy": 0.214,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 30,
+      "shots_fired": 7,
+      "shots_hit": 7,
+      "accuracy": 1.0,
+      "final_health": 120
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2765",
+      "elapsed_ms": null,
+      "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(960,-512) shotgun won the last round decisively aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 16,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(960,-512) shotgun won the last round decisively aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 457 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(320,-512) shotgun won the last round decisively aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 2457 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(320,-192) shotgun won the last round decisively aim_error=57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 3485 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-192) shotgun won the last round decisively aim_error=-39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 4514 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) shotgun won the last round decisively aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 5057 autopilot_action: player_2 action=route_complete reason=shotgun won the last round decisively aim_error=155"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 5800 autopilot_action: player_2 action=route_complete reason=shotgun won the last round decisively aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 13314 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(0,-192) opponent heads via row I toward shotgun F17 aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 13342 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(0,-192) opponent heads via row I toward shotgun F17 aim_error=-22"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 14028 autopilot_action: player_2 action=route_waypoint reason=wp=3/5 target=(320,-192) opponent heads via row I toward shotgun F17 aim_error=-26"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 15057 autopilot_action: player_2 action=route_waypoint reason=wp=4/5 target=(320,192) opponent heads via row I toward shotgun F17 aim_error=-129"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 16285 autopilot_action: player_2 action=route_waypoint reason=wp=5/5 target=(-320,192) opponent heads via row I toward shotgun F17 aim_error=-59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 18171 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/5 target=(-320,192) opponent heads via row I toward shotgun F17 aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 18200 autopilot_action: player_2 action=route_complete+attack reason=opponent heads via row I toward shotgun F17 aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2765",
+        "elapsed_ms": null,
+        "event": "run_bf53551d5a8c duel_e1m8_blind_spawn 2765 19171 autopilot_action: player_2 action=route_complete+attack reason=opponent heads via row I toward shotgun F17 aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 99,
+        "distance_traveled": 729.1,
+        "unique_cells_visited": 9,
+        "revisited_cells": 90
+      },
+      "player_2": {
+        "path_points": 99,
+        "distance_traveled": 3990.6,
+        "unique_cells_visited": 36,
+        "revisited_cells": 63
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 12517.0,
+    "decision_p95_ms": 33461.0,
+    "decision_max_ms": 33461.0,
+    "mcp_avg_ms": 2056.1,
+    "mcp_p95_ms": 1730.0,
+    "mcp_max_ms": 37587.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1704
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1704
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 45815,
+    "stale_intent_extension_max_ms": 36116
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "grab medikit at G08 and break line of sight",
+      "route": [
+        "I08",
+        "H08",
+        "G08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "at 50 health the nearby medikit beats a shotgun duel",
+      "plan_summary": "Ouch. HR says I'm entitled to a medkit break."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the south shotgun at R17",
+      "route": "V32;T32;T22;O22;O17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun won the last round decisively",
+      "plan_summary": "Same meatball, same plan, slightly less sweaty."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "reach shotgun F17 via column 12",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the top corridor is the shortest clear path east",
+      "plan_summary": "Round two. This time I'm sprinting for the shotgun like it's free pizza."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "intercept opponent along row I",
+      "route": "R17;O17;O22;I22;I12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent heads via row I toward shotgun F17",
+      "plan_summary": "Heard there's a party on row I. Bringing my plus-one: shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep west along row I",
+      "route": "I20;I08;O08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent was found west last round",
+      "plan_summary": "Walking west like I know where I'm going. I do not."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "descend column 12 toward shotgun F17",
+      "route": "B11;B12;C12;D12;E12;F12;G12;H12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "column 12 is open down to row I",
+      "plan_summary": "Down the elevator shaft of destiny. Mind the gap."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep west along row I",
+      "route": "I12;I08;O08",
+      "engagement_policy": "",
+      "reasoning": "opponent was found west last round",
+      "plan_summary": "Oops, wrong way. Meatball recalculating."
+    }
+  ]
+}

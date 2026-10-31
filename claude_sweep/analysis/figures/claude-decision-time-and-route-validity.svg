@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="648pt" viewBox="0 0 864 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 864 648 
+L 864 0 
+L 0 0 
+z
+" style="fill: #050505"/>
+  </g>
+  <g id="patch_2">
+   <path d="M 34.56 635.04 
+L 829.44 635.04 
+Q 851.04 635.04 851.04 618.84 
+L 851.04 29.16 
+Q 851.04 12.96 829.44 12.96 
+L 34.56 12.96 
+Q 12.96 12.96 12.96 29.16 
+L 12.96 618.84 
+Q 12.96 635.04 34.56 635.04 
+L 34.56 635.04 
+z
+" style="fill: none; stroke: #303036; stroke-linejoin: miter"/>
+  </g>
+  <g id="axes_1">
+   <g clip-path="url(#p058bfa9595)">
+    <image xlink:href="data:image/png;base64,
+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" id="image17eb206e32" transform="scale(1 -1) translate(0 -27.9)" x="736.992" y="-597.42" width="74.4" height="27.9"/>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_3">
+    <path d="M 168.48 518.4 
+L 419.04 518.4 
+L 419.04 155.52 
+L 168.48 155.52 
+z
+" style="fill: #050505"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 168.48 518.4 
+L 168.48 155.52 
+" clip-path="url(#p45ffce863b)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="m9b636e5e64" d="M 0 0 
+L 0 5 
+" style="stroke: #f4f4f4; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m9b636e5e64" x="168.48" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="168.48" y="540.989375" transform="rotate(-0 168.48 540.989375)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 239.079193 518.4 
+L 239.079193 155.52 
+" clip-path="url(#p45ffce863b)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="239.079193" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="239.079193" y="540.989375" transform="rotate(-0 239.079193 540.989375)">5</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 309.678385 518.4 
+L 309.678385 155.52 
+" clip-path="url(#p45ffce863b)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="309.678385" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="309.678385" y="540.989375" transform="rotate(-0 309.678385 540.989375)">10</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 380.277578 518.4 
+L 380.277578 155.52 
+" clip-path="url(#p45ffce863b)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="380.277578" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="380.277578" y="540.989375" transform="rotate(-0 380.277578 540.989375)">15</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="293.76" y="567.679531" transform="rotate(-0 293.76 567.679531)">Seconds</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_9"/>
+     <g id="text_6">
+      <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: end; fill: #69e8b3" x="155.48" y="228.291797" transform="rotate(-0 155.48 228.291797)">Opus 5.5</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_10"/>
+     <g id="text_7">
+      <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: end; fill: #ffe18a" x="155.48" y="341.612578" transform="rotate(-0 155.48 341.612578)">Fable 5.1</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_11"/>
+     <g id="text_8">
+      <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: end; fill: #dcc8ff" x="155.48" y="455.012578" transform="rotate(-0 155.48 455.012578)">Sonnet 5.5</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_4">
+    <path d="M 168.48 203.148 
+L 250.484154 203.148 
+L 250.484154 243.972 
+L 168.48 243.972 
+z
+" clip-path="url(#p45ffce863b)" style="fill: #69e8b3"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 168.48 316.548 
+L 335.52 316.548 
+L 335.52 357.372 
+L 168.48 357.372 
+z
+" clip-path="url(#p45ffce863b)" style="fill: #ffe18a"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 168.48 429.948 
+L 230.114248 429.948 
+L 230.114248 470.772 
+L 168.48 470.772 
+z
+" clip-path="url(#p45ffce863b)" style="fill: #dcc8ff"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 168.48 518.4 
+L 419.04 518.4 
+" style="fill: none; stroke: #b9b9c1; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="256.330554" y="219.558844" transform="rotate(-0 256.330554 219.558844)">5.81s</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="256.330554" y="238.619156" transform="rotate(-0 256.330554 238.619156)">n=146</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="341.3664" y="332.958844" transform="rotate(-0 341.3664 332.958844)">11.83s</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="341.3664" y="352.019156" transform="rotate(-0 341.3664 352.019156)">n=110</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="235.960648" y="446.358844" transform="rotate(-0 235.960648 446.358844)">4.37s</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="235.960648" y="465.419156" transform="rotate(-0 235.960648 465.419156)">n=196</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="168.48" y="137.52" transform="rotate(-0 168.48 137.52)">Mean decision time</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_8">
+    <path d="M 570.24 518.4 
+L 786.24 518.4 
+L 786.24 155.52 
+L 570.24 155.52 
+z
+" style="fill: #050505"/>
+   </g>
+   <g id="matplotlib.axis_3">
+    <g id="xtick_5">
+     <g id="line2d_12">
+      <path d="M 570.24 518.4 
+L 570.24 155.52 
+" clip-path="url(#p00b4c9467d)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_13">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="570.24" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_16">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="570.24" y="540.989375" transform="rotate(-0 570.24 540.989375)">0%</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_14">
+      <path d="M 638.704286 518.4 
+L 638.704286 155.52 
+" clip-path="url(#p00b4c9467d)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_15">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="638.704286" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_17">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="638.704286" y="540.989375" transform="rotate(-0 638.704286 540.989375)">10%</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_16">
+      <path d="M 707.168571 518.4 
+L 707.168571 155.52 
+" clip-path="url(#p00b4c9467d)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_17">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="707.168571" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_18">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="707.168571" y="540.989375" transform="rotate(-0 707.168571 540.989375)">20%</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_18">
+      <path d="M 775.632857 518.4 
+L 775.632857 155.52 
+" clip-path="url(#p00b4c9467d)" style="fill: none; stroke: #242429; stroke-width: 0.7; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_19">
+      <g>
+       <use xlink:href="#m9b636e5e64" x="775.632857" y="518.4" style="fill: #f4f4f4; stroke: #f4f4f4; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_19">
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="775.632857" y="540.989375" transform="rotate(-0 775.632857 540.989375)">30%</text>
+     </g>
+    </g>
+    <g id="text_20">
+     <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #f4f4f4" x="678.24" y="567.11" transform="rotate(-0 678.24 567.11)">Rejected / route attempts</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_4">
+    <g id="ytick_4">
+     <g id="line2d_20"/>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_21"/>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_22"/>
+    </g>
+   </g>
+   <g id="patch_9">
+    <path d="M 570.24 203.148 
+L 705.24 203.148 
+L 705.24 243.972 
+L 570.24 243.972 
+z
+" clip-path="url(#p00b4c9467d)" style="fill: #69e8b3"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 570.24 316.548 
+L 673.193813 316.548 
+L 673.193813 357.372 
+L 570.24 357.372 
+z
+" clip-path="url(#p00b4c9467d)" style="fill: #ffe18a"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 570.24 429.948 
+L 611.255471 429.948 
+L 611.255471 470.772 
+L 570.24 470.772 
+z
+" clip-path="url(#p00b4c9467d)" style="fill: #dcc8ff"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 570.24 518.4 
+L 786.24 518.4 
+" style="fill: none; stroke: #b9b9c1; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="710.64" y="219.558844" transform="rotate(-0 710.64 219.558844)">19.7%</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="710.64" y="238.619156" transform="rotate(-0 710.64 238.619156)">28/142</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="678.593813" y="332.958844" transform="rotate(-0 678.593813 332.958844)">15.0%</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="678.593813" y="352.019156" transform="rotate(-0 678.593813 352.019156)">20/133</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="616.655471" y="446.358844" transform="rotate(-0 616.655471 446.358844)">6.0%</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="616.655471" y="465.419156" transform="rotate(-0 616.655471 465.419156)">13/217</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="570.24" y="137.52" transform="rotate(-0 570.24 137.52)">Invalid-route rate</text>
+   </g>
+  </g>
+  <g id="text_28">
+   <text style="font-weight: 700; font-size: 23px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #f4f4f4" x="54.432" y="55.342969" transform="rotate(-0 54.432 55.342969)">Decision timing and route validity</text>
+  </g>
+  <g id="text_29">
+   <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="54.432" y="86.349375" transform="rotate(-0 54.432 86.349375)">Recorded model decisions and route submissions across all 60 matches</text>
+  </g>
+  <g id="text_30">
+   <text style="font-size: 10.5px; font-family: 'Arial', 'DejaVu Sans'; text-anchor: start; fill: #acacb4" x="54.432" y="110.034234" transform="rotate(-0 54.432 110.034234)">All-medium sweep  |  Opus, Fable and Sonnet: medium effort</text>
+  </g>
+  <g id="text_31">
+   <text style="font-size: 9.4px; font-family: 'Arial', 'DejaVu Sans'; fill: #acacb4" transform="translate(54.432 606.781945)">Decision time includes host orchestration. Invalid routes exclude post-finish / run-mismatch calls.</text>
+   <text style="font-size: 9.4px; font-family: 'Arial', 'DejaVu Sans'; fill: #acacb4" transform="translate(54.432 618.914555)">Lower is better on both panels; averages summarize tool-event telemetry, not pure inference.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p058bfa9595">
+   <rect x="736.992" y="597.456" width="74.304" height="27.864"/>
+  </clipPath>
+  <clipPath id="p45ffce863b">
+   <rect x="168.48" y="155.52" width="250.56" height="362.88"/>
+  </clipPath>
+  <clipPath id="p00b4c9467d">
+   <rect x="570.24" y="155.52" width="216" height="362.88"/>
+  </clipPath>
+ </defs>
+</svg>

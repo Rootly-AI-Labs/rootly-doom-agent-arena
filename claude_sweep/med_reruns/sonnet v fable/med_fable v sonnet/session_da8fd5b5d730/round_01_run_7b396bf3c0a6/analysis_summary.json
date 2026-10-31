@@ -1,0 +1,358 @@
+{
+  "run_id": "run_7b396bf3c0a6",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 25.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 55,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 95
+    },
+    "player_2": {
+      "damage_dealt": 55,
+      "damage_taken": 150,
+      "shots_fired": 8,
+      "shots_hit": 5,
+      "accuracy": 0.625,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2100",
+      "elapsed_ms": null,
+      "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) a shotgun wins early duels aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 19,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) a shotgun wins early duels aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-320,192) a shotgun wins early duels aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,192) a shotgun wins early duels aim_error=-70"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 4457 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) a shotgun wins early duels aim_error=19"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 5000 autopilot_action: player_1 action=route_complete reason=a shotgun wins early duels aim_error=118"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 5028 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 5742 autopilot_action: player_1 action=route_complete reason=a shotgun wins early duels aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 19628 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(0,192) the opponent likely spawned near the mirrored shotgun aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 19657 autopilot_action: player_1 action=route_waypoint reason=wp=1/5 target=(0,192) the opponent likely spawned near the mirrored shotgun aim_error=-19"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 20342 autopilot_action: player_1 action=route_waypoint reason=wp=2/5 target=(-256,192) the opponent likely spawned near the mirrored shotgun aim_error=-23"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 21171 autopilot_action: player_1 action=route_waypoint reason=wp=3/5 target=(-256,-128) the opponent likely spawned near the mirrored shotgun aim_error=-135"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 22000 autopilot_action: player_1 action=route_waypoint+attack reason=wp=3/5 target=(-256,-128) the opponent likely spawned near the mirrored shotgun aim_err"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 22200 autopilot_action: player_1 action=route_waypoint+attack reason=wp=4/5 target=(0,-128) the opponent likely spawned near the mirrored shotgun aim_error="
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 23028 autopilot_action: player_1 action=route_waypoint+attack reason=wp=5/5 target=(0,-384) the opponent likely spawned near the mirrored shotgun aim_error="
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 23400 autopilot_action: player_1 action=route_waypoint reason=wp=5/5 target=(0,-384) the opponent likely spawned near the mirrored shotgun aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 23771 autopilot_action: player_1 action=route_complete reason=the opponent likely spawned near the mirrored shotgun aim_error=-123"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 24371 autopilot_action: player_1 action=route_complete+attack reason=the opponent likely spawned near the mirrored shotgun aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 24514 autopilot_action: player_1 action=route_complete reason=the opponent likely spawned near the mirrored shotgun aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2100",
+        "elapsed_ms": null,
+        "event": "run_7b396bf3c0a6 duel_e1m8_blind_spawn 2100 25085 autopilot_action: player_1 action=route_complete+attack reason=the opponent likely spawned near the mirrored shotgun aim_error=3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 98,
+        "distance_traveled": 2797.7,
+        "unique_cells_visited": 33,
+        "revisited_cells": 65
+      },
+      "player_2": {
+        "path_points": 98,
+        "distance_traveled": 2290.2,
+        "unique_cells_visited": 26,
+        "revisited_cells": 72
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 10706.0,
+    "decision_p95_ms": 29596.0,
+    "decision_max_ms": 29596.0,
+    "mcp_avg_ms": 1113.23,
+    "mcp_p95_ms": 1696.0,
+    "mcp_max_ms": 21438.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 2
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 23229,
+    "stale_intent_extension_max_ms": 20176
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "scout nearby and find the opponent",
+      "route": [
+        "L17",
+        "L18"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Burrito rolling out, nobody panic."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "head toward the south shotgun",
+      "route": "V32;U32;T32;S32;R32;Q32;P32;O32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Burrito rolling out, nobody panic."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "grab the north shotgun",
+      "route": [
+        "I17",
+        "H17",
+        "G17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a shotgun wins early duels",
+      "plan_summary": "First order of business: acquire a bigger stapler."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "grab the north shotgun",
+      "route": "B12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a shotgun wins early duels",
+      "plan_summary": "First order of business: acquire a bigger stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "circle past the wall toward the south shotgun",
+      "route": "O32;O31;O30;O29;N29;N28;N27;O27",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Wrapping around this wall like a good tortilla."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "reach the south shotgun at R17",
+      "route": "O27;O26;O25;O24;O23;O22;O21;O20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Opponent got the shotgun first, I want seconds."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "hunt toward the south shotgun",
+      "route": "I17;I13;N13;N17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent likely spawned near the mirrored shotgun",
+      "plan_summary": "Got my big stapler. Time to go staple someone's performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "grab the shotgun at R17",
+      "route": "O20;O19;O18;P18;Q18;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun time, extra salsa."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close in on the opponent",
+      "route": [
+        "N18",
+        "N20",
+        "O20"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun pellets land best at short range",
+      "plan_summary": "Found you! Let's discuss your attendance record up close."
+    }
+  ]
+}

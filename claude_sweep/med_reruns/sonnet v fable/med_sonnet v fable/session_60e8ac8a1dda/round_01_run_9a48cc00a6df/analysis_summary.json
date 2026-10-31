@@ -1,0 +1,515 @@
+{
+  "run_id": "run_9a48cc00a6df",
+  "round": 1,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 45.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 30,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 120
+    },
+    "player_2": {
+      "damage_dealt": 30,
+      "damage_taken": 150,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3640",
+      "elapsed_ms": null,
+      "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun room at R17 opens only from the north side aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 22,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 29,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun room at R17 opens only from the north side aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,576) shotgun beats pistol aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 142 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-960,512) shotgun beats pistol aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 171 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,-640) shotgun room at R17 opens only from the north side aim_error=34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 400 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(768,-640) shotgun room at R17 opens only from the north side aim_error=33"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 400 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-960,448) shotgun beats pistol aim_error=-57"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 628 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-960,384) shotgun beats pistol aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 742 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-576) shotgun room at R17 opens only from the north side aim_error=32"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 885 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-960,320) shotgun beats pistol aim_error=-59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(768,-512) shotgun room at R17 opens only from the north side aim_error=-52"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1114 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-960,256) shotgun beats pistol aim_error=-62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1142 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(768,-448) shotgun room at R17 opens only from the north side aim_error=-60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1371 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(768,-384) shotgun room at R17 opens only from the north side aim_error=-65"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1371 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-960,192) shotgun beats pistol aim_error=-66"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,128) shotgun beats pistol aim_error=-69"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(768,-320) shotgun room at R17 opens only from the north side aim_error=-69"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1857 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=-73"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 1857 autopilot_action: player_2 action=route_complete reason=shotgun room at R17 opens only from the north side aim_error=-73"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 2600 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 2600 autopilot_action: player_2 action=route_complete reason=shotgun room at R17 opens only from the north side aim_error=-6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 2885 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,128) shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 2914 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=103"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 3657 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 3828 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,128) shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 3857 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=-75"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 4600 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 4771 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,128) shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 4800 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=103"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 5542 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 5714 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-960,128) shotgun beats pistol aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 5742 autopilot_action: player_1 action=route_complete reason=shotgun beats pistol aim_error=-75"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 24571 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 36000 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(448,-192) opponent has a shotgun now and I need one too aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 36028 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(384,-192) opponent has a shotgun now and I need one too aim_error=45"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 36257 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(320,-192) opponent has a shotgun now and I need one too aim_error=51"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 36514 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(256,-192) opponent has a shotgun now and I need one too aim_error=54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 36742 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(192,-192) opponent has a shotgun now and I need one too aim_error=56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 37000 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(128,-192) opponent has a shotgun now and I need one too aim_error=58"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 37228 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(64,-192) opponent has a shotgun now and I need one too aim_error=57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3640",
+        "elapsed_ms": null,
+        "event": "run_9a48cc00a6df duel_e1m8_blind_spawn 3640 37485 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(0,-192) opponent has a shotgun now and I need one too aim_error=57"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 176,
+        "distance_traveled": 3027.0,
+        "unique_cells_visited": 37,
+        "revisited_cells": 139
+      },
+      "player_2": {
+        "path_points": 176,
+        "distance_traveled": 1633.5,
+        "unique_cells_visited": 24,
+        "revisited_cells": 152
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8836.91,
+    "decision_p95_ms": 33109.0,
+    "decision_max_ms": 33109.0,
+    "mcp_avg_ms": 1860.71,
+    "mcp_p95_ms": 1646.0,
+    "mcp_max_ms": 40788.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 4,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 7568,
+      "player_2": 3209
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2751,
+      "player_2": 1613
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 34016,
+    "stale_intent_extension_max_ms": 29445
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;J02",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun beats pistol",
+      "plan_summary": "Boss said take initiative. Taking the shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "head north toward the south shotgun",
+      "route": "V31;V30;V29;U29;T29;S29;R29;Q29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun room at R17 opens only from the north side",
+      "plan_summary": "A burrito with a pistol is just sad. Going shopping for a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell I07 on the way to the shotgun",
+      "route": "I02;I03;I04;I05;J05;J06;J07;I07",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Walls are just suggestions. Rerouting politely."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach cell I15 near the shotgun room",
+      "route": "I08;I09;I10;I11;I12;I13;I14;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Speed-walking, because running is unprofessional."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cut west through the N-row gap",
+      "route": "P29;O29;N29;N28;N27;N26;O26;O25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "O28 is a wall so the detour through N28 is required",
+      "plan_summary": "Squeezing through a gap like a burrito through a mail slot."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "pick up the shotgun at F17",
+      "route": "I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun acquired soon. Please hold my pistol."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance at O17",
+      "route": "O24;O23;O22;O21;O20;O19;O18;O17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent has a shotgun now and I need one too",
+      "plan_summary": "They got the big gun first. Rude. Racing for mine."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent with the shotgun",
+      "route": "G17;H17;I17;I16;I15;I14;J14;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun in hand. Time for my performance review."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep south toward the R17 shotgun room",
+      "route": "L14;M14;N14;O14;O15;O16;P16;Q16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Checking the south room. Someone's hiding, I can smell it."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close in and shotgun the opponent at O17",
+      "route": [
+        "O17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Found you. This meeting could have been an email."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "grab the shotgun at R17 and return to O17",
+      "route": "P17;Q17;R17;Q17;P17;O17",
+      "engagement_policy": "",
+      "reasoning": "shotgun room is a dead end so I leave right after pickup",
+      "plan_summary": "Grab the shotgun, don't get cornered. Burrito in, burrito out."
+    }
+  ]
+}

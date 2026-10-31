@@ -1,0 +1,484 @@
+{
+  "run_id": "run_1ea805bccf50",
+  "round": 1,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 31.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 110,
+      "damage_taken": 150,
+      "shots_fired": 7,
+      "shots_hit": 3,
+      "accuracy": 0.429,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 110,
+      "shots_fired": 6,
+      "shots_hit": 3,
+      "accuracy": 0.5,
+      "final_health": 40
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2135",
+      "elapsed_ms": null,
+      "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(320,-640) closest shotgun and its room opens from the north aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 79,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 15,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(320,-640) closest shotgun and its room opens from the north aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 0 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-896,640) shotgun outclasses pistol in close fights aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 171 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-832,640) shotgun outclasses pistol in close fights aim_error=36"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 400 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(-768,640) shotgun outclasses pistol in close fights aim_error=38"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 657 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(-704,640) shotgun outclasses pistol in close fights aim_error=40"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 885 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(-640,640) shotgun outclasses pistol in close fights aim_error=43"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 1142 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(-576,640) shotgun outclasses pistol in close fights aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 1371 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=49"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 1628 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=53"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 2000 autopilot_action: player_2 action=route_waypoint reason=wp=3/7 target=(320,-192) closest shotgun and its room opens from the north aim_error=58"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 2371 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 2600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 2628 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-127"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 3371 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 3428 autopilot_action: player_2 action=route_waypoint reason=wp=4/7 target=(0,-192) closest shotgun and its room opens from the north aim_error=-44"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 3571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 3600 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4342 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4457 autopilot_action: player_2 action=route_waypoint reason=wp=5/7 target=(0,-256) closest shotgun and its room opens from the north aim_error=59"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4571 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-119"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4600 autopilot_action: player_2 action=route_waypoint reason=wp=6/7 target=(0,-320) closest shotgun and its room opens from the north aim_error=144"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 4828 autopilot_action: player_2 action=route_waypoint reason=wp=7/7 target=(0,-384) closest shotgun and its room opens from the north aim_error=149"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5057 autopilot_action: player_2 action=route_complete reason=closest shotgun and its room opens from the north aim_error=151"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5314 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5542 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=63"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 5800 autopilot_action: player_2 action=route_complete reason=closest shotgun and its room opens from the north aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 6285 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 6485 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 6514 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-114"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7085 autopilot_action: player_1 action=route_complete+attack reason=shotgun outclasses pistol in close fights aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7114 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7171 autopilot_action: player_1 action=route_complete+attack reason=shotgun outclasses pistol in close fights aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7228 autopilot_action: player_2 action=route_complete+attack reason=closest shotgun and its room opens from the north aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7257 autopilot_action: player_1 action=route_complete+attack reason=shotgun outclasses pistol in close fights aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7457 autopilot_action: player_1 action=route_waypoint+attack reason=wp=8/8 target=(-512,640) shotgun outclasses pistol in close fights aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7485 autopilot_action: player_2 action=route_complete reason=closest shotgun and its room opens from the north aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2135",
+        "elapsed_ms": null,
+        "event": "run_1ea805bccf50 duel_e1m8_blind_spawn 2135 7485 autopilot_action: player_1 action=route_complete reason=shotgun outclasses pistol in close fights aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 120,
+        "distance_traveled": 2554.7,
+        "unique_cells_visited": 26,
+        "revisited_cells": 94
+      },
+      "player_2": {
+        "path_points": 120,
+        "distance_traveled": 2663.1,
+        "unique_cells_visited": 33,
+        "revisited_cells": 87
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7903.38,
+    "decision_p95_ms": 18449.0,
+    "decision_max_ms": 18449.0,
+    "mcp_avg_ms": 1099.9,
+    "mcp_p95_ms": 3076.0,
+    "mcp_max_ms": 14118.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4637,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3031,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 18097,
+    "stale_intent_extension_max_ms": 9965
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the north shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun outclasses pistol in close fights",
+      "plan_summary": "Off to requisition a bigger stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "closest shotgun and its room opens from the north",
+      "plan_summary": "Lasagna layers up: first the shotgun, then the drama."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "circle toward the shotgun entrance",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun room opens from the south side",
+      "plan_summary": "Taking the scenic route to my promotion."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance",
+      "route": "G12;H12;I12;I13;I14;I15;I16;H16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent already grabbed the south shotgun",
+      "plan_summary": "They got a shotgun? HR will hear about this."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the north shotgun",
+      "route": "G16;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "matching opponent firepower",
+      "plan_summary": "Mine now. Finders keepers, per company policy."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "ambush north shotgun entrance at I17",
+      "route": "Q17;P17;O17;O13;L13;I13;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent likely heads to F17 and must pass I17",
+      "plan_summary": "Got my shotgun. Now I'll wait by the other one like a jealous ex."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "step onto the shotgun pickup",
+      "route": "F17;F16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "One more step to my corner-office boomstick."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close in and blast the opponent",
+      "route": "G16;H16",
+      "engagement_policy": "",
+      "reasoning": "trapped in dead end, point-blank shotgun is best",
+      "plan_summary": "Cornered middle manager. Extremely dangerous."
+    }
+  ]
+}

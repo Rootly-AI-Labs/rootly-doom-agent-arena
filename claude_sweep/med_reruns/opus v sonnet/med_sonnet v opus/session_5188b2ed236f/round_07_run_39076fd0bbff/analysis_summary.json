@@ -1,0 +1,416 @@
+{
+  "run_id": "run_39076fd0bbff",
+  "round": 7,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 24.6,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 90,
+      "damage_taken": 155,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 90,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 60
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1330",
+      "elapsed_ms": null,
+      "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won six rounds aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 20,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won six rounds aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 2000 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(320,-192) the shotgun opening has won six rounds aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 3428 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(0,-192) the shotgun opening has won six rounds aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 4457 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-256) the shotgun opening has won six rounds aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 4600 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) the shotgun opening has won six rounds aim_error=148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 4828 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) the shotgun opening has won six rounds aim_error=154"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 5057 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won six rounds aim_error=157"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 5800 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won six rounds aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 10285 autopilot_action: player_2 action=route_waypoint reason=wp=1/2 target=(0,-320) the opening route stalls before the pickup aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 10314 autopilot_action: player_2 action=route_waypoint reason=wp=1/2 target=(0,-320) the opening route stalls before the pickup aim_error=-27"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 10600 autopilot_action: player_2 action=route_waypoint reason=wp=2/2 target=(0,-384) the opening route stalls before the pickup aim_error=-28"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 10714 autopilot_action: player_2 action=route_complete reason=the opening route stalls before the pickup aim_error=154"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 11457 autopilot_action: player_2 action=route_complete reason=the opening route stalls before the pickup aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 15742 autopilot_action: player_2 action=route_complete+attack reason=the opening route stalls before the pickup aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 15800 autopilot_action: player_2 action=route_complete reason=the opening route stalls before the pickup aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 19314 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(0,-256) opponent rushes the north shotgun after I leave aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 19342 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(0,-256) opponent rushes the north shotgun after I leave aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 19714 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(0,-192) opponent rushes the north shotgun after I leave aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 20057 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(-192,-192) opponent rushes the north shotgun after I leave aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 20685 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(-192,192) opponent rushes the north shotgun after I leave aim_error=99"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 21914 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,192) opponent rushes the north shotgun after I leave aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 22228 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/6 target=(0,192) opponent rushes the north shotgun after I leave aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 22542 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/6 target=(0,320) opponent rushes the north shotgun after I leave aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 22857 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 22885 autopilot_action: player_2 action=route_complete+attack reason=opponent rushes the north shotgun after I leave aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 23228 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/6 target=(0,320) opponent rushes the north shotgun after I leave aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1330",
+        "elapsed_ms": null,
+        "event": "run_39076fd0bbff duel_e1m8_blind_spawn 1330 23257 autopilot_action: player_2 action=route_complete+attack reason=opponent rushes the north shotgun after I leave aim_error=1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 93,
+        "distance_traveled": 1949.7,
+        "unique_cells_visited": 25,
+        "revisited_cells": 68
+      },
+      "player_2": {
+        "path_points": 93,
+        "distance_traveled": 2736.3,
+        "unique_cells_visited": 32,
+        "revisited_cells": 61
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4866.0,
+    "decision_p95_ms": 6971.0,
+    "decision_max_ms": 6971.0,
+    "mcp_avg_ms": 499.42,
+    "mcp_p95_ms": 2423.0,
+    "mcp_max_ms": 2430.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4787,
+      "player_2": 3324
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2395,
+      "player_2": 1679
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the south shotgun at R17",
+      "route": "V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun opening has won six rounds",
+      "plan_summary": "Lucky number seven. Shotgun, extra cheese."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "race east to the north shotgun",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "The rival predicts me, so I predict myself harder."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "race to the north shotgun",
+      "route": "B11;B12;C12;D12;E12;F12;G12;H12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Running faster than my WiFi."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "step into R17 for the shotgun",
+      "route": "Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opening route stalls before the pickup",
+      "plan_summary": "Two more steps. I can smell the gunpowder from here."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the north shotgun",
+      "route": "I12;I13;I14;I15;I16;H16;G16;F16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Dashing for the shotgun before anyone notices."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "intercept the opponent at the north shotgun",
+      "route": "P17;O17;O14;I14;I17;G17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent rushes the north shotgun after I leave",
+      "plan_summary": "Reserved that shotgun for you. Just kidding, it's mine."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun",
+      "route": "F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Finally, an upgrade nobody approved."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "continue north to the F17 shotgun area",
+      "route": [
+        "N14",
+        "I14",
+        "I17",
+        "G17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "route stalled at O14, resuming northward",
+      "plan_summary": "Got distracted by a wall. Classic me. Onward!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "blast the adjacent rival with the shotgun",
+      "route": "G17;H17",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Point blank, no meeting invite needed."
+    }
+  ]
+}

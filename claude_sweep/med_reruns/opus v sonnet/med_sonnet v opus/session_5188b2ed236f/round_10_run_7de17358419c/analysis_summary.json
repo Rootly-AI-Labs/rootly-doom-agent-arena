@@ -1,0 +1,436 @@
+{
+  "run_id": "run_7de17358419c",
+  "round": 10,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 47.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 90,
+      "damage_taken": 155,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 90,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 75
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2240",
+      "elapsed_ms": null,
+      "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won nine rounds aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2240",
+      "elapsed_ms": null,
+      "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 35342 pickup: player_2 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 22,
+        "health": 1
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won nine rounds aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 2000 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(320,-192) the shotgun opening has won nine rounds aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 3428 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(0,-192) the shotgun opening has won nine rounds aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 4457 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-256) the shotgun opening has won nine rounds aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 4600 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) the shotgun opening has won nine rounds aim_error=148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 4828 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) the shotgun opening has won nine rounds aim_error=154"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 5057 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won nine rounds aim_error=157"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 5800 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won nine rounds aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 14028 autopilot_action: player_2 action=route_complete+attack reason=the shotgun opening has won nine rounds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 14114 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won nine rounds aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 21371 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 35285 autopilot_action: player_2 action=route_waypoint reason=wp=1/1 target=(-448,0) opponent now has a shotgun so full health matters aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 35314 autopilot_action: player_2 action=route_complete reason=opponent now has a shotgun so full health matters aim_error=148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 35342 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 36085 autopilot_action: player_2 action=route_complete reason=opponent now has a shotgun so full health matters aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 42771 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(-384,0) opponent just grabbed the F17 shotgun nearby aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 42800 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(-384,0) opponent just grabbed the F17 shotgun nearby aim_error=-37"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 43000 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(-320,0) opponent just grabbed the F17 shotgun nearby aim_error=-39"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 43342 autopilot_action: player_2 action=route_waypoint reason=wp=3/5 target=(-320,192) opponent just grabbed the F17 shotgun nearby aim_error=-46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 43971 autopilot_action: player_2 action=route_waypoint reason=wp=4/5 target=(0,192) opponent just grabbed the F17 shotgun nearby aim_error=54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 44628 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/5 target=(0,192) opponent just grabbed the F17 shotgun nearby aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 45000 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/5 target=(0,256) opponent just grabbed the F17 shotgun nearby aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2240",
+        "elapsed_ms": null,
+        "event": "run_7de17358419c duel_e1m8_blind_spawn 2240 45171 autopilot_action: player_2 action=route_complete+attack reason=opponent just grabbed the F17 shotgun nearby aim_error=-1"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "plan_errors": {
+      "route_noop": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 180,
+        "distance_traveled": 4358.6,
+        "unique_cells_visited": 26,
+        "revisited_cells": 154
+      },
+      "player_2": {
+        "path_points": 180,
+        "distance_traveled": 3108.7,
+        "unique_cells_visited": 37,
+        "revisited_cells": 143
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5171.25,
+    "decision_p95_ms": 6297.0,
+    "decision_max_ms": 9188.0,
+    "mcp_avg_ms": 526.59,
+    "mcp_p95_ms": 1762.0,
+    "mcp_max_ms": 3214.0
+  },
+  "errors": {
+    "route_noop": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 8
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 5754,
+      "player_2": 4916
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2509,
+      "player_2": 1652
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 3285,
+    "stale_intent_extension_max_ms": 3277
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "race east to the north shotgun",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Final round, intern goes out swinging."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the south shotgun at R17",
+      "route": "V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun opening has won nine rounds",
+      "plan_summary": "Final round. One last shotgun for the road."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "race to the north shotgun",
+      "route": "B11;B12;C12;D12;E12;F12;G12;H12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "One last sprint before the exit interview."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "step into R17 for the shotgun",
+      "route": [
+        "R17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the pickup is one cell away",
+      "plan_summary": "One step for burrito, one giant leap for buckshot."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "race to the north shotgun",
+      "route": "E12;F12;G12;H12;I12;I13;I14;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Eyes on the prize, elbows out."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the north shotgun",
+      "route": "I13;I14;I15;I16;H16;G16;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Head start! Nobody tell the shotgun guy."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep west toward the L10 medikit",
+      "route": "Q17;P17;O17;O12;L12;L11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent came through the west side last round",
+      "plan_summary": "Final lap. Heading west to make things awkward one last time."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "grab the north shotgun",
+      "route": "F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Two steps from glory, or from a funeral."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "defend the shotgun pocket and blast anyone who enters",
+      "route": "F16;F17;F18;F17;F16;F17;F18;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Armed and unreasonable, come say hi."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "grab the L10 medikit",
+      "route": "L10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent now has a shotgun so full health matters",
+      "plan_summary": "You got a shotgun too? Okay, emotional support medkit first."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "defend the shotgun pocket and blast anyone who enters",
+      "route": "F18;F17;F16;F17;F18;F17;F16;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still guarding the good stapler, er, shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "hunt the opponent near the north shotgun",
+      "route": "L11;L12;I12;I17;H17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent just grabbed the F17 shotgun nearby",
+      "plan_summary": "Shotgun versus shotgun. May the clingiest burrito win."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "defend the shotgun pocket and blast anyone who enters",
+      "route": "F16;F17;F18;F17;F16;F17;F18;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Pocket sentry reporting, still no visitors."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "push the opponent at F17 point blank",
+      "route": "H17;G17",
+      "engagement_policy": "",
+      "reasoning": "opponent is wounded and cornered in the shotgun room",
+      "plan_summary": "Group hug in the shotgun closet! No? Too bad."
+    }
+  ]
+}

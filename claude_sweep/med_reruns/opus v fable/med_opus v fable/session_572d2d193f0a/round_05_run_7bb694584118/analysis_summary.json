@@ -1,0 +1,251 @@
+{
+  "run_id": "run_7bb694584118",
+  "round": 5,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 14.9,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 80,
+      "damage_taken": 150,
+      "shots_fired": 2,
+      "shots_hit": 2,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 80,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 70
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1155",
+      "elapsed_ms": null,
+      "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 9,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 11600 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(0,-320) one step to the shotgun then the proven intercept lane aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 11628 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(0,-320) one step to the shotgun then the proven intercept lane aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 11828 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(0,-256) one step to the shotgun then the proven intercept lane aim_error=-19"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 12085 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(0,-192) one step to the shotgun then the proven intercept lane aim_error=-29"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 12400 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(-256,-192) one step to the shotgun then the proven intercept lane aim_error=-41"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 12657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/8 target=(-256,-192) one step to the shotgun then the proven intercept lane aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 13228 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/8 target=(-256,0) one step to the shotgun then the proven intercept lane aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1155",
+        "elapsed_ms": null,
+        "event": "run_7bb694584118 duel_e1m8_blind_spawn 1155 13771 autopilot_action: player_2 action=route_waypoint+attack reason=wp=7/8 target=(-256,192) one step to the shotgun then the proven intercept lane aim_err"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 56,
+        "distance_traveled": 2312.2,
+        "unique_cells_visited": 26,
+        "revisited_cells": 30
+      },
+      "player_2": {
+        "path_points": 56,
+        "distance_traveled": 2261.4,
+        "unique_cells_visited": 28,
+        "revisited_cells": 28
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4500.4,
+    "decision_p95_ms": 5641.0,
+    "decision_max_ms": 5641.0,
+    "mcp_avg_ms": 743.59,
+    "mcp_p95_ms": 1796.0,
+    "mcp_max_ms": 5328.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3348,
+      "player_2": 1630
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1709,
+      "player_2": 1630
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 1774,
+    "stale_intent_extension_max_ms": 1774
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "four wins from this opening so far",
+      "plan_summary": "Fifth round, still single, still armed. Shotgun run, go."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the north shotgun",
+      "route": "E02;E12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "fast straight legs reach it in seconds",
+      "plan_summary": "They survived on 10 HP. This time I'm bringing snacks."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "grab shotgun then post up beside the L10 medkit",
+      "route": "F17;G17;H17;I17;I12;L12;L11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing mid-fight should swing the close exchanges",
+      "plan_summary": "Shotgun acquired, now relocating to the snack drawer."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "grab shotgun then hunt toward I17",
+      "route": "R17;Q17;P17;O17;O13;L13;I13;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "one step to the shotgun then the proven intercept lane",
+      "plan_summary": "One more step for the shotgun, then off to ruin someone's day."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "post up beside the L10 medkit",
+      "route": [
+        "I12",
+        "L12",
+        "L11"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "healing mid-fight should swing the close exchanges",
+      "plan_summary": "Guarding the first-aid kit like it's the last parking spot."
+    }
+  ]
+}

@@ -1,0 +1,409 @@
+{
+  "run_id": "run_2b886bcb68c4",
+  "round": 5,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 38.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 145,
+      "damage_taken": 150,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 145,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 5
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) long straight segments should reach the shotgun before the ambush aim_err"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "2730",
+      "elapsed_ms": null,
+      "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 33771 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(0,-192) opponent still has only a pistol and I am at full health aim_error=-2"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 15,
+        "health": 13
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) long straight segments should reach the shotgun before the ambush aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 457 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(512,-512) long straight segments should reach the shotgun before the ambush aim_e"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 1885 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(512,-192) long straight segments should reach the shotgun before the ambush aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 2914 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-192) long straight segments should reach the shotgun before the ambush aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 4542 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) long straight segments should reach the shotgun before the ambush aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 4885 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) long straight segments should reach the shotgun before the ambush aim_er"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 5114 autopilot_action: player_2 action=route_complete reason=long straight segments should reach the shotgun before the ambush aim_error=151"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 5142 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 5857 autopilot_action: player_2 action=route_complete reason=long straight segments should reach the shotgun before the ambush aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 6885 autopilot_action: player_2 action=route_complete+attack reason=long straight segments should reach the shotgun before the ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 6942 autopilot_action: player_2 action=route_complete reason=long straight segments should reach the shotgun before the ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 7028 autopilot_action: player_2 action=route_complete+attack reason=long straight segments should reach the shotgun before the ambush aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 7085 autopilot_action: player_2 action=route_complete reason=long straight segments should reach the shotgun before the ambush aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 14971 autopilot_action: player_2 action=route_complete+attack reason=long straight segments should reach the shotgun before the ambush aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 15057 autopilot_action: player_2 action=route_complete reason=long straight segments should reach the shotgun before the ambush aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 21457 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 33771 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(0,-192) opponent still has only a pistol and I am at full health aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 33800 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(0,-192) opponent still has only a pistol and I am at full health aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 34400 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(0,-128) opponent still has only a pistol and I am at full health aim_error=-8"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 34742 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(-192,-128) opponent still has only a pistol and I am at full health aim_error=-"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 35371 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(-192,192) opponent still has only a pistol and I am at full health aim_error=99"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 36400 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,192) opponent still has only a pistol and I am at full health aim_error=30"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 36714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/6 target=(0,192) opponent still has only a pistol and I am at full health aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 37028 autopilot_action: player_2 action=route_waypoint+attack reason=wp=6/6 target=(0,384) opponent still has only a pistol and I am at full health aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 37571 autopilot_action: player_2 action=route_complete+attack reason=opponent still has only a pistol and I am at full health aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 37714 autopilot_action: player_2 action=route_complete reason=opponent still has only a pistol and I am at full health aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 37742 autopilot_action: player_2 action=route_complete+attack reason=opponent still has only a pistol and I am at full health aim_error=-4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 38285 autopilot_action: player_2 action=route_complete reason=opponent still has only a pistol and I am at full health aim_error=-9"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "2730",
+        "elapsed_ms": null,
+        "event": "run_2b886bcb68c4 duel_e1m8_blind_spawn 2730 38314 autopilot_action: player_2 action=route_complete+attack reason=opponent still has only a pistol and I am at full health aim_error=-6"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "plan_errors": {},
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 150,
+        "distance_traveled": 2502.1,
+        "unique_cells_visited": 27,
+        "revisited_cells": 123
+      },
+      "player_2": {
+        "path_points": 150,
+        "distance_traveled": 2665.6,
+        "unique_cells_visited": 35,
+        "revisited_cells": 115
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7243.33,
+    "decision_p95_ms": 22432.0,
+    "decision_max_ms": 22432.0,
+    "mcp_avg_ms": 1655.88,
+    "mcp_p95_ms": 1817.0,
+    "mcp_max_ms": 31912.0
+  },
+  "errors": {},
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1635,
+      "player_2": 1753
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1635,
+      "player_2": 1753
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 39771,
+    "stale_intent_extension_max_ms": 22064
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Three wins. Raccoon files for overtime."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach shotgun at R17 in one sprint",
+      "route": "T32;T25;O25;O17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "long straight segments should reach the shotgun before the ambush",
+      "plan_summary": "New plan: run like the syrup is on fire. Shotgun in one go!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B08;B09;B10;B11;B12;C12;D12;E12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Same route, same swagger."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance",
+      "route": "E12;F12;G12;H12;I12;I13;I14;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "They grabbed theirs already. Mine's next."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17",
+      "route": "I15;I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Late to the shotgun party, but I brought snacks."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "guard the shotgun room entrance and ambush whoever enters",
+      "route": "F17;F18;F17;F16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "I'll wait here. Please book a meeting with my shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "rush north to deny shotgun F17 and ambush",
+      "route": "O17;N17;N14;I14;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent still has only a pistol and I am at full health",
+      "plan_summary": "Got the boomstick first! Now to steal his too. Greedy pancake."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "guard the shotgun room entrance and ambush whoever enters",
+      "route": "F16;F17;F18;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still waiting. The coffee's getting cold."
+    }
+  ]
+}

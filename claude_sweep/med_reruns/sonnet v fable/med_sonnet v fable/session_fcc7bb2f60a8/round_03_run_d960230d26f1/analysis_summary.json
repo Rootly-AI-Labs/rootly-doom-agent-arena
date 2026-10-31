@@ -1,0 +1,348 @@
+{
+  "run_id": "run_d960230d26f1",
+  "round": 3,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 36.2,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 45,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 105
+    },
+    "player_2": {
+      "damage_dealt": 45,
+      "damage_taken": 155,
+      "shots_fired": 6,
+      "shots_hit": 4,
+      "accuracy": 0.667,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "2450",
+      "elapsed_ms": null,
+      "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(960,-576) shotgun first, then avoid long open rows aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 17,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(960,-576) shotgun first, then avoid long open rows aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 171 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-512) shotgun first, then avoid long open rows aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 514 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(896,-512) shotgun first, then avoid long open rows aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 657 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(832,-512) shotgun first, then avoid long open rows aim_error=29"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(768,-512) shotgun first, then avoid long open rows aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 1142 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(704,-512) shotgun first, then avoid long open rows aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 1371 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(640,-512) shotgun first, then avoid long open rows aim_error=41"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 1628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(576,-512) shotgun first, then avoid long open rows aim_error=44"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 1857 autopilot_action: player_2 action=route_complete reason=shotgun first, then avoid long open rows aim_error=47"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 2600 autopilot_action: player_2 action=route_complete reason=shotgun first, then avoid long open rows aim_error=6"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 19257 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 34628 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-192) row O leads to the only entrance of the shotgun room aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 34657 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(320,-192) row O leads to the only entrance of the shotgun room aim_error=56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 34714 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/8 target=(320,-192) row O leads to the only entrance of the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 34771 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/8 target=(256,-192) row O leads to the only entrance of the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 35028 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/8 target=(192,-192) row O leads to the only entrance of the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 35285 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/8 target=(128,-192) row O leads to the only entrance of the shotgun room aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2450",
+        "elapsed_ms": null,
+        "event": "run_d960230d26f1 duel_e1m8_blind_spawn 2450 35514 autopilot_action: player_2 action=route_waypoint+attack reason=wp=5/8 target=(64,-192) row O leads to the only entrance of the shotgun room aim_error="
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 139,
+        "distance_traveled": 2753.9,
+        "unique_cells_visited": 31,
+        "revisited_cells": 108
+      },
+      "player_2": {
+        "path_points": 139,
+        "distance_traveled": 1316.9,
+        "unique_cells_visited": 20,
+        "revisited_cells": 119
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4851.38,
+    "decision_p95_ms": 9367.0,
+    "decision_max_ms": 9367.0,
+    "mcp_avg_ms": 1312.62,
+    "mcp_p95_ms": 1769.0,
+    "mcp_max_ms": 25631.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 3284
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1706
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 19319,
+    "stale_intent_extension_max_ms": 16157
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "One win in the bank. Raccoon wants a bonus."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach shotgun at R17 via south corridor",
+      "route": "U32;T32;T31;T30;T29;T28;T27;T26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun first, then avoid long open rows",
+      "plan_summary": "Round three. Sprinting for the shotgun before anyone notices breakfast."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Same route, same swagger."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance",
+      "route": "F12;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Hallway sprint, still no scissors."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17",
+      "route": "I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Promotion to shotgun, effective immediately."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "reach shotgun at R17 via row O",
+      "route": "T25;S25;R25;Q25;P25;O25;O24;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "column 25 is the open path north to row O",
+      "plan_summary": "Up the east side again. This pancake has a routine."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "step out and shotgun whoever is shooting me",
+      "route": "F17;G17;H17;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Someone's hot-desking in my line of fire."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "move through the center east lane to find the opponent",
+      "route": "I17;I18;I19;I20;J20;K20;L20;M20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Walking the floor like a very armed manager."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach shotgun at R17",
+      "route": "O22;O21;O20;O19;O18;O17;P17;Q17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "row O leads to the only entrance of the shotgun room",
+      "plan_summary": "Traded a few pistol pokes. Now for the big spatula."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close in and shotgun the pistol-armed opponent at O21",
+      "route": "M20;N20;O20;O21",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Bringing a shotgun to a pistol fight."
+    }
+  ]
+}

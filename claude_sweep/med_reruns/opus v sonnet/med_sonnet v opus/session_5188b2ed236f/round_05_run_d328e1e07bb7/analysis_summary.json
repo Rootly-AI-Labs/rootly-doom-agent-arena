@@ -1,0 +1,510 @@
+{
+  "run_id": "run_d328e1e07bb7",
+  "round": 5,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 61.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 70,
+      "damage_taken": 220,
+      "shots_fired": 14,
+      "shots_hit": 7,
+      "accuracy": 0.5,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 220,
+      "damage_taken": 70,
+      "shots_fired": 7,
+      "shots_hit": 6,
+      "accuracy": 0.857,
+      "final_health": 80
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3010",
+      "elapsed_ms": null,
+      "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won four rounds aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "3010",
+      "elapsed_ms": null,
+      "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 36400 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(-64,192) opponent used the west medikit room last round aim_error=-5"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 1
+      },
+      "player_2": {
+        "shotgun": 9,
+        "health": 8
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(320,-640) the shotgun opening has won four rounds aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 2000 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(320,-192) the shotgun opening has won four rounds aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 3428 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(0,-192) the shotgun opening has won four rounds aim_error=-40"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 4457 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-256) the shotgun opening has won four rounds aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 4600 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) the shotgun opening has won four rounds aim_error=148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 4828 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) the shotgun opening has won four rounds aim_error=154"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 5057 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won four rounds aim_error=157"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 5800 autopilot_action: player_2 action=route_complete reason=the shotgun opening has won four rounds aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 10000 autopilot_action: player_2 action=route_waypoint reason=wp=1/3 target=(0,-256) the opening route stalled short of the pickup aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 10028 autopilot_action: player_2 action=route_waypoint reason=wp=1/3 target=(0,-256) the opening route stalled short of the pickup aim_error=-20"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 10514 autopilot_action: player_2 action=route_waypoint reason=wp=2/3 target=(0,-320) the opening route stalled short of the pickup aim_error=-23"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 10628 autopilot_action: player_2 action=route_waypoint reason=wp=3/3 target=(0,-384) the opening route stalled short of the pickup aim_error=158"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 10885 autopilot_action: player_2 action=route_complete reason=the opening route stalled short of the pickup aim_error=160"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "unknown",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 11600 autopilot_action: player_2 action=route_complete reason=the opening route stalled short of the pickup aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 36400 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(-64,192) opponent used the west medikit room last round aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 36428 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(-320,192) opponent used the west medikit room last round aim_error=49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 37257 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/4 target=(-320,192) opponent used the west medikit room last round aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 37342 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/4 target=(-320,0) opponent used the west medikit room last round aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 37971 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/4 target=(-384,0) opponent used the west medikit room last round aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 38114 autopilot_action: player_2 action=route_complete+attack reason=opponent used the west medikit room last round aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 38171 autopilot_action: player_2 action=route_complete reason=opponent used the west medikit room last round aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 38885 autopilot_action: player_2 action=route_complete reason=opponent used the west medikit room last round aim_error=0"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3010",
+        "elapsed_ms": null,
+        "event": "run_d328e1e07bb7 duel_e1m8_blind_spawn 3010 50428 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 11,
+      "player_2": 9
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 4
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 237,
+        "distance_traveled": 3337.4,
+        "unique_cells_visited": 20,
+        "revisited_cells": 217
+      },
+      "player_2": {
+        "path_points": 237,
+        "distance_traveled": 4329.1,
+        "unique_cells_visited": 45,
+        "revisited_cells": 192
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5045.22,
+    "decision_p95_ms": 6325.0,
+    "decision_max_ms": 7120.0,
+    "mcp_avg_ms": 764.49,
+    "mcp_p95_ms": 2171.0,
+    "mcp_max_ms": 10600.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 6315,
+      "player_2": 4883
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 3001,
+      "player_2": 1683
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 7165,
+    "stale_intent_extension_max_ms": 4685
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab the south shotgun at R17",
+      "route": "V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun opening has won four rounds",
+      "plan_summary": "Fifth date with this shotgun. It's getting serious."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east to a hidden northern waiting spot",
+      "route": "B03;B04;B05;B06;B07;B08;B09;B10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "If I can't see them, they can't see me."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": "B11;B12;C12;D12;C12;D12;C12;D12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Hiding behind the printer, hope they forget me."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "step into R17 for the shotgun",
+      "route": "P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opening route stalled short of the pickup",
+      "plan_summary": "Almost there. Don't make it weird, shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": "D12;C12;D12;C12;D12;C12;D12;C12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still hiding, still pretending to be busy."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": "C12;D12;C12;D12;C12;D12;C12;D12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Pacing like a nervous intern at review time."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "sweep around the center box hunting",
+      "route": "O17;N17;N20;I20;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this route has found the opponent every round",
+      "plan_summary": "Locked, loaded, and texting \"u up?\" to player one."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": [
+        "C12",
+        "D12",
+        "C12",
+        "D12",
+        "C12",
+        "D12",
+        "C12",
+        "D12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Another meeting that could have been an email."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "sweep north then west hunting",
+      "route": [
+        "N20",
+        "I20",
+        "I17",
+        "I12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent has favored the west and north areas",
+      "plan_summary": "Marco! ...You're supposed to say Polo before I shoot."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": "D11;D12;D11;D12;D11;D12;D11;D12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shuffling papers to look busy."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "check the west medikit room at L10",
+      "route": "I16;I12;L12;L11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent used the west medikit room last round",
+      "plan_summary": "Checking the snack room. You always hide by the snacks."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "wait hidden in the north and ambush anyone who comes",
+      "route": "D12;D11;D12;D11;D12;D11;D12;D11",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Pretending this stapler is a weapon."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "rush the opponent at D12",
+      "route": [
+        "I12",
+        "F12",
+        "E12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "closing distance makes shotgun pellets land",
+      "plan_summary": "Hi! Sorry! Personal space is a myth!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "grab the west medikit and fight back",
+      "route": "E11;F11;G11;G10;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Ow! Medikit run, shoot anything that moves."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "chase the opponent last seen at D12",
+      "route": "L12;I12;E12;D12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent is wounded and still on pistol",
+      "plan_summary": "You left without saying goodbye. I'm clingy, remember?"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "grab the west medikit",
+      "route": "G11;G10;G09;G08",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Almost at the snack table, don't look at me."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "corner the opponent at G08",
+      "route": [
+        "G11",
+        "G10",
+        "G09"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent is trapped in the medikit nook",
+      "plan_summary": "Eating my medkit in a corner? Same, but I'm still shooting."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "10",
+      "objective": "shoot the visible rival while strafing",
+      "route": "G09;G10;G09;G10",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Found you, now stop being so shotgun-y."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "run to the L10 medikit",
+      "route": "G11;G12;H12;I12;J12;K12;L12;L11",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Strategic retreat, which is just running with paperwork."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close in on the opponent at G10",
+      "route": "D11;D10;E10;F10",
+      "engagement_policy": "",
+      "reasoning": "point-blank shotgun range beats their pistol",
+      "plan_summary": "Ow. Okay, that's it, I'm hugging you with buckshot."
+    }
+  ]
+}

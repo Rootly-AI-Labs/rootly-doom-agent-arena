@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "retrieved_date_local": "2026-10-31",
+  "retrieved_at_utc": "2026-10-31T04:00:09Z",
+  "currency": "USD",
+  "unit": "per 1,000,000 tokens",
+  "pricing_basis": "Published standard global Claude API list rates; these are not the user's subscription bill.",
+  "primary_source": {
+    "title": "Pricing - Claude Platform Docs",
+    "url": "https://platform.claude.com/docs/en/about-claude/pricing"
+  },
+  "usage_accounting_sources": [
+    {
+      "title": "Steering thinking - Claude Platform Docs",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost",
+      "supports": "output_tokens includes reasoning; thinking_tokens is a subset, not an additional billable quantity."
+    },
+    {
+      "title": "Prompt caching - Claude Platform Docs",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "supports": "Total input consists of noncached input, cache creation, and cache reads."
+    }
+  ],
+  "models": {
+    "claude-opus-5-5": {
+      "display_name": "Claude Opus 5.5",
+      "input_usd_per_million": 4.0,
+      "output_usd_per_million": 20.0,
+      "cache_write_5m_usd_per_million": 5.0,
+      "cache_write_1h_usd_per_million": 8.0,
+      "cache_read_usd_per_million": 0.20,
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    "claude-sonnet-5-5": {
+      "display_name": "Claude Sonnet 5.5",
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 10.0,
+      "cache_write_5m_usd_per_million": 2.5,
+      "cache_write_1h_usd_per_million": 4.0,
+      "cache_read_usd_per_million": 0.10,
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    "claude-fable-5-1": {
+      "display_name": "Claude Fable 5.1",
+      "input_usd_per_million": 10.0,
+      "output_usd_per_million": 50.0,
+      "cache_write_5m_usd_per_million": 12.5,
+      "cache_write_1h_usd_per_million": 20.0,
+      "cache_read_usd_per_million": 0.25,
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "corroborating_source_url": "https://platform.claude.com/docs/en/models/fable-5-1/whats-new-fable-5-1"
+    }
+  },
+  "auxiliary_models": {
+    "claude-haiku-5-5": {
+      "input_usd_per_million": 0.10,
+      "output_usd_per_million": 0.50,
+      "cache_write_5m_usd_per_million": 0.125,
+      "cache_write_1h_usd_per_million": 0.20,
+      "cache_read_usd_per_million": 0.01,
+      "condition": "Prompts up to 100,000 tokens; all audited auxiliary session input totals are below this threshold.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing"
+    }
+  },
+  "modifiers": {
+    "long_context": "All three models include the full 1M context window at standard per-token rates; no >200k premium applies.",
+    "us_only_inference_multiplier": 1.1,
+    "opus_5_5_fast_mode_multiplier": 2.0,
+    "batch_multiplier": 0.5,
+    "client_side_mcp_tool_surcharge_usd": 0,
+    "web_search_usd_per_request": 0.01
+  },
+  "interpretation": [
+    "Input, cache write, cache read, and output categories must be priced separately.",
+    "Cache creation tokens with a known 1-hour TTL use the 1-hour price, not the 5-minute price.",
+    "Thinking tokens are already included in output_tokens; do not add them again.",
+    "Chart x coordinates use standard output-token list price only, not all-in tournament cost.",
+    "API-equivalent cost is a comparison estimate; actual billing may differ under a subscription, negotiated rates, tax, or credits."
+  ]
+}

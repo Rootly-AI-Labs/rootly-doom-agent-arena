@@ -1,0 +1,250 @@
+{
+  "run_id": "run_52247697da2b",
+  "round": 2,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 36.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 125,
+      "damage_taken": 150,
+      "shots_fired": 3,
+      "shots_hit": 2,
+      "accuracy": 0.667,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 125,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 25
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_52247697da2b duel_e1m8_blind_spawn 2030 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_52247697da2b duel_e1m8_blind_spawn 2030 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_52247697da2b duel_e1m8_blind_spawn 2030 5085 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 2,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 3
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 141,
+        "distance_traveled": 2076.7,
+        "unique_cells_visited": 23,
+        "revisited_cells": 118
+      },
+      "player_2": {
+        "path_points": 141,
+        "distance_traveled": 2967.6,
+        "unique_cells_visited": 33,
+        "revisited_cells": 108
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 8183.22,
+    "decision_p95_ms": 14389.0,
+    "decision_max_ms": 14389.0,
+    "mcp_avg_ms": 427.32,
+    "mcp_p95_ms": 1716.0,
+    "mcp_max_ms": 2151.0
+  },
+  "errors": {
+    "route_diagonal_segment": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3246,
+      "player_2": 3290
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1645,
+      "player_2": 1676
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 4620,
+    "stale_intent_extension_max_ms": 4620
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close in and engage near I16",
+      "route": [
+        "I13",
+        "I14",
+        "I15",
+        "I16"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun is strongest up close and opponent is nearby",
+      "plan_summary": "Someone poked me. Time to introduce them to seven angry pellets."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "same opening won round one",
+      "plan_summary": "Round two, same recipe: shotgun first, feelings later."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the north shotgun",
+      "route": "E02;E12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "long straight legs should arrive much faster",
+      "plan_summary": "Speed-walking to the supply closet before anyone notices."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "grab the north shotgun",
+      "route": [
+        "H16",
+        "G16",
+        "G17",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Claiming the good stapler. Back off, interns."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "grab shotgun at R17",
+      "route": "P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "previous route stalled just outside the room",
+      "plan_summary": "Stalled at the doorway like a guy who forgot his wallet. Going in."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "guard the shotgun room doorway",
+      "route": "F16;F18;F16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "intruders must enter through a narrow choke point",
+      "plan_summary": "My office. My door. Knock and find out."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "hunt toward north shotgun entrance at I17",
+      "route": "Q17;P17;O17;O13;L13;I13;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent took F17 and this lane found them last round",
+      "plan_summary": "Armed and emotionally unavailable. Let's go find my ex-opponent."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "guard the shotgun room doorway",
+      "route": "F17;F18;F17;F16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "intruders must enter through a narrow choke point",
+      "plan_summary": "Pacing my office like a boss awaiting quarterly results."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "sweep north shotgun room via H17",
+      "route": "I16;I17;H17;G17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent grabbed F17 and may still be inside",
+      "plan_summary": "Knock knock. It's the lasagna. I brought pellets instead of dessert."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "charge to point-blank shotgun range",
+      "route": [
+        "G17",
+        "H17",
+        "I17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "no cover in the box, close range maximizes pellets",
+      "plan_summary": "Fine, let's take this meeting in person."
+    }
+  ]
+}

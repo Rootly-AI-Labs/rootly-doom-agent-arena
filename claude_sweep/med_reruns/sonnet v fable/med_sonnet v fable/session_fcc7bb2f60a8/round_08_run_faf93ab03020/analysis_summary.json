@@ -1,0 +1,576 @@
+{
+  "run_id": "run_faf93ab03020",
+  "round": 8,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 94.7,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 245,
+      "damage_taken": 235,
+      "shots_fired": 19,
+      "shots_hit": 11,
+      "accuracy": 0.579,
+      "final_health": 35
+    },
+    "player_2": {
+      "damage_dealt": 235,
+      "damage_taken": 245,
+      "shots_fired": 16,
+      "shots_hit": 11,
+      "accuracy": 0.688,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3885",
+      "elapsed_ms": null,
+      "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) the one-plan sprint reaches the shotgun in ten seconds aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "3885",
+      "elapsed_ms": null,
+      "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 56400 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 2
+      },
+      "player_2": {
+        "shotgun": 15,
+        "health": 37
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/6 target=(960,-512) the one-plan sprint reaches the shotgun in ten seconds aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 457 autopilot_action: player_2 action=route_waypoint reason=wp=2/6 target=(512,-512) the one-plan sprint reaches the shotgun in ten seconds aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 1885 autopilot_action: player_2 action=route_waypoint reason=wp=3/6 target=(512,-192) the one-plan sprint reaches the shotgun in ten seconds aim_error=48"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 2914 autopilot_action: player_2 action=route_waypoint reason=wp=4/6 target=(0,-192) the one-plan sprint reaches the shotgun in ten seconds aim_error=-49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 4542 autopilot_action: player_2 action=route_waypoint reason=wp=5/6 target=(0,-320) the one-plan sprint reaches the shotgun in ten seconds aim_error=59"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 4885 autopilot_action: player_2 action=route_waypoint reason=wp=6/6 target=(0,-384) the one-plan sprint reaches the shotgun in ten seconds aim_error=148"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 5114 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=151"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 5142 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 5857 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 7228 autopilot_action: player_2 action=route_complete+attack reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 7485 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 9171 autopilot_action: player_2 action=route_complete+attack reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 9428 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 18142 autopilot_action: player_2 action=route_complete+attack reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 18228 autopilot_action: player_2 action=route_complete reason=the one-plan sprint reaches the shotgun in ten seconds aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 25457 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 56400 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 57742 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(0,-192) at 120 I need the medikit to hold the health lead aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 57771 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(0,-192) at 120 I need the medikit to hold the health lead aim_error=60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 58085 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/4 target=(0,-192) at 120 I need the medikit to hold the health lead aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 58342 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/4 target=(320,-192) at 120 I need the medikit to hold the health lead aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 59142 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(320,-192) at 120 I need the medikit to hold the health lead aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 59371 autopilot_action: player_2 action=route_waypoint reason=wp=3/4 target=(320,-320) at 120 I need the medikit to hold the health lead aim_error=-53"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 59828 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(576,-320) at 120 I need the medikit to hold the health lead aim_error=-155"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 60571 autopilot_action: player_2 action=route_complete reason=at 120 I need the medikit to hold the health lead aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 60571 pickup: player_2 medikit"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 61314 autopilot_action: player_2 action=route_complete reason=at 120 I need the medikit to hold the health lead aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 82914 autopilot_action: player_2 action=route_waypoint reason=wp=1/3 target=(512,-320) full health lead; make him come to me at close range aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 82942 autopilot_action: player_2 action=route_waypoint reason=wp=1/3 target=(512,-320) full health lead; make him come to me at close range aim_error=57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 83142 autopilot_action: player_2 action=route_waypoint reason=wp=2/3 target=(448,-320) full health lead; make him come to me at close range aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 83485 autopilot_action: player_2 action=route_waypoint reason=wp=3/3 target=(512,-320) full health lead; make him come to me at close range aim_error=72"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 83628 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 84371 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 84657 autopilot_action: player_2 action=route_waypoint reason=wp=3/3 target=(512,-320) full health lead; make him come to me at close range aim_error=-6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 84685 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=62"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 85428 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 85600 autopilot_action: player_2 action=route_waypoint reason=wp=3/3 target=(512,-320) full health lead; make him come to me at close range aim_error=6"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 85628 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=-112"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 86371 autopilot_action: player_2 action=route_complete reason=full health lead; make him come to me at close range aim_error=5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "health",
+        "tick": "3885",
+        "elapsed_ms": null,
+        "event": "run_faf93ab03020 duel_e1m8_blind_spawn 3885 86542 autopilot_action: player_2 action=route_waypoint reason=wp=3/3 target=(512,-320) full health lead; make him come to me at close range aim_error=2"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 12,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 369,
+        "distance_traveled": 4334.2,
+        "unique_cells_visited": 41,
+        "revisited_cells": 328
+      },
+      "player_2": {
+        "path_points": 369,
+        "distance_traveled": 3501.6,
+        "unique_cells_visited": 29,
+        "revisited_cells": 340
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7878.86,
+    "decision_p95_ms": 20300.0,
+    "decision_max_ms": 27593.0,
+    "mcp_avg_ms": 735.83,
+    "mcp_p95_ms": 1726.0,
+    "mcp_max_ms": 11274.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4944,
+      "player_2": 3249
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1671,
+      "player_2": 1645
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 40160,
+    "stale_intent_extension_max_ms": 22365
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "patrol near L24 medikit and watch column 22",
+      "route": [
+        "L22",
+        "K22",
+        "L22",
+        "L23"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "he hunts me, so I wait where I have a medikit",
+      "plan_summary": "Pacing by the medkit like a bouncer. Nobody gets past the pancake."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "4-3 up. Raccoon requests a raise."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "reach shotgun at R17 in one sprint",
+      "route": "T32;T25;O25;O17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the one-plan sprint reaches the shotgun in ten seconds",
+      "plan_summary": "Round eight. Sprint for the shotgun, then hold near a medkit."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Same commute, still winning."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room entrance",
+      "route": "F12;G12;H12;I12;I13;I14;I15;I16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Hallway sprint, HR-approved."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17",
+      "route": "I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun pickup, take five hundred and six."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "dash across row I to meet the opponent near the east alcove",
+      "route": "F17;G17;H17;I17;I18;I19;I20;I21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Crossing the hallway fast, again, no eye contact."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard inside the shotgun room",
+      "route": "R16;R17;R18;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "walls limit sightlines so any fight is close and on my terms",
+      "plan_summary": "Hiding in my kitchen with a shotgun. Classic pancake hospitality."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "peek down column 22 toward the east alcove",
+      "route": "I21;I22;J22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Peeking around the corner like a nosy neighbor."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "step down column 22 and shotgun whoever is in the alcove",
+      "route": "J22;K22;L22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Knock knock. Shotgun delivery for the alcove."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "enter the alcove, shoot whoever is there, and take the L24 medik",
+      "route": "L22;L23;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Delivering a shotgun and picking up my snack."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "heal at Q26 medikit",
+      "route": "O17;O22;Q22;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "at 120 I need the medikit to hold the health lead",
+      "plan_summary": "Took a hit. Off to Q26 for a medkit and a moment of self-reflection."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "guard the alcove at full health and ambush whoever approaches",
+      "route": "L24;L23;L24;L23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Healed up and holding the fort. Come at me."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "10",
+      "objective": "step out of the alcove and finish the wounded opponent",
+      "route": "L23;L22;K22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Ouch. Counter-offer incoming, with extra pellets."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "guard the Q24 pocket with short sightlines",
+      "route": "Q25;Q24;Q25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "full health lead; make him come to me at close range",
+      "plan_summary": "Full stack again. Waiting in the corner like a very armed waffle."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "11",
+      "objective": "reach the G26 medikit to heal",
+      "route": "K22;J22;I22;I23;I24;I25;I26;H26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Need a medkit and a better plan. In that order."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "12",
+      "objective": "take the G26 medikit",
+      "route": "H26;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Medikit, please. I'm out of snacks and health."
+    }
+  ]
+}

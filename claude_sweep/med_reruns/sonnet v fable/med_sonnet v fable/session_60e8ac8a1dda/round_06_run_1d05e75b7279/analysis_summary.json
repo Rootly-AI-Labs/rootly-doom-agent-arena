@@ -1,0 +1,238 @@
+{
+  "run_id": "run_1d05e75b7279",
+  "round": 6,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 51.0,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 10,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 140
+    },
+    "player_2": {
+      "damage_dealt": 10,
+      "damage_taken": 155,
+      "shots_fired": 4,
+      "shots_hit": 1,
+      "accuracy": 0.25,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "3675",
+      "elapsed_ms": null,
+      "event": "run_1d05e75b7279 duel_e1m8_blind_spawn 3675 31742 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3675",
+        "elapsed_ms": null,
+        "event": "run_1d05e75b7279 duel_e1m8_blind_spawn 3675 31742 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 199,
+        "distance_traveled": 3472.3,
+        "unique_cells_visited": 34,
+        "revisited_cells": 165
+      },
+      "player_2": {
+        "path_points": 199,
+        "distance_traveled": 1576.7,
+        "unique_cells_visited": 25,
+        "revisited_cells": 174
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5476.0,
+    "decision_p95_ms": 9760.0,
+    "decision_max_ms": 9760.0,
+    "mcp_avg_ms": 2255.24,
+    "mcp_p95_ms": 2235.0,
+    "mcp_max_ms": 48777.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 4,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 5,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 8688,
+      "player_2": 3314
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2158,
+      "player_2": 1682
+    },
+    "stale_intent_extension_count": 4,
+    "stale_intent_extension_total_ms": 50856,
+    "stale_intent_extension_max_ms": 43951
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Round six. Still winning, still sweating."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "head north toward the row O approach",
+      "route": "V31;V30;V29;U29;T29;S29;R29;Q29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the row O approach to R17 is hidden from the north corridors",
+      "plan_summary": "Sneaky burrito mode: hugging walls, avoiding long hallways."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "head toward the shotgun at F17",
+      "route": [
+        "C02",
+        "D02",
+        "E02",
+        "F02",
+        "G02",
+        "H02",
+        "I02",
+        "I03"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Round six. Still winning, still sweating."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell I09 on the way to the shotgun",
+      "route": "I04;I05;J05;J06;J07;I07;I08;I09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Same commute. The coffee machine still broken."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cut west through the N-row gap",
+      "route": "P29;O29;N29;N28;N27;N26;O26;O25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "O28 is a wall so the detour through N28 is required",
+      "plan_summary": "Mail slot, round six. I know this gap better than my own kitchen."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach cell I17 below the shotgun room",
+      "route": "I10;I11;I12;I13;I14;I15;I16;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Walking briskly. Not running. Legally distinct."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "grab the shotgun at F17 and exit west",
+      "route": "H17;G17;F17;G17;H17;I17;I16;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun pickup, then straight back to the meeting."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach the shotgun room doorway at P18",
+      "route": "O24;O23;O22;O21;O20;O19;O18;P18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "row O is hidden from the north corridors except at columns 20-22",
+      "plan_summary": "Crossing the hallway fast, like a burrito sneaking past the office fridge."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "head south toward the R17 shotgun room",
+      "route": "I14;J14;K14;L14;M14;N14;O14;O15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Armed. Moving to intercept the other intern."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "close in on the opponent at P18",
+      "route": "O16;O17;O18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Found you. Shotgun says hello."
+    }
+  ]
+}

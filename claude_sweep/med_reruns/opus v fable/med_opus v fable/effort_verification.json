@@ -1,0 +1,23 @@
+﻿{
+    "session_id":  "session_572d2d193f0a",
+    "verified_at_utc":  "2026-10-31T04:18:40.4600510Z",
+    "rounds":  10,
+    "basis":  "Actual Claude API request, response, and per-turn effort metadata; each participant log matches all 10 arena run IDs, side, and alias.",
+    "player_1":  {
+                     "model":  "claude-opus-5-5",
+                     "effort":  "medium",
+                     "api_requests":  71,
+                     "unique_api_responses":  71,
+                     "source_log_id":  "fe2f8510-c736-481e-a736-1a339d5239b4",
+                     "source_sha256":  "5f9ae6715de26281132bdc252634dc1da580a4cb2e6922748b2f16930ce59d89"
+                 },
+    "player_2":  {
+                     "model":  "claude-fable-5-1",
+                     "effort":  "medium",
+                     "api_requests":  93,
+                     "unique_api_responses":  93,
+                     "source_log_id":  "4aaab9a4-5ffa-4e20-a3d4-436044a0924a",
+                     "source_sha256":  "97fa40e57a5270d33ac5cee9bd9c5175318f5d11ddd20762878c096c7c2bf40a"
+                 },
+    "preserved_archive_files":  101
+}

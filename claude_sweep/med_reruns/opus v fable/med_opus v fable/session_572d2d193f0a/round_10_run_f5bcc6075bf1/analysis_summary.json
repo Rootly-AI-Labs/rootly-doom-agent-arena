@@ -1,0 +1,516 @@
+{
+  "run_id": "run_f5bcc6075bf1",
+  "round": 10,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 38.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 165,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 15
+    },
+    "player_2": {
+      "damage_dealt": 165,
+      "damage_taken": 150,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,448) shotgun plus nearby medkit is my best record aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "2030",
+      "elapsed_ms": null,
+      "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 13571 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 26,
+        "health": 14
+      },
+      "player_2": {
+        "shotgun": 11,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(-960,448) shotgun plus nearby medkit is my best record aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 0 autopilot_action: player_2 action=route_waypoint reason=wp=2/7 target=(320,-640) shotgun then guard the east medkit pocket worked last round aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 628 autopilot_action: player_1 action=route_waypoint reason=wp=2/8 target=(-320,448) shotgun plus nearby medkit is my best record aim_error=-57"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 2000 autopilot_action: player_2 action=route_waypoint reason=wp=3/7 target=(320,-192) shotgun then guard the east medkit pocket worked last round aim_error="
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 2628 autopilot_action: player_1 action=route_waypoint reason=wp=3/8 target=(-320,192) shotgun plus nearby medkit is my best record aim_error=53"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 3428 autopilot_action: player_2 action=route_waypoint reason=wp=4/7 target=(0,-192) shotgun then guard the east medkit pocket worked last round aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 3457 autopilot_action: player_1 action=route_waypoint reason=wp=4/8 target=(0,192) shotgun plus nearby medkit is my best record aim_error=-55"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 4457 autopilot_action: player_2 action=route_waypoint reason=wp=5/7 target=(0,-256) shotgun then guard the east medkit pocket worked last round aim_error=86"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 4485 autopilot_action: player_1 action=route_waypoint reason=wp=5/8 target=(0,384) shotgun plus nearby medkit is my best record aim_error=87"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 4600 autopilot_action: player_2 action=route_waypoint reason=wp=6/7 target=(0,-320) shotgun then guard the east medkit pocket worked last round aim_error=17"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 4828 autopilot_action: player_2 action=route_waypoint reason=wp=7/7 target=(0,-384) shotgun then guard the east medkit pocket worked last round aim_error=17"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5057 autopilot_action: player_2 action=route_complete reason=shotgun then guard the east medkit pocket worked last round aim_error=-180"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5114 autopilot_action: player_1 action=route_waypoint reason=wp=6/8 target=(0,192) shotgun plus nearby medkit is my best record aim_error=178"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5714 autopilot_action: player_1 action=route_waypoint reason=wp=7/8 target=(512,192) shotgun plus nearby medkit is my best record aim_error=1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 5800 autopilot_action: player_2 action=route_complete reason=shotgun then guard the east medkit pocket worked last round aim_error=-2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 6685 autopilot_action: player_2 action=route_complete+attack reason=shotgun then guard the east medkit pocket worked last round aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 6714 autopilot_action: player_2 action=route_complete reason=shotgun then guard the east medkit pocket worked last round aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 7314 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=128"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 7685 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-148"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 8428 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 8628 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 8657 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 9400 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 9600 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 9628 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-148"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 10371 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 10571 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 10600 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=30"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 11342 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 11542 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 11571 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-148"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 12314 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 12514 autopilot_action: player_1 action=route_waypoint reason=wp=8/8 target=(512,320) shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 12542 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=38"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 13285 autopilot_action: player_1 action=route_complete reason=shotgun plus nearby medkit is my best record aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 13571 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 25000 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(384,320) full health wins at timeout if no contact aim_error=-2"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2030",
+        "elapsed_ms": null,
+        "event": "run_f5bcc6075bf1 duel_e1m8_blind_spawn 2030 25028 autopilot_action: player_1 action=route_waypoint reason=wp=1/8 target=(384,320) full health wins at timeout if no contact aim_error=-63"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 5,
+      "player_2": 5
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 149,
+        "distance_traveled": 4708.2,
+        "unique_cells_visited": 33,
+        "revisited_cells": 116
+      },
+      "player_2": {
+        "path_points": 149,
+        "distance_traveled": 3011.9,
+        "unique_cells_visited": 34,
+        "revisited_cells": 115
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6069.0,
+    "decision_p95_ms": 9093.0,
+    "decision_max_ms": 9093.0,
+    "mcp_avg_ms": 579.32,
+    "mcp_p95_ms": 1675.0,
+    "mcp_max_ms": 5570.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 3
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 0
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4801,
+      "player_2": 0
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1621,
+      "player_2": 0
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 2418,
+    "stale_intent_extension_max_ms": 2418
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "intercept opponent at medikit G26",
+      "route": [
+        "L22",
+        "I22",
+        "I26",
+        "H26",
+        "G26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they are hurt and G26 is their usual first heal",
+      "plan_summary": "Racing a wounded guy to his own medkit. Lasagna moves fast when motivated."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "grab shotgun then relocate to the east medkit pocket",
+      "route": "E02;E12;I12;I17;F17;I17;I25;G25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun plus nearby medkit is my best record",
+      "plan_summary": "Final meeting of the year. Bringing the big stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun then guard the east medkit pocket worked last round",
+      "plan_summary": "Final course. Shotgun, then I guard the medkits like leftovers."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard medikit pocket at L24 from L23",
+      "route": "Q17;P17;O17;O22;L22;L23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this ambush spot won round nine cleanly",
+      "plan_summary": "Back to my medkit campsite. Bring marshmallows, I brought a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "heal at G26 and hold the pocket",
+      "route": "G25;G26;G24;G26;G24;G26;G24;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "pocket walls limit approach angles to west and south",
+      "plan_summary": "Barricading myself in the corner office with snacks."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "guard medikit pocket at L24",
+      "route": "K23;L23;L24;L23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent just healed at G26 and heads here next",
+      "plan_summary": "They took G26. Next stop is my pocket. Pellets are pre-heated."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "guard the east pocket at full health",
+      "route": "G23;G26;G23;G26;G23;G26;G23;G26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "full health wins at timeout if no contact",
+      "plan_summary": "Pacing the corner office. Do not disturb."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "hunt opponent near G26 via row I",
+      "route": "L22;I22;I26;H26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they healed at G26 and have not advanced so I go to",
+      "plan_summary": "Fine, I'll come to you. Lasagna delivery, no tip required."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "guard the east pocket at full health",
+      "route": "G25;G23;G25;G23;G25;G23;G25;G23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "avoid snagging on the G26 corner walls",
+      "plan_summary": "Stuck on the furniture again. Rearranging the office."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "flee to the L24 medkit",
+      "route": "G22;L22;L24",
+      "engagement_policy": "",
+      "reasoning": "health is 15 and L24 is the closest medkit",
+      "plan_summary": "Running to the nurse's office. Cover me!"
+    }
+  ]
+}

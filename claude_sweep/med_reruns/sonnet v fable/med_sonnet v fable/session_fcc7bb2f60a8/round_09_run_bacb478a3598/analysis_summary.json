@@ -1,0 +1,477 @@
+{
+  "run_id": "run_bacb478a3598",
+  "round": 9,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 45.5,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 120,
+      "damage_taken": 150,
+      "shots_fired": 4,
+      "shots_hit": 3,
+      "accuracy": 0.75,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 150,
+      "damage_taken": 120,
+      "shots_fired": 4,
+      "shots_hit": 4,
+      "accuracy": 1.0,
+      "final_health": 30
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3360",
+      "elapsed_ms": null,
+      "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 6257 pickup: player_2 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 33,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 6257 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 20914 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(-64,384) he arrives with a pistol into my shotgun at close range aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 20942 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(-64,384) he arrives with a pistol into my shotgun at close range aim_error=-33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21171 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=-38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21314 autopilot_action: player_2 action=route_waypoint reason=wp=3/4 target=(64,384) he arrives with a pistol into my shotgun at close range aim_error=124"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21628 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=132"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21685 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 21742 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-49"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 22485 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 22857 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 22885 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=130"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 23628 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 23800 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 23828 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-45"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 24571 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 24742 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 24771 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=130"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 25514 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 25685 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=2"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 25714 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-45"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 26457 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=0"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 26628 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 26657 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=121"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 27257 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,384) he arrives with a pistol into my shotgun at close range aim_error=3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 27285 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-51"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 28057 autopilot_action: player_2 action=route_complete reason=he arrives with a pistol into my shotgun at close range aim_error=-1"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 33571 pickup: player_1 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 42742 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,192) he only has a pistol; denying both shotguns locks the advantage aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 42771 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,192) he only has a pistol; denying both shotguns locks the advantage aim_erro"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 43342 autopilot_action: player_2 action=route_waypoint reason=wp=2/5 target=(-192,192) he only has a pistol; denying both shotguns locks the advantage aim_e"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 43771 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/5 target=(-192,192) he only has a pistol; denying both shotguns locks the advantag"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 43971 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/5 target=(-192,-128) he only has a pistol; denying both shotguns locks the advanta"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3360",
+        "elapsed_ms": null,
+        "event": "run_bacb478a3598 duel_e1m8_blind_spawn 3360 45028 autopilot_action: player_2 action=route_waypoint+attack reason=wp=4/5 target=(0,-128) he only has a pistol; denying both shotguns locks the advantage "
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 7,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 177,
+        "distance_traveled": 3065.0,
+        "unique_cells_visited": 32,
+        "revisited_cells": 145
+      },
+      "player_2": {
+        "path_points": 177,
+        "distance_traveled": 3219.1,
+        "unique_cells_visited": 36,
+        "revisited_cells": 141
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6902.75,
+    "decision_p95_ms": 16425.0,
+    "decision_max_ms": 16425.0,
+    "mcp_avg_ms": 1998.0,
+    "mcp_p95_ms": 1719.0,
+    "mcp_max_ms": 43126.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 4
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1619
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 0,
+      "player_2": 1619
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 44125,
+    "stale_intent_extension_max_ms": 33711
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "5-3. One more win and I get the corner office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "reach medikit Q08 across the south row",
+      "route": [
+        "R25",
+        "T25",
+        "T09",
+        "Q09",
+        "Q08"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "east medikits are gone and I am faster than him",
+      "plan_summary": "Ouch! Running west for a medkit. Pancakes are surprisingly fast when scared."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "steal the F17 shotgun before the opponent arrives",
+      "route": "J32;J27;I27;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I move faster and he is still on pistol when he reaches",
+      "plan_summary": "Round nine. Raiding HIS kitchen before he gets home. Bold pancake."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B08;B09;B10;B11;B12;C12;D12;E12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Same commute, same coffee."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "go south along column 12 toward the R17 shotgun",
+      "route": "E12;F12;G12;H12;I12;J12;K12;L12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "They took my shotgun. I'm taking the other one."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard inside the F17 room and ambush",
+      "route": "F16;F17;F18;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "he arrives with a pistol into my shotgun at close range",
+      "plan_summary": "Stole his shotgun. Now waiting in his kitchen. Surprise, it's pancake!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "continue toward the R17 shotgun room entrance",
+      "route": "L12;M12;N12;O12;O13;O14;O15;O16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Second shotgun, second chance. Don't tell HR."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "grab the shotgun at R17",
+      "route": "O16;P16;Q16;R16;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Taking cover in the shotgun closet. Hello, upgrade."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "head west toward the Q08 medikit",
+      "route": "R17;Q17;P17;O17;O16;O15;O14;O13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Armed and slightly dented. Off to the west-side snack bar."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "take the R17 shotgun too and deny him any shotgun",
+      "route": "I17;I14;N14;N17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "he only has a pistol; denying both shotguns locks the advantage",
+      "plan_summary": "Taking ALL the shotguns. Nobody said pancakes have to share."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "close in and shotgun the opponent at L14",
+      "route": "O13;N13;M13;M14",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Found you. Point-blank is my love language."
+    }
+  ]
+}

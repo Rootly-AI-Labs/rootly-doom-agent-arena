@@ -1,0 +1,282 @@
+{
+  "run_id": "run_8341f3c2e39a",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 30.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 155,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 70
+    },
+    "player_2": {
+      "damage_dealt": 155,
+      "damage_taken": 150,
+      "shots_fired": 6,
+      "shots_hit": 6,
+      "accuracy": 1.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "1925",
+      "elapsed_ms": null,
+      "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 15485 pickup: player_1 medikit"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 2
+      },
+      "player_2": {
+        "shotgun": 8,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 5085 pickup: player_2 shotgun x=0 y=-384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 10285 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(0,-192) route stalled partway and the shotgun is still available aim_error=-5"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 10314 autopilot_action: player_2 action=route_waypoint reason=wp=1/4 target=(0,-192) route stalled partway and the shotgun is still available aim_error=35"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 11000 autopilot_action: player_2 action=route_waypoint reason=wp=2/4 target=(0,-256) route stalled partway and the shotgun is still available aim_error=46"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 11114 autopilot_action: player_2 action=route_waypoint reason=wp=3/4 target=(0,-320) route stalled partway and the shotgun is still available aim_error=-135"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 11342 autopilot_action: player_2 action=route_waypoint reason=wp=4/4 target=(0,-384) route stalled partway and the shotgun is still available aim_error=-138"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 11600 autopilot_action: player_2 action=route_complete reason=route stalled partway and the shotgun is still available aim_error=-141"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 12314 autopilot_action: player_2 action=route_complete reason=route stalled partway and the shotgun is still available aim_error=-5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 15485 pickup: player_1 medikit"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "1925",
+        "elapsed_ms": null,
+        "event": "run_8341f3c2e39a duel_e1m8_blind_spawn 1925 28228 pickup: player_1 medikit"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 3,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 116,
+        "distance_traveled": 4325.5,
+        "unique_cells_visited": 39,
+        "revisited_cells": 77
+      },
+      "player_2": {
+        "path_points": 115,
+        "distance_traveled": 3157.6,
+        "unique_cells_visited": 34,
+        "revisited_cells": 81
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6437.4,
+    "decision_p95_ms": 9201.0,
+    "decision_max_ms": 9201.0,
+    "mcp_avg_ms": 770.52,
+    "mcp_p95_ms": 1784.0,
+    "mcp_max_ms": 5267.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 3
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1651,
+      "player_2": 5037
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1651,
+      "player_2": 1731
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 1869,
+    "stale_intent_extension_max_ms": 1869
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "finish wounded opponent at L12",
+      "route": [
+        "M13",
+        "L13",
+        "L12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "they are already hurt and point-blank pellets all land",
+      "plan_summary": "Ten health, zero regrets. One more volley and we're both done here."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "six wins from this opening so far",
+      "plan_summary": "Lucky number seven. Shotgun first, then I go looking for trouble."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "grab shotgun then relocate to the east medkit pocket",
+      "route": "E02;E12;I12;I17;F17;I17;I25;G25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent keeps arriving from the west side",
+      "plan_summary": "Grabbing the shotgun and transferring to the east office."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "grab shotgun at R17",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "route stalled partway and the shotgun is still available",
+      "plan_summary": "Stalled again. The lasagna refuses to be undercooked. Moving."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "heal at G26 and guard the pocket",
+      "route": "G26;G24;G26;G24;G26;G24;G26;G24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "took chip damage and medkit is adjacent",
+      "plan_summary": "Minor paper cut. Filing a medkit claim."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "hunt toward I17 via column 13",
+      "route": "Q17;P17;O17;O13;L13;I13;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent favors the west medkit lane and this route crosses it",
+      "plan_summary": "Already tagged them once. Lasagna's coming out of the oven, hot."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "patrol beside the L24 medkit",
+      "route": "G24;G22;L22;L24;L22;L24;L22;L24",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "keeps a fresh medkit within one step during fights",
+      "plan_summary": "Relocating my desk next to the other first-aid kit."
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "run_id": "run_005a55b38e9e",
+  "round": 2,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 49.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 150,
+      "damage_taken": 50,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 100
+    },
+    "player_2": {
+      "damage_dealt": 50,
+      "damage_taken": 150,
+      "shots_fired": 7,
+      "shots_hit": 4,
+      "accuracy": 0.571,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "3080",
+      "elapsed_ms": null,
+      "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun room at R17 opens only from the north side aim_error=-11"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 10,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun room at R17 opens only from the north side aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 171 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(832,-640) shotgun room at R17 opens only from the north side aim_error=34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 400 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(768,-640) shotgun room at R17 opens only from the north side aim_error=33"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 742 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(768,-576) shotgun room at R17 opens only from the north side aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 885 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(768,-512) shotgun room at R17 opens only from the north side aim_error=-52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 1142 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(768,-448) shotgun room at R17 opens only from the north side aim_error=-60"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 1371 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(768,-384) shotgun room at R17 opens only from the north side aim_error=-65"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 1628 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(768,-320) shotgun room at R17 opens only from the north side aim_error=-69"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 1857 autopilot_action: player_2 action=route_complete reason=shotgun room at R17 opens only from the north side aim_error=-72"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 2600 autopilot_action: player_2 action=route_complete reason=shotgun room at R17 opens only from the north side aim_error=-3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "3080",
+        "elapsed_ms": null,
+        "event": "run_005a55b38e9e duel_e1m8_blind_spawn 3080 22914 pickup: player_1 shotgun x=0 y=384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 8,
+      "player_2": 3
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 191,
+        "distance_traveled": 3092.3,
+        "unique_cells_visited": 36,
+        "revisited_cells": 155
+      },
+      "player_2": {
+        "path_points": 191,
+        "distance_traveled": 1613.6,
+        "unique_cells_visited": 24,
+        "revisited_cells": 167
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 7025.64,
+    "decision_p95_ms": 25369.0,
+    "decision_max_ms": 25369.0,
+    "mcp_avg_ms": 1274.52,
+    "mcp_p95_ms": 1731.0,
+    "mcp_max_ms": 27143.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 3,
+    "superseded_count": 5
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 4,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 6728,
+      "player_2": 3275
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1733,
+      "player_2": 1639
+    },
+    "stale_intent_extension_count": 3,
+    "stale_intent_extension_total_ms": 28322,
+    "stale_intent_extension_max_ms": 17924
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Round two. Same plan, more confidence."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "head north toward the south shotgun",
+      "route": "V31;V30;V29;U29;T29;S29;R29;Q29",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun room at R17 opens only from the north side",
+      "plan_summary": "Round two. Same burrito, fewer regrets, hopefully more shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell I09 on the way to the shotgun",
+      "route": "I04;I05;J05;J06;J07;I07;I08;I09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Beep beep, intern coming through."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "reach cell I15 near the shotgun room",
+      "route": "I08;I09;I10;I11;I12;I13;I14;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Almost there. Please nobody touch my shotgun."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "cut west through the N-row gap",
+      "route": "P29;O29;N29;N28;N27;N26;O26;O25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "O28 is a wall so the detour through N28 is required",
+      "plan_summary": "Through the mail slot again. This time I'm bringing attitude."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "pick up the shotgun at F17",
+      "route": "I16;I17;H17;G17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Grabbing the good stapler. I mean shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "hunt the opponent with the shotgun",
+      "route": "G17;H17;I17;I16;I15;I14;J14;K14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Armed and unreasonably confident. Standard intern."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep south toward the R17 shotgun room",
+      "route": "L14;M14;N14;O14;O15;O16;P16;Q16",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Knocking on the south door. With a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "push east along row O toward the opponent",
+      "route": [
+        "O14",
+        "O15",
+        "O16",
+        "O17",
+        "O18",
+        "O19",
+        "O20",
+        "O21"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Already landed a hit. Delivering the rest of the feedback."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "reach P18 at the shotgun room doorway",
+      "route": "O24;O23;O22;O21;O20;O19;O18;P18",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "last round I died at O17 before reaching the gun",
+      "plan_summary": "Last time I window-shopped. This time I'm buying."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "push east along row O toward the opponent",
+      "route": "P16;O16;O17;O18;O19;O20;O21;O22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Chasing the guy I already shot. Rude, but effective."
+    }
+  ]
+}

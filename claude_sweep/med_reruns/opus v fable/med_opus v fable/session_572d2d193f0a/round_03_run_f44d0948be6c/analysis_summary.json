@@ -1,0 +1,225 @@
+{
+  "run_id": "run_f44d0948be6c",
+  "round": 3,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 26.3,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 115,
+      "damage_taken": 160,
+      "shots_fired": 3,
+      "shots_hit": 2,
+      "accuracy": 0.667,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 115,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 35
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "1470",
+      "elapsed_ms": null,
+      "event": "run_f44d0948be6c duel_e1m8_blind_spawn 1470 5057 pickup: player_1 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 1,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "1470",
+        "elapsed_ms": null,
+        "event": "run_f44d0948be6c duel_e1m8_blind_spawn 1470 5057 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1470",
+        "elapsed_ms": null,
+        "event": "run_f44d0948be6c duel_e1m8_blind_spawn 1470 5085 pickup: player_2 shotgun x=0 y=-384"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 4
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 1,
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 101,
+        "distance_traveled": 2131.2,
+        "unique_cells_visited": 24,
+        "revisited_cells": 77
+      },
+      "player_2": {
+        "path_points": 102,
+        "distance_traveled": 2694.4,
+        "unique_cells_visited": 29,
+        "revisited_cells": 73
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 5577.0,
+    "decision_p95_ms": 8427.0,
+    "decision_max_ms": 8427.0,
+    "mcp_avg_ms": 424.13,
+    "mcp_p95_ms": 1663.0,
+    "mcp_max_ms": 1689.0
+  },
+  "errors": {
+    "route_diagonal_segment": 1,
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 1,
+    "superseded_count": 3
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 2,
+      "player_2": 2
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 3194,
+      "player_2": 3209
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1608,
+      "player_2": 1632
+    },
+    "stale_intent_extension_count": 1,
+    "stale_intent_extension_total_ms": 1888,
+    "stale_intent_extension_max_ms": 1888
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "grab shotgun at R17",
+      "route": "V32;V22;O22;O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this opening won both previous rounds",
+      "plan_summary": "Third helping of lasagna. Shotgun first, regrets never."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "rush the north shotgun",
+      "route": "E02;E12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "fast straight legs reached it quickly last round",
+      "plan_summary": "Third time's the charm, says my motivational poster."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "grab shotgun at R17",
+      "route": "O17;P17;Q17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "route stalled at the room entrance again",
+      "plan_summary": "Doorway stage fright again. Deep breath, lasagna. Walk in."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "grab the north shotgun",
+      "route": [
+        "H16",
+        "G16",
+        "F16",
+        "F17"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Swiping the shotgun like the last donut in the break room."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "leave the box and ambush from the side",
+      "route": "F16;G16;H16;I16;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the box is a shooting gallery from the south",
+      "plan_summary": "Leaving my office before the surprise performance review."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "hunt toward north shotgun entrance at I17",
+      "route": "Q17;P17;O17;O13;L13;I13;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "this lane produced the winning fight in both rounds",
+      "plan_summary": "Same lane, same lasagna, same bad news for whoever's up there."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "reach ambush spot at I13",
+      "route": "I15;I14;I13",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "flank anyone peeking up the column 17 lane",
+      "plan_summary": "Hiding behind the water cooler. Classic."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "close on opponent at I14",
+      "route": "K13;J13;I13;I14",
+      "engagement_policy": "",
+      "reasoning": "shotgun pellets land best at close range",
+      "plan_summary": "There you are! Come get a face full of baked pasta pellets."
+    }
+  ]
+}

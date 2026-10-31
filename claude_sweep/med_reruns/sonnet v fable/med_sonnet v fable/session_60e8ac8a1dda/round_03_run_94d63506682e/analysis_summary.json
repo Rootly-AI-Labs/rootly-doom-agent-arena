@@ -1,0 +1,627 @@
+{
+  "run_id": "run_94d63506682e",
+  "round": 3,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 107.1,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 0,
+      "shots_fired": 14,
+      "shots_hit": 9,
+      "accuracy": 0.643,
+      "final_health": 150
+    },
+    "player_2": {
+      "damage_dealt": 0,
+      "damage_taken": 155,
+      "shots_fired": 30,
+      "shots_hit": 0,
+      "accuracy": 0.0,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "6160",
+      "elapsed_ms": null,
+      "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun spread is weak at range and medikits are near me aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_2",
+      "type": "health",
+      "tick": "6160",
+      "elapsed_ms": null,
+      "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 94171 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(960,-704) no contact yet and full health so patience is paying off aim_error=2"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 1,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 43,
+        "health": 16
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 0 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) shotgun spread is weak at range and medikits are near me aim_error=-11"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 257 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-576) shotgun spread is weak at range and medikits are near me aim_error=34"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 514 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-576) shotgun spread is weak at range and medikits are near me aim_error=-52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 742 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-640) shotgun spread is weak at range and medikits are near me aim_error=-147"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 971 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(896,-640) shotgun spread is weak at range and medikits are near me aim_error=128"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 1200 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(896,-576) shotgun spread is weak at range and medikits are near me aim_error=38"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 1428 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(960,-576) shotgun spread is weak at range and medikits are near me aim_error=-56"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 1657 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-640) shotgun spread is weak at range and medikits are near me aim_error=-14"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 1800 autopilot_action: player_2 action=route_complete reason=shotgun spread is weak at range and medikits are near me aim_error=123"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 2571 autopilot_action: player_2 action=route_complete reason=shotgun spread is weak at range and medikits are near me aim_error=5"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 29828 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 45685 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) nobody has a shotgun yet so range favors me staying put aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 45714 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) nobody has a shotgun yet so range favors me staying put aim_error=-85"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 45857 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-576) nobody has a shotgun yet so range favors me staying put aim_error=-87"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 46200 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-576) nobody has a shotgun yet so range favors me staying put aim_error=-76"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 46457 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-640) nobody has a shotgun yet so range favors me staying put aim_error=-15"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 46600 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-704) nobody has a shotgun yet so range favors me staying put aim_error=117"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 46942 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(896,-704) nobody has a shotgun yet so range favors me staying put aim_error=117"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 47171 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(896,-640) nobody has a shotgun yet so range favors me staying put aim_error=32"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 47314 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(896,-576) nobody has a shotgun yet so range favors me staying put aim_error=-54"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 47542 autopilot_action: player_2 action=route_complete reason=nobody has a shotgun yet so range favors me staying put aim_error=-64"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 48285 autopilot_action: player_2 action=route_complete reason=nobody has a shotgun yet so range favors me staying put aim_error=-3"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 64114 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(960,-576) opponent now has a shotgun so I want distance and cover aim_error=4"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 64142 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(960,-576) opponent now has a shotgun so I want distance and cover aim_error=-16"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 64371 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(960,-640) opponent now has a shotgun so I want distance and cover aim_error=-16"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 64542 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-704) opponent now has a shotgun so I want distance and cover aim_error=135"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 64885 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(896,-704) opponent now has a shotgun so I want distance and cover aim_error=135"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 65114 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(896,-640) opponent now has a shotgun so I want distance and cover aim_error=52"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 65257 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(896,-576) opponent now has a shotgun so I want distance and cover aim_error=-37"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 65571 autopilot_action: player_2 action=route_waypoint reason=wp=7/8 target=(960,-576) opponent now has a shotgun so I want distance and cover aim_error=-50"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 65828 autopilot_action: player_2 action=route_waypoint reason=wp=8/8 target=(960,-640) opponent now has a shotgun so I want distance and cover aim_error=-13"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 65971 autopilot_action: player_2 action=route_complete reason=opponent now has a shotgun so I want distance and cover aim_error=130"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 66714 autopilot_action: player_2 action=route_complete reason=opponent now has a shotgun so I want distance and cover aim_error=7"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 79714 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) a timeout draw beats dying at the shotgun door again aim_error=-1"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 79742 autopilot_action: player_2 action=route_waypoint reason=wp=1/8 target=(896,-640) a timeout draw beats dying at the shotgun door again aim_error=21"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 79971 autopilot_action: player_2 action=route_waypoint reason=wp=2/8 target=(896,-576) a timeout draw beats dying at the shotgun door again aim_error=22"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 80228 autopilot_action: player_2 action=route_waypoint reason=wp=3/8 target=(960,-576) a timeout draw beats dying at the shotgun door again aim_error=-36"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 80457 autopilot_action: player_2 action=route_waypoint reason=wp=4/8 target=(960,-640) a timeout draw beats dying at the shotgun door again aim_error=-127"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 80600 autopilot_action: player_2 action=route_waypoint reason=wp=5/8 target=(960,-704) a timeout draw beats dying at the shotgun door again aim_error=145"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "6160",
+        "elapsed_ms": null,
+        "event": "run_94d63506682e duel_e1m8_blind_spawn 6160 80914 autopilot_action: player_2 action=route_waypoint reason=wp=6/8 target=(896,-704) a timeout draw beats dying at the shotgun door again aim_error=141"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 14,
+      "player_2": 6
+    },
+    "invalid_plan_counts": {
+      "player_1": 3,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "route_diagonal_segment": 2,
+      "waypoint_in_wall_cell": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 416,
+        "distance_traveled": 7331.7,
+        "unique_cells_visited": 67,
+        "revisited_cells": 349
+      },
+      "player_2": {
+        "path_points": 416,
+        "distance_traveled": 2665.5,
+        "unique_cells_visited": 6,
+        "revisited_cells": 410
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 6312.17,
+    "decision_p95_ms": 10971.0,
+    "decision_max_ms": 15376.0,
+    "mcp_avg_ms": 1824.9,
+    "mcp_p95_ms": 2505.0,
+    "mcp_max_ms": 60273.0
+  },
+  "errors": {
+    "route_diagonal_segment": 2,
+    "waypoint_in_wall_cell": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 6,
+    "superseded_count": 10
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 9,
+      "player_2": 5
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 16742,
+      "player_2": 8085
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 2681,
+      "player_2": 1634
+    },
+    "stale_intent_extension_count": 6,
+    "stale_intent_extension_total_ms": 70805,
+    "stale_intent_extension_max_ms": 54121
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head toward the shotgun at F17",
+      "route": "C02;D02;E02;F02;G02;H02;I02;I03",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Round three. Still employed, still armed."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "V31;U31;U32;V32;V31;U31;U32;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "shotgun spread is weak at range and medikits are near me",
+      "plan_summary": "New plan: be the burrito nobody can reach. Corner camping, proudly."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "reach cell I09 on the way to the shotgun",
+      "route": "I04;I05;J05;J06;J07;I07;I08;I09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Following my own sticky-note directions."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "continue east along row I toward the shotgun",
+      "route": [
+        "J06",
+        "J07",
+        "I07",
+        "I08",
+        "I09",
+        "I10",
+        "I11",
+        "I12"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Corridor sprint. HR says no running, I say yes."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "reach cell I17 below the shotgun room",
+      "route": "I10;I11;I12;I13;I14;I15;I16;I17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Corridor sprint. HR says no running, I say yes."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "W32;W31;V31;U31;U32;V32;W32;W31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent must cross open ground to reach me here",
+      "plan_summary": "Pacing in my corner like a burrito waiting for a very late bus."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "grab the shotgun at F17 and come back out",
+      "route": "H17;G17;F17;G17;H17;I17;I16;I15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Quick shotgun errand, back before lunch."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "hunt the opponent with the shotgun",
+      "route": [
+        "H17",
+        "I17",
+        "I16",
+        "I15",
+        "I14",
+        "J14",
+        "K14",
+        "L14"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Shotgun secured. Opening the quarterly bloodbath."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "hunt the opponent with the shotgun",
+      "route": "I14;J14;K14;L14;M14;N14;O14;O15",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Shotgun secured. Opening the quarterly bloodbath."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "V31;U31;U32;V32;W32;W31;V31;U31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "nobody has a shotgun yet so range favors me staying put",
+      "plan_summary": "Still camping. My corner has great lighting and zero shotguns."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "7",
+      "objective": "sweep east along row O to find the opponent",
+      "route": "O16;O17;O18;O19;O20;O21;O22;O23",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Marco! ...Polo? Anyone? I have a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "continue sweeping east to find the opponent",
+      "route": [
+        "O22",
+        "O23",
+        "O24",
+        "O25",
+        "O26",
+        "O27",
+        "P27",
+        "P26"
+      ],
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "",
+      "plan_summary": "Still looking. Hide-and-seek champion, two years running."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "U32;V32;W32;W31;V31;U31;U32;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "opponent now has a shotgun so I want distance and cover",
+      "plan_summary": "They armed up. I'm staying far away like a sensible snack."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "8",
+      "objective": "sweep north along the east side to find the opponent",
+      "route": "O24;O25;O26;N26;M26;L26;K26;J26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Plot twist: checking the other side of the office."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "9",
+      "objective": "sweep west along row I toward the north shotgun room",
+      "route": "I26;I25;I24;I23;I22;I21;I20;I19",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Checking the north corridor. Meeting rooms next."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "V31;U31;U32;V32;W32;W31;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "a timeout draw beats dying at the shotgun door again",
+      "plan_summary": "Ninety seconds to go. I can out-wait anyone. Ask my microwave."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "10",
+      "objective": "cut south through the center to find the opponent",
+      "route": "I20;J20;K20;L20;M20;N20;O20;O21",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Not up north. Checking the basement."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "guard the southeast corner with long sightlines",
+      "route": "W32;W31;V31;U31;U32;V32;V31;W31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "no contact yet and full health so patience is paying off",
+      "plan_summary": "Still full health, still in my corner. Peak burrito performance."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "11",
+      "objective": "sweep the southern area to find the opponent",
+      "route": "O22;P22;Q22;R22;S22;T22;U22;V22",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Basement inspection. Fire marshal with a shotgun."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "12",
+      "objective": "close in on the opponent at W31",
+      "route": "S22;T22;U22;V22;W22;W23;W24;W25",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Found you in the supply closet. Surprise!"
+    }
+  ]
+}

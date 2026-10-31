@@ -1,0 +1,410 @@
+{
+  "run_id": "run_d837b8e91c2a",
+  "round": 7,
+  "outcome": {
+    "winner": "player_1",
+    "terminal_reason": "player_2_dead",
+    "elapsed_time_seconds": 68.4,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 155,
+      "damage_taken": 80,
+      "shots_fired": 5,
+      "shots_hit": 4,
+      "accuracy": 0.8,
+      "final_health": 70
+    },
+    "player_2": {
+      "damage_dealt": 80,
+      "damage_taken": 155,
+      "shots_fired": 10,
+      "shots_hit": 8,
+      "accuracy": 0.8,
+      "final_health": 0
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_1",
+      "type": "shotgun",
+      "tick": "2940",
+      "elapsed_ms": null,
+      "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) the shotgun has won every round so far aim_error=-11"
+    },
+    "first_health_pickup": {
+      "participant_id": "player_1",
+      "type": "health",
+      "tick": "2940",
+      "elapsed_ms": null,
+      "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 8885 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(0,192) the opponent likes the southeast medikit corner aim_error=3"
+    },
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 7,
+        "health": 10
+      },
+      "player_2": {
+        "shotgun": 0,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 0 autopilot_action: player_1 action=route_waypoint reason=wp=1/4 target=(-320,640) the shotgun has won every round so far aim_error=-11"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 2000 autopilot_action: player_1 action=route_waypoint reason=wp=2/4 target=(-320,192) the shotgun has won every round so far aim_error=46"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 3428 autopilot_action: player_1 action=route_waypoint reason=wp=3/4 target=(0,192) the shotgun has won every round so far aim_error=-53"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 4457 autopilot_action: player_1 action=route_waypoint reason=wp=4/4 target=(0,384) the shotgun has won every round so far aim_error=41"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 5000 autopilot_action: player_1 action=route_complete reason=the shotgun has won every round so far aim_error=137"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 5028 pickup: player_1 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "shotgun",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 5742 autopilot_action: player_1 action=route_complete reason=the shotgun has won every round so far aim_error=4"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 8885 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(0,192) the opponent likes the southeast medikit corner aim_error=3"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 8914 autopilot_action: player_1 action=route_waypoint reason=wp=1/7 target=(0,192) the opponent likes the southeast medikit corner aim_error=-42"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 9600 autopilot_action: player_1 action=route_waypoint reason=wp=2/7 target=(0,384) the opponent likes the southeast medikit corner aim_error=-49"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 10228 autopilot_action: player_1 action=route_waypoint reason=wp=3/7 target=(0,192) the opponent likes the southeast medikit corner aim_error=137"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 10857 autopilot_action: player_1 action=route_waypoint reason=wp=4/7 target=(-256,192) the opponent likes the southeast medikit corner aim_error=-47"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 11685 autopilot_action: player_1 action=route_waypoint reason=wp=5/7 target=(-256,-128) the opponent likes the southeast medikit corner aim_error=-144"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 12714 autopilot_action: player_1 action=route_waypoint reason=wp=6/7 target=(0,-128) the opponent likes the southeast medikit corner aim_error=-68"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 13542 autopilot_action: player_1 action=route_waypoint reason=wp=7/7 target=(0,-384) the opponent likes the southeast medikit corner aim_error=26"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 14285 autopilot_action: player_1 action=route_complete reason=the opponent likes the southeast medikit corner aim_error=-71"
+      },
+      {
+        "participant_id": "player_1",
+        "type": "health",
+        "tick": "2940",
+        "elapsed_ms": null,
+        "event": "run_d837b8e91c2a duel_e1m8_blind_spawn 2940 15028 autopilot_action: player_1 action=route_complete reason=the opponent likes the southeast medikit corner aim_error=-3"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 6,
+      "player_2": 11
+    },
+    "invalid_plan_counts": {
+      "player_1": 0,
+      "player_2": 1
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 264,
+        "distance_traveled": 7758.5,
+        "unique_cells_visited": 83,
+        "revisited_cells": 181
+      },
+      "player_2": {
+        "path_points": 264,
+        "distance_traveled": 3729.9,
+        "unique_cells_visited": 4,
+        "revisited_cells": 260
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 4871.6,
+    "decision_p95_ms": 9659.0,
+    "decision_max_ms": 10750.0,
+    "mcp_avg_ms": 745.38,
+    "mcp_p95_ms": 2180.0,
+    "mcp_max_ms": 5718.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 0,
+    "superseded_count": 14
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 3,
+      "player_2": 7
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 4931,
+      "player_2": 13121
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1706,
+      "player_2": 2441
+    },
+    "stale_intent_extension_count": 0,
+    "stale_intent_extension_total_ms": 0,
+    "stale_intent_extension_max_ms": 0
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "grab the north shotgun",
+      "route": "B12;I12;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the shotgun has won every round so far",
+      "plan_summary": "Round seven. Stapler first, feelings never."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V32;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Corner burrito: crunchy outside, loaded inside."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V31;V32;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Corner seat taken. Cash only."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "grab the shotgun then hunt south",
+      "route": "I17;F17;I17;I13;N13;N17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent likes the southeast medikit corner",
+      "plan_summary": "Stapler, then south. I know where you keep your snacks."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "3",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V32;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still here, still crunchy."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "sweep the southeast medikit corner",
+      "route": "O17;O24;O26;Q26",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent camped near Q26 last round",
+      "plan_summary": "Checking the southeast break room. Nobody hides from the stapler."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "4",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V31;V32;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Waiting patiently, burrito style."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "5",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V32;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Nobody here but us burritos."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "4",
+      "objective": "sweep north along the east lane",
+      "route": "O26;I26;I20",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the southeast corner was empty this time",
+      "plan_summary": "Break room empty. Someone's hiding in the north wing this time."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "6",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V31;V32;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Patience is a burrito virtue."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "7",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V32;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Still waiting. Nice weather for a burrito."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "5",
+      "objective": "sweep the west side for the opponent",
+      "route": "I08;Q08;Q14",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the east and center lanes were empty",
+      "plan_summary": "East wing clear. Time to audit the west wing with extreme prejudice."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "8",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V31;V32;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Tick tock, tortilla clock."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "9",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V32;V31;V32;V31",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Any minute now, I can feel it."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "6",
+      "objective": "sweep the south edge to the southeast corner",
+      "route": "U14;U32;P32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "the opponent may be camping near their spawn",
+      "plan_summary": "Checking the basement. If you're hiding at your desk, I'm coming."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "10",
+      "objective": "guard the spawn corner and shoot along both long lanes",
+      "route": "V31;V32;V31;V32",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Holding the line, holding the beans."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": null,
+      "objective": "fight the opponent from the corner and strafe",
+      "route": "V32;U32;V32;U32",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Showtime. Extra hot sauce, no mercy."
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "run_id": "run_41ccb2d1b6de",
+  "round": 10,
+  "outcome": {
+    "winner": "player_2",
+    "terminal_reason": "player_1_dead",
+    "elapsed_time_seconds": 28.8,
+    "timeout_seconds": 180
+  },
+  "combat": {
+    "player_1": {
+      "damage_dealt": 45,
+      "damage_taken": 160,
+      "shots_fired": 5,
+      "shots_hit": 5,
+      "accuracy": 1.0,
+      "final_health": 0
+    },
+    "player_2": {
+      "damage_dealt": 160,
+      "damage_taken": 45,
+      "shots_fired": 3,
+      "shots_hit": 3,
+      "accuracy": 1.0,
+      "final_health": 105
+    }
+  },
+  "resources": {
+    "first_shotgun_pickup": {
+      "participant_id": "player_2",
+      "type": "shotgun",
+      "tick": "1750",
+      "elapsed_ms": null,
+      "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 6257 pickup: player_2 shotgun x=0 y=384"
+    },
+    "first_health_pickup": null,
+    "pickup_counts": {
+      "player_1": {
+        "shotgun": 0,
+        "health": 0
+      },
+      "player_2": {
+        "shotgun": 6,
+        "health": 0
+      }
+    },
+    "pickup_events": [
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 6257 pickup: player_2 shotgun x=0 y=384"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 26314 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,192) with both shotguns gone he fights with a pistol all round aim_error=-13"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 26342 autopilot_action: player_2 action=route_waypoint reason=wp=1/5 target=(0,192) with both shotguns gone he fights with a pistol all round aim_error=73"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 26857 autopilot_action: player_2 action=route_waypoint+attack reason=wp=1/5 target=(0,192) with both shotguns gone he fights with a pistol all round aim_err"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 27028 autopilot_action: player_2 action=route_waypoint+attack reason=wp=2/5 target=(-192,192) with both shotguns gone he fights with a pistol all round aim_"
+      },
+      {
+        "participant_id": "player_2",
+        "type": "shotgun",
+        "tick": "1750",
+        "elapsed_ms": null,
+        "event": "run_41ccb2d1b6de duel_e1m8_blind_spawn 1750 27657 autopilot_action: player_2 action=route_waypoint+attack reason=wp=3/5 target=(-192,-128) with both shotguns gone he fights with a pistol all round aim"
+      }
+    ]
+  },
+  "routing": {
+    "plan_counts": {
+      "player_1": 4,
+      "player_2": 2
+    },
+    "invalid_plan_counts": {
+      "player_1": 1,
+      "player_2": 0
+    },
+    "plan_errors": {
+      "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 1
+    },
+    "route_repair_count": 0,
+    "route_rebase_count": 0,
+    "inserted_connector_cells": [],
+    "dropped_passed_cells": [],
+    "path": {
+      "player_1": {
+        "path_points": 111,
+        "distance_traveled": 2816.9,
+        "unique_cells_visited": 21,
+        "revisited_cells": 90
+      },
+      "player_2": {
+        "path_points": 111,
+        "distance_traveled": 2497.9,
+        "unique_cells_visited": 31,
+        "revisited_cells": 80
+      }
+    }
+  },
+  "latency": {
+    "decision_avg_ms": 9663.0,
+    "decision_p95_ms": 15438.0,
+    "decision_max_ms": 15438.0,
+    "mcp_avg_ms": 579.0,
+    "mcp_p95_ms": 1749.0,
+    "mcp_max_ms": 6495.0
+  },
+  "errors": {
+    "POST /api/arena/participant-intents failed with HTTP 409: {\"ok\":false,\"error\":\"Match is already finished; post-finish participant intents are rejected.\",\"run_id": 2
+  },
+  "lifecycle": {
+    "stale_or_sticky_count": 2,
+    "superseded_count": 1
+  },
+  "reliability": {
+    "exact_plan_repetitions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "deduplicated_plan_submissions_by_participant": {
+      "player_1": 0,
+      "player_2": 0
+    },
+    "stalled_observation_wakeups_by_participant": {
+      "player_1": 1,
+      "player_2": 1
+    },
+    "stalled_observation_wait_ms_by_participant": {
+      "player_1": 1632,
+      "player_2": 1652
+    },
+    "max_stalled_observation_wait_ms_by_participant": {
+      "player_1": 1632,
+      "player_2": 1652
+    },
+    "stale_intent_extension_count": 2,
+    "stale_intent_extension_total_ms": 11792,
+    "stale_intent_extension_max_ms": 10516
+  },
+  "fairness": {
+    "scenario_id": "duel_e1m8_blind_spawn",
+    "spawn_variant": "duel_e1m8_blind_spawn",
+    "player_1_model": "",
+    "player_2_model": "",
+    "fog_of_war_enabled": true,
+    "weapon_pickups_enabled": true,
+    "seed": 42
+  },
+  "reasoning": [
+    {
+      "participant_id": "player_1",
+      "sequence_number": "1",
+      "objective": "head east toward the shotgun",
+      "route": "B02;B03;B04;B05;B06;B07;B08;B09",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Final meeting of the quarter. Bring snacks."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "1",
+      "objective": "steal the F17 shotgun before the opponent arrives",
+      "route": "J32;J27;I27;I17;F17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "I reach F17 in ten seconds while he still carries a pistol",
+      "plan_summary": "Final round. Raiding his kitchen again. Pancake heist, part two."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "2",
+      "objective": "swing around toward the shotgun room",
+      "route": "B09;B10;B11;B12;C12;D12;E12;F12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Last commute of the benchmark. Make it count."
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": "3",
+      "objective": "go south along column 12 toward the R17 shotgun",
+      "route": "F12;G12;H12;I12;J12;K12;L12;M12",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": null,
+      "plan_summary": "Plan B: the other shotgun closet."
+    },
+    {
+      "participant_id": "player_2",
+      "sequence_number": "2",
+      "objective": "take the R17 shotgun too and deny him any shotgun",
+      "route": "I17;I14;N14;N17;R17",
+      "engagement_policy": "engage_if_visible",
+      "reasoning": "with both shotguns gone he fights with a pistol all round",
+      "plan_summary": "Grabbing the other shotgun too. Pistol duels only for him today!"
+    },
+    {
+      "participant_id": "player_1",
+      "sequence_number": null,
+      "objective": "take the L10 medikit to survive",
+      "route": "M12;L12;L11;L10",
+      "engagement_policy": "",
+      "reasoning": "",
+      "plan_summary": "Medkit emergency. Pistol is not a personality."
+    }
+  ]
+}
