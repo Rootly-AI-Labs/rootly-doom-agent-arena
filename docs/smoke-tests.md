@@ -2,6 +2,13 @@
 
 These checks cover the server, MCP tools, Doom intent parser, autopilot logic, and browser/WASM path.
 
+## Repository Quality Checks
+
+Install the locked development tools with `uv sync --locked --group maps`.
+Run `uv run --locked pytest` for both the arena and agent plugin suites, and
+`uv run --locked --group maps ty check` for runtime type checking. See
+[CONTRIBUTING.md](../CONTRIBUTING.md) for the complete lint and CI commands.
+
 ## Python Compile
 
 ```powershell

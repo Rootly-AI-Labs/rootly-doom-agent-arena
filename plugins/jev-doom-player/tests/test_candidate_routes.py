@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import pytest
 
 
 PLUGIN_SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"

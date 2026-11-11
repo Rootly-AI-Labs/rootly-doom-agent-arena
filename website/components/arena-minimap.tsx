@@ -1,15 +1,15 @@
 const pickupDots = [
-  { top: "18%", left: "22%" },
-  { top: "18%", left: "78%" },
-  { top: "42%", left: "38%" },
-  { top: "42%", left: "62%" },
-  { top: "68%", left: "22%" },
-  { top: "68%", left: "78%" },
+  { top: '18%', left: '22%' },
+  { top: '18%', left: '78%' },
+  { top: '42%', left: '38%' },
+  { top: '42%', left: '62%' },
+  { top: '68%', left: '22%' },
+  { top: '68%', left: '78%' },
 ]
 
 const weaponDots = [
-  { top: "8%", left: "50%" },
-  { top: "78%", left: "50%" },
+  { top: '8%', left: '50%' },
+  { top: '78%', left: '50%' },
 ]
 
 export function ArenaMinimap() {
@@ -19,8 +19,8 @@ export function ArenaMinimap() {
         className="absolute inset-0 opacity-40"
         style={{
           backgroundImage:
-            "linear-gradient(oklch(0.75 0.24 142 / 25%) 1px, transparent 1px), linear-gradient(90deg, oklch(0.75 0.24 142 / 25%) 1px, transparent 1px)",
-          backgroundSize: "10% 10%",
+            'linear-gradient(oklch(0.75 0.24 142 / 25%) 1px, transparent 1px), linear-gradient(90deg, oklch(0.75 0.24 142 / 25%) 1px, transparent 1px)',
+          backgroundSize: '10% 10%',
         }}
       />
       <div className="absolute left-[15%] top-[10%] h-px w-[30%] bg-hud-green/70" />

@@ -1,4 +1,4 @@
-import { assetPath } from "@/lib/asset-path"
+import { assetPath } from '@/lib/asset-path'
 
 export function MatchViewer() {
   return (
@@ -10,15 +10,18 @@ export function MatchViewer() {
           </h2>
         </div>
         <div className="mx-auto w-3/4">
+          {/* Preserve the recording until a caption track is available. */}
+          {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
           <video
-            src={assetPath("/videos/astra-sol61-match.mp4")}
+            src={assetPath('/videos/astra-sol61-match.mp4')}
             aria-label="Doom Agent Arena match: GPT-6 Astra versus GPT-6.1 Sol"
             controls
             playsInline
             preload="metadata"
             className="block h-auto w-full rounded-sm"
           >
-            Your browser does not support embedded video. <a href={assetPath("/videos/astra-sol61-match.mp4")}>Download the match video.</a>
+            Your browser does not support embedded video.{' '}
+            <a href={assetPath('/videos/astra-sol61-match.mp4')}>Download the match video.</a>
           </video>
         </div>
       </div>

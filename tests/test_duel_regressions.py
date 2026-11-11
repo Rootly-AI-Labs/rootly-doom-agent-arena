@@ -710,7 +710,7 @@ def test_duel_player_1_retains_last_autopilot_command_briefly() -> None:
 
 def test_duel_dashboard_tracks_equipment_and_guards_completed_reload() -> None:
     index = (REPO_ROOT / "src" / "index.html").read_text(encoding="utf-8-sig")
-    browser_runtime = (REPO_ROOT / "src" / "websockets-doom.js").read_text(encoding="utf-8")
+    _browser_runtime = (REPO_ROOT / "src" / "websockets-doom.js").read_text(encoding="utf-8")
     logo = REPO_ROOT / "src" / "assets" / "rootly-ai-logo-white.png"
     favicon = REPO_ROOT / "src" / "assets" / "rootly-favicon.svg"
     player_1_card = index.split('id="player-1-pov-card"', 1)[1].split('id="player-2-pov-card"', 1)[0]

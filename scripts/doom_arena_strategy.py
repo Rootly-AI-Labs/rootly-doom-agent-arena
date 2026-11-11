@@ -5,7 +5,6 @@ from __future__ import annotations
 import math
 import time
 from collections import deque
-from copy import deepcopy
 from functools import lru_cache
 from typing import Any
 
@@ -653,7 +652,7 @@ def recommend_actions(tactical: dict[str, Any]) -> dict[str, list[str]]:
 def make_strategy_observation(full_observation: dict[str, Any], control_mode: str = CONTROL_MODE_HIERARCHICAL) -> dict[str, Any]:
     current_ms = now_ms()
     participant_id = str(full_observation.get("participant_id", ""))
-    opponent_id = str(full_observation.get("opponent_id", ""))
+    _opponent_id = str(full_observation.get("opponent_id", ""))
     state = full_observation.get("state", {}) if isinstance(full_observation.get("state"), dict) else {}
     run_id = str(state.get("run_id", ""))
     scenario_id = str(state.get("scenario_id", "duel_e1m8"))
@@ -664,7 +663,7 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     self_state = state.get(participant_id, {}) if isinstance(state.get(participant_id), dict) else {}
     bucket = history_bucket(run_id, participant_id)
 
-    current_zone = classify_zone(self_raw.get("x"), self_raw.get("y"), scenario_id)
+    _current_zone = classify_zone(self_raw.get("x"), self_raw.get("y"), scenario_id)
     opponent_visible = bool(opponent_raw.get("visible"))
     if opponent_visible:
         opponent_x = opponent_raw.get("x")
@@ -695,14 +694,14 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
     result = last_action_result(bucket.get("last_observation"), snapshot, spin, stuck)
     bucket["last_observation"] = dict(snapshot)
     last_seen_ms = bucket.get("last_seen_ms")
-    last_seen_age = current_ms - int(last_seen_ms) if last_seen_ms else None
-    pressure = pressure_bucket(self_raw.get("health"), opponent_raw.get("health"), "health" in opponent_raw)
-    distance_bucket = (self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown") if opponent_visible else "unknown"
-    los = self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los")
+    _last_seen_age = current_ms - int(last_seen_ms) if last_seen_ms else None
+    _pressure = pressure_bucket(self_raw.get("health"), opponent_raw.get("health"), "health" in opponent_raw)
+    _distance_bucket = (self_raw.get("distance_bucket") or tactical_raw.get("distance_bucket") or "unknown") if opponent_visible else "unknown"
+    _los = self_raw.get("los_status") or tactical_raw.get("los_status") or ("visible" if opponent_visible else "lost_los")
 
     active_plan = full_observation.get("active_plan") if isinstance(full_observation.get("active_plan"), dict) else None
     last_plan = full_observation.get("last_plan") if isinstance(full_observation.get("last_plan"), dict) else None
-    observation_wait = (
+    _observation_wait = (
         full_observation.get("observation_wait")
         if isinstance(full_observation.get("observation_wait"), dict)
         else None
@@ -748,12 +747,13 @@ def make_strategy_observation(full_observation: dict[str, Any], control_mode: st
         last_plan_result = last_route_result
 
     map_block = full_observation.get("map", {}) if isinstance(full_observation.get("map"), dict) else {}
+    pickups_raw = map_block.get("pickups")
     pickups = (
-        map_block.get("pickups")
-        if isinstance(map_block.get("pickups"), list)
+        pickups_raw
+        if isinstance(pickups_raw, list)
         else strategy_pickups_for_observation(self_raw.get("x"), self_raw.get("y"))
     )
-    pickup_summary = {
+    _pickup_summary = {
         "available": sum(1 for pickup in pickups if pickup.get("available") is not False),
         "unavailable": sum(1 for pickup in pickups if pickup.get("available") is False),
     }

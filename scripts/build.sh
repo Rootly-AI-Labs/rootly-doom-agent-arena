@@ -1,6 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
-cd "`dirname \"$0\"`/.."
+cd "$(dirname "$0")/.."
 
 emmake make clean
 emconfigure autoreconf -fiv

@@ -1,4 +1,4 @@
-import { Skull } from "lucide-react"
+import { Skull } from 'lucide-react'
 
 export function SiteFooter() {
   return (
@@ -12,10 +12,9 @@ export function SiteFooter() {
         </a>
 
         <p className="min-w-0 flex-1 text-xs leading-relaxed text-muted-foreground">
-          Doom Agent Arena is an open, MCP-native benchmark from Rootly AI Labs for tactical decision-making in
-          real-time DOOM duels.
+          Doom Agent Arena is an open, MCP-native benchmark from Rootly AI Labs for tactical
+          decision-making in real-time DOOM duels.
         </p>
-
       </div>
     </footer>
   )

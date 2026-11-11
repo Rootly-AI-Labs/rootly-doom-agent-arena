@@ -77,11 +77,17 @@ def build_outbound_state(
 ) -> dict[str, Any]:
     """Reduce a fog-filtered arena observation to the only fields Jev may see."""
 
-    self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
-    opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
-    tactical = observation.get("tactical_context") if isinstance(observation.get("tactical_context"), Mapping) else {}
-    match = observation.get("match") if isinstance(observation.get("match"), Mapping) else {}
-    map_state = observation.get("map") if isinstance(observation.get("map"), Mapping) else {}
+    self_state_raw = observation.get("self")
+
+    self_state = self_state_raw if isinstance(self_state_raw, Mapping) else {}
+    opponent_raw = observation.get("opponent")
+    opponent = opponent_raw if isinstance(opponent_raw, Mapping) else {}
+    tactical_raw = observation.get("tactical_context")
+    tactical = tactical_raw if isinstance(tactical_raw, Mapping) else {}
+    match_raw = observation.get("match")
+    match = match_raw if isinstance(match_raw, Mapping) else {}
+    map_state_raw = observation.get("map")
+    map_state = map_state_raw if isinstance(map_state_raw, Mapping) else {}
 
     visible = bool(opponent.get("visible"))
     opponent_state: dict[str, Any] = {

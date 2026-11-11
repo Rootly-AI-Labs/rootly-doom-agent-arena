@@ -140,6 +140,7 @@ def read_mcp_message_with_timeout(process: subprocess.Popen[bytes], timeout_seco
 
 def write_mcp_message(process: subprocess.Popen[bytes], message: dict[str, Any]) -> None:
     body = json.dumps(message, separators=(",", ":")).encode("utf-8")
+    assert process.stdin is not None
     process.stdin.write(b"Content-Length: " + str(len(body)).encode("ascii") + b"\r\n\r\n")
     process.stdin.write(body)
     process.stdin.flush()
@@ -250,9 +251,24 @@ def smoke_results_persist(base_url: str) -> None:
     print(f"ok results persisted under {round_dir.relative_to(REPO_ROOT)}")
 
 
+def ensure_runtime_paths() -> None:
+    """Prepare bind mounts on a fresh checkout without replacing live tokens."""
+    (REPO_ROOT / "benchmarks" / "results").mkdir(parents=True, exist_ok=True)
+    tokens_path = REPO_ROOT / "src" / "arena_controller_tokens.local.json"
+    try:
+        descriptor = os.open(tokens_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        if not tokens_path.is_file():
+            raise RuntimeError(f"Controller token bind mount must be a file: {tokens_path}")
+    else:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write("{}\n")
+
+
 def main() -> int:
     args = parse_args()
     require_docker()
+    ensure_runtime_paths()
 
     env = os.environ.copy()
     env["DOOM_ARENA_PORT"] = str(args.port)
@@ -265,7 +281,7 @@ def main() -> int:
     wait_for_health(base_url, args.timeout_seconds)
 
     status, body = request("GET", base_url.rstrip("/") + "/")
-    if status != 200 or b"Websockets Doom" not in body:
+    if status != 200 or b"<title>Rootly Doom Agent Arena</title>" not in body:
         raise RuntimeError(f"browser/index route failed: HTTP {status}")
     print("ok browser/index route loads")
 

@@ -1,0 +1,18 @@
+extends: default
+
+ignore: |
+  website/node_modules/
+  website/.next/
+  website/out/
+  website/pnpm-lock.yaml
+  .venv/
+  .serena/
+
+rules:
+  document-start: disable
+  line-length: disable
+  truthy:
+    allowed-values: ['true', 'false']
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1

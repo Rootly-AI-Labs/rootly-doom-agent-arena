@@ -250,7 +250,7 @@ def instructions(
     locked_agent_name = " ".join(str(agent_name or "").split())
     locked_agent_name_json = json.dumps(locked_agent_name, ensure_ascii=False)
     if current_round <= 1 or not locked_agent_name:
-        agent_name_section = f"""ARENA NAME (FIRST MATCH ONLY)
+        agent_name_section = """ARENA NAME (FIRST MATCH ONLY)
 - Before your first `set_participant_ready` call, invent your own funny arena name.
 - Make the joke understandable in one second to a broad audience with no Doom or gaming knowledge.
 - Prefer playful everyday word combinations about work, food, awkward confidence, or bad decisions.
@@ -265,7 +265,7 @@ def instructions(
 - If readiness reports that the name is locked, reuse the exact quoted locked name instead of inventing another one.
 
 """
-        ready_example_agent_name = f'\n  "agent_name": "chosen alias",'
+        ready_example_agent_name = '\n  "agent_name": "chosen alias",'
     else:
         agent_name_section = f"""ARENA NAME (ALREADY CHOSEN)
 - Your locked arena name is `{locked_agent_name}`.

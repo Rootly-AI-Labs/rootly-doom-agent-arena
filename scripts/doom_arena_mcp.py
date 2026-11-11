@@ -16,7 +16,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, overload
 
 from doom_arena_strategy import (
     ALL_STRATEGY_ACTIONS,
@@ -210,6 +210,7 @@ class DoomArenaClient:
         active_run_id = str(duel_session.get("run_id") or self.run_id or "")
         state_path = "/api/arena/state" + (f"?run_id={run_id}" if run_id else "")
         state_error = ""
+        state: dict[str, Any]
         try:
             rows = parse_state(self._request("GET", state_path))
             hide_enemy_position = state_rows_hide_enemy_position(rows)
@@ -249,7 +250,7 @@ class DoomArenaClient:
                 "elapsed_time_seconds": state.get("elapsed_time_seconds", 0),
                 "timeout_seconds": state.get("timeout_seconds", 180),
                 "duel_session_id": duel_session.get("duel_session_id", ""),
-                "current_round": duel_session.get("current_round", state.get("player_1", {}).get("round")),
+                "current_round": duel_session.get("current_round", (state["player_1"].get("round") if isinstance(state.get("player_1"), dict) else None)),
                 "total_rounds": duel_session.get("total_rounds", 1),
                 "has_next_round": duel_session.get("has_next_round", False),
                 "player_1": state.get("player_1", {}),
@@ -299,16 +300,18 @@ class DoomArenaClient:
         return bool(expires_at_ms and expires_at_ms <= now_ms())
 
     def _observation_tactical_wake_state(self, observation: dict[str, Any]) -> dict[str, Any]:
-        self_block = observation.get("self") if isinstance(observation.get("self"), dict) else {}
-        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), dict) else {}
-        tactical = (
-            observation.get("tactical_context")
-            if isinstance(observation.get("tactical_context"), dict)
-            else {}
-        )
-        match = observation.get("match") if isinstance(observation.get("match"), dict) else {}
-        map_block = observation.get("map") if isinstance(observation.get("map"), dict) else {}
-        pickups = map_block.get("pickups") if isinstance(map_block.get("pickups"), list) else []
+        self_block_raw = observation.get("self")
+        self_block = self_block_raw if isinstance(self_block_raw, dict) else {}
+        opponent_raw = observation.get("opponent")
+        opponent = opponent_raw if isinstance(opponent_raw, dict) else {}
+        tactical_raw = observation.get("tactical_context")
+        tactical = tactical_raw if isinstance(tactical_raw, dict) else {}
+        match_raw = observation.get("match")
+        match = match_raw if isinstance(match_raw, dict) else {}
+        map_block_raw = observation.get("map")
+        map_block = map_block_raw if isinstance(map_block_raw, dict) else {}
+        pickups_raw = map_block.get("pickups")
+        pickups = pickups_raw if isinstance(pickups_raw, list) else []
         pickup_state = tuple(
             sorted(
                 (
@@ -321,12 +324,12 @@ class DoomArenaClient:
             )
         )
         try:
-            endgame = float(match.get("time_left_seconds")) <= 20.0
+            endgame = float(match.get("time_left_seconds", "")) <= 20.0
         except (TypeError, ValueError):
             try:
                 endgame = (
-                    float(match.get("timeout_seconds"))
-                    - float(match.get("elapsed_time_seconds"))
+                    float(match.get("timeout_seconds", ""))
+                    - float(match.get("elapsed_time_seconds", ""))
                     <= 20.0
                 )
             except (TypeError, ValueError):
@@ -518,8 +521,8 @@ class DoomArenaClient:
         rows.sort(key=sequence_value)
         row = rows[-1]
 
-        self_x = self_block.get("x")
-        self_y = self_block.get("y")
+        self_x = self_block.get("x", "")
+        self_y = self_block.get("y", "")
         route_cells = [cell for cell in str(row.get("plan_route_cells", "")).split(";") if cell]
         route_xy = []
         for item in str(row.get("plan_route", "")).split(";"):
@@ -607,7 +610,7 @@ class DoomArenaClient:
         spawns = blueprint.get("spawns", {})
         spawn = spawns.get(participant_id, {}) if isinstance(spawns, dict) else {}
         try:
-            return float(spawn.get("x")), float(spawn.get("y"))
+            return float(spawn.get("x", "")), float(spawn.get("y", ""))
         except (TypeError, ValueError):
             return None
 
@@ -631,7 +634,7 @@ class DoomArenaClient:
         for row in state:
             if row.get("kind") == "participant" and row.get("entity_id") == participant_id:
                 try:
-                    return float(row.get("x")), float(row.get("y"))
+                    return float(row.get("x", "")), float(row.get("y", ""))
                 except (TypeError, ValueError):
                     break
         if allow_spawn_fallback:
@@ -776,14 +779,14 @@ class DoomArenaClient:
             except DoomArenaError as exc:
                 latest_state = {"phase": "unavailable", "error": str(exc)}
             state_run_id = str(latest_state.get("run_id", ""))
-            state_scenario_id = str(latest_state.get("scenario_id", ""))
+            _state_scenario_id = str(latest_state.get("scenario_id", ""))
             state_stale = bool(
                 active_run_id
                 and state_run_id
                 and state_run_id != active_run_id
             )
             phase = "unavailable" if state_stale else str(latest_state.get("phase", ""))
-            participant_state = {} if state_stale else latest_state.get(participant_id, {})
+            _participant_state = {} if state_stale else latest_state.get(participant_id, {})
             ready_participants = {
                 row.get("participant_id", "")
                 for row in self._read_participant_ready_rows()
@@ -2698,8 +2701,8 @@ def point_hits_static_wall(x: int, y: int) -> bool:
     if not rows:
         return False
     cell_size = 64
-    col = int((x - PLAN_BOUNDS["x_min"]) // cell_size)
-    row = int((PLAN_BOUNDS["y_max"] - y) // cell_size)
+    col = int((x - MAP_BOUNDS["x_min"]) // cell_size)
+    row = int((MAP_BOUNDS["y_max"] - y) // cell_size)
     if row < 0 or row >= len(rows) or col < 0 or col >= len(rows[row]):
         return False
     return rows[row][col] == "#"
@@ -2973,6 +2976,26 @@ def trim_passed_route_cells(
         dropped.append(remaining.pop(0))
 
     return remaining, dropped
+
+
+@overload
+def normalize_plan_route(
+    route: Any,
+    start_cell: str = "",
+    rebase_position: tuple[float, float] | None = None,
+    *,
+    return_diagnostics: Literal[False] = False,
+) -> tuple[str, list[str]]: ...
+
+
+@overload
+def normalize_plan_route(
+    route: Any,
+    start_cell: str = "",
+    rebase_position: tuple[float, float] | None = None,
+    *,
+    return_diagnostics: Literal[True],
+) -> tuple[str, list[str], dict[str, Any]]: ...
 
 
 def normalize_plan_route(
@@ -3726,7 +3749,7 @@ def make_participant_observation(rows: list[dict[str, str]], participant_id: str
             "executed_fire_mode": opponent_state.get("executed_fire_mode"),
         }
 
-    return {
+    observation = {
         "participant_id": participant_id,
         "opponent_id": opponent_id,
         "state_mode": "fog_of_war" if hide_enemy_position else "shared_full",

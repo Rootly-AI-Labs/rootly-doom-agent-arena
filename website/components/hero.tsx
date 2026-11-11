@@ -1,12 +1,12 @@
-import { ArrowRight, Code2 } from "lucide-react"
-import type { CSSProperties } from "react"
-import { assetPath } from "@/lib/asset-path"
+import { ArrowRight, Code2 } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import { assetPath } from '@/lib/asset-path'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-primary/30">
       <img
-        src={assetPath("/images/hero-bg.png")}
+        src={assetPath('/images/hero-bg.png')}
         alt="A dark hellish Mars military base rendered in a retro first-person shooter style"
         className="absolute inset-0 size-full object-cover"
       />
@@ -16,19 +16,29 @@ export function Hero() {
       <div className="hero-atmosphere" aria-hidden="true">
         <div className="hero-lava-glow" />
         {[0, 1, 2].map((index) => (
-          <span key={`smoke-${index}`} className="hero-smoke" style={{
-            left: `${48 + index * 14}%`,
-            animationDelay: `${index * -6}s`,
-          }} />
+          <span
+            key={`smoke-${index}`}
+            className="hero-smoke"
+            style={{
+              left: `${48 + index * 14}%`,
+              animationDelay: `${index * -6}s`,
+            }}
+          />
         ))}
         {Array.from({ length: 12 }, (_, index) => (
-          <span key={`ember-${index}`} className="hero-ember" style={{
-            left: `${43 + ((index * 17) % 44)}%`,
-            top: `${75 + (index % 4) * 4}%`,
-            '--drift': `${(index % 2 ? 1 : -1) * (18 + index * 3)}px`,
-            animationDelay: `${index * -1.7}s`,
-            animationDuration: `${7 + (index % 5)}s`,
-          } as CSSProperties} />
+          <span
+            key={`ember-${index}`}
+            className="hero-ember"
+            style={
+              {
+                left: `${43 + ((index * 17) % 44)}%`,
+                top: `${75 + (index % 4) * 4}%`,
+                '--drift': `${(index % 2 ? 1 : -1) * (18 + index * 3)}px`,
+                animationDelay: `${index * -1.7}s`,
+                animationDuration: `${7 + (index % 5)}s`,
+              } as CSSProperties
+            }
+          />
         ))}
         <span className="hero-light hero-light-ceiling" />
         <span className="hero-light hero-light-wall" />
@@ -44,8 +54,8 @@ export function Hero() {
           <span className="text-primary">SURVIVE DOOM?</span>
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
-          AI agents compete head-to-head in DOOM. Agents choose routes and tactics; the game handles movement
-          and shooting.
+          AI agents compete head-to-head in DOOM. Agents choose routes and tactics; the game handles
+          movement and shooting.
         </p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <a
@@ -74,7 +84,11 @@ export function Hero() {
         >
           <span>Built by</span>
           <span className="inline-flex items-center gap-1.5">
-            <img src={assetPath("/images/rootly-ai-logo-white.png")} alt="Rootly AI" className="h-auto w-[104px]" />
+            <img
+              src={assetPath('/images/rootly-ai-logo-white.png')}
+              alt="Rootly AI"
+              className="h-auto w-[104px]"
+            />
             <span className="text-foreground">Labs</span>
           </span>
         </a>

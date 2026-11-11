@@ -147,7 +147,7 @@ do_start() {
   local missing_assets=()
   for asset in "${REQUIRED_ASSETS[@]}"; do
     if [ ! -f "$asset" ]; then
-      missing_assets+=("${asset#$REPO_ROOT/}")
+      missing_assets+=("${asset#"$REPO_ROOT"/}")
     fi
   done
 

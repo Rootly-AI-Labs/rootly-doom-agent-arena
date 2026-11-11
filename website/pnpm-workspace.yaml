@@ -3,3 +3,9 @@ pmOnFail: ignore
 minimumReleaseAgeExclude:
   - '@next/*'
   - next
+  - minimatch@11.0.7
+
+# shadcn's build tooling still requests minimatch 10; keep the patched release.
+# Remove when ts-morph's dependency range includes minimatch 11.
+overrides:
+  'minimatch@>=7.0.0 <11.0.1': ^11.0.7

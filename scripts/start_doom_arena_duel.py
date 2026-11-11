@@ -45,7 +45,7 @@ def wait_for_server(server_url: str, timeout_seconds: int = 10) -> None:
 def main() -> int:
     args = parse_args()
     server_url = f"http://{args.host}:{args.port}"
-    server_process: subprocess.Popen[str] | None = None
+    server_process: subprocess.Popen[bytes] | None = None
 
     server_cmd = [
         sys.executable,

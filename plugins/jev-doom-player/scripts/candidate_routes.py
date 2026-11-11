@@ -186,7 +186,7 @@ class CandidateRouteEngine:
     def _segment_has_clearance(self, start_cell: str, end_cell: str) -> bool:
         if start_cell == end_cell:
             return True
-        edge = tuple(sorted((start_cell, end_cell)))
+        edge = (min(start_cell, end_cell), max(start_cell, end_cell))
         if edge not in self._clearance_cache:
             self._clearance_cache[edge] = bool(
                 self.clearance_checker(start_cell, end_cell, WALL_CLEARANCE_UNITS)
@@ -233,7 +233,7 @@ class CandidateRouteEngine:
                 candidate = _cell_label(candidate_row, candidate_col)
                 if candidate not in walkable:
                     continue
-                edge = tuple(sorted((cell, candidate)))
+                edge = (min(cell, candidate), max(cell, candidate))
                 if edge not in edge_clearance:
                     edge_clearance[edge] = self._segment_has_clearance(*edge)
                 if edge_clearance[edge]:

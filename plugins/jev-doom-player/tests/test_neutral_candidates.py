@@ -1,5 +1,4 @@
 from copy import deepcopy
-import sys
 
 import pytest
 
@@ -104,7 +103,6 @@ def test_real_map_menu_passes_arena_validation_and_outbound_size():
 
 def test_v3_rejects_host_advice_and_uses_one_choice():
     from test_latest_planner import harness
-    from controller import ControllerError
     h = harness(['hold_position'])
     h.controller._planner_version = 'flat_v3'
     with pytest.raises(TypeError):
