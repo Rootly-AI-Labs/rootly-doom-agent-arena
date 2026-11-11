@@ -436,7 +436,7 @@ class DoomArenaServer(ThreadingHTTPServer):
 
 
 class DoomArenaHandler(SimpleHTTPRequestHandler):
-    server: DoomArenaServer
+    server: DoomArenaServer  # ty: ignore[incompatible-mutable-override] -- handler is only constructed by DoomArenaServer
 
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, directory=str(SRC_DIR), **kwargs)
@@ -1223,7 +1223,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         }
 
         if tool_name == "set_participant_plan":
-            plan = payload.get("plan") if isinstance(payload.get("plan"), dict) else {}
+            plan_raw = payload.get("plan")
+            plan = plan_raw if isinstance(plan_raw, dict) else {}
             diagnostics = (
                 payload.get("route_diagnostics")
                 if isinstance(payload.get("route_diagnostics"), dict)
@@ -1244,9 +1245,12 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 }
             )
         elif tool_name == "get_participant_observation":
-            self_block = payload.get("self") if isinstance(payload.get("self"), dict) else {}
-            opponent_block = payload.get("opponent") if isinstance(payload.get("opponent"), dict) else {}
-            match_block = payload.get("match") if isinstance(payload.get("match"), dict) else {}
+            self_block_raw = payload.get("self")
+            self_block = self_block_raw if isinstance(self_block_raw, dict) else {}
+            opponent_block_raw = payload.get("opponent")
+            opponent_block = opponent_block_raw if isinstance(opponent_block_raw, dict) else {}
+            match_block_raw = payload.get("match")
+            match_block = match_block_raw if isinstance(match_block_raw, dict) else {}
             active_plan = payload.get("active_plan") if isinstance(payload.get("active_plan"), dict) else None
             trace["observation"] = {
                 "match": {
@@ -1294,7 +1298,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         session_dir = RESULTS_ROOT / duel_session_id
         if not session_dir.exists():
             return []
-        recap_rounds: list[dict[str, Any]] = []
+        recap_rounds: list[tuple[int, Path]] = []
         for round_dir in sorted(session_dir.glob("round_*")):
             if not round_dir.is_dir():
                 continue
@@ -1313,7 +1317,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         for round_num, round_dir in recap_rounds:
             summary_path = round_dir / "summary.json"
             stats_path = round_dir / "stats.json"
-            events_path = round_dir / "events.jsonl"
+            _events_path = round_dir / "events.jsonl"
             opponent_id = "player_2" if participant_id == "player_1" else "player_1"
             entry: dict[str, Any] = {
                 "round": round_num,
@@ -1848,7 +1852,8 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                     invalid_plan_counts[participant_id] += 1
                 key = str(call.get("error_type") or call.get("error") or "unknown_plan_error")[:160]
                 plan_errors[key] = plan_errors.get(key, 0) + 1
-            diagnostics = call.get("route_diagnostics") if isinstance(call.get("route_diagnostics"), dict) else {}
+            diagnostics_raw = call.get("route_diagnostics")
+            diagnostics = diagnostics_raw if isinstance(diagnostics_raw, dict) else {}
             inserted = diagnostics.get("inserted_connector_cells") if isinstance(diagnostics, dict) else []
             dropped = diagnostics.get("dropped_passed_cells") if isinstance(diagnostics, dict) else []
             if isinstance(inserted, list) and inserted:
@@ -3537,7 +3542,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
                 values.extend([""] * (len(parse_header) - len(values)))
             if len(values) != len(parse_header):
                 raise ValueError("participant intent TSV row has wrong column count")
-            row = dict(zip(parse_header, values))
+            row: dict[str, str] = dict(zip(parse_header, values))
             if parse_header == legacy_header:
                 row.update(
                     {
@@ -3736,7 +3741,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
             values = line.split("\t")
             if len(values) != len(expected_header):
                 raise ValueError("participant ready TSV row has wrong column count")
-            row = dict(zip(expected_header, values))
+            row: dict[str, str] = dict(zip(expected_header, values))
             self.validate_participant_ready_row(row)
             rows.append(row)
         return rows
@@ -3840,7 +3845,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
 
         if rotate_all_maps:
             return [
-                entry["scenario_id"]
+                str(entry["scenario_id"])
                 for entry in DUEL_SCENARIOS
                 if not entry["requires_wasm_rebuild"]
             ]
@@ -4226,7 +4231,7 @@ class DoomArenaHandler(SimpleHTTPRequestHandler):
         state = read_arena_state()
         self.write_json(HTTPStatus.OK, score_from_state(state))
 
-    def write_json(self, status: HTTPStatus, payload: dict[str, Any]) -> None:
+    def write_json(self, status: HTTPStatus, payload: Any) -> None:
         body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")

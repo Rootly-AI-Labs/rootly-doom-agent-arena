@@ -1,34 +1,26 @@
 #!/bin/bash
+set -euo pipefail
 
-cd "`dirname \"$0\"`/.."
+cd "$(dirname "$0")/.."
 
-rm -fr aclocal.m4 autom4te.cache autotools config.hin configure Makefile.in stamp-h1 config.log config.status config.h a.wasm Makefile clean
+rm -fr -- aclocal.m4 autom4te.cache autotools config.hin configure Makefile.in \
+  stamp-h1 config.log config.status config.h a.wasm Makefile clean
 
-cd textscreen
-rm -fr Makefile Makefile.in .deps *.o *.a
-cd fonts
-rm -fr Makefile Makefile.in
-cd ..
-cd examples
-rm -fr Makefile Makefile.in *.o *.a *.wasm *.wasm.map *.worker.js *.html *.html.symbols *.js .deps
-cd ../..
+for directory in chocolate-doom/textscreen chocolate-doom/textscreen/fonts \
+  chocolate-doom/textscreen/examples chocolate-doom/opl \
+  chocolate-doom/opl/examples chocolate-doom/data chocolate-doom/pcsound src src/doom; do
+  (
+    cd "$directory"
+    rm -fr -- Makefile Makefile.in .deps ./*.o ./*.a
+  )
+done
 
-cd opl
-rm -fr Makefile Makefile.in .deps *.o *.a
-cd examples
-rm -fr Makefile Makefile.in *.o *.a *.wasm *.wasm.map *.worker.js *.html *.html.symbols *.js .deps
-cd ../..
+for directory in chocolate-doom/textscreen/examples chocolate-doom/opl/examples; do
+  (
+    cd "$directory"
+    rm -fr -- ./*.wasm ./*.wasm.map ./*.worker.js ./*.html ./*.html.symbols ./*.js
+  )
+done
 
-cd data
-rm -fr Makefile Makefile.in
-cd ..
-
-cd pcsound
-rm -fr Makefile Makefile.in .deps *.o *.a .deps
-cd ..
-
-cd src
-rm -fr Makefile Makefile.in .deps *.o *.a .deps chocolate* org.chocolate_doom* Doom.desktop Doom.metainfo.xml Doom_Screensaver.desktop
-cd doom
-rm -fr Makefile Makefile.in .deps *.o *.a .deps
-cd ../..
+rm -fr -- src/chocolate* src/org.chocolate_doom* src/Doom.desktop \
+  src/Doom.metainfo.xml src/Doom_Screensaver.desktop

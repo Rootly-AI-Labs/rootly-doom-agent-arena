@@ -198,7 +198,7 @@ def main() -> int:
             run_id = metadata_run_id
         diagnostics["latest_run_metadata"] = metadata.get("row", {})
 
-        tokens = write_controller_tokens(run_id)
+        _tokens = write_controller_tokens(run_id)
         loaded_tokens = read_controller_tokens()
         diagnostics["token_file_exists"] = CONTROLLER_TOKENS_PATH.exists()
         diagnostics["token_file_run_id"] = loaded_tokens.get("run_id", "")

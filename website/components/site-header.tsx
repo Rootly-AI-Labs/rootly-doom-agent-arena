@@ -1,4 +1,4 @@
-import { Code2, Skull } from "lucide-react"
+import { Code2, Skull } from 'lucide-react'
 
 export function SiteHeader() {
   return (
@@ -15,7 +15,10 @@ export function SiteHeader() {
           <a href="#match" className="hidden transition-colors hover:text-hud-green sm:inline">
             LIVE ROUND
           </a>
-          <a href="#leaderboard" className="hidden transition-colors hover:text-hud-green sm:inline">
+          <a
+            href="#leaderboard"
+            className="hidden transition-colors hover:text-hud-green sm:inline"
+          >
             LEADERBOARD
           </a>
           <a

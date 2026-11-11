@@ -8,7 +8,6 @@ import json
 import os
 import tempfile
 import sys
-from collections import Counter
 
 HERE = Path(__file__).resolve().parent
 os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "rootly-doom-matplotlib"))

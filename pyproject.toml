@@ -1,0 +1,55 @@
+[project]
+name = "rootly-doom-agent-arena"
+version = "0.1.0"
+description = "MCP-native Doom agent benchmark and arena server"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+    "ty>=0.0.100",
+    "yamllint>=1.38.0",
+    "pip-audit>=2.10.1",
+    "pre-commit>=4.7.0",
+    "actionlint-py>=1.7.12.25",
+    "shellcheck-py>=0.11.0.1",
+    "zizmor>=1.32.0",
+]
+analysis = ["matplotlib", "numpy", "pillow"]
+maps = [
+    "omgifol>=0.5.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "plugins/jev-doom-player/tests"]
+addopts = "--strict-config --strict-markers"
+
+[tool.ruff]
+target-version = "py312"
+force-exclude = true
+extend-exclude = [
+    "claude_sweep/med_reruns",
+    "benchmarks/legacy-results-analysis",
+    "benchmarks/benchmark-analysis-official",
+    "benchmarks/results",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+# Matplotlib's backend/config directory must be set before importing pyplot.
+"benchmarks/figures/*.py" = ["E402"]
+"claude_sweep/analysis/generate_figures.py" = ["E402"]
+
+[tool.ty.environment]
+python-version = "3.12"
+extra-paths = ["scripts", "plugins/jev-doom-player/scripts"]
+
+[tool.ty.src]
+include = ["scripts", "plugins/jev-doom-player/scripts"]

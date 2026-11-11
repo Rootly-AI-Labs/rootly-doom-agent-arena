@@ -4,6 +4,9 @@ Benchmark model duels in Doom.
 
 An MCP-native arena for real-time model-vs-model evaluations.
 
+For local setup, linting, type checks, tests, and CI maintenance, see
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
 <img width="1901" height="912" alt="image" src="https://github.com/user-attachments/assets/f836858d-524e-4b72-b4af-d41dea9325c4" />
 
 ## Leaderboard

@@ -36,6 +36,13 @@ src/agentic_monster_commands.local.json
 .claude/
 .codex/
 .venv/
+.serena/
+.pytest_cache/
+.ruff_cache/
+.ty_cache/
+.coverage
+htmlcov/
+junit*.xml
 .mcp.local.json
 src/.emscripten_cache/
 src/.emscripten_browser

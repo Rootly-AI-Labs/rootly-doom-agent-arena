@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "nextjs", "jsx-a11y", "import", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "nextjs/no-img-element": "off",
+    "jsx-a11y/control-has-associated-label": [
+      "error",
+      {
+        "ignoreElements": ["td"]
+      }
+    ]
+  },
+  "ignorePatterns": [".next/**", "out/**", "node_modules/**", "next-env.d.ts"]
+}

@@ -6,11 +6,11 @@ Never add API keys or arena controller tokens here.
 
 ## Local development
 
-Requires Node.js 24. From this folder:
+Requires Node.js 26 (see `.node-version`). From this folder:
 
 ```powershell
-npx --yes pnpm@12.3.4 install --frozen-lockfile
-npx --yes pnpm@12.3.4 dev --hostname 127.0.0.1 --port 3000
+npx --yes pnpm@12.18.0 install --frozen-lockfile
+npx --yes pnpm@12.18.0 dev --hostname 127.0.0.1 --port 3000
 ```
 
 Stop any other server on port 3000 first, or choose another port.
@@ -33,10 +33,12 @@ the rest of the arena repository.
 
 ```powershell
 $env:NEXT_PUBLIC_BASE_PATH = '/rootly-doom-agent-arena'
-npx --yes pnpm@12.3.4 build
+npx --yes pnpm@12.18.0 build
 node scripts/verify-export.mjs
 Remove-Item Env:NEXT_PUBLIC_BASE_PATH
 ```
+
+Run `pnpm check` for Oxlint, Prettier, and TypeScript checks.
 
 Output is website/out. Next.js start is not used for a static export.
 For a root-level custom domain, change the workflow's NEXT_PUBLIC_BASE_PATH to

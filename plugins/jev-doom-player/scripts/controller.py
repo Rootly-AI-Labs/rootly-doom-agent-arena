@@ -107,8 +107,8 @@ class JevPlayerController:
         handoff_dedupe_seconds: float = DEFAULT_HANDOFF_DEDUPE_SECONDS,
         handoff_rearm_threshold: float = DEFAULT_HANDOFF_REARM_THRESHOLD,
     ) -> None:
-        self._arena = arena_module
-        self._client = client
+        self._arena: Any = arena_module
+        self._client: Any = client
         self._adapter = adapter
         self._route_engine = route_engine
         self._telemetry = telemetry or JsonlTelemetry()
@@ -259,18 +259,20 @@ class JevPlayerController:
         cell = observation.get('self', {}).get('cell')
         if isinstance(cell, str) and re.fullmatch(r'[A-W](?:0[1-9]|[12][0-9]|3[0-3])', cell):
             self._visited_cells[cell] = now
-        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
+        opponent_raw = observation.get("opponent")
+        opponent = opponent_raw if isinstance(opponent_raw, Mapping) else {}
         if opponent.get("visible") and opponent.get("cell"):
             self._last_seen_cell = str(opponent["cell"])
             self._last_seen_at = now
             self._last_contact_at = now
-        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+        self_state_raw = observation.get("self")
+        self_state = self_state_raw if isinstance(self_state_raw, Mapping) else {}
         try:
-            health = int(self_state.get("health"))
+            health = int(self_state.get("health", ""))
         except (TypeError, ValueError):
             health = None
         try:
-            damage_dealt = int(self_state.get("damage_dealt"))
+            damage_dealt = int(self_state.get("damage_dealt", ""))
         except (TypeError, ValueError):
             damage_dealt = None
         if self._last_health is not None and health is not None and health < self._last_health:
@@ -289,6 +291,7 @@ class JevPlayerController:
         observation: Mapping[str, Any],
         current_plan: Mapping[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
+        assert self._route_engine is not None
         candidates, self._candidate_audit = self._route_engine.generate_neutral_candidates(
             observation, scenario_id=self._scenario_id,
             current_plan={**self._current_plan, **(current_plan or {})},
@@ -309,6 +312,7 @@ class JevPlayerController:
         observation: Mapping[str, Any],
         candidates: Sequence[Mapping[str, Any]],
     ) -> dict[str, Any]:
+        assert self._route_engine is not None
         return dict(
             self._route_engine.safe_fallback(
                 observation,
@@ -339,20 +343,22 @@ class JevPlayerController:
             self._record('decision_observation', {'run_id': self._run_id,
                 'participant_id': self._participant_id, 'state': outbound,
                 'state_hash': filtered_state_hash(outbound)})
-            outbound['memory'] = {'last_seen_opponent_cell': self._last_seen_cell or None,
+            memory: dict[str, Any] = {'last_seen_opponent_cell': self._last_seen_cell or None,
                 'visited_cell_count': len(self._visited_cells),
                 'search_memory_basis': 'Recorded player cells only; not a visibility or cleared-area map.',
                 'last_seen_age_seconds': max(0.0, self._clock() - self._last_seen_at)
                 if self._last_seen_at is not None else None}
+            outbound['memory'] = memory
             if self._planner_version == 'flat_v3':
-                outbound['memory']['recent_plan_outcomes'] = getattr(self, '_recent_plan_outcomes', [])
-                outbound['memory']['last_plan_feedback'] = {
+                memory['recent_plan_outcomes'] = getattr(self, '_recent_plan_outcomes', [])
+                memory['last_plan_feedback'] = {
                     key: self._last_active_plan[key] for key in
                     ('status', 'sequence_number', 'current_waypoint_cell')
                     if key in self._last_active_plan}
             outbound['planning'] = {'stage': 'plan', 'selection_mode': 'all_legal_plans'}
             outbound['candidates'] = candidate_facts(candidates)
         assert_outbound_safe(outbound)
+        assert self._adapter is not None
         decision = self._adapter.choose(outbound, candidates)
         if self._planner_version in {'flat_v3'} and decision.selected_id not in {c['id'] for c in candidates}:
             raise ControllerError('Jev selected an option outside the offered menu')
@@ -427,10 +433,12 @@ class JevPlayerController:
         candidates: Sequence[Mapping[str, Any]],
         decision: JevDecision | None,
     ) -> tuple[Any, ...]:
-        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
-        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
+        self_state_raw = observation.get("self")
+        self_state = self_state_raw if isinstance(self_state_raw, Mapping) else {}
+        opponent_raw = observation.get("opponent")
+        opponent = opponent_raw if isinstance(opponent_raw, Mapping) else {}
         try:
-            health_bucket = int(self_state.get("health")) // 25
+            health_bucket = int(self_state.get("health", "")) // 25
         except (TypeError, ValueError):
             health_bucket = None
         return (
@@ -774,6 +782,7 @@ class JevPlayerController:
                 )
             else:
                 try:
+                    assert selected is not None
                     self._submit_candidate(selected, source="jev")
                 except ControllerError as exc:
                     self._last_error = _safe_error_text(exc, self._controller_token)
@@ -790,9 +799,12 @@ class JevPlayerController:
             self._last_fingerprint = None
 
     def _fingerprint(self, observation: Mapping[str, Any], active_plan: Mapping[str, Any]) -> tuple[Any, ...]:
-        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
-        opponent = observation.get("opponent") if isinstance(observation.get("opponent"), Mapping) else {}
-        tactical = observation.get("tactical_context") if isinstance(observation.get("tactical_context"), Mapping) else {}
+        self_state_raw = observation.get("self")
+        self_state = self_state_raw if isinstance(self_state_raw, Mapping) else {}
+        opponent_raw = observation.get("opponent")
+        opponent = opponent_raw if isinstance(opponent_raw, Mapping) else {}
+        tactical_raw = observation.get("tactical_context")
+        tactical = tactical_raw if isinstance(tactical_raw, Mapping) else {}
         pickups = observation.get("map", {}).get("pickups", []) if isinstance(observation.get("map"), Mapping) else []
         available_pickups = tuple(
             sorted(
@@ -803,14 +815,15 @@ class JevPlayerController:
         )
         health = self_state.get("health")
         try:
-            health_bucket = int(health) // 25
+            health_bucket = int(health) // 25 if health is not None else None
         except (TypeError, ValueError):
             health_bucket = None
-        match = observation.get("match") if isinstance(observation.get("match"), Mapping) else {}
+        match_raw = observation.get("match")
+        match = match_raw if isinstance(match_raw, Mapping) else {}
         try:
             endgame = (
-                float(match.get("timeout_seconds"))
-                - float(match.get("elapsed_time_seconds"))
+                float(match.get("timeout_seconds", ""))
+                - float(match.get("elapsed_time_seconds", ""))
                 <= 20.0
             )
         except (TypeError, ValueError):
@@ -828,7 +841,7 @@ class JevPlayerController:
         # plan reaches a terminal state.
         position_event = self_state.get("cell") if not active_plan or route_terminal else None
         ammo_buckets = tuple(
-            (key, int(self_state.get(key)) // 5)
+            (key, int(self_state.get(key, "")) // 5)
             for key in ("ammo_bullets", "ammo_shells", "ammo_cells", "ammo_rockets")
             if str(self_state.get(key, "")).lstrip("-").isdigit()
         )
@@ -849,8 +862,10 @@ class JevPlayerController:
         )
 
     def _match_finished(self, observation: Mapping[str, Any]) -> bool:
-        match = observation.get("match") if isinstance(observation.get("match"), Mapping) else {}
-        self_state = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+        match_raw = observation.get("match")
+        match = match_raw if isinstance(match_raw, Mapping) else {}
+        self_state_raw = observation.get("self")
+        self_state = self_state_raw if isinstance(self_state_raw, Mapping) else {}
         return str(match.get("phase", "")) == "finished" or self_state.get("alive") is False
 
     def _mark_match_finished(self) -> None:
@@ -877,7 +892,8 @@ class JevPlayerController:
             if target and observation.get('self', {}).get('cell') == target:
                 self._record_outcome('destination_reached', observation)
         if self._center_patrol_target:
-            self_block = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+            self_block_raw = observation.get("self")
+            self_block = self_block_raw if isinstance(self_block_raw, Mapping) else {}
             active_status = str(active_plan.get("status") or "")
             if (
                 str(self_block.get("cell") or "") == self._center_patrol_target
@@ -1057,6 +1073,7 @@ class JevPlayerController:
                             self._handle_evaluation_failure(reason, observation, candidates, decision)
                         else:
                             try:
+                                assert selected is not None
                                 self._submit_candidate(selected, source="jev")
                             except ControllerError as exc:
                                 self._last_error = _safe_error_text(exc, self._controller_token)
@@ -1125,7 +1142,8 @@ class JevPlayerController:
         if not isinstance(override_plan, Mapping):
             raise ControllerError("override_plan must be an object")
         observation = self._last_observation
-        self_block = observation.get("self") if isinstance(observation.get("self"), Mapping) else {}
+        self_block_raw = observation.get("self")
+        self_block = self_block_raw if isinstance(self_block_raw, Mapping) else {}
         start_cell = str(self_block.get("cell") or "")
         route = override_plan.get("route")
         try:

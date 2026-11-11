@@ -6,6 +6,7 @@ on:
     paths: ['website/**', '.github/workflows/website-pages.yml']
   pull_request:
     paths: ['website/**', '.github/workflows/website-pages.yml']
+  merge_group:
   workflow_dispatch:
 
 permissions:
@@ -17,7 +18,8 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: website
@@ -25,19 +27,25 @@ jobs:
       NEXT_PUBLIC_BASE_PATH: /rootly-doom-agent-arena
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: '24'
-          check-latest: true
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: website/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: website/.node-version
+          cache: pnpm
+          cache-dependency-path: website/pnpm-lock.yaml
       - name: Install locked dependencies
-        run: npx --yes pnpm@12.3.4 install --frozen-lockfile
-      - name: Type check
-        run: npx --yes pnpm@12.3.4 exec tsc --noEmit
+        run: pnpm install --frozen-lockfile
+      - name: Lint, format, and type check
+        run: pnpm check
       - name: Export static website
-        run: npx --yes pnpm@12.3.4 build
+        run: pnpm build
       - name: Verify export and asset paths
-        run: node scripts/verify-export.mjs
+        run: pnpm verify:export
       # Package directly: upload-pages-artifact has an unpinned nested action.
       - name: Package GitHub Pages artifact
         run: |
@@ -46,7 +54,7 @@ jobs:
             --exclude=.git --exclude=.github \
             -cf "$RUNNER_TEMP/artifact.tar" .
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: github-pages
           path: ${{ runner.temp }}/artifact.tar
@@ -56,7 +64,8 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
-    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     permissions:
       pages: write
       id-token: write
@@ -64,7 +73,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
