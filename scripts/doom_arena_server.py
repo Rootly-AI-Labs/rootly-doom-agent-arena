@@ -361,7 +361,14 @@ def fetch_elevenlabs_signed_url(api_key: str, agent_id: str) -> str:
         payload = json.loads(response.read().decode("utf-8"))
     signed_url = str(payload.get("signed_url", "")).strip()
     parsed = urlparse(signed_url)
-    if parsed.scheme != "wss" or parsed.hostname != "api.elevenlabs.io":
+    # WebSocket URLs cannot contain credentials. Reject userinfo so Python's
+    # authority parsing cannot hide a different browser host behind a backslash.
+    if (
+        parsed.scheme != "wss"
+        or parsed.hostname != "api.elevenlabs.io"
+        or parsed.username is not None
+        or parsed.password is not None
+    ):
         raise ValueError("ElevenLabs returned an invalid signed WebSocket URL.")
     return signed_url
 

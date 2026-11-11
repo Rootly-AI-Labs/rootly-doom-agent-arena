@@ -69,46 +69,101 @@ class FakeResponse:
 
 def test_fetch_elevenlabs_signed_url_uses_server_key_without_leaking_it(monkeypatch):
     captured = {}
+    expected_signed_url = (
+        "wss://api.elevenlabs.io/v1/convai/conversation"
+        "?agent_id=agent_test&conversation_signature=temporary"
+    )
 
     def fake_urlopen(request, timeout):
         captured["url"] = request.full_url
         captured["key"] = request.headers["Xi-api-key"]
         captured["timeout"] = timeout
-        return FakeResponse(
-            {
-                "signed_url": (
-                    "wss://api.elevenlabs.io/v1/convai/conversation"
-                    "?agent_id=agent_test&conversation_signature=temporary"
-                )
-            }
-        )
+        return FakeResponse({"signed_url": expected_signed_url})
 
     monkeypatch.setattr(server, "urlopen", fake_urlopen)
 
     signed_url = server.fetch_elevenlabs_signed_url("secret-key", "agent_test")
 
-    assert signed_url.startswith("wss://api.elevenlabs.io/")
+    assert signed_url == expected_signed_url
     assert "agent_id=agent_test" in captured["url"]
     assert captured["key"] == "secret-key"
     assert captured["timeout"] == server.ELEVENLABS_REQUEST_TIMEOUT_SECONDS
     assert "secret-key" not in signed_url
 
 
-def test_fetch_elevenlabs_signed_url_rejects_untrusted_host(monkeypatch):
+@pytest.mark.parametrize(
+    "signed_url",
+    [
+        "wss://attacker.example/steal",
+        "wss://api.elevenlabs.io.attacker.example/steal",
+        "wss://attacker-api.elevenlabs.io/steal",
+        "wss://api.elevenlabs.io@attacker.example/steal",
+        "wss://attacker.example/path/wss://api.elevenlabs.io/",
+        "wss://attacker.example/?next=wss://api.elevenlabs.io/",
+        r"wss://attacker.example\@api.elevenlabs.io/steal",
+        r"wss://attacker.example\user:password@api.elevenlabs.io/steal",
+        "wss://user:password@api.elevenlabs.io/v1/convai/conversation",
+        "wss://@api.elevenlabs.io/v1/convai/conversation",
+        "ws://api.elevenlabs.io/v1/convai/conversation",
+        "https://api.elevenlabs.io/v1/convai/conversation",
+        "//api.elevenlabs.io/v1/convai/conversation",
+        "",
+    ],
+)
+def test_fetch_elevenlabs_signed_url_rejects_untrusted_url(monkeypatch, signed_url):
+    monkeypatch.setattr(
+        server,
+        "urlopen",
+        lambda _request, timeout: FakeResponse({"signed_url": signed_url}),
+    )
+
+    with pytest.raises(ValueError, match="invalid signed WebSocket URL"):
+        server.fetch_elevenlabs_signed_url("secret-key", "agent_test")
+
+
+@pytest.mark.parametrize(
+    "signed_url",
+    [
+        "wss://api.elevenlabs.io/v1/convai/conversation?conversation_signature=a%2Bb%3D",
+        "wss://api.elevenlabs.io:443/v1/convai/conversation?agent_id=agent_test",
+        "WSS://API.ELEVENLABS.IO/v1/convai/conversation?agent_id=agent_test",
+    ],
+)
+def test_fetch_elevenlabs_signed_url_preserves_valid_url(monkeypatch, signed_url):
+    monkeypatch.setattr(
+        server,
+        "urlopen",
+        lambda _request, timeout: FakeResponse({"signed_url": signed_url}),
+    )
+
+    assert server.fetch_elevenlabs_signed_url("secret-key", "agent_test") == signed_url
+
+
+def test_signed_url_endpoint_hides_rejected_url_and_credentials(monkeypatch):
+    handler = make_handler()
+    response = {}
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "secret-key")
+    monkeypatch.setenv("ELEVENLABS_AGENT_ID", "agent_test")
+    monkeypatch.setattr(server.time, "monotonic", lambda: 10.0)
     monkeypatch.setattr(
         server,
         "urlopen",
         lambda _request, timeout: FakeResponse(
-            {"signed_url": "wss://attacker.example/steal"}
+            {"signed_url": r"wss://attacker.example\@api.elevenlabs.io/steal"}
         ),
     )
+    handler.write_json = lambda status, payload: response.update(
+        {"status": status, "payload": payload}
+    )
+    handler.log_error = lambda *_args: None
 
-    try:
-        server.fetch_elevenlabs_signed_url("secret-key", "agent_test")
-    except ValueError as exc:
-        assert "invalid signed WebSocket URL" in str(exc)
-    else:
-        raise AssertionError("untrusted ElevenAgents URL was accepted")
+    handler.read_commentator_signed_url()
+
+    assert response["status"] == server.HTTPStatus.BAD_GATEWAY
+    assert response["payload"]["ok"] is False
+    assert "signed_url" not in response["payload"]
+    assert "attacker.example" not in json.dumps(response)
+    assert "secret-key" not in json.dumps(response)
 
 
 def test_commentator_config_reports_only_missing_variable_names(monkeypatch):
